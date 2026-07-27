@@ -27,3 +27,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# stray scratchpad leakage / one-off dev scripts
+UsersNutzer*.json
+add-turkish*.cjs
+fix-lessons-syntax.cjs

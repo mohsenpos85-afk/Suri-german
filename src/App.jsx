@@ -467,13 +467,12 @@ const OB_LANGS = [
   {v:"ar",    code:"AR", label:"Arabic",    native:"العربية"},
   {v:"tr",    code:"TR", label:"Turkish",   native:"Türkçe"},
   {v:"fr",    code:"FR", label:"French",    native:"Français"},
-  {v:"ru",    code:"RU", label:"Russian",   native:"Русский"},
+  {v:"uk",    code:"UK", label:"Ukrainian", native:"Українська"},
   {v:"ku",    code:"KU", label:"Sorani Kurdish", native:"سۆرانی"},
   {v:"fa",    code:"FA", label:"Farsi",         native:"فارسی"},
-  {v:"ko",    code:"KO", label:"Korean",        native:"한국어"},
   {v:"ja",    code:"JA", label:"Japanese",      native:"日本語"},
 ];
-const LANG_DIR = {tr:"ltr",en:"ltr",ar:"rtl",es:"ltr",fr:"ltr",ru:"ltr",ku:"rtl",fa:"rtl",ko:"ltr",ja:"ltr"};
+const LANG_DIR = {tr:"ltr",en:"ltr",ar:"rtl",es:"ltr",fr:"ltr",uk:"ltr",ku:"rtl",fa:"rtl",ja:"ltr"};
 
 const OB_TRANS = {
   en:{
@@ -616,45 +615,25 @@ const OB_TRANS = {
     err_name:"Veuillez entrer votre nom complet.",err_email_invalid:"Veuillez entrer un e-mail valide.",err_pw_weak:"Mot de passe : min 8 caractères, 1 majuscule, 1 chiffre.",err_pw_match:"Les mots de passe ne correspondent pas.",err_email_exists:"Cet e-mail est déjà enregistré. Redirection vers la connexion…",
     profile_title:"Parlez-nous de vous",profile_sub:"Les histoires s'adapteront à votre profil",profile_name:"Votre prénom",profile_age:"Votre âge",profile_male:"Homme",profile_female:"Femme",profile_no_say:"Préfère ne pas dire",err_age:"Veuillez entrer votre âge.",
   },
-  ru:{
-    level_title:"Какой у вас текущий уровень немецкого?",level_sub:"Будьте честны — мы подстроимся под ваш темп",
-    goals_title:"Зачем вы хотите учить немецкий?",goals_sub:"Выберите всё, что подходит",
-    daily_title:"Сколько времени вы можете учиться каждый день?",daily_sub:"Регулярность важнее интенсивности",
-    focus_title:"Что хотите улучшить в первую очередь?",focus_sub:"Выберите всё, что подходит",
-    summary_title:"Ваш персональный план готов!",summary_sub:"Вот что мы для вас подготовили",
-    btn_continue:"Продолжить",sum_lang:"Родной язык",sum_level:"Текущий уровень",sum_goals:"Цели",sum_daily:"Ежедневное обучение",sum_focus:"Фокус",
-    auth_title:"Создайте аккаунт",auth_sub:"Сохраните прогресс",auth_email:"Продолжить с email",auth_google:"Продолжить с Google",auth_apple:"Продолжить с Apple",auth_skip:"Может быть позже",
-    login_title:"С возвращением",login_sub:"Войдите для продолжения",login_email:"ЭЛ. ПОЧТА",login_pass:"ПАРОЛЬ",login_btn:"Войти",login_no_acc:"Нет аккаунта?",login_reg:"Зарегистрироваться",forgot_link:"Забыли пароль?",forgot_title:"Сброс пароля",forgot_sub:"Введите email — отправим 6-значный код",forgot_send:"Отправить код",forgot_otp_title:"Проверьте почту",forgot_otp_sub:"Введите 6-значный код отправленный на",forgot_verify:"Подтвердить код",forgot_newpw_title:"Новый пароль",forgot_newpw_sub:"Придумайте надёжный новый пароль",forgot_save:"Сохранить пароль",
-    lv_none:"Полный новичок",lv_none_s:"Никогда не учил немецкий",lv_x:"Не уверен",lv_x_s:"Узнаю позже",
-    lv_A1_s:"Базовые слова и фразы",lv_A2_s:"Простые разговоры",lv_B1_s:"Повседневные темы",lv_B2_s:"Свободное общение",lv_C1_s:"Почти как носитель",
-    g_live:"Жизнь в Германии",g_work:"Работа и карьера",g_edu:"Университет / Образование",g_exam:"Гражданство / Экзамен",g_travel:"Путешествия",g_family:"Семья и друзья",g_hobby:"Личный интерес",
-    d_5:"Быстрая ежедневная привычка",d_10:"Регулярная практика",d_15:"Стабильный прогресс",d_20:"Серьёзное обучение",d_30:"Быстрое продвижение",
-    f_speaking:"Говорение",f_listening:"Аудирование",f_reading:"Чтение",f_writing:"Письмо",f_grammar:"Грамматика",f_vocabulary:"Словарный запас",f_all:"Всё",
-    lang_title:"Какой у вас родной язык?",lang_sub:"Мы будем объяснять грамматику на вашем языке",lang_msg:"Приложение откроется на русском языке",btn_back:"Назад",unit_min:"мин",
-    ubung_label:"Упражнения",
-    welcome_have_acc:"У меня есть аккаунт",welcome_im_new:"Я новый",
-    err_name:"Пожалуйста, введите полное имя.",err_email_invalid:"Пожалуйста, введите корректный email.",err_pw_weak:"Пароль: мин. 8 символов, 1 заглавная, 1 цифра.",err_pw_match:"Пароли не совпадают.",err_email_exists:"Этот email уже зарегистрирован. Перенаправление на вход…",
-    profile_title:"Расскажите о себе",profile_sub:"Истории будут подстраиваться под вас",profile_name:"Ваше имя",profile_age:"Ваш возраст",profile_male:"Мужской",profile_female:"Женский",profile_no_say:"Не хочу указывать",err_age:"Пожалуйста, введите возраст.",
-  },
-  ko:{
-    level_title:"현재 독일어 수준은 어떻게 되나요?",level_sub:"솔직하게 — 속도에 맞춰 드립니다",
-    goals_title:"독일어를 배우려는 이유가 무엇인가요?",goals_sub:"해당하는 것을 모두 선택하세요",
-    daily_title:"매일 얼마나 공부할 수 있나요?",daily_sub:"꾸준함이 강도를 이깁니다",
-    focus_title:"먼저 무엇을 개선하고 싶으신가요?",focus_sub:"해당하는 것을 모두 선택하세요",
-    summary_title:"맞춤형 계획이 준비됐어요!",summary_sub:"준비한 내용을 확인하세요",
-    btn_continue:"계속",sum_lang:"모국어",sum_level:"현재 수준",sum_goals:"목표",sum_daily:"일일 학습",sum_focus:"집중",
-    auth_title:"계정을 만드세요",auth_sub:"진행 상황을 저장하세요",auth_email:"이메일로 계속",auth_google:"Google로 계속",auth_apple:"Apple로 계속",auth_skip:"나중에 하기",
-    login_title:"다시 오신 것을 환영합니다",login_sub:"계속하려면 로그인하세요",login_email:"이메일",login_pass:"비밀번호",login_btn:"로그인",login_no_acc:"계정이 없으신가요?",login_reg:"회원가입",forgot_link:"비밀번호를 잊으셨나요?",forgot_title:"비밀번호 재설정",forgot_sub:"이메일을 입력하세요 — 6자리 코드를 보내드립니다",forgot_send:"코드 보내기",forgot_otp_title:"이메일을 확인하세요",forgot_otp_sub:"다음 주소로 전송된 6자리 코드를 입력하세요:",forgot_verify:"코드 확인",forgot_newpw_title:"새 비밀번호 설정",forgot_newpw_sub:"강력한 새 비밀번호를 선택하세요",forgot_save:"비밀번호 저장",
-    lv_none:"완전 초보",lv_none_s:"독일어를 배운 적 없어요",lv_x:"잘 모르겠어요",lv_x_s:"나중에 알아볼게요",
-    lv_A1_s:"기본 단어와 표현",lv_A2_s:"간단한 대화",lv_B1_s:"일상 주제",lv_B2_s:"유창한 의사소통",lv_C1_s:"원어민에 가까운 수준",
-    g_live:"독일에서 생활",g_work:"직업과 커리어",g_edu:"대학 / 교육",g_exam:"시민권 / 시험",g_travel:"여행",g_family:"가족과 친구",g_hobby:"개인 관심",
-    d_5:"빠른 일일 습관",d_10:"규칙적인 연습",d_15:"꾸준한 진전",d_20:"진지한 학습",d_30:"빠른 발전",
-    f_speaking:"말하기",f_listening:"듣기",f_reading:"읽기",f_writing:"쓰기",f_grammar:"문법",f_vocabulary:"어휘",f_all:"전부",
-    lang_title:"모국어가 무엇인가요?",lang_sub:"문법을 귀하의 언어로 설명해 드립니다",lang_msg:"앱이 한국어로 열립니다",btn_back:"뒤로",unit_min:"분",
-    ubung_label:"연습",
-    welcome_have_acc:"계정이 있어요",welcome_im_new:"처음이에요",
-    err_name:"전체 이름을 입력해주세요.",err_email_invalid:"유효한 이메일을 입력해주세요.",err_pw_weak:"비밀번호: 최소 8자, 대문자 1개, 숫자 1개.",err_pw_match:"비밀번호가 일치하지 않습니다.",err_email_exists:"이 이메일은 이미 등록되어 있습니다. 로그인으로 이동합니다…",
-    profile_title:"당신을 알아가겠습니다",profile_sub:"이야기가 당신에 맞게 바뀝니다",profile_name:"이름",profile_age:"나이",profile_male:"남성",profile_female:"여성",profile_no_say:"밝히지 않음",err_age:"나이를 입력해주세요.",
+  uk:{
+    level_title:"Який ваш поточний рівень німецької?",level_sub:"Будьте чесні — ми підлаштуємося під ваш темп",
+    goals_title:"Навіщо ви хочете вивчати німецьку?",goals_sub:"Виберіть усе, що підходить",
+    daily_title:"Скільки часу ви можете вчитися щодня?",daily_sub:"Регулярність важливіша за інтенсивність",
+    focus_title:"Що б ви хотіли покращити спершу?",focus_sub:"Виберіть усе, що підходить",
+    summary_title:"Ваш персональний план готовий!",summary_sub:"Ось що ми для вас підготували",
+    btn_continue:"Продовжити",sum_lang:"Рідна мова",sum_level:"Поточний рівень",sum_goals:"Цілі",sum_daily:"Щоденне навчання",sum_focus:"Фокус",
+    auth_title:"Створіть акаунт",auth_sub:"Збережіть свій прогрес",auth_email:"Продовжити з email",auth_google:"Продовжити з Google",auth_apple:"Продовжити з Apple",auth_skip:"Можливо пізніше",
+    login_title:"З поверненням",login_sub:"Увійдіть, щоб продовжити",login_email:"ЕЛЕКТРОННА ПОШТА",login_pass:"ПАРОЛЬ",login_btn:"Увійти",login_no_acc:"Немає акаунта?",login_reg:"Зареєструватися",forgot_link:"Забули пароль?",forgot_title:"Скидання пароля",forgot_sub:"Введіть email — надішлемо 6-значний код",forgot_send:"Надіслати код",forgot_otp_title:"Перевірте пошту",forgot_otp_sub:"Введіть 6-значний код, надісланий на",forgot_verify:"Підтвердити код",forgot_newpw_title:"Новий пароль",forgot_newpw_sub:"Придумайте надійний новий пароль",forgot_save:"Зберегти пароль",
+    lv_none:"Повний початківець",lv_none_s:"Ніколи не вивчав німецьку",lv_x:"Не впевнений",lv_x_s:"Дізнаюся пізніше",
+    lv_A1_s:"Базові слова та фрази",lv_A2_s:"Прості розмови",lv_B1_s:"Повсякденні теми",lv_B2_s:"Вільне спілкування",lv_C1_s:"Майже як носій",
+    g_live:"Життя в Німеччині",g_work:"Робота та кар'єра",g_edu:"Університет / Освіта",g_exam:"Громадянство / Іспит",g_travel:"Подорожі",g_family:"Сім'я та друзі",g_hobby:"Особистий інтерес",
+    d_5:"Швидка щоденна звичка",d_10:"Регулярна практика",d_15:"Стабільний прогрес",d_20:"Серйозне навчання",d_30:"Швидке просування",
+    f_speaking:"Говоріння",f_listening:"Аудіювання",f_reading:"Читання",f_writing:"Письмо",f_grammar:"Граматика",f_vocabulary:"Словниковий запас",f_all:"Усе",
+    lang_title:"Яка ваша рідна мова?",lang_sub:"Ми пояснюватимемо граматику вашою мовою",lang_msg:"Застосунок відкриється українською",btn_back:"Назад",unit_min:"хв",
+    ubung_label:"Вправи",
+    welcome_have_acc:"У мене є акаунт",welcome_im_new:"Я новачок",
+    err_name:"Будь ласка, введіть повне ім'я.",err_email_invalid:"Будь ласка, введіть дійсний email.",err_pw_weak:"Пароль: мін. 8 символів, 1 велика літера, 1 цифра.",err_pw_match:"Паролі не збігаються.",err_email_exists:"Цей email уже зареєстровано. Перенаправлення на вхід…",
+    profile_title:"Розкажіть про себе",profile_sub:"Історії підлаштуються під вас",profile_name:"Ваше ім'я",profile_age:"Ваш вік",profile_male:"Чоловіча",profile_female:"Жіноча",profile_no_say:"Не хочу вказувати",err_age:"Будь ласка, введіть вік.",
   },
   ja:{
     level_title:"現在のドイツ語レベルは？",level_sub:"正直に — ペースに合わせます",
@@ -1057,11 +1036,8 @@ const APP_TRANS = {
   fr: {
     app_subtitle: "FR · DE · A1–C2",
   },
-  ru: {
-    app_subtitle: "RU · DE · A1–C2",
-  },
-  ko: {
-    app_subtitle: "KO · DE · A1–C2",
+  uk: {
+    app_subtitle: "UK · DE · A1–C2",
   },
   ja: {
     app_subtitle: "JA · DE · A1–C2",
@@ -4126,7 +4102,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
 // ══════════════════════════════════════════════════════════════════════
 // A1 LESEN EXERCISES — Teil A, B, C
 // ══════════════════════════════════════════════════════════════════════
-const DONE_WORD = { ku:"تەواو", tr:"Tamam", ar:"تمام", fa:"تمام", en:"Done", es:"Listo", fr:"Terminé", ru:"Готово", ko:"완료", ja:"完了", de:"Fertig" };
+const DONE_WORD = { ku:"تەواو", tr:"Tamam", ar:"تمام", fa:"تمام", en:"Done", es:"Listo", fr:"Terminé", uk:"Готово", ja:"完了", de:"Fertig" };
 
 const A1_LESEN_A = [
   {

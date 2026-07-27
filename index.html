@@ -15,36 +15,16 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      // Service worker + seamless auto-update.
-      // The new SW uses network-first for HTML, so a fresh index.html (with
-      // current chunk hashes) is always fetched online — this prevents the
-      // "stale cache → missing chunk → blank screen" failure. When a new SW
-      // takes control, we reload ONCE so the page runs the new code. The
-      // `hadController` guard avoids reloading on the very first install.
+      // Register the service worker. The SW uses network-first for HTML, so a
+      // fresh index.html (with current chunk hashes) is always fetched online —
+      // this prevents the "stale cache → missing chunk → blank screen" failure.
+      // The SW self-activates (skipWaiting + clients.claim), so a new version
+      // takes over on the next navigation. We deliberately do NOT force a
+      // reload on controllerchange: that pattern can loop (the reload resets
+      // its own guard), which is worse than a one-navigation-late update.
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          const hadController = !!navigator.serviceWorker.controller;
-          let refreshing = false;
-          navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (!hadController || refreshing) return; // first install → no reload
-            refreshing = true;
-            window.location.reload();
-          });
-          navigator.serviceWorker.register("/sw.js").then((reg) => {
-            // Nudge the browser to check for a new SW on each load.
-            reg.update().catch(() => {});
-            reg.addEventListener("updatefound", () => {
-              const nw = reg.installing;
-              if (!nw) return;
-              nw.addEventListener("statechange", () => {
-                // A new SW finished installing while an old one still controls
-                // the page → tell it to activate immediately.
-                if (nw.state === "installed" && navigator.serviceWorker.controller) {
-                  nw.postMessage("SKIP_WAITING");
-                }
-              });
-            });
-          }).catch(() => {});
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
         });
       }
     </script>

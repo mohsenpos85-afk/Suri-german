@@ -80,6 +80,12 @@ function extractLiteral(marker, openChar) {
   Object.keys(gmod.GRAMMAR).forEach((lv) => gmod.GRAMMAR[lv].forEach((t) => {
     ['uk', 'expUk'].forEach((f) => { if (!t[f]) report('GRAMMAR topic', lv + ' "' + t.de + '" missing ' + f); });
     (t.ex || []).forEach((e, i) => { if (!e.uk) report('GRAMMAR ex', lv + ' "' + t.de + '" ex[' + i + ']'); });
+    // article groups (label uk, rulesUk, and each example word's 6th element = uk)
+    (t.groups || []).forEach((g) => {
+      if (!g.uk) report('GRAMMAR group', lv + ' "' + t.de + '" group ' + g.art + ' missing uk');
+      if (!g.rulesUk) report('GRAMMAR group.rules', lv + ' "' + t.de + '" group ' + g.art + ' missing rulesUk');
+      (g.words || []).forEach((w) => { if (!w[5]) report('GRAMMAR group.words', lv + ' "' + t.de + '" ' + w[0] + ' missing uk'); });
+    });
   }));
   Object.keys(gmod.GTABLES).forEach((k) => {
     ['headersUk', 'rowsUk'].forEach((f) => { if (!gmod.GTABLES[k][f]) report('GTABLES', '"' + k + '" missing ' + f); });

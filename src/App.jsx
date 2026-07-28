@@ -1037,7 +1037,49 @@ const APP_TRANS = {
     app_subtitle: "FR · DE · A1–C2",
   },
   uk: {
-    app_subtitle: "UK · DE · A1–C2",
+    tab_grammar:"Граматика", tab_words:"Слова", tab_cards:"Картки",
+    tab_stories:"Історії", tab_ubung:"Вправи", tab_dialog:"Діалог",
+    tab_pretest:"Перед-тест", tab_exam:"Іспит",
+    grammar_pick:"Оберіть правило", grammar_no:"Немає граматики для цього рівня",
+    grammar_ai:"Запитати ШІ", grammar_rule:"Правило",
+    words_pick:"Оберіть урок", words_no:"Немає слів для цього рівня", words_listen:"Слухати",
+    cards_pick:"Оберіть урок", cards_no:"Немає карток для цього рівня",
+    cards_flip:"Перевернути", cards_next:"Далі", cards_prev:"Назад",
+    stories_back:"Усі історії", stories_empty:"На цьому рівні ще немає історій", stories_para:"абз.",
+    ubung_pick:"Оберіть вправу", ubung_no:"Немає вправ для цього рівня",
+    ubung_check:"Перевірити", ubung_again:"Ще раз", ubung_done:"Готово",
+    ubung_filled:"заповнено", ubung_blanks:"пропуск",
+    dialog_pick:"Оберіть діалог", dialog_no:"Немає діалогів для цього рівня",
+    exam_locked:"Цей іспит ще заблоковано", exam_need95_de:"Schließe 95% ab!", exam_need95:"Потрібно завершити цей розділ на 95%", exam_start:"Почати", exam_submit:"Надіслати",
+    loading:"Завантаження...", correct:"Правильно! ✓", wrong:"Неправильно ✗",
+    show_answer:"Показати відповідь", try_again:"Спробувати ще раз", level_label:"Рівень",
+    logout:"Вийти", app_name:"Вивчай німецьку",
+    prov_goethe:"Goethe", prov_telc:"TELC", prov_osd:"ÖSD",
+    lesson_fav:"Обране", lesson_all:"Усі уроки",
+    gc_explain:"Пояснення", gc_table:"Коротка таблиця", gc_rules:"Правила", gc_examples:"Приклади", gc_sentences:"Речення",
+    exam_locked_h:"Іспит заблоковано", exam_formal:"Офіційний іспит", exam_pick_desc:"Оберіть офіційний іспит.",
+    lesson_pick_desc:"Оберіть рівень, потім виберіть вміст.",
+    exam_done95:"✓ Готово", exam_go:"Уперед", pretest_title:"Перед-тест",
+    exam_unlock_tip:"💡 Завершіть свої теми, після цього зможете скласти іспит.",
+    quiz_questions:"Питання", quiz_start:"Почати", quiz_continue:"Продовжити",
+    quiz_check:"Перевірити відповіді", quiz_good:"🎉 Молодець!", quiz_study:"📚 Вчіть більше",
+    quiz_right:"правильно", quiz_retry:"Спробувати ще раз", ubung_reset:"↺ Скинути",
+    ai_loading:"⏳ ШІ генерує питання…", ai_quiz_title:"ШІ-тест",
+    ai_start:"Почати іспит", ai_continue10:"Продовжити — 10 питань",
+    ai_submit:"Перевірити відповіді", ai_more10:"Ще 10 питань", ai_later:"Пізніше",
+    ai_unanswered:"питань без відповіді", ai_unanswered2:"Без відповіді зараховується як помилка",
+    chat_err:"Вибачте, з'єднання не вдалося. Спробуйте ще раз.",
+    result_great:"Чудово! Молодець", result_good:"Добре! Продовжуйте", result_keep:"Не зупиняйтесь, спробуйте ще раз",
+    nav_home:"Головна", nav_talk:"Розмова", nav_favs:"Обране", nav_lid:"Життя в DE", nav_compare:"Порівняти", nav_spiel:"Ігри", nav_menu:"Меню", nav_profile:"Профіль", nav_levels:"Рівні",
+    app_subtitle:"UK · DE · A1–C2",
+    home_title:"Німецька", home_back:"Головна",
+    fav_title:"Обране", fav_empty_h:"Ваше обране порожнє",
+    fav_empty_p:"Торкніться сердечка під час вправ із картками, щоб зберегти слова",
+    fav_words:"слів", fav_remove:"Видалити",
+    offline_msg:"Ви офлайн — деякі функції (як-от ШІ-чат) можуть не працювати", back_online_msg:"Ви знову онлайн ✓",
+    lv_desc_0:"Початок мови", lv_desc_1:"Говоріть щодня",
+    lv_desc_2:"Прості розмови", lv_desc_3:"Вільне мовлення",
+    lv_desc_4:"Ділова мова", lv_desc_5:"Досконале володіння",
   },
   ja: {
     app_subtitle: "JA · DE · A1–C2",
@@ -1143,6 +1185,7 @@ const DICT_LANG_META = {
   tr: { badge: "TR", bg: "#E05A00", rtl: false },
   en: { badge: "EN", bg: "#2563EB", rtl: false },
   ar: { badge: "AR", bg: "#7C3AED", rtl: true },
+  uk: { badge: "UK", bg: "#2F80ED", rtl: false },
 };
 
 // ── Onboarding System ───────────────────────────────────────────────
@@ -22393,6 +22436,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
     if (userLang === 'ku' && line.s_ku) { raw = line.s_ku; rtl = true; useDict = false; langLabel = 'کوردی'; }
     else if (userLang === 'en' && line.s_en) { raw = line.s_en; rtl = false; useDict = true; langLabel = 'English'; }
     else if (userLang === 'ar' && line.s_ar) { raw = line.s_ar; rtl = true; useDict = true; langLabel = 'العربية'; }
+    else if (userLang === 'uk' && line.s_uk) { raw = line.s_uk; rtl = false; useDict = true; langLabel = 'Українська'; }
     const s = resolveName(raw);
     const rtlStyle = rtl ? { direction:'rtl', textAlign:'right' } : {};
     const body = useDict ? renderWithDict(s, seenSet) : s;

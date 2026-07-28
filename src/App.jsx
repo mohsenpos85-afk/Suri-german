@@ -189,29 +189,29 @@ function buildDialogVocabIndex(vocabArr) {
   return { regex, lookup };
 }
 const STAT_LABEL = {
-  lesson:  { tr: "ders",        ku: "وانە",   en: "lesson",  ar: "درس" },
-  word:    { tr: "kelime",      ku: "وشە",    en: "word",    ar: "كلمة" },
-  grammar: { tr: "dilbilgisi",  ku: "ڕێزمان", en: "grammar", ar: "قواعد" },
-  verb:    { tr: "fiil",        ku: "کردار",  en: "verb",    ar: "فعل" },
-  start:   { tr: "Başla",       ku: "دەستپێبکە", en: "Start", ar: "ابدأ" },
-  progress:  { tr: "İlerleme",   ku: "پێشکەوتن", en: "Progress",  ar: "التقدم" },
-  completed: { tr: "tamamlandı", ku: "تەواوبوو",  en: "completed", ar: "مكتمل" },
-  continue:  { tr: "Devam Et",   ku: "بەردەوامبە", en: "Continue", ar: "متابعة" },
-  hoursStudied: { tr: "Saat Öğrenildi", ku: "کاتژمێر", en: "Hours studied", ar: "ساعات الدراسة" },
+  lesson:  { tr: "ders",        ku: "وانە",   en: "lesson",  ar: "درس", uk: "урок" },
+  word:    { tr: "kelime",      ku: "وشە",    en: "word",    ar: "كلمة", uk: "слів" },
+  grammar: { tr: "dilbilgisi",  ku: "ڕێزمان", en: "grammar", ar: "قواعد", uk: "граматика" },
+  verb:    { tr: "fiil",        ku: "کردار",  en: "verb",    ar: "فعل", uk: "дієслів" },
+  start:   { tr: "Başla",       ku: "دەستپێبکە", en: "Start", ar: "ابدأ", uk: "Почати" },
+  progress:  { tr: "İlerleme",   ku: "پێشکەوتن", en: "Progress",  ar: "التقدم", uk: "Прогрес" },
+  completed: { tr: "tamamlandı", ku: "تەواوبوو",  en: "completed", ar: "مكتمل", uk: "завершено" },
+  continue:  { tr: "Devam Et",   ku: "بەردەوامبە", en: "Continue", ar: "متابعة", uk: "Продовжити" },
+  hoursStudied: { tr: "Saat Öğrenildi", ku: "کاتژمێر", en: "Hours studied", ar: "ساعات الدراسة", uk: "Годин навчання" },
 };
 const UI_LABEL = {
-  allTopics:  { tr: "Tüm konular",  ku: "هەموو بابەتەکان", en: "All topics",   ar: "كل المواضيع" },
-  grammar:    { tr: "Dilbilgisi",   ku: "ڕێزمان",           en: "Grammar",      ar: "القواعد" },
-  explanation:{ tr: "Açıklama",     ku: "ڕوونکردنەوە",      en: "Explanation",  ar: "الشرح" },
-  shortTable: { tr: "Kısa Tablo",   ku: "خشتەی کورتە",      en: "Short Table",  ar: "جدول مختصر" },
+  allTopics:  { tr: "Tüm konular",  ku: "هەموو بابەتەکان", en: "All topics",   ar: "كل المواضيع", uk: "Усі теми" },
+  grammar:    { tr: "Dilbilgisi",   ku: "ڕێزمان",           en: "Grammar",      ar: "القواعد", uk: "Граматика" },
+  explanation:{ tr: "Açıklama",     ku: "ڕوونکردنەوە",      en: "Explanation",  ar: "الشرح", uk: "Пояснення" },
+  shortTable: { tr: "Kısa Tablo",   ku: "خشتەی کورتە",      en: "Short Table",  ar: "جدول مختصر", uk: "Коротка таблиця" },
 };
 const REGISTER_LABEL = {
-  formal:   { tr: "Resmî",     ku: "فەرمی",       en: "Formal",   ar: "رسمي" },
-  informal: { tr: "Samimi",    ku: "ئاسایی",       en: "Informal", ar: "غير رسمي" },
+  formal:   { tr: "Resmî",     ku: "فەرمی",       en: "Formal",   ar: "رسمي", uk: "Офіційно" },
+  informal: { tr: "Samimi",    ku: "ئاسایی",       en: "Informal", ar: "غير رسمي", uk: "Неофіційно" },
 };
 const DLG_POPUP_LABEL = {
-  colloquial: { tr: "Günlük dil", ku: "زمانی ڕۆژانە", en: "Colloquial", ar: "عامية" },
-  formalHint: { tr: "Resmî hâli:", ku: "شێوازی فەرمی:", en: "Formal version:", ar: "الصيغة الرسمية:" },
+  colloquial: { tr: "Günlük dil", ku: "زمانی ڕۆژانە", en: "Colloquial", ar: "عامية", uk: "Розмовне" },
+  formalHint: { tr: "Resmî hâli:", ku: "شێوازی فەرمی:", en: "Formal version:", ar: "الصيغة الرسمية:", uk: "Офіційна форма:" },
 };
 function renderDialogLine(text, vocabIdx, color, onWordClick) {
   if (!vocabIdx || !text) return text;
@@ -1924,6 +1924,7 @@ const JOURNEY_INTRO_T = {
   ku: "گەشتەکەت ئێستا دەستپێدەکات…",
   en: "Your journey begins now…",
   ar: "رحلتك تبدأ الآن…",
+  uk: "Твоя подорож починається зараз…",
 };
 function JourneyIntroTransition({ lang = "tr", onDone }) {
   useEffect(() => {
@@ -1979,6 +1980,7 @@ const SESSION_COMPLETE_T = {
   ku: { title: "بەش تەواو بوو!", words: "وشەت فێربوو", streak: "ڕۆژ بەردەوامی", card: "کارتی نوێ!", practice: "ئەوەی فێربوویت ڕابردین بکە", cont: "بەردەوامبە" },
   en: { title: "Chapter complete!", words: "words learned", streak: "day streak", card: "New card!", practice: "Practice what you learned", cont: "Continue" },
   ar: { title: "اكتمل الفصل!", words: "كلمة تعلمتها", streak: "يوم متتالي", card: "بطاقة جديدة!", practice: "تدرب على ما تعلمته", cont: "متابعة" },
+  uk: { title: "Розділ завершено!", words: "слів вивчено", streak: "днів поспіль", card: "Нова картка!", practice: "Практикуй вивчене", cont: "Продовжити" },
 };
 function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
   const t = (k) => SESSION_COMPLETE_T[lang]?.[k] ?? SESSION_COMPLETE_T.tr[k];
@@ -22239,6 +22241,7 @@ const CHAPTER_QUIZ_T = {
   ku: { title: 'تاقیکردنەوەی بەش', question: 'پرسیار', artikel_q: 'der، die یان das؟', meaning_q: 'واتای چیە؟', spelling_q: 'بە ئەڵمانی چۆنە؟', correct: 'ڕاستە!', wrong: 'هەڵەیە!', pass: 'دەرچوویت!', fail: 'ئەم جارە نا', passSub: 'وەڵامی ڕاست — کارتێکت بەدەستهێنا!', failSub: 'وەڵامی ڕاست — پێویستە بە ٨. دووبارە هەوڵبدەرەوە!', retry: 'دووبارە هەوڵبدەرەوە', continueBtn: 'بەردەوامبە' },
   en: { title: 'Chapter Test', question: 'Question', artikel_q: 'der, die or das?', meaning_q: 'What does it mean?', spelling_q: 'What is it in German?', correct: 'Correct!', wrong: 'Wrong!', pass: 'You passed!', fail: 'Not this time', passSub: 'correct — you earned a card!', failSub: 'correct — need 8. Try again!', retry: 'Try Again', continueBtn: 'Continue' },
   ar: { title: 'اختبار الفصل', question: 'سؤال', artikel_q: 'der أم die أم das؟', meaning_q: 'ما المعنى؟', spelling_q: 'كيف تقال بالألمانية؟', correct: 'صحيح!', wrong: 'خطأ!', pass: 'لقد نجحت!', fail: 'ليس هذه المرة', passSub: 'صحيحة — لقد ربحت بطاقة!', failSub: 'صحيحة — تحتاج 8. حاول مرة أخرى!', retry: 'حاول مرة أخرى', continueBtn: 'متابعة' },
+  uk: { title: 'Тест розділу', question: 'Питання', artikel_q: 'der, die чи das?', meaning_q: 'Що це означає?', spelling_q: 'Як це німецькою?', correct: 'Правильно!', wrong: 'Неправильно!', pass: 'Ти склав!', fail: 'Не цього разу', passSub: 'правильних — ти отримав картку!', failSub: 'правильних — потрібно 8. Спробуй ще раз!', retry: 'Спробувати ще раз', continueBtn: 'Продовжити' },
 };
 function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
   const t = (k) => CHAPTER_QUIZ_T[lang]?.[k] ?? CHAPTER_QUIZ_T.tr[k];
@@ -22493,7 +22496,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
           {/* Scene header */}
           <div style={{ marginBottom: scene.img ? 14 : 22, paddingBottom: scene.img ? 10 : 14, borderBottom: '1.5px solid rgba(180,130,60,.22)' }}>
             <div style={{ fontSize: 10, color: '#7A5C30', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', marginBottom: 5 }}>
-              {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : 'Sahne'} {scene.n} / {total}
+              {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : 'Sahne'} {scene.n} / {total}
             </div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#2c1408', lineHeight: 1.32 }}>{scene.title}</div>
           </div>
@@ -22559,7 +22562,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
               {scenes[page]?.title}
             </div>
             <div style={{ fontSize: 11, color: '#b08050', fontFamily: 'Georgia,serif', marginTop: 1 }}>
-              {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : 'Sahne'} {page + 1} / {total}
+              {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : 'Sahne'} {page + 1} / {total}
             </div>
           </div>
           <div style={{ width: 56 }} />

@@ -32,3 +32,4 @@ dist-ssr
 UsersNutzer*.json
 add-turkish*.cjs
 fix-lessons-syntax.cjs
+lessons.js.orig.bak

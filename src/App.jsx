@@ -8353,14 +8353,14 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
 
 // ── Übung section metadata (used by WheelPicker in ubung mode) ──────
 const UBUNG_SECTIONS = [
-  { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    emoji:"🧩", color:"#5B5BD6" },
-  { id:"lesenA",    label:"Lesen A",          sub:"سەردێڕ دیاری بکە",    subTr:"Başlık seç",          emoji:"📰", color:"#059669" },
-  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  emoji:"📖", color:"#0891B2" },
-  { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    emoji:"📚", color:"#7C3AED" },
-  { id:"schreibA",  label:"Schreiben A",      sub:"نووسینی فۆرم",        subTr:"Form doldurma",       emoji:"✍️", color:"#B45309" },
-  { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       emoji:"📝", color:"#BE185D" },
-  { id:"mundlichA", label:"Mündlich A",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  emoji:"🗣️", color:"#0F766E" },
-  { id:"mundlichB", label:"Mündlich B",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  emoji:"💬", color:"#1D4ED8" },
+  { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків",   emoji:"🧩", color:"#5B5BD6" },
+  { id:"lesenA",    label:"Lesen A",          sub:"سەردێڕ دیاری بکە",    subTr:"Başlık seç",          subUk:"Оберіть заголовок",       emoji:"📰", color:"#059669" },
+  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба",          emoji:"📖", color:"#0891B2" },
+  { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    subUk:"Текст і питання",         emoji:"📚", color:"#7C3AED" },
+  { id:"schreibA",  label:"Schreiben A",      sub:"نووسینی فۆرم",        subTr:"Form doldurma",       subUk:"Заповнення форми",        emoji:"✍️", color:"#B45309" },
+  { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       subUk:"Вільне письмо",           emoji:"📝", color:"#BE185D" },
+  { id:"mundlichA", label:"Mündlich A",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення",  emoji:"🗣️", color:"#0F766E" },
+  { id:"mundlichB", label:"Mündlich B",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення",  emoji:"💬", color:"#1D4ED8" },
 ];
 
 // ── Collapsing Picker Header ─────────────────────────────────────────

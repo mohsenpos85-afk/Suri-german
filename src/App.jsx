@@ -9689,7 +9689,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {/* ── Page header ── */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20, gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "#1A1F2E", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : "وانە و ڕێزمان"}</h2>
+          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "#1A1F2E", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : lang === "uk" ? "Уроки та граматика" : "وانە و ڕێزمان"}</h2>
           <p style={{ color: C.muted, fontSize: 13.5, margin: "4px 0 0", lineHeight: 1.5 }}>
             {mode === "exam" ? tL("exam_pick_desc") : tL("lesson_pick_desc")}
           </p>
@@ -9701,7 +9701,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </div>
           <div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "#1A1F2E", lineHeight: 1 }}>{avgPct}%</div>
-            <div style={{ fontSize: 10, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : "تاک"}</div>
+            <div style={{ fontSize: 10, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "uk" ? "тем" : "تاک"}</div>
           </div>
         </div>
       </div>

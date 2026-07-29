@@ -1,5 +1,5 @@
 // Bump this string on each deploy-worthy change to purge old caches.
-const CACHE = "suri-v2";
+const CACHE = "suri-v3";
 
 // Minimal app-shell precache (icons + offline fallback document).
 const ASSETS = [

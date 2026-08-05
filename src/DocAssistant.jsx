@@ -167,6 +167,17 @@ const LABELS = {
     copied: "Copiado", thinking: "Pensando…",
   },
 };
+// Privacy / consent strings (merged into LABELS)
+const PV = {
+  en: { pv_title: "Privacy & consent", pv_b1: "To analyse it, your document is sent securely to the AI service.", pv_b2: "It is used only to create your explanation — never for advertising.", pv_b3: "Only scan documents that belong to you or that you are allowed to use.", pv_accept: "I understand & continue", pv_cancel: "Cancel", pv_foot: "This does not replace professional legal, tax or medical advice." },
+  tr: { pv_title: "Gizlilik ve onay", pv_b1: "Belgeni analiz etmek için içeriği güvenli şekilde yapay zekâ servisine gönderilir.", pv_b2: "Yalnızca açıklamanı oluşturmak için kullanılır — asla reklam için değil.", pv_b3: "Sadece sana ait olan veya kullanma hakkın olan belgeleri tara.", pv_accept: "Anladım, devam et", pv_cancel: "İptal", pv_foot: "Bu, profesyonel hukuki, mali veya tıbbi danışmanlığın yerini tutmaz." },
+  ar: { pv_title: "الخصوصية والموافقة", pv_b1: "لتحليل مستندك، يُرسَل محتواه بشكل آمن إلى خدمة الذكاء الاصطناعي.", pv_b2: "يُستخدم فقط لإنشاء الشرح الخاص بك — وليس للإعلانات أبدًا.", pv_b3: "امسح فقط المستندات التي تملكها أو المسموح لك باستخدامها.", pv_accept: "فهمت، متابعة", pv_cancel: "إلغاء", pv_foot: "هذا لا يغني عن الاستشارة القانونية أو الضريبية أو الطبية المهنية." },
+  fa: { pv_title: "حریم خصوصی و رضایت", pv_b1: "برای تحلیل سند، محتوای آن به‌صورت امن به سرویس هوش مصنوعی فرستاده می‌شود.", pv_b2: "فقط برای ساختن توضیحِ شما استفاده می‌شود — هرگز برای تبلیغات.", pv_b3: "فقط اسنادی را اسکن کنید که متعلق به شماست یا اجازهٔ استفاده از آن‌ها را دارید.", pv_accept: "متوجه شدم، ادامه", pv_cancel: "انصراف", pv_foot: "این جایگزین مشاورهٔ حرفه‌ای حقوقی، مالیاتی یا پزشکی نیست." },
+  ku: { pv_title: "تایبەتێتی و ڕەزامەندی", pv_b1: "بۆ شیکردنەوەی بەڵگەنامەکەت، ناوەڕۆکەکەی بە شێوەیەکی پارێزراو بۆ خزمەتگوزاری زیرەکی دەستکرد دەنێردرێت.", pv_b2: "تەنها بۆ دروستکردنی ڕوونکردنەوەکەت بەکاردێت — هەرگیز بۆ ڕیکلام نا.", pv_b3: "تەنها ئەو بەڵگەنامانە سکان بکە کە هی خۆتن یان مۆڵەتی بەکارهێنانیانت هەیە.", pv_accept: "تێگەیشتم، بەردەوامبە", pv_cancel: "هەڵوەشاندنەوە", pv_foot: "ئەمە جێگای ڕاوێژی پیشەیی یاسایی، باجی یان پزیشکی ناگرێتەوە." },
+  es: { pv_title: "Privacidad y consentimiento", pv_b1: "Para analizarlo, tu documento se envía de forma segura al servicio de IA.", pv_b2: "Se usa solo para crear tu explicación, nunca para publicidad.", pv_b3: "Escanea solo documentos que te pertenezcan o que tengas permiso de usar.", pv_accept: "Entiendo y continúo", pv_cancel: "Cancelar", pv_foot: "Esto no sustituye el asesoramiento profesional legal, fiscal o médico." },
+};
+Object.keys(PV).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV[k]); });
+
 const L = (lang, key) => (LABELS[lang]?.[key] ?? LABELS.en[key] ?? key);
 
 const INFO_ICONS = {
@@ -217,6 +228,10 @@ export default function DocAssistant({ lang = "en", onBack, callClaude }) {
   const [chatBusy, setChatBusy] = useState(false);
   const [transMode, setTransMode] = useState("app");
   const [toast, setToast] = useState("");
+  const [consent, setConsent] = useState(() => {
+    try { return !!localStorage.getItem("docassist_privacy_ok"); } catch { return false; }
+  });
+  const [pending, setPending] = useState(null); // 'cam' | 'file' | null
   const fileRef = useRef(null);
   const camRef = useRef(null);
   const chatEndRef = useRef(null);
@@ -224,6 +239,15 @@ export default function DocAssistant({ lang = "en", onBack, callClaude }) {
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy]);
 
   const showToast = (m) => { setToast(m); setTimeout(() => setToast(""), 1600); };
+
+  const openPicker = (kind) => { (kind === "cam" ? camRef : fileRef).current?.click(); };
+  const requestScan = (kind) => { if (consent) openPicker(kind); else setPending(kind); };
+  const acceptConsent = () => {
+    try { localStorage.setItem("docassist_privacy_ok", "1"); } catch {}
+    setConsent(true);
+    const k = pending; setPending(null);
+    openPicker(k); // still inside the user-gesture chain
+  };
 
   function finishOnboarding() {
     try { localStorage.setItem("docassist_onboarded", "1"); } catch {}
@@ -421,11 +445,11 @@ Here is the full text of the user's document (may be in another language):
         <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={(e) => analyze(e.target.files?.[0])} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-          <button onClick={() => camRef.current?.click()} style={bigBtn(T.accent, "#fff", true)}>
+          <button onClick={() => requestScan("cam")} style={bigBtn(T.accent, "#fff", true)}>
             <Camera size={26} strokeWidth={1.8} />
             <span>{L(lang, "takePhoto")}</span>
           </button>
-          <button onClick={() => fileRef.current?.click()} style={bigBtn(T.card, T.ink, false)}>
+          <button onClick={() => requestScan("file")} style={bigBtn(T.card, T.ink, false)}>
             <Upload size={26} strokeWidth={1.8} color={T.accent} />
             <span>{L(lang, "importFile")}</span>
           </button>
@@ -436,6 +460,38 @@ Here is the full text of the user's document (may be in another language):
           <ShieldCheck size={18} color={T.muted} style={{ flexShrink: 0, marginTop: 1 }} />
           <p style={{ fontSize: 12.5, lineHeight: 1.55, color: T.muted, margin: 0 }}>{L(lang, "disclaimer")}</p>
         </div>
+
+        {pending && (
+          <div dir={dir} onClick={() => setPending(null)}
+            style={{ position: "fixed", inset: 0, zIndex: 400, background: "rgba(24,24,27,.42)", backdropFilter: "blur(3px)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+            <div onClick={(e) => e.stopPropagation()} className="da-sheet"
+              style={{ background: T.card, width: "100%", maxWidth: 480, borderRadius: "24px 24px 0 0", padding: "26px 22px calc(26px + env(safe-area-inset-bottom))", boxShadow: "0 -8px 40px rgba(0,0,0,.2)" }}>
+              <div style={{ width: 44, height: 5, borderRadius: 999, background: T.line, margin: "0 auto 20px" }} />
+              <div style={{ width: 60, height: 60, borderRadius: 18, background: T.accentSoft, display: "grid", placeItems: "center", margin: "0 auto 16px" }}>
+                <ShieldCheck size={28} color={T.accent} strokeWidth={1.7} />
+              </div>
+              <h3 style={{ fontSize: 19, fontWeight: 800, textAlign: "center", margin: "0 0 18px" }}>{L(lang, "pv_title")}</h3>
+              <div style={{ display: "grid", gap: 12, marginBottom: 18 }}>
+                {["pv_b1", "pv_b2", "pv_b3"].map((k) => (
+                  <div key={k} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
+                    <span style={{ width: 22, height: 22, borderRadius: 7, background: T.greenSoft, display: "grid", placeItems: "center", flexShrink: 0, marginTop: 1 }}><Check size={13} color={T.green} strokeWidth={3} /></span>
+                    <span style={{ fontSize: 14, lineHeight: 1.5, color: T.ink2 }}>{L(lang, k)}</span>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: 12, lineHeight: 1.5, color: T.faint, textAlign: "center", margin: "0 0 20px" }}>{L(lang, "pv_foot")}</p>
+              <button onClick={acceptConsent}
+                style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: T.accent, color: "#fff", fontSize: 15.5, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 20px rgba(91,91,214,.28)", marginBottom: 8 }}>
+                {L(lang, "pv_accept")}
+              </button>
+              <button onClick={() => setPending(null)}
+                style={{ width: "100%", padding: "13px", borderRadius: 14, border: "none", background: "transparent", color: T.muted, fontSize: 14.5, fontWeight: 600, cursor: "pointer" }}>
+                {L(lang, "pv_cancel")}
+              </button>
+            </div>
+            <style>{`@keyframes daSheet{from{transform:translateY(100%)}to{transform:translateY(0)}} .da-sheet{animation:daSheet .28s cubic-bezier(.22,1,.36,1)}`}</style>
+          </div>
+        )}
         {toast && toastEl()}
       </div>
     );

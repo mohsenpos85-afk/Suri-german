@@ -189,6 +189,17 @@ const XTRA = {
 };
 Object.keys(XTRA).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, XTRA[k]); });
 
+// GDPR/DSGVO consent strings
+const PV2 = {
+  en: { pv_secure: "To analyse it, your document is sent securely to an AI provider (e.g. Anthropic, USA).", pv_purpose: "It is used only to create your explanation — not for advertising or model training.", pv_local: "Results are stored only on your device (Recent) and you can delete them anytime.", pv_ai: "AI can make mistakes. This is informational only, not legal, tax or medical advice.", pv_own: "Only scan documents that belong to you or that you are allowed to use.", pv_check: "I consent to my document — which may contain sensitive data (e.g. health) — being processed by the AI service, including transfer to the USA. I can withdraw this at any time.", pv_privacy: "Privacy Policy", pv_impressum: "Imprint" },
+  tr: { pv_secure: "Belgen analiz için bir AI sağlayıcısına (ör. Anthropic, ABD) güvenli şekilde gönderilir.", pv_purpose: "Yalnızca açıklamanı oluşturmak için kullanılır — reklam veya model eğitimi için değil.", pv_local: "Sonuçlar yalnızca cihazında saklanır (Son taramalar) ve istediğin an silebilirsin.", pv_ai: "Yapay zekâ hata yapabilir. Bu yalnızca bilgilendirmedir; hukuki, mali veya tıbbi danışmanlık değildir.", pv_own: "Sadece sana ait olan veya kullanma hakkın olan belgeleri tara.", pv_check: "Belgemin — sağlık gibi hassas veriler içerebilir — ABD'ye aktarım dâhil AI servisi tarafından işlenmesine onay veriyorum. Bu onayı istediğim an geri çekebilirim.", pv_privacy: "Gizlilik Politikası", pv_impressum: "Künye (Impressum)" },
+  ar: { pv_secure: "لتحليله، يُرسَل مستندك بشكل آمن إلى مزوّد ذكاء اصطناعي (مثل Anthropic، الولايات المتحدة).", pv_purpose: "يُستخدم فقط لإنشاء شرحك — وليس للإعلانات أو تدريب النماذج.", pv_local: "تُحفظ النتائج على جهازك فقط (الأخيرة) ويمكنك حذفها في أي وقت.", pv_ai: "قد يخطئ الذكاء الاصطناعي. هذا لأغراض المعلومات فقط وليس استشارة قانونية أو ضريبية أو طبية.", pv_own: "امسح فقط المستندات التي تملكها أو المسموح لك باستخدامها.", pv_check: "أوافق على معالجة مستندي — الذي قد يحتوي بيانات حساسة (مثل الصحة) — بواسطة خدمة الذكاء الاصطناعي، بما في ذلك النقل إلى الولايات المتحدة. ويمكنني سحب الموافقة في أي وقت.", pv_privacy: "سياسة الخصوصية", pv_impressum: "بيانات الناشر" },
+  fa: { pv_secure: "برای تحلیل، سند شما به‌صورت امن به یک ارائه‌دهندهٔ هوش مصنوعی (مثل Anthropic، آمریکا) فرستاده می‌شود.", pv_purpose: "فقط برای ساختن توضیحِ شما استفاده می‌شود — نه برای تبلیغات یا آموزشِ مدل.", pv_local: "نتایج فقط روی دستگاهِ شما ذخیره می‌شوند (اخیر) و هر زمان می‌توانید حذفشان کنید.", pv_ai: "هوش مصنوعی ممکن است اشتباه کند. این فقط جنبهٔ اطلاع‌رسانی دارد و مشاورهٔ حقوقی، مالیاتی یا پزشکی نیست.", pv_own: "فقط اسنادی را اسکن کنید که متعلق به شماست یا اجازهٔ استفاده از آن‌ها را دارید.", pv_check: "با پردازشِ سندم — که ممکن است دادهٔ حساس (مثل سلامت) داشته باشد — توسط سرویس هوش مصنوعی، شاملِ انتقال به آمریکا، موافقم. می‌توانم این رضایت را هر زمان پس بگیرم.", pv_privacy: "سیاست حریم خصوصی", pv_impressum: "شناسنامه (Impressum)" },
+  ku: { pv_secure: "بۆ شیکردنەوە، بەڵگەنامەکەت بە شێوەیەکی پارێزراو بۆ دابینکەرێکی زیرەکی دەستکرد (وەک Anthropic، ئەمریکا) دەنێردرێت.", pv_purpose: "تەنها بۆ دروستکردنی ڕوونکردنەوەکەت بەکاردێت — نەک بۆ ڕیکلام یان ڕاهێنانی مۆدێل.", pv_local: "ئەنجامەکان تەنها لەسەر ئامێرەکەت هەڵدەگیرێن (دواییەکان) و هەر کاتێک دەتوانیت بیانسڕیتەوە.", pv_ai: "زیرەکی دەستکرد لەوانەیە هەڵە بکات. ئەمە تەنها بۆ زانیارییە و ڕاوێژی یاسایی، باجی یان پزیشکی نییە.", pv_own: "تەنها ئەو بەڵگەنامانە سکان بکە کە هی خۆتن یان مۆڵەتی بەکارهێنانیانت هەیە.", pv_check: "ڕازیم بەڵگەنامەکەم — کە لەوانەیە داتای هەستیار (وەک تەندروستی) لەخۆبگرێت — لەلایەن خزمەتگوزاری زیرەکی دەستکردەوە پرۆسێس بکرێت، بە گواستنەوەش بۆ ئەمریکا. دەتوانم هەر کاتێک ئەم ڕەزامەندییە پاشبگەزێمەوە.", pv_privacy: "سیاسەتی تایبەتێتی", pv_impressum: "زانیاری بڵاوکەرەوە (Impressum)" },
+  es: { pv_secure: "Para analizarlo, tu documento se envía de forma segura a un proveedor de IA (p. ej. Anthropic, EE. UU.).", pv_purpose: "Se usa solo para crear tu explicación, no para publicidad ni entrenamiento de modelos.", pv_local: "Los resultados se guardan solo en tu dispositivo (Recientes) y puedes borrarlos cuando quieras.", pv_ai: "La IA puede equivocarse. Esto es solo informativo y no sustituye asesoría legal, fiscal o médica.", pv_own: "Escanea solo documentos que te pertenezcan o que tengas permiso de usar.", pv_check: "Consiento que mi documento — que puede contener datos sensibles (p. ej. salud) — sea procesado por el servicio de IA, incluida la transferencia a EE. UU. Puedo retirar el consentimiento en cualquier momento.", pv_privacy: "Política de privacidad", pv_impressum: "Aviso legal" },
+};
+Object.keys(PV2).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV2[k]); });
+
 const L = (lang, key) => (LABELS[lang]?.[key] ?? LABELS.en[key] ?? key);
 
 const INFO_ICONS = {
@@ -223,7 +234,7 @@ function extractJSON(text) {
   try { return JSON.parse(s); } catch { return null; }
 }
 
-export default function DocAssistant({ lang = "en", onBack, callClaude }) {
+export default function DocAssistant({ lang = "en", onBack, callClaude, privacyUrl, impressumUrl }) {
   const dir = RTL.has(lang) ? "rtl" : "ltr";
   const langName = LANG_NAME[lang] || "English";
   const [stage, setStage] = useState(() =>
@@ -243,6 +254,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude }) {
     try { return !!localStorage.getItem("docassist_privacy_ok"); } catch { return false; }
   });
   const [pending, setPending] = useState(null); // 'cam' | 'file' | null
+  const [agree, setAgree] = useState(false);     // GDPR explicit consent checkbox
   const fileRef = useRef(null);
   const camRef = useRef(null);
   const chatEndRef = useRef(null);
@@ -252,8 +264,9 @@ export default function DocAssistant({ lang = "en", onBack, callClaude }) {
   const showToast = (m) => { setToast(m); setTimeout(() => setToast(""), 1600); };
 
   const openPicker = (kind) => { (kind === "cam" ? camRef : fileRef).current?.click(); };
-  const requestScan = (kind) => { if (consent) openPicker(kind); else setPending(kind); };
+  const requestScan = (kind) => { if (consent) openPicker(kind); else { setAgree(false); setPending(kind); } };
   const acceptConsent = () => {
+    if (!agree) return; // explicit consent required
     try { localStorage.setItem("docassist_privacy_ok", "1"); } catch {}
     setConsent(true);
     const k = pending; setPending(null);
@@ -500,23 +513,39 @@ Here is the full text of the user's document (may be in another language):
           <div dir={dir} onClick={() => setPending(null)}
             style={{ position: "fixed", inset: 0, zIndex: 400, background: "rgba(24,24,27,.42)", backdropFilter: "blur(3px)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
             <div onClick={(e) => e.stopPropagation()} className="da-sheet"
-              style={{ background: T.card, width: "100%", maxWidth: 480, borderRadius: "24px 24px 0 0", padding: "26px 22px calc(26px + env(safe-area-inset-bottom))", boxShadow: "0 -8px 40px rgba(0,0,0,.2)" }}>
-              <div style={{ width: 44, height: 5, borderRadius: 999, background: T.line, margin: "0 auto 20px" }} />
-              <div style={{ width: 60, height: 60, borderRadius: 18, background: T.accentSoft, display: "grid", placeItems: "center", margin: "0 auto 16px" }}>
-                <ShieldCheck size={28} color={T.accent} strokeWidth={1.7} />
+              style={{ background: T.card, width: "100%", maxWidth: 480, maxHeight: "92vh", overflowY: "auto", borderRadius: "24px 24px 0 0", padding: "24px 22px calc(24px + env(safe-area-inset-bottom))", boxShadow: "0 -8px 40px rgba(0,0,0,.2)" }}>
+              <div style={{ width: 44, height: 5, borderRadius: 999, background: T.line, margin: "0 auto 18px" }} />
+              <div style={{ width: 58, height: 58, borderRadius: 17, background: T.accentSoft, display: "grid", placeItems: "center", margin: "0 auto 14px" }}>
+                <ShieldCheck size={27} color={T.accent} strokeWidth={1.7} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 800, textAlign: "center", margin: "0 0 18px" }}>{L(lang, "pv_title")}</h3>
-              <div style={{ display: "grid", gap: 12, marginBottom: 18 }}>
-                {["pv_b1", "pv_b2", "pv_b3"].map((k) => (
+              <h3 style={{ fontSize: 19, fontWeight: 800, textAlign: "center", margin: "0 0 16px" }}>{L(lang, "pv_title")}</h3>
+              <div style={{ display: "grid", gap: 11, marginBottom: 14 }}>
+                {[["pv_secure", "ok"], ["pv_purpose", "ok"], ["pv_local", "ok"], ["pv_own", "ok"], ["pv_ai", "warn"]].map(([k, kind]) => (
                   <div key={k} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
-                    <span style={{ width: 22, height: 22, borderRadius: 7, background: T.greenSoft, display: "grid", placeItems: "center", flexShrink: 0, marginTop: 1 }}><Check size={13} color={T.green} strokeWidth={3} /></span>
-                    <span style={{ fontSize: 14, lineHeight: 1.5, color: T.ink2 }}>{L(lang, k)}</span>
+                    <span style={{ width: 22, height: 22, borderRadius: 7, background: kind === "warn" ? T.amberSoft : T.greenSoft, display: "grid", placeItems: "center", flexShrink: 0, marginTop: 1 }}>
+                      {kind === "warn" ? <AlertTriangle size={13} color={T.amber} /> : <Check size={13} color={T.green} strokeWidth={3} />}
+                    </span>
+                    <span style={{ fontSize: 13.5, lineHeight: 1.5, color: T.ink2 }}>{L(lang, k)}</span>
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: 12, lineHeight: 1.5, color: T.faint, textAlign: "center", margin: "0 0 20px" }}>{L(lang, "pv_foot")}</p>
-              <button onClick={acceptConsent}
-                style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: T.accent, color: "#fff", fontSize: 15.5, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 20px rgba(91,91,214,.28)", marginBottom: 8 }}>
+
+              <div style={{ display: "flex", gap: 14, justifyContent: "center", margin: "0 0 16px", fontSize: 13, fontWeight: 600 }}>
+                <a href={privacyUrl || "#"} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "underline" }}>{L(lang, "pv_privacy")}</a>
+                <span style={{ color: T.line }}>·</span>
+                <a href={impressumUrl || "#"} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "underline" }}>{L(lang, "pv_impressum")}</a>
+              </div>
+
+              <button onClick={() => setAgree(!agree)}
+                style={{ display: "flex", gap: 11, alignItems: "flex-start", textAlign: "start", width: "100%", background: agree ? T.accentSoft : T.line2, border: `1.5px solid ${agree ? T.accent : T.line}`, borderRadius: 14, padding: "13px 14px", cursor: "pointer", marginBottom: 16 }}>
+                <span style={{ width: 22, height: 22, borderRadius: 7, flexShrink: 0, marginTop: 1, display: "grid", placeItems: "center", background: agree ? T.accent : T.card, border: `1.5px solid ${agree ? T.accent : T.faint}` }}>
+                  {agree && <Check size={14} color="#fff" strokeWidth={3} />}
+                </span>
+                <span style={{ fontSize: 13, lineHeight: 1.5, color: T.ink2 }}>{L(lang, "pv_check")}</span>
+              </button>
+
+              <button onClick={acceptConsent} disabled={!agree}
+                style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: agree ? T.accent : T.line, color: agree ? "#fff" : T.faint, fontSize: 15.5, fontWeight: 700, cursor: agree ? "pointer" : "default", boxShadow: agree ? "0 8px 20px rgba(91,91,214,.28)" : "none", marginBottom: 6, transition: "all .2s" }}>
                 {L(lang, "pv_accept")}
               </button>
               <button onClick={() => setPending(null)}

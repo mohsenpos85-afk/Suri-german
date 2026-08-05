@@ -178,6 +178,17 @@ const PV = {
 };
 Object.keys(PV).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV[k]); });
 
+// Extra strings (PDF / share / calendar / recent)
+const XTRA = {
+  en: { qa_pdf: "Export as PDF", qa_share: "Share", qa_calendar: "Add to calendar", noDates: "No dates found", shared: "Shared", openRecent: "Open" },
+  tr: { qa_pdf: "PDF olarak dışa aktar", qa_share: "Paylaş", qa_calendar: "Takvime ekle", noDates: "Tarih bulunamadı", shared: "Paylaşıldı", openRecent: "Aç" },
+  ar: { qa_pdf: "تصدير كـ PDF", qa_share: "مشاركة", qa_calendar: "أضف إلى التقويم", noDates: "لا توجد تواريخ", shared: "تمت المشاركة", openRecent: "فتح" },
+  fa: { qa_pdf: "خروجی PDF", qa_share: "اشتراک", qa_calendar: "افزودن به تقویم", noDates: "تاریخی یافت نشد", shared: "به اشتراک گذاشته شد", openRecent: "باز کردن" },
+  ku: { qa_pdf: "هەناردە بکە وەک PDF", qa_share: "هاوبەشکردن", qa_calendar: "زیادکردن بۆ ساڵنامە", noDates: "هیچ بەروارێک نەدۆزرایەوە", shared: "هاوبەشکرا", openRecent: "کردنەوە" },
+  es: { qa_pdf: "Exportar como PDF", qa_share: "Compartir", qa_calendar: "Añadir al calendario", noDates: "No se encontraron fechas", shared: "Compartido", openRecent: "Abrir" },
+};
+Object.keys(XTRA).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, XTRA[k]); });
+
 const L = (lang, key) => (LABELS[lang]?.[key] ?? LABELS.en[key] ?? key);
 
 const INFO_ICONS = {
@@ -304,6 +315,7 @@ If the image is not a readable document, still return the schema with confidence
       if (!parsed) throw new Error("PARSE");
       setResult(parsed);
       setDocText(parsed.originalText || "");
+      saveRecent({ ts: Date.now(), documentType: parsed.documentType || "", detectedLanguage: parsed.detectedLanguage || "", summary: parsed.summary || "", result: parsed, docText: parsed.originalText || "" });
       setStage("result");
     } catch (e) {
       const msg = String(e?.message || e);
@@ -455,6 +467,29 @@ Here is the full text of the user's document (may be in another language):
           </button>
         </div>
         <p style={{ textAlign: "center", fontSize: 12.5, color: T.faint, margin: "2px 0 26px" }}>{L(lang, "homeHint")}</p>
+
+        {(() => {
+          const rec = loadRecent();
+          if (!rec.length) return null;
+          return (
+            <div style={{ marginBottom: 22 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: T.faint, textTransform: "uppercase", letterSpacing: ".06em", margin: "0 4px 10px" }}>{L(lang, "recent")}</div>
+              <div style={{ display: "grid", gap: 9 }}>
+                {rec.map((it) => (
+                  <button key={it.ts} onClick={() => openRecent(it)}
+                    style={{ display: "flex", alignItems: "center", gap: 12, textAlign: "start", width: "100%", background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "12px 14px", cursor: "pointer" }}>
+                    <span style={{ width: 36, height: 36, borderRadius: 10, background: T.accentSoft, display: "grid", placeItems: "center", flexShrink: 0 }}><FileText size={17} color={T.accent} /></span>
+                    <span style={{ minWidth: 0, flex: 1 }}>
+                      <span style={{ display: "block", fontSize: 14.5, fontWeight: 700, color: T.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.documentType || "—"}</span>
+                      <span style={{ display: "block", fontSize: 12, color: T.muted, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.summary || it.detectedLanguage || ""}</span>
+                    </span>
+                    <ChevronLeft size={17} color={T.faint} style={{ transform: dir === "rtl" ? "none" : "scaleX(-1)", flexShrink: 0 }} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         <div style={{ ...cardStyle, background: T.line2, border: "none", boxShadow: "none", display: "flex", gap: 12, alignItems: "flex-start" }}>
           <ShieldCheck size={18} color={T.muted} style={{ flexShrink: 0, marginTop: 1 }} />
@@ -629,7 +664,14 @@ Here is the full text of the user's document (may be in another language):
               {L(lang, key)}
             </button>
           ))}
-          <button onClick={() => copyText(docText)} style={{ border: `1px solid ${T.line}`, background: T.card, color: T.ink2, borderRadius: 999, padding: "9px 15px", fontSize: 13.5, fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><Copy size={14} /> {L(lang, "qa_copy")}</button>
+          {[
+            [Calendar, L(lang, "qa_calendar"), addCalendar],
+            [Download, L(lang, "qa_pdf"), exportPDF],
+            [Share2, L(lang, "qa_share"), shareDoc],
+            [Copy, L(lang, "qa_copy"), () => copyText(docText)],
+          ].map(([Ic, lab, fn], i) => (
+            <button key={i} onClick={fn} style={{ border: `1px solid ${T.line}`, background: T.card, color: T.ink2, borderRadius: 999, padding: "9px 15px", fontSize: 13.5, fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><Ic size={14} /> {lab}</button>
+          ))}
         </div>
       ))}
 
@@ -683,6 +725,95 @@ Here is the full text of the user's document (may be in another language):
       {toast && toastEl()}
     </div>
   );
+
+  // ── report / export helpers ──────────────────────────────────────────
+  function buildPlainText() {
+    const d = result || {};
+    const lines = [];
+    if (d.documentType) lines.push(`${L(lang, "docType")}: ${d.documentType}`);
+    if (d.summary) lines.push(`\n${L(lang, "s_summary")}\n${d.summary}`);
+    if (d.purpose) lines.push(`\n${L(lang, "s_purpose")}\n${d.purpose}`);
+    if (Array.isArray(d.importantInfo) && d.importantInfo.length) lines.push(`\n${L(lang, "s_info")}\n` + d.importantInfo.map((x) => `• ${x.label}: ${x.value}`).join("\n"));
+    if (Array.isArray(d.checklist) && d.checklist.length) lines.push(`\n${L(lang, "s_todo")}\n` + d.checklist.map((x) => `✓ ${x}`).join("\n"));
+    if (Array.isArray(d.nextSteps) && d.nextSteps.length) lines.push(`\n${L(lang, "s_next")}\n` + d.nextSteps.map((x) => `→ ${x}`).join("\n"));
+    return lines.join("\n");
+  }
+  function buildReportHTML() {
+    const d = result || {};
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    const block = (title, inner) => inner ? `<h2>${esc(title)}</h2>${inner}` : "";
+    const ul = (arr, pre = "") => Array.isArray(arr) && arr.length ? `<ul>${arr.map((x) => `<li>${pre}${esc(x)}</li>`).join("")}</ul>` : "";
+    const info = Array.isArray(d.importantInfo) && d.importantInfo.length
+      ? `<table>${d.importantInfo.map((x) => `<tr><td class="k">${esc(x.label)}</td><td>${esc(x.value)}</td></tr>`).join("")}</table>` : "";
+    const detail = Array.isArray(d.detailedExplanation) ? d.detailedExplanation.map((p) => `<p>${esc(p)}</p>`).join("") : "";
+    const faq = Array.isArray(d.faq) ? d.faq.map((f) => `<p><b>${esc(f.q)}</b><br>${esc(f.a)}</p>`).join("") : "";
+    return `<!doctype html><html dir="${dir}"><head><meta charset="utf-8"><title>${esc(d.documentType || "Document")}</title>
+<style>@page{margin:22mm}body{font-family:'Vazirmatn',system-ui,Arial,sans-serif;color:#18181B;line-height:1.6;max-width:720px;margin:0 auto;padding:20px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;color:#4B45C4;border-bottom:1px solid #eee;padding-bottom:4px}
+.meta{color:#71717A;font-size:13px;margin-bottom:8px}table{border-collapse:collapse;width:100%}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}td.k{color:#71717A;width:38%}
+ul{padding-inline-start:20px}li{margin:4px 0}p{margin:8px 0}</style></head><body>
+<h1>${esc(d.documentType || "Document")}</h1>
+<div class="meta">${esc(d.detectedLanguage || "")} · ${L(lang, "confidence")} ${Math.round(d.confidence || 0)}%</div>
+${block(L(lang, "s_summary"), d.summary ? `<p>${esc(d.summary)}</p>` : "")}
+${block(L(lang, "s_purpose"), d.purpose ? `<p>${esc(d.purpose)}</p>` : "")}
+${block(L(lang, "s_info"), info)}
+${block(L(lang, "s_todo"), ul(d.checklist, "✓ "))}
+${block(L(lang, "s_warn"), ul(d.warnings, "⚠ "))}
+${block(L(lang, "s_detail"), detail)}
+${block(L(lang, "s_faq"), faq)}
+${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
+<p class="meta" style="margin-top:26px">${esc(L(lang, "disclaimer"))}</p>
+</body></html>`;
+  }
+  function exportPDF() {
+    const w = window.open("", "_blank");
+    if (!w) { showToast(L(lang, "errTitle")); return; }
+    w.document.write(buildReportHTML());
+    w.document.close(); w.focus();
+    setTimeout(() => { try { w.print(); } catch {} }, 350);
+  }
+  async function shareDoc() {
+    const text = buildPlainText();
+    try {
+      if (navigator.share) { await navigator.share({ title: (result || {}).documentType || "Document", text }); showToast(L(lang, "shared")); }
+      else { await navigator.clipboard.writeText(text); showToast(L(lang, "copied")); }
+    } catch {}
+  }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function parseDate(str) {
+    const s = String(str || "");
+    let m = s.match(/(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})/);      // dd.mm.yyyy
+    if (m) { let y = +m[3]; if (y < 100) y += 2000; return `${y}${pad(+m[2])}${pad(+m[1])}`; }
+    m = s.match(/(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})/);            // yyyy-mm-dd
+    if (m) return `${m[1]}${pad(+m[2])}${pad(+m[3])}`;
+    return null;
+  }
+  function addCalendar() {
+    const items = (result?.importantInfo || []).filter((x) => ["date", "deadline", "appointment"].includes(x.icon));
+    const events = items.map((x) => ({ d: parseDate(x.value), title: `${x.label}: ${x.value}` })).filter((e) => e.d);
+    if (!events.length) { showToast(L(lang, "noDates")); return; }
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SURI//DocAssistant//EN",
+      ...events.flatMap((e, i) => ["BEGIN:VEVENT", `UID:suri-${Date.now()}-${i}@suri`, `DTSTAMP:${stamp}`,
+        `DTSTART;VALUE=DATE:${e.d}`, `SUMMARY:${e.title.replace(/[\r\n,]/g, " ")}`, "END:VEVENT"]),
+      "END:VCALENDAR"].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "reminders.ics";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ── recent scans (localStorage) ──────────────────────────────────────
+  function loadRecent() { try { return JSON.parse(localStorage.getItem("docassist_recent") || "[]"); } catch { return []; } }
+  function saveRecent(entry) {
+    const list = [entry, ...loadRecent().filter((x) => x.ts !== entry.ts)].slice(0, 8);
+    try { localStorage.setItem("docassist_recent", JSON.stringify(list)); } catch {}
+  }
+  function openRecent(entry) {
+    setResult(entry.result); setDocText(entry.docText || ""); setPreview(null); setIsPdf(false);
+    setChat([]); setTransMode("app"); setStage("result");
+  }
 
   // ── helpers (closures) ───────────────────────────────────────────────
   function topBar(label, onClick) {

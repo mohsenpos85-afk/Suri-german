@@ -4,6 +4,7 @@ import {
   Check, HelpCircle, ArrowRight, MessageCircle, Copy, Share2, Download,
   X, ChevronLeft, Info, Languages, ListChecks, Phone, Mail, MapPin, Hash,
   Building2, Clock, Loader2, Send, Wand2, Banknote, FileSignature, ShieldCheck,
+  SwitchCamera, Circle,
 } from "lucide-react";
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -202,6 +203,15 @@ Object.keys(PV2).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV2
 
 const L = (lang, key) => (LABELS[lang]?.[key] ?? LABELS.en[key] ?? key);
 
+const CAMERA_LABELS = {
+  en: { title:"Camera", hint:"Position the document inside the frame", capture:"Take photo", cancel:"Cancel", flip:"Switch camera", unavailable:"Camera access is unavailable in this browser.", denied:"Camera permission was denied. Allow camera access in the browser settings and try again.", failed:"The camera could not be started. Close other apps using the camera and try again." },
+  tr: { title:"Kamera", hint:"Belgeyi çerçevenin içine yerleştirin", capture:"Fotoğraf çek", cancel:"İptal", flip:"Kamerayı değiştir", unavailable:"Bu tarayıcıda kamera erişimi kullanılamıyor.", denied:"Kamera izni reddedildi. Tarayıcı ayarlarından kamera izni verip tekrar deneyin.", failed:"Kamera başlatılamadı. Kamerayı kullanan diğer uygulamaları kapatıp tekrar deneyin." },
+  de: { title:"Kamera", hint:"Dokument innerhalb des Rahmens positionieren", capture:"Foto aufnehmen", cancel:"Abbrechen", flip:"Kamera wechseln", unavailable:"Der Kamerazugriff ist in diesem Browser nicht verfügbar.", denied:"Der Kamerazugriff wurde verweigert. Bitte in den Browsereinstellungen erlauben.", failed:"Die Kamera konnte nicht gestartet werden. Schließen Sie andere Kamera-Apps und versuchen Sie es erneut." },
+  uk: { title:"Камера", hint:"Розташуйте документ у рамці", capture:"Зробити фото", cancel:"Скасувати", flip:"Змінити камеру", unavailable:"Доступ до камери недоступний у цьому браузері.", denied:"Доступ до камери заборонено. Дозвольте його в налаштуваннях браузера й повторіть спробу.", failed:"Не вдалося запустити камеру. Закрийте інші програми, що використовують камеру, і спробуйте знову." },
+  fa: { title:"دوربین", hint:"سند را داخل کادر قرار دهید", capture:"گرفتن عکس", cancel:"لغو", flip:"تغییر دوربین", unavailable:"دسترسی به دوربین در این مرورگر امکان‌پذیر نیست.", denied:"دسترسی به دوربین رد شد. در تنظیمات مرورگر اجازهٔ دسترسی بدهید و دوباره تلاش کنید.", failed:"دوربین راه‌اندازی نشد. برنامه‌های دیگری را که از دوربین استفاده می‌کنند ببندید و دوباره تلاش کنید." },
+};
+const CL = (lang, key) => (CAMERA_LABELS[lang]?.[key] ?? CAMERA_LABELS.en[key]);
+
 const INFO_ICONS = {
   date: Calendar, deadline: Clock, amount: Banknote, reference: Hash,
   address: MapPin, authority: Building2, contact: Phone, application: FileSignature,
@@ -255,15 +265,20 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
   });
   const [pending, setPending] = useState(null); // 'cam' | 'file' | null
   const [agree, setAgree] = useState(false);     // GDPR explicit consent checkbox
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [cameraFacing, setCameraFacing] = useState("environment");
+  const [cameraError, setCameraError] = useState("");
   const fileRef = useRef(null);
-  const camRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+
   const chatEndRef = useRef(null);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy]);
 
   const showToast = (m) => { setToast(m); setTimeout(() => setToast(""), 1600); };
 
-  const openPicker = (kind) => { (kind === "cam" ? camRef : fileRef).current?.click(); };
+  const openPicker = (kind) => { if (kind === "cam") { setCameraError(""); setCameraOpen(true); } else fileRef.current?.click(); };
   const requestScan = (kind) => { if (consent) openPicker(kind); else { setAgree(false); setPending(kind); } };
   const acceptConsent = () => {
     if (!agree) return; // explicit consent required
@@ -273,6 +288,63 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
     openPicker(k); // still inside the user-gesture chain
   };
 
+  const stopCamera = () => {
+    streamRef.current?.getTracks?.().forEach((track) => track.stop());
+    streamRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+  };
+
+  useEffect(() => {
+    if (!cameraOpen) { stopCamera(); return undefined; }
+    let cancelled = false;
+    async function startCamera() {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCameraError(CL(lang, "unavailable"));
+        return;
+      }
+      try {
+        stopCamera();
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: cameraFacing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+          audio: false,
+        });
+        if (cancelled) { stream.getTracks().forEach((track) => track.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+      } catch (e) {
+        if (!cancelled) {
+          const denied = e?.name === "NotAllowedError" || e?.name === "SecurityError";
+          setCameraError(CL(lang, denied ? "denied" : "failed"));
+        }
+      }
+    }
+    startCamera();
+    return () => { cancelled = true; stopCamera(); };
+  }, [cameraOpen, cameraFacing, lang]);
+
+  const closeCamera = () => {
+    stopCamera();
+    setCameraOpen(false);
+    setCameraError("");
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    if (!video?.videoWidth || !video?.videoHeight) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+      if (!blob) { setCameraError(CL(lang, "failed")); return; }
+      const file = new File([blob], `scan-${Date.now()}.jpg`, { type: "image/jpeg" });
+      closeCamera();
+      analyze(file);
+    }, "image/jpeg", 0.92);
+  };
   function finishOnboarding() {
     try { localStorage.setItem("docassist_onboarded", "1"); } catch {}
     setStage("home");
@@ -466,8 +538,50 @@ Here is the full text of the user's document (may be in another language):
           </div>
         </div>
 
-        <input ref={camRef} type="file" accept="image/*" capture="environment" style={{ display: "none" }} onChange={(e) => analyze(e.target.files?.[0])} />
-        <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={(e) => analyze(e.target.files?.[0])} />
+        {cameraOpen && (
+          <div role="dialog" aria-modal="true" aria-label={CL(lang, "title")}
+            style={{ position:"fixed", inset:0, zIndex:500, background:"#09090B", color:"#fff", display:"flex", flexDirection:"column" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 16px", paddingTop:"calc(14px + env(safe-area-inset-top))", background:"rgba(9,9,11,.94)" }}>
+              <button onClick={closeCamera} aria-label={CL(lang, "cancel")}
+                style={{ width:42, height:42, borderRadius:999, border:"1px solid rgba(255,255,255,.2)", background:"rgba(255,255,255,.1)", color:"#fff", display:"grid", placeItems:"center", cursor:"pointer" }}>
+                <X size={22} />
+              </button>
+              <div style={{ fontSize:16, fontWeight:800 }}>{CL(lang, "title")}</div>
+              <button onClick={() => setCameraFacing((f) => f === "environment" ? "user" : "environment")} aria-label={CL(lang, "flip")}
+                style={{ width:42, height:42, borderRadius:999, border:"1px solid rgba(255,255,255,.2)", background:"rgba(255,255,255,.1)", color:"#fff", display:"grid", placeItems:"center", cursor:"pointer" }}>
+                <SwitchCamera size={21} />
+              </button>
+            </div>
+
+            <div style={{ position:"relative", flex:1, minHeight:0, overflow:"hidden", display:"grid", placeItems:"center", background:"#000" }}>
+              <video ref={videoRef} autoPlay playsInline muted
+                style={{ width:"100%", height:"100%", objectFit:"cover", transform:cameraFacing === "user" ? "scaleX(-1)" : "none" }} />
+              <div style={{ position:"absolute", inset:"9% 7% 13%", border:"2px solid rgba(255,255,255,.9)", borderRadius:18, boxShadow:"0 0 0 9999px rgba(0,0,0,.28)", pointerEvents:"none" }}>
+                <span style={{ position:"absolute", left:-2, top:-2, width:36, height:36, borderLeft:"5px solid #fff", borderTop:"5px solid #fff", borderRadius:"16px 0 0 0" }} />
+                <span style={{ position:"absolute", right:-2, top:-2, width:36, height:36, borderRight:"5px solid #fff", borderTop:"5px solid #fff", borderRadius:"0 16px 0 0" }} />
+                <span style={{ position:"absolute", left:-2, bottom:-2, width:36, height:36, borderLeft:"5px solid #fff", borderBottom:"5px solid #fff", borderRadius:"0 0 0 16px" }} />
+                <span style={{ position:"absolute", right:-2, bottom:-2, width:36, height:36, borderRight:"5px solid #fff", borderBottom:"5px solid #fff", borderRadius:"0 0 16px 0" }} />
+              </div>
+              <div style={{ position:"absolute", left:20, right:20, bottom:22, textAlign:"center", fontSize:13, fontWeight:650, textShadow:"0 1px 4px rgba(0,0,0,.8)" }}>{CL(lang, "hint")}</div>
+              {cameraError && (
+                <div style={{ position:"absolute", inset:20, display:"grid", placeItems:"center" }}>
+                  <div style={{ maxWidth:380, padding:"22px 20px", borderRadius:18, background:"rgba(24,24,27,.94)", textAlign:"center", boxShadow:"0 12px 40px rgba(0,0,0,.4)" }}>
+                    <AlertTriangle size={30} color="#FCA5A5" style={{ marginBottom:10 }} />
+                    <div style={{ fontSize:14.5, lineHeight:1.55 }}>{cameraError}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"center", padding:"18px 20px", paddingBottom:"calc(18px + env(safe-area-inset-bottom))", background:"#09090B" }}>
+              <button onClick={capturePhoto} disabled={!!cameraError} aria-label={CL(lang, "capture")}
+                style={{ width:76, height:76, borderRadius:999, border:"5px solid #fff", background:cameraError ? "#52525B" : T.accent, color:"#fff", display:"grid", placeItems:"center", cursor:cameraError ? "not-allowed" : "pointer", boxShadow:"0 0 0 3px rgba(255,255,255,.25)" }}>
+                <Circle size={48} fill="currentColor" strokeWidth={0} />
+              </button>
+            </div>
+          </div>
+        )}
+        <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; analyze(file); }} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
           <button onClick={() => requestScan("cam")} style={bigBtn(T.accent, "#fff", true)}>

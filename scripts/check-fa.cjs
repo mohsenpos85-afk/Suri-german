@@ -49,14 +49,14 @@ function extractLiteral(marker, openChar) {
 }
 
 (async () => {
-  console.log('Farsi (uk) coverage scan\n');
+  console.log('Farsi coverage scan\n');
 
   // ---- src/data modules ----
   const lessons = (await import('file://' + path.join(ROOT, 'src/data/lessons.js').replace(/\\/g, '/'))).LESSONS;
   lessons.forEach((l) => {
     ['titleFa', 'grammarFa'].forEach((f) => { if (!l[f]) report('LESSONS meta', 'lesson ' + l.id + ' missing ' + f); });
     (l.words || []).forEach((w) => {
-      if (!w.fa) report('LESSONS words', l.id + ' "' + (w.de || '') + '" missing uk');
+      if (!w.fa) report('LESSONS words', l.id + ' "' + (w.de || '') + '" missing fa');
       if (w.ex && !w.exfa) report('LESSONS words.ex', l.id + ' "' + w.de + '" missing exfa');
     });
   });
@@ -65,14 +65,14 @@ function extractLiteral(marker, openChar) {
   Object.keys(VERBS).forEach((lv) => VERBS[lv].forEach((cat) => {
     if (!cat.titleFa) report('VERBS meta', 'cat ' + cat.id + ' missing titleFa');
     (cat.words || []).forEach((w) => {
-      if (!w.fa) report('VERBS words', cat.id + ' "' + (w.de || '') + '" missing uk');
+      if (!w.fa) report('VERBS words', cat.id + ' "' + (w.de || '') + '" missing fa');
       if (w.ex && !w.exfa) report('VERBS words.ex', cat.id + ' "' + w.de + '" missing exfa');
     });
   }));
 
   const FLASHCARDS = (await import('file://' + path.join(ROOT, 'src/data/flashcards.js').replace(/\\/g, '/'))).FLASHCARDS;
   Object.keys(FLASHCARDS).forEach((lv) => FLASHCARDS[lv].forEach((w) => {
-    if (!w.fa) report('FLASHCARDS', lv + ' "' + (w.de || '') + '" missing uk');
+    if (!w.fa) report('FLASHCARDS', lv + ' "' + (w.de || '') + '" missing fa');
     if (w.ex && !w.exfa) report('FLASHCARDS.ex', lv + ' "' + w.de + '" missing exfa');
   }));
 
@@ -82,9 +82,9 @@ function extractLiteral(marker, openChar) {
     (t.ex || []).forEach((e, i) => { if (!e.fa) report('GRAMMAR ex', lv + ' "' + t.de + '" ex[' + i + ']'); });
     // article groups (label uk, rulesFa, and each example word's 6th element = uk)
     (t.groups || []).forEach((g) => {
-      if (!g.fa) report('GRAMMAR group', lv + ' "' + t.de + '" group ' + g.art + ' missing uk');
+      if (!g.fa) report('GRAMMAR group', lv + ' "' + t.de + '" group ' + g.art + ' missing fa');
       if (!g.rulesFa) report('GRAMMAR group.rules', lv + ' "' + t.de + '" group ' + g.art + ' missing rulesFa');
-      (g.words || []).forEach((w) => { if (!w[6]) report('GRAMMAR group.words', lv + ' "' + t.de + '" ' + w[0] + ' missing uk'); });
+      (g.words || []).forEach((w) => { if (!w[6]) report('GRAMMAR group.words', lv + ' "' + t.de + '" ' + w[0] + ' missing fa'); });
     });
   }));
   Object.keys(gmod.GTABLES).forEach((k) => {
@@ -118,23 +118,41 @@ function extractLiteral(marker, openChar) {
     iter.forEach((dlg) => (dlg.lines || []).forEach((ln, i) => { if (!ln.fa) report(name, (dlg.id || dlg.theme) + ' line[' + i + ']'); }));
   });
 
-  // ---- Journey stories (array literals of scene objects with .lines[].s_fa) ----
-  const storyConsts = ['ANKUNFT_STORY','BOLUM2_STORY','BOLUM3_STORY','BOLUM4_STORY','BOLUM6_STORY','BOLUM7_STORY','BOLUM8_STORY','BOLUM9_STORY','BOLUM10_STORY','BOLUM_ARBEITSSUCHE_STORY'];
+  // ---- Word Match examples (A1-C2, verbs/nouns/adjectives) ----
+  ['FIIL_DATA', 'ISIM_DATA', 'SIFAT_DATA'].forEach((name) => {
+    const rows = extractLiteral('const ' + name + ' = [', '[');
+    rows.forEach((row, i) => Object.keys(row).filter((key) => /^ex(?:_(?:b1|b2|c1|c2))?_tr$/.test(key)).forEach((key) => {
+      const faKey = key.replace(/_tr$/, '_fa');
+      if (!row[faKey]) report('WORDMATCH examples', name + ' row[' + i + '] missing ' + faKey);
+    }));
+  });
+  // ---- Games and LiD ----
+  ['SATZ_DATA', 'ARTIKEL_DATA'].forEach((name) => {
+    const rows = extractLiteral('const ' + name + ' = [', '[');
+    rows.forEach((row, i) => { if (row.en && !row.fa) report(name, 'row[' + i + '] missing fa'); });
+  });
+  const lid = extractLiteral('const LID_T = {');
+  if (!lid.fa) report('LID_T', 'missing fa locale');
+  else Object.keys(lid.en).forEach((key) => { if (!lid.fa[key]) report('LID_T', 'missing fa.' + key); });
+
+  // ---- All Journey stories (scene locations and lines) ----
+  const storyConsts = [...src.matchAll(/const\s+([A-Z0-9_]+_STORY)\s*=\s*\[/g)].map((m) => m[1]);
   storyConsts.forEach((name) => {
     const arr = extractLiteral('const ' + name + ' = [', '[');
     if (!arr) return;
-    arr.forEach((scene, si) => (scene.lines || []).forEach((ln, i) => {
-      // narration lines carry .s (German/base); need .s_fa. Dialogue lines with .de are learning-words (stay German).
-      if (ln.s && !ln.s_fa) report('JOURNEY ' + name, 'scene[' + si + '] line[' + i + ']');
-    }));
+    arr.forEach((scene, si) => {
+      if (scene.place && !scene.place_fa) report('JOURNEY place', name + ' scene[' + si + ']');
+      (scene.lines || []).forEach((ln, i) => {
+        if (ln.s && !ln.s_fa) report('JOURNEY line', name + ' scene[' + si + '] line[' + i + ']');
+      });
+    });
   });
-
-  console.log('--- missing uk fields by bucket ---');
+  console.log('--- missing fa fields by bucket ---');
   const buckets = Object.keys(counts).sort();
   if (buckets.length === 0) console.log('  ✓ none');
   else buckets.forEach((b) => console.log('  ' + b.padEnd(22), counts[b]));
   console.log('---');
   if (problems === 0) console.log('✓ Farsi fully covers every record — no Kurdish/base fallback possible.');
-  else console.log('✗ ' + problems + ' field(s) missing uk.');
+  else console.log('✗ ' + problems + ' field(s) missing fa.');
   process.exit(problems === 0 ? 0 : 1);
 })().catch((e) => { console.error('scan failed:', e); process.exit(2); });

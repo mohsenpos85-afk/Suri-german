@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "check:i18n": "node scripts/check-i18n.cjs",
+    "check:es": "node scripts/check-es.cjs --list",
     "preview": "vite preview",
     "watch": "vite build --watch"
   },

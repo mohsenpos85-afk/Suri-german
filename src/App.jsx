@@ -3530,6 +3530,8 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
       skills:{ grammatik:"Граматика", cart:"Картки", journey:"Journey", wortschatz:"Словник", lesen:"Читання", hoeren:"Аудіювання" } },
     fa: { heading:"داشبورد پیشرفت", pyramidTitle:"هرم سطوح", pyramidSub:"پیشرفت کلی", hexTitle:"مهارت‌های تو", hexSub: (id)=>`${id} — انتخاب‌شده`, current:"سطح فعلی", done:"تکمیل شد",
       skills:{ grammatik:"دستور زبان", cart:"کارت‌ها", journey:"سفر", wortschatz:"واژگان", lesen:"خواندن", hoeren:"شنیدن" } },
+    es: { heading:"Panel de progreso", pyramidTitle:"Pirámide de niveles", pyramidSub:"Progreso general", hexTitle:"Tus habilidades", hexSub: (id)=>`${id} — seleccionado`, current:"Nivel actual", done:"completado",
+      skills:{ grammatik:"Gramática", cart:"Tarjetas", journey:"Journey", wortschatz:"Vocabulario", lesen:"Lectura", hoeren:"Escucha" } },
   };
   const ht = HT[lang] || HT.tr;
 
@@ -23360,6 +23362,11 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   const ZK_T = {
     tr:{ back:"Geri", title:"Sayı Kodu", sub:"Şifreli kelimeleri çöz", choose:"Bölüm seç", chapter:"Bölüm", check:"Kontrol Et", wrong:"Bazı harfler yanlış — tekrar dene!", solved:"Tüm kelimeler doğru!", chapters:"Bölümler", next:"Sonraki" },
     uk:{ back:"Назад", title:"Числовий код", sub:"Розшифруй слова", choose:"Оберіть розділ", chapter:"Розділ", check:"Перевірити", wrong:"Деякі літери неправильні — спробуй ще раз!", solved:"Усі слова правильні!", chapters:"Розділи", next:"Далі" },
+    en:{ back:"Back", title:"Number Code", sub:"Decode the encrypted words", choose:"Choose a chapter", chapter:"Chapter", check:"Check", wrong:"Some letters are wrong — try again!", solved:"All words correct!", chapters:"Chapters", next:"Next" },
+    ar:{ back:"رجوع", title:"شيفرة الأرقام", sub:"فك رموز الكلمات المشفرة", choose:"اختر فصلاً", chapter:"فصل", check:"تحقق", wrong:"بعض الحروف خاطئة — حاول مرة أخرى!", solved:"جميع الكلمات صحيحة!", chapters:"الفصول", next:"التالي" },
+    ku:{ back:"گەڕانەوە", title:"کۆدی ژمارە", sub:"وشە نهێنییەکان بدۆزەرەوە", choose:"بەشێک هەڵبژێرە", chapter:"بەش", check:"پشکنین", wrong:"هەندێک پیت هەڵەن — دووبارە هەوڵبدە!", solved:"هەموو وشەکان ڕاستن!", chapters:"بەشەکان", next:"دواتر" },
+    fa:{ back:"بازگشت", title:"کد عددی", sub:"واژه‌های رمزی را رمزگشایی کنید", choose:"یک بخش انتخاب کنید", chapter:"بخش", check:"بررسی", wrong:"برخی حروف نادرست‌اند — دوباره تلاش کنید!", solved:"همهٔ واژه‌ها درست‌اند!", chapters:"بخش‌ها", next:"بعدی" },
+    es:{ back:"Atrás", title:"Código numérico", sub:"Descifra las palabras codificadas", choose:"Elige un capítulo", chapter:"Capítulo", check:"Comprobar", wrong:"Algunas letras son incorrectas — ¡inténtalo de nuevo!", solved:"¡Todas las palabras correctas!", chapters:"Capítulos", next:"Siguiente" },
   };
   const zt = key => (ZK_T[lang] || ZK_T.tr)[key];
   // ── Word pools per CEFR level (only A-Z, no umlauts) ─────────────────────

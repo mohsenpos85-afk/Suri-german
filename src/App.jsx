@@ -4487,7 +4487,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
-        {lang==="tr" ? `Alıştırma ${idx+1} · Doğru başlığı her metnin üzerine sürükle` : lang==="en" ? `Exercise ${idx+1} · Drag the correct title onto each text` : lang==="ar" ? `تمرين ${idx+1} · اسحب العنوان الصحيح فوق كل نص` : lang==="uk" ? `Вправа ${idx+1} · Перетягніть правильний заголовок на кожен текст` : `تاقیکردنەوە ${idx+1} · سەردێڕی دروست بکێشە بۆ سەر هەر دەقێک`}
+        {lang==="tr" ? `Alıştırma ${idx+1} · Doğru başlığı her metnin üzerine sürükle` : lang==="en" ? `Exercise ${idx+1} · Drag the correct title onto each text` : lang==="ar" ? `تمرين ${idx+1} · اسحب العنوان الصحيح فوق كل نص` : lang === "fa" ? `تمرین ${idx+1} · عنوان درست را روی هر متن بکشید` : lang==="uk" ? `Вправа ${idx+1} · Перетягніть правильний заголовок на кожен текст` : `تاقیکردنەوە ${idx+1} · سەردێڕی دروست بکێشە بۆ سەر هەر دەقێک`}
       </div>
       <div style={{ display: "grid", gap: 10, marginBottom: 12 }}>
         {ex.texts.map((textObj, ti) => {
@@ -4619,7 +4619,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
-        {lang==="tr" ? `Alıştırma ${idx+1} · Metni okuyun, ardından her cümle için «Richtig» ya da «Falsch» seçin` : lang==="en" ? `Exercise ${idx+1} · Read the text, then choose «Richtig» or «Falsch» for each sentence` : lang==="ar" ? `تمرين ${idx+1} · اقرأ النص، ثم اختر «Richtig» أو «Falsch» لكل جملة` : lang==="uk" ? `Вправа ${idx+1} · Прочитайте текст, потім оберіть «Richtig» або «Falsch» для кожного речення` : `تاقیکردنەوە ${idx+1} · دەقەکە بخوێنەرەوە، پاشان بۆ هەر رستەیەک «Richtig» یان «Falsch» کلیک بکە`}
+        {lang==="tr" ? `Alıştırma ${idx+1} · Metni okuyun, ardından her cümle için «Richtig» ya da «Falsch» seçin` : lang==="en" ? `Exercise ${idx+1} · Read the text, then choose «Richtig» or «Falsch» for each sentence` : lang==="ar" ? `تمرين ${idx+1} · اقرأ النص، ثم اختر «Richtig» أو «Falsch» لكل جملة` : lang === "fa" ? `تمرین ${idx+1} · متن را بخوانید، سپس برای هر جمله «Richtig» یا «Falsch» را انتخاب کنید` : lang==="uk" ? `Вправа ${idx+1} · Прочитайте текст, потім оберіть «Richtig» або «Falsch» для кожного речення` : `تاقیکردنەوە ${idx+1} · دەقەکە بخوێنەرەوە، پاشان بۆ هەر رستەیەک «Richtig» یان «Falsch» کلیک بکە`}
       </div>
       <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #E4E4E8", padding: 12, marginBottom: 12,
         fontSize: 13.5, lineHeight: 1.85, color: "#1A1F2E", whiteSpace: "pre-line" }} dir="ltr">
@@ -4739,7 +4739,7 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 12 }}>
-        {lang==="tr" ? `Alıştırma ${idx + 1} · Her durum için doğru seçeneği seç` : lang==="en" ? `Exercise ${idx + 1} · Choose the correct option for each situation` : lang==="ar" ? `تمرين ${idx + 1} · اختر الخيار الصحيح لكل موقف` : lang==="uk" ? `Вправа ${idx + 1} · Оберіть правильний варіант для кожної ситуації` : `تاقیکردنەوە ${idx + 1} · بۆ هەر دۆخێک هەڵبژاردەی دروست کلیک بکە`}
+        {lang==="tr" ? `Alıştırma ${idx + 1} · Her durum için doğru seçeneği seç` : lang==="en" ? `Exercise ${idx + 1} · Choose the correct option for each situation` : lang==="ar" ? `تمرين ${idx + 1} · اختر الخيار الصحيح لكل موقف` : lang === "fa" ? `تمرین ${idx + 1} · برای هر موقعیت گزینهٔ درست را انتخاب کنید` : lang==="uk" ? `Вправа ${idx + 1} · Оберіть правильний варіант для кожної ситуації` : `تاقیکردنەوە ${idx + 1} · بۆ هەر دۆخێک هەڵبژاردەی دروست کلیک بکە`}
       </div>
       <div style={{ display: "grid", gap: 14 }}>
         {ex.questions.map((q, qi) => {
@@ -5110,7 +5110,7 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
   const [showModel, setShowModel] = useState(false);
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF7E6", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75 }} dir="ltr">
         {ex.task}
       </div>
@@ -5184,7 +5184,7 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
   function closeAll() { setOpenCards({}); }
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FDF4FF", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12.5, border: "1px solid #E9D5FF" }}>
         <span style={{ fontWeight: 700, color: "#7C3AED" }}>{ex.person}</span>
         <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
@@ -5252,7 +5252,7 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
   const [showDlg, setShowDlg] = useState(false);
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF0F5", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75, border: "1px solid #FBCFE8" }} dir="ltr">
         {ex.scenario}
       </div>
@@ -5446,7 +5446,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
       <div style={{ fontSize:22, marginBottom:8 }}>💳</div>
       <div style={{ color:"#92400e", fontWeight:700, fontSize:15, marginBottom:6 }}>{lang === "tr" ? "Anthropic krediniz bitti" : lang === "en" ? "Your Anthropic credit has run out" : lang === "ar" ? "نفد رصيد Anthropic الخاص بك" : lang === "uk" ? "Ваш кредит Anthropic вичерпано" : lang === "fa" ? "اعتبار Anthropic شما تمام شده است" : "Anthropic کرێدیتت تەواو بووە"}</div>
       <div style={{ color:"#78350f", fontSize:13, lineHeight:1.7, marginBottom:12 }}>
-        {lang === "tr" ? <><strong>console.anthropic.com/settings/billing</strong> adresine giderek kredi ekle, ardından tekrar dene.</> : lang === "en" ? <>Go to <strong>console.anthropic.com/settings/billing</strong> to add credit, then try again.</> : lang === "ar" ? <>اذهب إلى <strong>console.anthropic.com/settings/billing</strong> لإضافة رصيد، ثم أعد المحاولة.</> : lang === "uk" ? <>Перейдіть на <strong>console.anthropic.com/settings/billing</strong>, щоб додати кредит, потім спробуйте знову.</> : <>بچۆ بۆ <strong>console.anthropic.com/settings/billing</strong> و کرێدیت زیاد بکە، پاشان دووبارە هەوڵبدەرەوە.</>}
+        {lang === "tr" ? <><strong>console.anthropic.com/settings/billing</strong> adresine giderek kredi ekle, ardından tekrar dene.</> : lang === "en" ? <>Go to <strong>console.anthropic.com/settings/billing</strong> to add credit, then try again.</> : lang === "ar" ? <>اذهب إلى <strong>console.anthropic.com/settings/billing</strong> لإضافة رصيد، ثم أعد المحاولة.</> : lang === "fa" ? <>برای افزودن اعتبار به <strong>console.anthropic.com/settings/billing</strong> بروید، سپس دوباره تلاش کنید.</> : lang === "uk" ? <>Перейдіть на <strong>console.anthropic.com/settings/billing</strong>, щоб додати кредит, потім спробуйте знову.</> : <>بچۆ بۆ <strong>console.anthropic.com/settings/billing</strong> و کرێدیت زیاد بکە، پاشان دووبارە هەوڵبدەرەوە.</>}
       </div>
       <button onClick={generate} style={{ background:"#f59e0b", color:"#fff", border:"none", padding:"9px 18px", borderRadius:9, fontWeight:700 }}>{lang === "tr" ? "Tekrar dene" : lang === "en" ? "Try again" : lang === "ar" ? "أعد المحاولة" : lang === "uk" ? "Спробуйте ще раз" : lang === "fa" ? "دوباره تلاش کنید" : "دووبارە هەوڵبدە"}</button>
     </div>
@@ -7858,7 +7858,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             if (c && c !== "loading" && c !== "error") {
               if (s.type === "schreiben") info = lang === "tr" ? "Elle (kağıt) ✍️" : lang === "en" ? "By hand (paper) ✍️" : lang === "ar" ? "بخط اليد (ورقة) ✍️" : lang === "uk" ? "Від руки (папір) ✍️" : lang === "fa" ? "با دست (کاغذ) ✍️" : "بە دەست (دەفتەر) ✍️";
               else if (s.type === "muendlich") info = lang === "tr" ? "Sözlü 🗣️" : lang === "en" ? "Spoken 🗣️" : lang === "ar" ? "شفهي 🗣️" : lang === "uk" ? "Усно 🗣️" : lang === "fa" ? "شفاهی 🗣️" : "زارەکی 🗣️";
-              else { const n = Object.keys(a).length; info = lang === "tr" ? `${n} cevap` : lang === "en" ? `${n} answers` : lang === "ar" ? `${n} إجابة` : lang === "uk" ? `${n} відповідей` : `${n} وەڵام`; }
+              else { const n = Object.keys(a).length; info = lang === "tr" ? `${n} cevap` : lang === "en" ? `${n} answers` : lang === "ar" ? `${n} إجابة` : lang === "fa" ? `${n} پاسخ` : lang === "uk" ? `${n} відповідей` : `${n} وەڵام`; }
             }
             return (
               <button key={s.type} onClick={() => { setPhase("run"); setIdx(i); }} style={{ textAlign: "right", background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "13px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -8785,7 +8785,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       </div>
       {/* AI */}
       <div className="rise" style={{ animationDelay:"195ms" }}>
-        <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
+        <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
           pct={progress[level+"::"+g.de]||0} onBatch={mkBatch(level+"::"+g.de)} lang={lang} />
       </div>
     </div>
@@ -9741,7 +9741,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </div>
 
         <div className="rise" style={{ animationDelay:"260ms" }}>
-          <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
+          <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
             pct={progress[level + "::" + g.de] || 0} onBatch={mkBatch(level + "::" + g.de)} lang={lang} />
         </div>
       </div>
@@ -10120,7 +10120,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <div style={{ textAlign: "center", padding: "48px 20px", color: C.muted }}>
             <div style={{ marginBottom: 12 }}><MessageCircle size={40} color={C.muted} /></div>
             <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{tL("dialog_no")}</div>
-            <div style={{ fontSize: 14 }}>{lang === "tr" ? `${level} seviyesi için henüz diyalog eklenmedi.` : lang === "en" ? `No dialogues have been added yet for level ${level}.` : lang === "ar" ? `لم تُضَف حوارات بعد لمستوى ${level}.` : lang === "uk" ? `Для рівня ${level} діалоги ще не додані.` : `بۆ ئاستی ${level} هێشتا دیالۆگ زیاد نەکراوە.`}</div>
+            <div style={{ fontSize: 14 }}>{lang === "tr" ? `${level} seviyesi için henüz diyalog eklenmedi.` : lang === "en" ? `No dialogues have been added yet for level ${level}.` : lang === "ar" ? `لم تُضَف حوارات بعد لمستوى ${level}.` : lang === "fa" ? `هنوز گفتگویی برای سطح ${level} اضافه نشده است.` : lang === "uk" ? `Для рівня ${level} діалоги ще не додані.` : `بۆ ئاستی ${level} هێشتا دیالۆگ زیاد نەکراوە.`}</div>
           </div>
         );
         return (
@@ -10435,7 +10435,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 <div>
                   <div style={{ fontWeight:800, fontSize:17, color:"#1A1F2E" }}>{tL("exam_formal")}</div>
-                  <div style={{ fontSize:12.5, color:C.muted }}>{lang === "tr" ? `${level} Seviyesi — Hangi sınavı istersiniz?` : lang === "en" ? `${level} Level — Which exam would you like?` : lang === "ar" ? `مستوى ${level} — أي اختبار تريد؟` : lang === "uk" ? `Рівень ${level} — який іспит ви хочете?` : `ئاستی ${level} — کام تاقیکردنەوە دەتەوێت؟`}</div>
+                  <div style={{ fontSize:12.5, color:C.muted }}>{lang === "tr" ? `${level} Seviyesi — Hangi sınavı istersiniz?` : lang === "en" ? `${level} Level — Which exam would you like?` : lang === "ar" ? `مستوى ${level} — أي اختبار تريد؟` : lang === "fa" ? `سطح ${level} — کدام آزمون را می‌خواهید؟` : lang === "uk" ? `Рівень ${level} — який іспит ви хочете?` : `ئاستی ${level} — کام تاقیکردنەوە دەتەوێت؟`}</div>
                 </div>
               </div>
               <div style={{ display:"grid", gap:12 }}>
@@ -10453,7 +10453,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         <div style={{ fontWeight:800, fontSize:16 }} dir="ltr">{p.name}</div>
                         <div style={{ color:C.muted, fontSize:12.5, marginTop:3, lineHeight:1.65 }}>{p.note}</div>
                         {sc > 0 && <div style={{ fontSize:11.5, color: sc>=95 ? C.green : C.gold, fontWeight:700, marginTop:4 }}>
-                          {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
+                          {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "fa" ? `✓ قبلاً ${Math.round(sc)}% گرفتید` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
                         </div>}
                       </div>
                       <div style={{ background:`${p.color}14`, borderRadius:10, padding:"8px 14px", fontSize:13, fontWeight:800, color:p.color, flexShrink:0 }}>
@@ -10670,7 +10670,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca fiiller (çekim ve cümlede kullanım)` : lang === "en" ? `German verbs at ${level} level (conjugation and use in sentences)` : lang === "ar" ? `الأفعال الألمانية لمستوى ${level} (التصريف والاستخدام في الجمل)` : lang === "uk" ? `Німецькі дієслова рівня ${level} (відмінювання та вживання в реченнях)` : `کرداری ئەڵمانی ئاستی ${level} (کێشان و بەکارهێنانیان لە ناو ڕستەدا)`} level={level}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca fiiller (çekim ve cümlede kullanım)` : lang === "en" ? `German verbs at ${level} level (conjugation and use in sentences)` : lang === "ar" ? `الأفعال الألمانية لمستوى ${level} (التصريف والاستخدام في الجمل)` : lang === "fa" ? `فعل‌های آلمانی در سطح ${level} (صرف و کاربرد در جمله)` : lang === "uk" ? `Німецькі дієслова рівня ${level} (відмінювання та вживання в реченнях)` : `کرداری ئەڵمانی ئاستی ${level} (کێشان و بەکارهێنانیان لە ناو ڕستەدا)`} level={level}
                   hint={lang === "tr" ? "Fiillerin cümlede kullanımı üzerine sorular: doğru fiil formu, zaman, çekim ve boşluk doldurma. Fiilin Kürtçe anlamını sorma." : lang === "en" ? "Questions on verb use in sentences: correct verb form, tense, conjugation, and fill-in-the-blank. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول استخدام الأفعال في الجمل: الصيغة الصحيحة، الزمن، التصريف، وملء الفراغات. لا تسأل عن المعنى بالكردية." : lang === "uk" ? "Питання про вживання дієслів у реченнях: правильна форма, час, дієвідмінювання та заповнення пропусків. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد افعال در جملات: شکل درست فعل، زمان، صرف و پر کردن جای خالی. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی کردارەکان بن لە ناو ڕستەدا: فۆرمی ڕاستی کردار، کات، کێشان و پڕکردنەوەی بۆشایی لە ڕستەدا. پرسیاری واتای کوردی کردارەکە مەکە."}
                   pct={progress[level + "::verbs"] || 0} onBatch={mkBatch(level + "::verbs")} lang={lang} />
               </div>
@@ -10790,7 +10790,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "fa" ? `واژه‌های آلمانی در سطح ${level}، موضوع‌ها: ${vocabList.map((l) => l.title).join("، ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
                   pct={progress[level + "::vocab"] || 0} onBatch={mkBatch(level + "::vocab")} lang={lang} />
               </div>
             </div>
@@ -10906,7 +10906,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca sıfatlar ve kullanımları` : lang === "en" ? `German adjectives at ${level} level and their usage` : lang === "ar" ? `الصفات الألمانية لمستوى ${level} واستخداماتها` : lang === "uk" ? `Німецькі прикметники рівня ${level} та їх вживання` : `ئەپیتافەکانی ئەڵمانی ئاستی ${level} و بەکارهێنانیان`} level={level}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca sıfatlar ve kullanımları` : lang === "en" ? `German adjectives at ${level} level and their usage` : lang === "ar" ? `الصفات الألمانية لمستوى ${level} واستخداماتها` : lang === "fa" ? `صفت‌های آلمانی در سطح ${level} و کاربردشان` : lang === "uk" ? `Німецькі прикметники рівня ${level} та їх вживання` : `ئەپیتافەکانی ئەڵمانی ئاستی ${level} و بەکارهێنانیان`} level={level}
                   hint={lang === "tr" ? "Sıfatların cümlede doğru kullanımı, karşıtları ve edatlı sıfatlar üzerine sorular. Kelimenin Kürtçe anlamını sorma." : lang === "en" ? "Questions on correct adjective use in sentences, opposites, and preposition-linked adjectives. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول الاستخدام الصحيح للصفات في الجمل، الأضداد، والصفات المرتبطة بحروف الجر. لا تسأل عن المعنى بالكردية." : lang === "uk" ? "Питання про правильне вживання прикметників у реченнях, антоніми та прикметники з прийменниками. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد درست صفت‌ها در جملات، متضادها و صفت‌های همراه با حرف اضافه. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی ڕاستی ئەپیتافەکان لە ناو ڕستەدا، دژەواژەکان و ئەپیتافەکانی لەگەڵ داچەک."}
                   pct={progress[level + "::adj"] || 0} onBatch={mkBatch(level + "::adj")} lang={lang} />
               </div>
@@ -11518,8 +11518,8 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                           {card.ex}
                         </div>
                       )}
-                      {(lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku) && (
-                        <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
+                      {(lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku) && (
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
                       )}
                       {/* TTS on back */}
                       <div style={{ marginTop:2 }}><Speak text={card.de} size={16} color="rgba(255,255,255,.5)" /></div>
@@ -11563,7 +11563,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                   <De size={13} color={C.muted}>{card.ex}</De>
                   <Speak text={card.ex} size={13} />
                 </div>
-                <div style={{ color:C.muted, fontSize:12, lineHeight:1.7 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
+                <div style={{ color:C.muted, fontSize:12, lineHeight:1.7 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
               </div>
             )}
           </div>

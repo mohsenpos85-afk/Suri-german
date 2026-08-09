@@ -3179,7 +3179,7 @@ function LevelComparison({ lang = "ku" }) {
   const isEmpty = total === 0;
   const row     = isEmpty ? null : activeData[Math.min(idx, total - 1)];
   const lv    = LV_CMP_CFG.find(l => l.key === selLv) ?? LV_CMP_CFG[0];
-  const title = lang === "tr" ? "Seviyeler Karşılaştırması" : lang === "en" ? "Level Comparison" : lang === "ar" ? "مقارنة المستويات" : lang === "ku" ? "بەراوردکردنی ئاستەکان" : lang === "uk" ? "Порівняння рівнів" : lang === "fa" ? "مقایسه سطوح" : "Niveauvergleich";
+  const title = lang === "tr" ? "Seviyeler Karşılaştırması" : lang === "en" ? "Level Comparison" : lang === "ar" ? "مقارنة المستويات" : lang === "ku" ? "بەراوردکردنی ئاستەکان" : lang === "es" ? "Comparación de niveles" : lang === "uk" ? "Порівняння рівнів" : lang === "fa" ? "مقایسه سطوح" : "Niveauvergleich";
 
   return (
     <div style={{ marginTop:28 }}>
@@ -3194,9 +3194,9 @@ function LevelComparison({ lang = "ku" }) {
         {/* ── kategori butonları: Fiiller / İsimler / Sıfatlar + Sıfırla ── */}
         <div style={{ display:"flex", gap:7, marginBottom:10 }}>
           {[
-            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#FF7E2E" },
-            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#3B82F6" },
-            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#10B981" },
+            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang === "es" ? "Verbos" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#FF7E2E" },
+            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang === "es" ? "Sustantivos" : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#3B82F6" },
+            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang === "es" ? "Adjetivos" : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#10B981" },
           ].map(cat => {
             const active = categ === cat.key;
             return (
@@ -3242,7 +3242,7 @@ function LevelComparison({ lang = "ku" }) {
           <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"32px 20px", gap:8 }}>
             <div style={{ fontSize:28, opacity:.35 }}>☝️</div>
             <div style={{ fontSize:13, fontWeight:700, color:"#A1A1AA", textAlign:"center" }}>
-              {lang==="tr" ? "Bir kategori veya seviye seçin" : lang==="en" ? "Choose a category or level" : lang==="ar" ? "اختر فئة أو مستوى" : lang==="ku" ? "کتێگۆریێک یان ئاستێک هەڵبژێرە" : lang==="uk" ? "Оберіть категорію або рівень" : lang === "fa" ? "یک دسته یا سطح انتخاب کنید" : "Kategorie oder Niveau wählen"}
+              {lang==="tr" ? "Bir kategori veya seviye seçin" : lang==="en" ? "Choose a category or level" : lang==="ar" ? "اختر فئة أو مستوى" : lang==="ku" ? "کتێگۆریێک یان ئاستێک هەڵبژێرە" : lang === "es" ? "Elige una categoría o nivel" : lang==="uk" ? "Оберіть категорію або рівень" : lang === "fa" ? "یک دسته یا سطح انتخاب کنید" : "Kategorie oder Niveau wählen"}
             </div>
           </div>
         ) : (<>
@@ -3272,7 +3272,7 @@ function LevelComparison({ lang = "ku" }) {
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
               <span style={{ fontSize:16, fontWeight:700, color: isEmpty ? "#A1A1AA" : "#18181B", lineHeight:1.5, fontStyle: isEmpty ? "italic" : "normal" }}>
-                {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row.a1}
+                {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang === "es" ? "Próximamente…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row.a1}
               </span>
               {!isEmpty && <SpeakBtn text={row.a1} color="#FF7E2E" />}
             </div>
@@ -3282,9 +3282,9 @@ function LevelComparison({ lang = "ku" }) {
                 <SpeakBtn text={row.ex} color="#A1A1AA" small />
               </div>
             )}
-            {!isEmpty && row.ex && (lang==="tr" ? row.ex_tr : lang==="en" ? row.ex_en : lang==="ar" ? row.ex_ar : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : lang==="ku" ? row.ex_ku : null) && (
+            {!isEmpty && row.ex && (lang==="tr" ? row.ex_tr : lang==="en" ? row.ex_en : lang==="ar" ? row.ex_ar : lang === "es" ? row.ex_es : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : lang==="ku" ? row.ex_ku : null) && (
               <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#A1A1AA", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
-                {lang==="tr" ? row.ex_tr : lang==="en" ? (row.ex_en || row.ex_ku) : lang==="ar" ? (row.ex_ar || row.ex_ku) : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : row.ex_ku}
+                {lang==="tr" ? row.ex_tr : lang==="en" ? (row.ex_en || row.ex_ku) : lang==="ar" ? (row.ex_ar || row.ex_ku) : lang === "es" ? (row.ex_es || row.ex_ku) : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : row.ex_ku}
               </div>
             )}
           </div>
@@ -3310,7 +3310,7 @@ function LevelComparison({ lang = "ku" }) {
             minHeight:60, display:"flex", alignItems:"center", justifyContent:"center",
           }}>
             <div style={{ fontSize:13, fontWeight:700, color:"#A1A1AA", fontStyle:"italic" }}>
-              {lang==="tr" ? "Seviye seçin…" : lang==="en" ? "Choose a level…" : lang==="ar" ? "اختر مستوى…" : lang==="ku" ? "ئاستێک هەڵبژێرە…" : lang==="uk" ? "Оберіть рівень…" : lang === "fa" ? "یک سطح انتخاب کنید…" : "Niveau wählen…"}
+              {lang==="tr" ? "Seviye seçin…" : lang==="en" ? "Choose a level…" : lang==="ar" ? "اختر مستوى…" : lang==="ku" ? "ئاستێک هەڵبژێرە…" : lang === "es" ? "Elige un nivel…" : lang==="uk" ? "Оберіть рівень…" : lang === "fa" ? "یک سطح انتخاب کنید…" : "Niveau wählen…"}
             </div>
           </div>
         ) : (
@@ -3325,7 +3325,7 @@ function LevelComparison({ lang = "ku" }) {
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", gap:6 }}>
               <span style={{ fontSize:15, fontWeight:700, color: isEmpty ? "#A1A1AA" : "#18181B", lineHeight:1.6, fontStyle: isEmpty ? "italic" : "normal" }}>
-                {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row[selLv]}
+                {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang === "es" ? "Próximamente…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row[selLv]}
               </span>
               {!isEmpty && <SpeakBtn text={row[selLv]} color={lv.from} />}
             </div>
@@ -3335,9 +3335,9 @@ function LevelComparison({ lang = "ku" }) {
                 <SpeakBtn text={row['ex_' + selLv]} color={lv.from} small />
               </div>
             )}
-            {!isEmpty && row['ex_' + selLv] && (lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? row['ex_' + selLv + '_en'] : lang==="ar" ? row['ex_' + selLv + '_ar'] : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : lang==="ku" ? row['ex_' + selLv + '_ku'] : null) && (
+            {!isEmpty && row['ex_' + selLv] && (lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? row['ex_' + selLv + '_en'] : lang==="ar" ? row['ex_' + selLv + '_ar'] : lang === "es" ? row['ex_' + selLv + '_es'] : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : lang==="ku" ? row['ex_' + selLv + '_ku'] : null) && (
               <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color: lv.from + "88", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
-                {lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? (row['ex_' + selLv + '_en'] || row['ex_' + selLv + '_ku']) : lang==="ar" ? (row['ex_' + selLv + '_ar'] || row['ex_' + selLv + '_ku']) : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : row['ex_' + selLv + '_ku']}
+                {lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? (row['ex_' + selLv + '_en'] || row['ex_' + selLv + '_ku']) : lang==="ar" ? (row['ex_' + selLv + '_ar'] || row['ex_' + selLv + '_ku']) : lang === "es" ? (row['ex_' + selLv + '_es'] || row['ex_' + selLv + '_ku']) : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : row['ex_' + selLv + '_ku']}
               </div>
             )}
           </div>
@@ -3879,8 +3879,8 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
           <span style={{ fontSize:20 }}>✏️</span>
         </div>
         <div>
-          <div style={{ fontWeight:800, fontSize:16, color:C.ink }}>{lang === "tr" ? "Hazır Sorular" : lang === "en" ? "Ready-made Questions" : lang === "ar" ? "أسئلة جاهزة" : lang === "uk" ? "Готові питання" : lang === "fa" ? "سؤال‌های آماده" : "پرسیارە ئامادەکراوەکان"}</div>
-          <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{N} {lang === "tr" ? "soru · Dört seçenekli" : lang === "en" ? "questions · 4 options" : lang === "ar" ? "سؤال · أربعة خيارات" : lang === "uk" ? "питань · 4 варіанти" : lang === "fa" ? "سؤال · ۴ گزینه" : "پرسیار · چوار چاوی هەڵبژاردن"}</div>
+          <div style={{ fontWeight:800, fontSize:16, color:C.ink }}>{lang === "tr" ? "Hazır Sorular" : lang === "en" ? "Ready-made Questions" : lang === "ar" ? "أسئلة جاهزة" : lang === "es" ? "Preguntas listas" : lang === "uk" ? "Готові питання" : lang === "fa" ? "سؤال‌های آماده" : "پرسیارە ئامادەکراوەکان"}</div>
+          <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{N} {lang === "tr" ? "soru · Dört seçenekli" : lang === "en" ? "questions · 4 options" : lang === "ar" ? "سؤال · أربعة خيارات" : lang === "es" ? "preguntas · 4 opciones" : lang === "uk" ? "питань · 4 варіанти" : lang === "fa" ? "سؤال · ۴ گزینه" : "پرسیار · چوار چاوی هەڵبژاردن"}</div>
         </div>
       </div>
       <div style={{ display:"flex", justifyContent:"center", marginBottom:20 }}>
@@ -4172,8 +4172,8 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
             <span style={{ fontSize:18 }}>🧩</span>
           </div>
           <div>
-            <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang==="tr" ? "Sprachbausteine — Boşluk Doldurma" : lang==="en" ? "Sprachbausteine — Fill the Gap" : lang==="ar" ? "Sprachbausteine — املأ الفراغ" : lang === "uk" ? "Sprachbausteine — Заповніть пропуск" : lang === "fa" ? "Sprachbausteine — جای خالی را پر کنید" : "Sprachbausteine — بۆشایی پڕکردنەوە"}</div>
-            <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
+            <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang==="tr" ? "Sprachbausteine — Boşluk Doldurma" : lang==="en" ? "Sprachbausteine — Fill the Gap" : lang==="ar" ? "Sprachbausteine — املأ الفراغ" : lang === "es" ? "Sprachbausteine — Rellena el hueco" : lang === "uk" ? "Sprachbausteine — Заповніть пропуск" : lang === "fa" ? "Sprachbausteine — جای خالی را پر کنید" : "Sprachbausteine — بۆشایی پڕکردنەوە"}</div>
+            <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? "5 ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
           </div>
         </div>
         <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -4487,7 +4487,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
-        {lang==="tr" ? `Alıştırma ${idx+1} · Doğru başlığı her metnin üzerine sürükle` : lang==="en" ? `Exercise ${idx+1} · Drag the correct title onto each text` : lang==="ar" ? `تمرين ${idx+1} · اسحب العنوان الصحيح فوق كل نص` : lang === "fa" ? `تمرین ${idx+1} · عنوان درست را روی هر متن بکشید` : lang==="uk" ? `Вправа ${idx+1} · Перетягніть правильний заголовок на кожен текст` : `تاقیکردنەوە ${idx+1} · سەردێڕی دروست بکێشە بۆ سەر هەر دەقێک`}
+        {lang==="tr" ? `Alıştırma ${idx+1} · Doğru başlığı her metnin üzerine sürükle` : lang==="en" ? `Exercise ${idx+1} · Drag the correct title onto each text` : lang==="ar" ? `تمرين ${idx+1} · اسحب العنوان الصحيح فوق كل نص` : lang === "fa" ? `تمرین ${idx+1} · عنوان درست را روی هر متن بکشید` : lang === "es" ? `Ejercicio ${idx+1} · Arrastra el título correcto sobre cada texto` : lang==="uk" ? `Вправа ${idx+1} · Перетягніть правильний заголовок на кожен текст` : `تاقیکردنەوە ${idx+1} · سەردێڕی دروست بکێشە بۆ سەر هەر دەقێک`}
       </div>
       <div style={{ display: "grid", gap: 10, marginBottom: 12 }}>
         {ex.texts.map((textObj, ti) => {
@@ -4518,7 +4518,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
                   </span>
                 ) : (
                   <span style={{ color: C.muted, fontSize: 12, fontStyle: "italic" }}>
-                    {selected !== null ? (lang==="tr" ? "← Buraya sürükle" : lang==="en" ? "← Drag here" : lang==="ar" ? "← اسحب هنا" : lang === "uk" ? "← Перетягніть сюди" : lang === "fa" ? "← اینجا بکشید" : "← ئێرە بکێشە") : (lang==="tr" ? "Başlık boşluğu …" : lang==="en" ? "Title slot …" : lang==="ar" ? "فراغ العنوان …" : lang === "uk" ? "Місце для заголовка …" : lang === "fa" ? "جای عنوان …" : "بۆشایی سەردێڕ …")}
+                    {selected !== null ? (lang==="tr" ? "← Buraya sürükle" : lang==="en" ? "← Drag here" : lang==="ar" ? "← اسحب هنا" : lang === "es" ? "← Arrastra aquí" : lang === "uk" ? "← Перетягніть сюди" : lang === "fa" ? "← اینجا بکشید" : "← ئێرە بکێشە") : (lang==="tr" ? "Başlık boşluğu …" : lang==="en" ? "Title slot …" : lang==="ar" ? "فراغ العنوان …" : lang === "es" ? "Espacio para el título …" : lang === "uk" ? "Місце для заголовка …" : lang === "fa" ? "جای عنوان …" : "بۆشایی سەردێڕ …")}
                   </span>
                 )}
               </div>
@@ -4586,8 +4586,8 @@ function LesenASection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>📰</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen A — Başlık Seç" : lang==="en" ? "Lesen A — Choose a Title" : lang==="ar" ? "Lesen A — اختر عنوانًا" : lang === "uk" ? "Lesen A — Оберіть заголовок" : lang === "fa" ? "Lesen A — عنوان را انتخاب کنید" : "Lesen A — سەردێڕ دیاری بکە"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Başlığı metne sürükle" : lang==="en" ? "3 exercises · Drag the title onto the text" : lang==="ar" ? "3 تمارين · اسحب العنوان إلى النص" : lang === "uk" ? "3 вправи · Перетягніть заголовок на текст" : lang === "fa" ? "۳ تمرین · عنوان را روی متن بکشید" : "3 تاقیکردنەوە · سەردێڕ بکێشە بۆ سەر دەقەکان"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen A — Başlık Seç" : lang==="en" ? "Lesen A — Choose a Title" : lang==="ar" ? "Lesen A — اختر عنوانًا" : lang === "es" ? "Lesen A — Elige un título" : lang === "uk" ? "Lesen A — Оберіть заголовок" : lang === "fa" ? "Lesen A — عنوان را انتخاب کنید" : "Lesen A — سەردێڕ دیاری بکە"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Başlığı metne sürükle" : lang==="en" ? "3 exercises · Drag the title onto the text" : lang==="ar" ? "3 تمارين · اسحب العنوان إلى النص" : lang === "es" ? "3 ejercicios · Arrastra el título sobre el texto" : lang === "uk" ? "3 вправи · Перетягніть заголовок на текст" : lang === "fa" ? "۳ تمرین · عنوان را روی متن بکشید" : "3 تاقیکردنەوە · سەردێڕ بکێشە بۆ سەر دەقەکان"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -4619,7 +4619,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
-        {lang==="tr" ? `Alıştırma ${idx+1} · Metni okuyun, ardından her cümle için «Richtig» ya da «Falsch» seçin` : lang==="en" ? `Exercise ${idx+1} · Read the text, then choose «Richtig» or «Falsch» for each sentence` : lang==="ar" ? `تمرين ${idx+1} · اقرأ النص، ثم اختر «Richtig» أو «Falsch» لكل جملة` : lang === "fa" ? `تمرین ${idx+1} · متن را بخوانید، سپس برای هر جمله «Richtig» یا «Falsch» را انتخاب کنید` : lang==="uk" ? `Вправа ${idx+1} · Прочитайте текст, потім оберіть «Richtig» або «Falsch» для кожного речення` : `تاقیکردنەوە ${idx+1} · دەقەکە بخوێنەرەوە، پاشان بۆ هەر رستەیەک «Richtig» یان «Falsch» کلیک بکە`}
+        {lang==="tr" ? `Alıştırma ${idx+1} · Metni okuyun, ardından her cümle için «Richtig» ya da «Falsch» seçin` : lang==="en" ? `Exercise ${idx+1} · Read the text, then choose «Richtig» or «Falsch» for each sentence` : lang==="ar" ? `تمرين ${idx+1} · اقرأ النص، ثم اختر «Richtig» أو «Falsch» لكل جملة` : lang === "fa" ? `تمرین ${idx+1} · متن را بخوانید، سپس برای هر جمله «Richtig» یا «Falsch» را انتخاب کنید` : lang === "es" ? `Ejercicio ${idx+1} · Lee el texto y elige «Richtig» o «Falsch» para cada frase` : lang==="uk" ? `Вправа ${idx+1} · Прочитайте текст, потім оберіть «Richtig» або «Falsch» для кожного речення` : `تاقیکردنەوە ${idx+1} · دەقەکە بخوێنەرەوە، پاشان بۆ هەر رستەیەک «Richtig» یان «Falsch» کلیک بکە`}
       </div>
       <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #E4E4E8", padding: 12, marginBottom: 12,
         fontSize: 13.5, lineHeight: 1.85, color: "#1A1F2E", whiteSpace: "pre-line" }} dir="ltr">
@@ -4700,8 +4700,8 @@ function LesenBSection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>📋</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen B — Doğru ya da Yanlış" : lang==="en" ? "Lesen B — True or False" : lang==="ar" ? "Lesen B — صح أم خطأ" : lang === "uk" ? "Lesen B — Правда чи хиба" : lang === "fa" ? "Lesen B — درست یا نادرست" : "Lesen B — ڕاست یان هەڵە"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Richtig veya Falsch seç" : lang==="en" ? "3 exercises · Choose Richtig or Falsch" : lang==="ar" ? "3 تمارين · اختر Richtig أو Falsch" : lang === "uk" ? "3 вправи · Оберіть Richtig або Falsch" : lang === "fa" ? "۳ تمرین · Richtig یا Falsch را انتخاب کنید" : "3 تاقیکردنەوە · Richtig یان Falsch بکێشە"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen B — Doğru ya da Yanlış" : lang==="en" ? "Lesen B — True or False" : lang==="ar" ? "Lesen B — صح أم خطأ" : lang === "es" ? "Lesen B — Verdadero o falso" : lang === "uk" ? "Lesen B — Правда чи хиба" : lang === "fa" ? "Lesen B — درست یا نادرست" : "Lesen B — ڕاست یان هەڵە"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Richtig veya Falsch seç" : lang==="en" ? "3 exercises · Choose Richtig or Falsch" : lang==="ar" ? "3 تمارين · اختر Richtig أو Falsch" : lang === "es" ? "3 ejercicios · Elige Richtig o Falsch" : lang === "uk" ? "3 вправи · Оберіть Richtig або Falsch" : lang === "fa" ? "۳ تمرین · Richtig یا Falsch را انتخاب کنید" : "3 تاقیکردنەوە · Richtig یان Falsch بکێشە"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -4739,7 +4739,7 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 12 }}>
-        {lang==="tr" ? `Alıştırma ${idx + 1} · Her durum için doğru seçeneği seç` : lang==="en" ? `Exercise ${idx + 1} · Choose the correct option for each situation` : lang==="ar" ? `تمرين ${idx + 1} · اختر الخيار الصحيح لكل موقف` : lang === "fa" ? `تمرین ${idx + 1} · برای هر موقعیت گزینهٔ درست را انتخاب کنید` : lang==="uk" ? `Вправа ${idx + 1} · Оберіть правильний варіант для кожної ситуації` : `تاقیکردنەوە ${idx + 1} · بۆ هەر دۆخێک هەڵبژاردەی دروست کلیک بکە`}
+        {lang==="tr" ? `Alıştırma ${idx + 1} · Her durum için doğru seçeneği seç` : lang==="en" ? `Exercise ${idx + 1} · Choose the correct option for each situation` : lang==="ar" ? `تمرين ${idx + 1} · اختر الخيار الصحيح لكل موقف` : lang === "fa" ? `تمرین ${idx + 1} · برای هر موقعیت گزینهٔ درست را انتخاب کنید` : lang === "es" ? `Ejercicio ${idx + 1} · Elige la opción correcta para cada situación` : lang==="uk" ? `Вправа ${idx + 1} · Оберіть правильний варіант для кожної ситуації` : `تاقیکردنەوە ${idx + 1} · بۆ هەر دۆخێک هەڵبژاردەی دروست کلیک بکە`}
       </div>
       <div style={{ display: "grid", gap: 14 }}>
         {ex.questions.map((q, qi) => {
@@ -4814,8 +4814,8 @@ function LesenCSection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>🔍</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen C — Doğru Seçenek" : lang==="en" ? "Lesen C — Correct Option" : lang==="ar" ? "Lesen C — الخيار الصحيح" : lang === "uk" ? "Lesen C — Правильний варіант" : lang === "fa" ? "Lesen C — گزینه درست" : "Lesen C — هەڵبژاردەی دروست"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Doğru seçeneği işaretle" : lang==="en" ? "3 exercises · Mark the correct option" : lang==="ar" ? "3 تمارين · حدد الخيار الصحيح" : lang === "uk" ? "3 вправи · Позначте правильний варіант" : lang === "fa" ? "۳ تمرین · گزینه درست را علامت بزنید" : "3 تاقیکردنەوە · هەڵبژاردەی دروست بکێشە"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Lesen C — Doğru Seçenek" : lang==="en" ? "Lesen C — Correct Option" : lang==="ar" ? "Lesen C — الخيار الصحيح" : lang === "es" ? "Lesen C — Opción correcta" : lang === "uk" ? "Lesen C — Правильний варіант" : lang === "fa" ? "Lesen C — گزینه درست" : "Lesen C — هەڵبژاردەی دروست"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Doğru seçeneği işaretle" : lang==="en" ? "3 exercises · Mark the correct option" : lang==="ar" ? "3 تمارين · حدد الخيار الصحيح" : lang === "es" ? "3 ejercicios · Marca la opción correcta" : lang === "uk" ? "3 вправи · Позначте правильний варіант" : lang === "fa" ? "۳ تمرین · گزینه درست را علامت بزنید" : "3 تاقیکردنەوە · هەڵبژاردەی دروست بکێشە"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -5052,7 +5052,7 @@ function SchreibenAItem({ ex, idx, lang = "ku" }) {
       <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13, lineHeight: 1.75 }} dir="ltr">
         {ex.personInfo}
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.personInfoTr||ex.personInfoKu) : lang==="en" ? (ex.personInfoEn||ex.personInfoKu) : lang==="ar" ? (ex.personInfoAr||ex.personInfoKu) : lang==="uk" ? (ex.personInfoUk||ex.personInfoEn||ex.personInfoKu) : lang==="fa" ? (ex.personInfoFa||ex.personInfoEn||ex.personInfoKu) : ex.personInfoKu}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.personInfoTr||ex.personInfoKu) : lang==="en" ? (ex.personInfoEn||ex.personInfoKu) : lang==="ar" ? (ex.personInfoAr||ex.personInfoKu) : lang === "es" ? (ex.personInfoEs||ex.personInfoKu) : lang==="uk" ? (ex.personInfoUk||ex.personInfoEn||ex.personInfoKu) : lang==="fa" ? (ex.personInfoFa||ex.personInfoEn||ex.personInfoKu) : ex.personInfoKu}</div>
       <div style={{ display: "grid", gap: 5, marginBottom: 12 }}>
         {ex.fields.map((f, i) => (
           <div key={i} onClick={() => toggleField(i)}
@@ -5092,8 +5092,8 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>📝</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Schreiben A — Form Doldur" : lang==="en" ? "Schreiben A — Fill the Form" : lang==="ar" ? "Schreiben A — املأ النموذج" : lang === "uk" ? "Schreiben A — Заповніть форму" : lang === "fa" ? "Schreiben A — فرم را پر کنید" : "Schreiben A — فۆرم پڕبکەرەوە"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Bilgileri forma gir" : lang==="en" ? "3 exercises · Enter the information into the form" : lang==="ar" ? "3 تمارين · أدخل المعلومات في النموذج" : lang === "uk" ? "3 вправи · Введіть інформацію у форму" : lang === "fa" ? "۳ تمرین · اطلاعات را در فرم وارد کنید" : "3 تاقیکردنەوە · داتا بخرە فۆرمەکەدا"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Schreiben A — Form Doldur" : lang==="en" ? "Schreiben A — Fill the Form" : lang==="ar" ? "Schreiben A — املأ النموذج" : lang === "es" ? "Schreiben A — Rellena el formulario" : lang === "uk" ? "Schreiben A — Заповніть форму" : lang === "fa" ? "Schreiben A — فرم را پر کنید" : "Schreiben A — فۆرم پڕبکەرەوە"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Bilgileri forma gir" : lang==="en" ? "3 exercises · Enter the information into the form" : lang==="ar" ? "3 تمارين · أدخل المعلومات في النموذج" : lang === "es" ? "3 ejercicios · Introduce la información en el formulario" : lang === "uk" ? "3 вправи · Введіть інформацію у форму" : lang === "fa" ? "۳ تمرین · اطلاعات را در فرم وارد کنید" : "3 تاقیکردنەوە · داتا بخرە فۆرمەکەدا"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -5110,13 +5110,13 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
   const [showModel, setShowModel] = useState(false);
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF7E6", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75 }} dir="ltr">
         {ex.task}
       </div>
       <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{ex["task"+lang.charAt(0).toUpperCase()+lang.slice(1)] || ex.taskKu}</div>
       <div style={{ marginBottom: 10 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 5 }}>{lang==="tr" ? "Şu noktalara değinmelisiniz:" : lang==="en" ? "You should cover these points:" : lang==="ar" ? "يجب أن تتناول هذه النقاط:" : lang === "uk" ? "Ви маєте висвітлити ці пункти:" : lang === "fa" ? "باید به این نکات بپردازید:" : "دەبێت لەم خاڵانە بنووسیت:"}</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 5 }}>{lang==="tr" ? "Şu noktalara değinmelisiniz:" : lang==="en" ? "You should cover these points:" : lang==="ar" ? "يجب أن تتناول هذه النقاط:" : lang === "es" ? "Debes cubrir estos puntos:" : lang === "uk" ? "Ви маєте висвітлити ці пункти:" : lang === "fa" ? "باید به این نکات بپردازید:" : "دەبێت لەم خاڵانە بنووسیت:"}</div>
         {ex.bullets.map((b, i) => (
           <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 4 }}>
             <span style={{ color: "#F59E0B", fontWeight: 800, flexShrink: 0 }}>•</span>
@@ -5126,7 +5126,7 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
         ))}
       </div>
       <div style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600, marginBottom: 8 }}>
-        {lang==="tr" ? "✏️ Yaklaşık 30 kelime · ca. 30 Wörter" : lang==="en" ? "✏️ About 30 words · ca. 30 Wörter" : lang==="ar" ? "✏️ حوالي 30 كلمة · ca. 30 Wörter" : lang === "uk" ? "✏️ Близько 30 слів · ca. 30 Wörter" : lang === "fa" ? "✏️ حدود ۳۰ واژه · ca. 30 Wörter" : "✏️ نزیکەی ٣٠ وشە · ca. 30 Wörter"}
+        {lang==="tr" ? "✏️ Yaklaşık 30 kelime · ca. 30 Wörter" : lang==="en" ? "✏️ About 30 words · ca. 30 Wörter" : lang==="ar" ? "✏️ حوالي 30 كلمة · ca. 30 Wörter" : lang === "es" ? "✏️ Unas 30 palabras · ca. 30 Wörter" : lang === "uk" ? "✏️ Близько 30 слів · ca. 30 Wörter" : lang === "fa" ? "✏️ حدود ۳۰ واژه · ca. 30 Wörter" : "✏️ نزیکەی ٣٠ وشە · ca. 30 Wörter"}
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, fontStyle: "italic", marginBottom: 12 }} dir="ltr">
         Beginnen Sie mit: „{ex.salutation}"
@@ -5137,13 +5137,13 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
           background: showModel ? "#5B5BD6" : "#fff",
           color: showModel ? "#fff" : "#5B5BD6",
           fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
-        {showModel ? (lang==="tr" ? "▲ Kapat" : lang==="en" ? "▲ Close" : lang==="ar" ? "▲ إغلاق" : lang === "uk" ? "▲ Закрити" : lang === "fa" ? "▲ بستن" : "▲ داخستن") : (lang==="tr" ? "▼ Örnek cevap — Musterlösung" : lang==="en" ? "▼ Sample answer — Musterlösung" : lang==="ar" ? "▼ إجابة نموذجية — Musterlösung" : lang === "uk" ? "▼ Зразок відповіді — Musterlösung" : lang === "fa" ? "▼ نمونه پاسخ — Musterlösung" : "▼ نموونەی وەڵام — Musterlösung")}
+        {showModel ? (lang==="tr" ? "▲ Kapat" : lang==="en" ? "▲ Close" : lang==="ar" ? "▲ إغلاق" : lang === "es" ? "▲ Cerrar" : lang === "uk" ? "▲ Закрити" : lang === "fa" ? "▲ بستن" : "▲ داخستن") : (lang==="tr" ? "▼ Örnek cevap — Musterlösung" : lang==="en" ? "▼ Sample answer — Musterlösung" : lang==="ar" ? "▼ إجابة نموذجية — Musterlösung" : lang === "es" ? "▼ Respuesta modelo — Musterlösung" : lang === "uk" ? "▼ Зразок відповіді — Musterlösung" : lang === "fa" ? "▼ نمونه پاسخ — Musterlösung" : "▼ نموونەی وەڵام — Musterlösung")}
       </button>
       {showModel && (
         <div style={{ marginTop: 10, background: "#F0FDF4", borderRadius: 10, padding: "12px 14px", border: "1.5px solid #86EFAC" }}>
           <div style={{ fontSize: 11.5, fontWeight: 700, color: "#16A34A", marginBottom: 6 }}>✓ Musterlösung</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.85, whiteSpace: "pre-line" }} dir="ltr">{ex.modelAnswer}</div>
-          <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
+          <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang === "es" ? (ex.modelAnswerEs||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
         </div>
       )}
     </div>
@@ -5163,8 +5163,8 @@ function SchreibenBSection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>✍️</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Schreiben B — Kısa Yaz" : lang==="en" ? "Schreiben B — Write Short" : lang==="ar" ? "Schreiben B — اكتب باختصار" : lang === "uk" ? "Schreiben B — Напишіть коротко" : lang === "fa" ? "Schreiben B — کوتاه بنویسید" : "Schreiben B — کورت بنووسە"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Kısa mesaj (~30 kelime)" : lang==="en" ? "3 exercises · Short message (~30 words)" : lang==="ar" ? "3 تمارين · رسالة قصيرة (~30 كلمة)" : lang === "uk" ? "3 вправи · Коротке повідомлення (~30 слів)" : lang === "fa" ? "۳ تمرین · پیام کوتاه (~۳۰ واژه)" : "3 تاقیکردنەوە · نامەیەکی کورت (~٣٠ وشە)"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Schreiben B — Kısa Yaz" : lang==="en" ? "Schreiben B — Write Short" : lang==="ar" ? "Schreiben B — اكتب باختصار" : lang === "es" ? "Schreiben B — Escribe breve" : lang === "uk" ? "Schreiben B — Напишіть коротко" : lang === "fa" ? "Schreiben B — کوتاه بنویسید" : "Schreiben B — کورت بنووسە"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Kısa mesaj (~30 kelime)" : lang==="en" ? "3 exercises · Short message (~30 words)" : lang==="ar" ? "3 تمارين · رسالة قصيرة (~30 كلمة)" : lang === "es" ? "3 ejercicios · Mensaje corto (~30 palabras)" : lang === "uk" ? "3 вправи · Коротке повідомлення (~30 слів)" : lang === "fa" ? "۳ تمرین · پیام کوتاه (~۳۰ واژه)" : "3 تاقیکردنەوە · نامەیەکی کورت (~٣٠ وشە)"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -5184,12 +5184,12 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
   function closeAll() { setOpenCards({}); }
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FDF4FF", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12.5, border: "1px solid #E9D5FF" }}>
         <span style={{ fontWeight: 700, color: "#7C3AED" }}>{ex.person}</span>
-        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
+        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang === "es" ? (ex.personEs||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? "Her karta tıklayarak örneği gör:" : lang==="en" ? "Tap each card to see the example:" : lang==="ar" ? "انقر كل بطاقة لرؤية المثال:" : lang === "uk" ? "Торкніться кожної картки, щоб побачити приклад:" : lang === "fa" ? "روی هر کارت بزنید تا مثال را ببینید:" : "هەر کارتێک کلیک بکە نموونەکە ببینیت:"}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? "Her karta tıklayarak örneği gör:" : lang==="en" ? "Tap each card to see the example:" : lang==="ar" ? "انقر كل بطاقة لرؤية المثال:" : lang === "es" ? "Toca cada tarjeta para ver el ejemplo:" : lang === "uk" ? "Торкніться кожної картки, щоб побачити приклад:" : lang === "fa" ? "روی هر کارت بزنید تا مثال را ببینید:" : "هەر کارتێک کلیک بکە نموونەکە ببینیت:"}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
         {ex.prompts.map((p, i) => (
           <div key={i} onClick={() => toggle(i)}
@@ -5210,11 +5210,11 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
       <div style={{ display: "flex", gap: 8 }}>
         <button onClick={openAll}
           style={{ flex: 1, padding: "7px", borderRadius: 8, border: "none", background: "#7C3AED", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
-          {lang==="tr" ? "✓ Tüm örnekler" : lang==="en" ? "✓ All examples" : lang==="ar" ? "✓ كل الأمثلة" : lang === "uk" ? "✓ Усі приклади" : lang === "fa" ? "✓ همه مثال‌ها" : "✓ هەموو نموونەکان"}
+          {lang==="tr" ? "✓ Tüm örnekler" : lang==="en" ? "✓ All examples" : lang==="ar" ? "✓ كل الأمثلة" : lang === "es" ? "✓ Todos los ejemplos" : lang === "uk" ? "✓ Усі приклади" : lang === "fa" ? "✓ همه مثال‌ها" : "✓ هەموو نموونەکان"}
         </button>
         <button onClick={closeAll}
           style={{ flex: 1, padding: "7px", borderRadius: 8, border: "1.5px solid #E4E4E8", background: "#fff", color: C.muted, fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
-          {lang==="tr" ? "↺ Kapat" : lang==="en" ? "↺ Close" : lang==="ar" ? "↺ إغلاق" : lang === "uk" ? "↺ Закрити" : lang === "fa" ? "↺ بستن" : "↺ داخستن"}
+          {lang==="tr" ? "↺ Kapat" : lang==="en" ? "↺ Close" : lang==="ar" ? "↺ إغلاق" : lang === "es" ? "↺ Cerrar" : lang === "uk" ? "↺ Закрити" : lang === "fa" ? "↺ بستن" : "↺ داخستن"}
         </button>
       </div>
     </div>
@@ -5234,8 +5234,8 @@ function MündlichASection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>🎤</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Mündlich A — Kendini Tanıt" : lang==="en" ? "Mündlich A — Introduce Yourself" : lang==="ar" ? "Mündlich A — عرّف عن نفسك" : lang === "uk" ? "Mündlich A — Представтеся" : lang === "fa" ? "Mündlich A — خودتان را معرفی کنید" : "Mündlich A — خۆت بناسێنە"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Sich vorstellen" : lang==="en" ? "3 exercises · Sich vorstellen" : lang==="ar" ? "3 تمارين · Sich vorstellen" : lang === "uk" ? "3 вправи · Sich vorstellen" : lang === "fa" ? "۳ تمرین · Sich vorstellen" : "3 تاقیکردنەوە · Sich vorstellen"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Mündlich A — Kendini Tanıt" : lang==="en" ? "Mündlich A — Introduce Yourself" : lang==="ar" ? "Mündlich A — عرّف عن نفسك" : lang === "es" ? "Mündlich A — Preséntate" : lang === "uk" ? "Mündlich A — Представтеся" : lang === "fa" ? "Mündlich A — خودتان را معرفی کنید" : "Mündlich A — خۆت بناسێنە"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Sich vorstellen" : lang==="en" ? "3 exercises · Sich vorstellen" : lang==="ar" ? "3 تمارين · Sich vorstellen" : lang === "es" ? "3 ejercicios · Sich vorstellen" : lang === "uk" ? "3 вправи · Sich vorstellen" : lang === "fa" ? "۳ تمرین · Sich vorstellen" : "3 تاقیکردنەوە · Sich vorstellen"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -5252,25 +5252,25 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
   const [showDlg, setShowDlg] = useState(false);
   return (
     <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF0F5", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75, border: "1px solid #FBCFE8" }} dir="ltr">
         {ex.scenario}
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.scenarioTr||ex.scenarioKu) : lang==="en" ? (ex.scenarioEn||ex.scenarioKu) : lang==="ar" ? (ex.scenarioAr||ex.scenarioKu) : lang==="uk" ? (ex.scenarioUk||ex.scenarioEn||ex.scenarioKu) : lang==="fa" ? (ex.scenarioFa||ex.scenarioEn||ex.scenarioKu) : ex.scenarioKu}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.scenarioTr||ex.scenarioKu) : lang==="en" ? (ex.scenarioEn||ex.scenarioKu) : lang==="ar" ? (ex.scenarioAr||ex.scenarioKu) : lang === "es" ? (ex.scenarioEs||ex.scenarioKu) : lang==="uk" ? (ex.scenarioUk||ex.scenarioEn||ex.scenarioKu) : lang==="fa" ? (ex.scenarioFa||ex.scenarioEn||ex.scenarioKu) : ex.scenarioKu}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
         <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px" }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Senin rolün" : lang==="en" ? "Your role" : lang==="ar" ? "دورك" : lang === "uk" ? "Твоя роль" : lang === "fa" ? "نقش تو" : "ڕۆڵی تۆ"}</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#5B5BD6" }}>{lang==="tr" ? (ex.yourRoleTr||ex.yourRoleKu) : lang==="en" ? (ex.yourRoleEn||ex.yourRoleKu) : lang==="ar" ? (ex.yourRoleAr||ex.yourRoleKu) : lang==="uk" ? (ex.yourRoleUk||ex.yourRoleEn||ex.yourRoleKu) : lang==="fa" ? (ex.yourRoleFa||ex.yourRoleEn||ex.yourRoleKu) : ex.yourRoleKu}</div>
+          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Senin rolün" : lang==="en" ? "Your role" : lang==="ar" ? "دورك" : lang === "es" ? "Tu papel" : lang === "uk" ? "Твоя роль" : lang === "fa" ? "نقش تو" : "ڕۆڵی تۆ"}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#5B5BD6" }}>{lang==="tr" ? (ex.yourRoleTr||ex.yourRoleKu) : lang==="en" ? (ex.yourRoleEn||ex.yourRoleKu) : lang==="ar" ? (ex.yourRoleAr||ex.yourRoleKu) : lang === "es" ? (ex.yourRoleEs||ex.yourRoleKu) : lang==="uk" ? (ex.yourRoleUk||ex.yourRoleEn||ex.yourRoleKu) : lang==="fa" ? (ex.yourRoleFa||ex.yourRoleEn||ex.yourRoleKu) : ex.yourRoleKu}</div>
           <div style={{ fontSize: 11.5, color: C.muted }} dir="ltr">{ex.yourRole}</div>
         </div>
         <div style={{ background: "#F5F5FA", borderRadius: 10, padding: "10px 12px" }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Diğer kişinin rolü" : lang==="en" ? "The other person's role" : lang==="ar" ? "دور الشخص الآخر" : lang === "uk" ? "Роль співрозмовника" : lang === "fa" ? "نقش طرف مقابل" : "ڕۆڵی ئەوی دیکە"}</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#374151" }}>{lang==="tr" ? (ex.partnerRoleTr||ex.partnerRoleKu) : lang==="en" ? (ex.partnerRoleEn||ex.partnerRoleKu) : lang==="ar" ? (ex.partnerRoleAr||ex.partnerRoleKu) : lang==="uk" ? (ex.partnerRoleUk||ex.partnerRoleEn||ex.partnerRoleKu) : lang==="fa" ? (ex.partnerRoleFa||ex.partnerRoleEn||ex.partnerRoleKu) : ex.partnerRoleKu}</div>
+          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Diğer kişinin rolü" : lang==="en" ? "The other person's role" : lang==="ar" ? "دور الشخص الآخر" : lang === "es" ? "El papel de la otra persona" : lang === "uk" ? "Роль співрозмовника" : lang === "fa" ? "نقش طرف مقابل" : "ڕۆڵی ئەوی دیکە"}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#374151" }}>{lang==="tr" ? (ex.partnerRoleTr||ex.partnerRoleKu) : lang==="en" ? (ex.partnerRoleEn||ex.partnerRoleKu) : lang==="ar" ? (ex.partnerRoleAr||ex.partnerRoleKu) : lang === "es" ? (ex.partnerRoleEs||ex.partnerRoleKu) : lang==="uk" ? (ex.partnerRoleUk||ex.partnerRoleEn||ex.partnerRoleKu) : lang==="fa" ? (ex.partnerRoleFa||ex.partnerRoleEn||ex.partnerRoleKu) : ex.partnerRoleKu}</div>
           <div style={{ fontSize: 11.5, color: C.muted }} dir="ltr">{ex.partnerRole}</div>
         </div>
       </div>
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, color: C.muted, marginBottom: 6 }}>🗣️ {lang==="tr" ? "Bu ifadeleri kullanabilirsin:" : lang==="en" ? "You can use these phrases:" : lang==="ar" ? "يمكنك استخدام هذه العبارات:" : lang === "uk" ? "Ви можете використати ці фрази:" : lang === "fa" ? "می‌توانید از این عبارات استفاده کنید:" : "دەتوانیت ئەم ووتانەت بەکار بێنیت:"}</div>
+        <div style={{ fontSize: 11.5, fontWeight: 700, color: C.muted, marginBottom: 6 }}>🗣️ {lang==="tr" ? "Bu ifadeleri kullanabilirsin:" : lang==="en" ? "You can use these phrases:" : lang==="ar" ? "يمكنك استخدام هذه العبارات:" : lang === "es" ? "Puedes usar estas frases:" : lang === "uk" ? "Ви можете використати ці фрази:" : lang === "fa" ? "می‌توانید از این عبارات استفاده کنید:" : "دەتوانیت ئەم ووتانەت بەکار بێنیت:"}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
           {ex.hints.map((h, i) => (
             <span key={i} style={{ background: "#fff", border: "1.5px solid #E4E4E8", borderRadius: 8, padding: "4px 10px", fontSize: 12 }} dir="ltr">{h}</span>
@@ -5283,7 +5283,7 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
           background: showDlg ? "#EC4899" : "#fff",
           color: showDlg ? "#fff" : "#EC4899",
           fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
-        {showDlg ? (lang==="tr" ? "▲ Kapat" : lang==="en" ? "▲ Close" : lang==="ar" ? "▲ إغلاق" : lang === "uk" ? "▲ Закрити" : lang === "fa" ? "▲ بستن" : "▲ داخستن") : (lang==="tr" ? "▼ Örnek diyalog — Musterdialog" : lang==="en" ? "▼ Sample dialogue — Musterdialog" : lang==="ar" ? "▼ حوار نموذجي — Musterdialog" : lang === "uk" ? "▼ Зразок діалогу — Musterdialog" : lang === "fa" ? "▼ نمونه گفتگو — Musterdialog" : "▼ نموونەی گفتوگۆ — Musterdialog")}
+        {showDlg ? (lang==="tr" ? "▲ Kapat" : lang==="en" ? "▲ Close" : lang==="ar" ? "▲ إغلاق" : lang === "es" ? "▲ Cerrar" : lang === "uk" ? "▲ Закрити" : lang === "fa" ? "▲ بستن" : "▲ داخستن") : (lang==="tr" ? "▼ Örnek diyalog — Musterdialog" : lang==="en" ? "▼ Sample dialogue — Musterdialog" : lang==="ar" ? "▼ حوار نموذجي — Musterdialog" : lang === "es" ? "▼ Diálogo modelo — Musterdialog" : lang === "uk" ? "▼ Зразок діалогу — Musterdialog" : lang === "fa" ? "▼ نمونه گفتگو — Musterdialog" : "▼ نموونەی گفتوگۆ — Musterdialog")}
       </button>
       {showDlg && (
         <div style={{ marginTop: 12, display: "grid", gap: 8 }}>
@@ -5327,8 +5327,8 @@ function MündlichBSection({ lang = "ku", open = false, onToggle }) {
             <span style={{ fontSize: 18 }}>🗣️</span>
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Mündlich B — Rol Yapma" : lang==="en" ? "Mündlich B — Role Play" : lang==="ar" ? "Mündlich B — تمثيل الأدوار" : lang === "uk" ? "Mündlich B — Рольова гра" : lang === "fa" ? "Mündlich B — ایفای نقش" : "Mündlich B — ڕۆڵ یازی"}</div>
-            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Rollenspiel · Alıştır" : lang==="en" ? "3 exercises · Rollenspiel · Practice" : lang==="ar" ? "3 تمارين · Rollenspiel · تدرّب" : lang === "uk" ? "3 вправи · Rollenspiel · Практика" : lang === "fa" ? "۳ تمرین · Rollenspiel · تمرین" : "3 تاقیکردنەوە · Rollenspiel · دەم پێ بکە"}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{lang==="tr" ? "Mündlich B — Rol Yapma" : lang==="en" ? "Mündlich B — Role Play" : lang==="ar" ? "Mündlich B — تمثيل الأدوار" : lang === "es" ? "Mündlich B — Juego de roles" : lang === "uk" ? "Mündlich B — Рольова гра" : lang === "fa" ? "Mündlich B — ایفای نقش" : "Mündlich B — ڕۆڵ یازی"}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? "3 alıştırma · Rollenspiel · Alıştır" : lang==="en" ? "3 exercises · Rollenspiel · Practice" : lang==="ar" ? "3 تمارين · Rollenspiel · تدرّب" : lang === "es" ? "3 ejercicios · Rollenspiel · Practica" : lang === "uk" ? "3 вправи · Rollenspiel · Практика" : lang === "fa" ? "۳ تمرین · Rollenspiel · تمرین" : "3 تاقیکردنەوە · Rollenspiel · دەم پێ بکە"}</div>
           </div>
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
@@ -5397,7 +5397,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
           </div>
           <div>
             <div style={{ fontWeight:800, fontSize:16, color:C.text }}>{tApp(lang,"ai_quiz_title")}</div>
-            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang === "tr" ? "Her seferinde 10 soru" : lang === "en" ? "10 questions each round" : lang === "ar" ? "10 أسئلة في كل جولة" : lang === "uk" ? "10 питань за раунд" : lang === "fa" ? "۱۰ سؤال در هر دور" : "هەر گەڕێک ١٠ پرسیار"}</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang === "tr" ? "Her seferinde 10 soru" : lang === "en" ? "10 questions each round" : lang === "ar" ? "10 أسئلة في كل جولة" : lang === "es" ? "10 preguntas por ronda" : lang === "uk" ? "10 питань за раунд" : lang === "fa" ? "۱۰ سؤال در هر دور" : "هەر گەڕێک ١٠ پرسیار"}</div>
           </div>
         </div>
 
@@ -5409,9 +5409,9 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
         {/* stats row */}
         <div style={{ display:"flex", justifyContent:"center", gap:20, marginBottom: lastDelta !== null ? 12 : 20 }}>
           {[
-            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#10b981" },
-            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#ef4444" },
-            { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"#5B5BD6" },
+            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#10b981" },
+            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#ef4444" },
+            { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "es" ? "Objetivo" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"#5B5BD6" },
           ].map(r => (
             <div key={r.label} style={{ textAlign:"center" }}>
               <div style={{ fontWeight:700, fontSize:15, color:r.color }}>{r.val}</div>
@@ -5422,7 +5422,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
 
         {lastDelta !== null && (
           <div style={{ background: lastDelta >= 0 ? "rgba(16,185,129,.1)" : "rgba(239,68,68,.1)", borderRadius:10, padding:"7px 12px", fontSize:13, marginBottom:16, color: lastDelta >= 0 ? "#065f46" : "#991b1b", fontWeight:600, textAlign:"center" }}>
-            {lastDelta >= 0 ? `+${lastDelta}٪` : `${lastDelta}٪`} — {lang === "tr" ? "Son test" : lang === "en" ? "Last test" : lang === "ar" ? "آخر اختبار" : lang === "uk" ? "Останній тест" : lang === "fa" ? "آخرین آزمون" : "دوایین تاقیکردنەوە"}
+            {lastDelta >= 0 ? `+${lastDelta}٪` : `${lastDelta}٪`} — {lang === "tr" ? "Son test" : lang === "en" ? "Last test" : lang === "ar" ? "آخر اختبار" : lang === "es" ? "Última prueba" : lang === "uk" ? "Останній тест" : lang === "fa" ? "آخرین آزمون" : "دوایین تاقیکردنەوە"}
           </div>
         )}
 
@@ -5437,24 +5437,24 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
   if (phase === "nokey") return (
     <div style={{ marginTop:26, textAlign:"center", padding:20, background:"#fef3c7", borderRadius:14 }}>
       <div style={{ fontSize:22, marginBottom:8 }}>🔑</div>
-      <div style={{ color:"#92400e", fontWeight:700, fontSize:15, marginBottom:6 }}>{lang === "tr" ? "API anahtarın yok" : lang === "en" ? "You don't have an API key" : lang === "ar" ? "ليس لديك مفتاح API" : lang === "uk" ? "У вас немає ключа API" : lang === "fa" ? "شما کلید API ندارید" : "API کلیلت نییە"}</div>
-      <div style={{ color:"#78350f", fontSize:13 }}>{lang === "tr" ? "Sayfanın üstündeki 🔑 butonuna tıklayarak anahtarını ekle." : lang === "en" ? "Tap the 🔑 button at the top of the page to add your key." : lang === "ar" ? "انقر زر 🔑 أعلى الصفحة لإضافة مفتاحك." : lang === "uk" ? "Натисніть кнопку 🔑 угорі сторінки, щоб додати свій ключ." : lang === "fa" ? "روی دکمه 🔑 بالای صفحه بزنید تا کلید خود را اضافه کنید." : "لە سەرەوەی پەڕەکە کلیک بکە لەسەر 🔑 و کلیلەکەت زیاد بکە."}</div>
+      <div style={{ color:"#92400e", fontWeight:700, fontSize:15, marginBottom:6 }}>{lang === "tr" ? "API anahtarın yok" : lang === "en" ? "You don't have an API key" : lang === "ar" ? "ليس لديك مفتاح API" : lang === "es" ? "No tienes una clave API" : lang === "uk" ? "У вас немає ключа API" : lang === "fa" ? "شما کلید API ندارید" : "API کلیلت نییە"}</div>
+      <div style={{ color:"#78350f", fontSize:13 }}>{lang === "tr" ? "Sayfanın üstündeki 🔑 butonuna tıklayarak anahtarını ekle." : lang === "en" ? "Tap the 🔑 button at the top of the page to add your key." : lang === "ar" ? "انقر زر 🔑 أعلى الصفحة لإضافة مفتاحك." : lang === "es" ? "Toca el botón 🔑 en la parte superior de la página para añadir tu clave." : lang === "uk" ? "Натисніть кнопку 🔑 угорі сторінки, щоб додати свій ключ." : lang === "fa" ? "روی دکمه 🔑 بالای صفحه بزنید تا کلید خود را اضافه کنید." : "لە سەرەوەی پەڕەکە کلیک بکە لەسەر 🔑 و کلیلەکەت زیاد بکە."}</div>
     </div>
   );
   if (phase === "nocredit") return (
     <div style={{ marginTop:26, textAlign:"center", padding:20, background:"#fef3c7", borderRadius:14 }}>
       <div style={{ fontSize:22, marginBottom:8 }}>💳</div>
-      <div style={{ color:"#92400e", fontWeight:700, fontSize:15, marginBottom:6 }}>{lang === "tr" ? "Anthropic krediniz bitti" : lang === "en" ? "Your Anthropic credit has run out" : lang === "ar" ? "نفد رصيد Anthropic الخاص بك" : lang === "uk" ? "Ваш кредит Anthropic вичерпано" : lang === "fa" ? "اعتبار Anthropic شما تمام شده است" : "Anthropic کرێدیتت تەواو بووە"}</div>
+      <div style={{ color:"#92400e", fontWeight:700, fontSize:15, marginBottom:6 }}>{lang === "tr" ? "Anthropic krediniz bitti" : lang === "en" ? "Your Anthropic credit has run out" : lang === "ar" ? "نفد رصيد Anthropic الخاص بك" : lang === "es" ? "Tu crédito de Anthropic se ha agotado" : lang === "uk" ? "Ваш кредит Anthropic вичерпано" : lang === "fa" ? "اعتبار Anthropic شما تمام شده است" : "Anthropic کرێدیتت تەواو بووە"}</div>
       <div style={{ color:"#78350f", fontSize:13, lineHeight:1.7, marginBottom:12 }}>
-        {lang === "tr" ? <><strong>console.anthropic.com/settings/billing</strong> adresine giderek kredi ekle, ardından tekrar dene.</> : lang === "en" ? <>Go to <strong>console.anthropic.com/settings/billing</strong> to add credit, then try again.</> : lang === "ar" ? <>اذهب إلى <strong>console.anthropic.com/settings/billing</strong> لإضافة رصيد، ثم أعد المحاولة.</> : lang === "fa" ? <>برای افزودن اعتبار به <strong>console.anthropic.com/settings/billing</strong> بروید، سپس دوباره تلاش کنید.</> : lang === "uk" ? <>Перейдіть на <strong>console.anthropic.com/settings/billing</strong>, щоб додати кредит, потім спробуйте знову.</> : <>بچۆ بۆ <strong>console.anthropic.com/settings/billing</strong> و کرێدیت زیاد بکە، پاشان دووبارە هەوڵبدەرەوە.</>}
+        {lang === "tr" ? <><strong>console.anthropic.com/settings/billing</strong> adresine giderek kredi ekle, ardından tekrar dene.</> : lang === "en" ? <>Go to <strong>console.anthropic.com/settings/billing</strong> to add credit, then try again.</> : lang === "ar" ? <>اذهب إلى <strong>console.anthropic.com/settings/billing</strong> لإضافة رصيد، ثم أعد المحاولة.</> : lang === "fa" ? <>برای افزودن اعتبار به <strong>console.anthropic.com/settings/billing</strong> بروید، سپس دوباره تلاش کنید.</> : lang === "es" ? <>Ve a <strong>console.anthropic.com/settings/billing</strong> para añadir crédito y vuelve a intentarlo.</> : lang === "uk" ? <>Перейдіть на <strong>console.anthropic.com/settings/billing</strong>, щоб додати кредит, потім спробуйте знову.</> : <>بچۆ بۆ <strong>console.anthropic.com/settings/billing</strong> و کرێدیت زیاد بکە، پاشان دووبارە هەوڵبدەرەوە.</>}
       </div>
-      <button onClick={generate} style={{ background:"#f59e0b", color:"#fff", border:"none", padding:"9px 18px", borderRadius:9, fontWeight:700 }}>{lang === "tr" ? "Tekrar dene" : lang === "en" ? "Try again" : lang === "ar" ? "أعد المحاولة" : lang === "uk" ? "Спробуйте ще раз" : lang === "fa" ? "دوباره تلاش کنید" : "دووبارە هەوڵبدە"}</button>
+      <button onClick={generate} style={{ background:"#f59e0b", color:"#fff", border:"none", padding:"9px 18px", borderRadius:9, fontWeight:700 }}>{lang === "tr" ? "Tekrar dene" : lang === "en" ? "Try again" : lang === "ar" ? "أعد المحاولة" : lang === "es" ? "Intentar de nuevo" : lang === "uk" ? "Спробуйте ще раз" : lang === "fa" ? "دوباره تلاش کنید" : "دووبارە هەوڵبدە"}</button>
     </div>
   );
   if (phase === "error") return (
     <div style={{ marginTop:26, textAlign:"center", padding:20, background:"#fbeae6", borderRadius:14 }}>
-      <div style={{ color:C.redDk, fontSize:15, marginBottom:10 }}>{lang === "tr" ? "Üzgünüz, soru oluşturma başarısız oldu." : lang === "en" ? "Sorry, question generation failed." : lang === "ar" ? "عذرًا، فشل إنشاء السؤال." : lang === "uk" ? "Вибачте, не вдалося згенерувати питання." : lang === "fa" ? "متأسفیم، ساختن سؤال ممکن نشد." : "ببورە، دروستکردنی پرسیار سەرکەوتوو نەبوو."}</div>
-      <button onClick={generate} style={{ background:C.red, color:"#fff", border:"none", padding:"9px 18px", borderRadius:9, fontWeight:700 }}>{lang === "tr" ? "Tekrar dene" : lang === "en" ? "Try again" : lang === "ar" ? "أعد المحاولة" : lang === "uk" ? "Спробуйте ще раз" : lang === "fa" ? "دوباره تلاش کنید" : "دووبارە هەوڵبدە"}</button>
+      <div style={{ color:C.redDk, fontSize:15, marginBottom:10 }}>{lang === "tr" ? "Üzgünüz, soru oluşturma başarısız oldu." : lang === "en" ? "Sorry, question generation failed." : lang === "ar" ? "عذرًا، فشل إنشاء السؤال." : lang === "es" ? "Lo sentimos, no se pudo generar la pregunta." : lang === "uk" ? "Вибачте, не вдалося згенерувати питання." : lang === "fa" ? "متأسفیم، ساختن سؤال ممکن نشد." : "ببورە، دروستکردنی پرسیار سەرکەوتوو نەبوو."}</div>
+      <button onClick={generate} style={{ background:C.red, color:"#fff", border:"none", padding:"9px 18px", borderRadius:9, fontWeight:700 }}>{lang === "tr" ? "Tekrar dene" : lang === "en" ? "Try again" : lang === "ar" ? "أعد المحاولة" : lang === "es" ? "Intentar de nuevo" : lang === "uk" ? "Спробуйте ще раз" : lang === "fa" ? "دوباره تلاش کنید" : "دووبارە هەوڵبدە"}</button>
     </div>
   );
 
@@ -5470,9 +5470,9 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
         <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, marginBottom: 16, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", justifyContent: "center" }}>
           <Donut pct={pct} />
           <div style={{ textAlign: "center", minWidth: 150 }}>
-            <div style={{ fontSize: 14, color: C.muted, marginBottom: 4 }}>{lang === "tr" ? "Bu test" : lang === "en" ? "This test" : lang === "ar" ? "هذا الاختبار" : lang === "uk" ? "Цей тест" : lang === "fa" ? "این آزمون" : "ئەم تاقیکردنەوەیە"}</div>
+            <div style={{ fontSize: 14, color: C.muted, marginBottom: 4 }}>{lang === "tr" ? "Bu test" : lang === "en" ? "This test" : lang === "ar" ? "هذا الاختبار" : lang === "es" ? "Esta prueba" : lang === "uk" ? "Цей тест" : lang === "fa" ? "این آزمون" : "ئەم تاقیکردنەوەیە"}</div>
             <div style={{ fontSize: 26, fontWeight: 800, color: lastDelta >= 0 ? C.green : C.redDk }} dir="ltr">{lastDelta >= 0 ? "+" : ""}{lastDelta}%</div>
-            <div style={{ fontSize: 13.5, color: C.muted, marginTop: 6 }}>{lang === "tr" ? "Genel puan:" : lang === "en" ? "Overall score:" : lang === "ar" ? "النتيجة الإجمالية:" : lang === "uk" ? "Загальний бал:" : lang === "fa" ? "امتیاز کلی:" : "ڕێژەی گشتی:"} <b style={{ color: C.green }}>{Math.round(pct)}٪</b></div>
+            <div style={{ fontSize: 13.5, color: C.muted, marginTop: 6 }}>{lang === "tr" ? "Genel puan:" : lang === "en" ? "Overall score:" : lang === "ar" ? "النتيجة الإجمالية:" : lang === "es" ? "Puntuación total:" : lang === "uk" ? "Загальний бал:" : lang === "fa" ? "امتیاز کلی:" : "ڕێژەی گشتی:"} <b style={{ color: C.green }}>{Math.round(pct)}٪</b></div>
           </div>
         </div>
       )}
@@ -5633,7 +5633,7 @@ B1_REDEMITTEL.forEach((cat, ci) => {
 function RedemittelPanel({ lang = "ku" }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>📚 {lang === "tr" ? "B1 Önemli İfadeler ve Bağlaçlar (örneklerle)" : lang === "en" ? "B1 Key Phrases and Connectors (with examples)" : lang === "ar" ? "عبارات وروابط B1 المهمة (بأمثلة)" : lang === "uk" ? "B1 Ключові фрази та сполучники (з прикладами)" : lang === "fa" ? "B1 عبارات کلیدی و حروف ربط (با مثال)" : "دەستەواژە و گرێدەرە گرنگەکانی B1 (بە نموونە)"}</div>
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>📚 {lang === "tr" ? "B1 Önemli İfadeler ve Bağlaçlar (örneklerle)" : lang === "en" ? "B1 Key Phrases and Connectors (with examples)" : lang === "ar" ? "عبارات وروابط B1 المهمة (بأمثلة)" : lang === "es" ? "B1 Frases clave y conectores (con ejemplos)" : lang === "uk" ? "B1 Ключові фрази та сполучники (з прикладами)" : lang === "fa" ? "B1 عبارات کلیدی و حروف ربط (با مثال)" : "دەستەواژە و گرێدەرە گرنگەکانی B1 (بە نموونە)"}</div>
       <div style={{ display: "grid", gap: 12 }}>
         {B1_REDEMITTEL.map((cat, ci) => (
           <CollapsibleCat key={ci} de={cat.de} ku={tC(cat, lang)} accent={C.gold}>
@@ -5701,7 +5701,7 @@ const B2_PRAESENTATION = [
 function PraesentationPanel({ lang = "ku" }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10, display:"flex", alignItems:"center", gap:6 }}><Mic size={14} /> {lang === "tr" ? "Sunum Yapısı (Präsentation) — B2" : lang === "en" ? "Presentation Structure (Präsentation) — B2" : lang === "ar" ? "بنية العرض التقديمي (Präsentation) — B2" : lang === "uk" ? "Структура презентації (Präsentation) — B2" : lang === "fa" ? "ساختار ارائه (Präsentation) — B2" : "پێکهاتەی پێشکەشکردن (Präsentation) — B2"}</div>
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10, display:"flex", alignItems:"center", gap:6 }}><Mic size={14} /> {lang === "tr" ? "Sunum Yapısı (Präsentation) — B2" : lang === "en" ? "Presentation Structure (Präsentation) — B2" : lang === "ar" ? "بنية العرض التقديمي (Präsentation) — B2" : lang === "es" ? "Estructura de la presentación (Präsentation) — B2" : lang === "uk" ? "Структура презентації (Präsentation) — B2" : lang === "fa" ? "ساختار ارائه (Präsentation) — B2" : "پێکهاتەی پێشکەشکردن (Präsentation) — B2"}</div>
       <div style={{ display: "grid", gap: 12 }}>
         {B2_PRAESENTATION.map((cat, ci) => (
           <CollapsibleCat key={ci} de={cat.de} ku={tC(cat, lang)} accent={C.plum}>
@@ -7835,11 +7835,11 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
           <div style={{ fontWeight: 700, fontSize: 22, marginTop: 8 }}>{provName} — {level}</div>
           <div style={{ fontSize: 48, fontWeight: 800, marginTop: 6 }} dir="ltr">{result.pct}%</div>
           <div style={{ fontSize: 15, opacity: .92, marginTop: 4 }} dir="ltr">{result.correct} / {result.total}</div>
-          <div style={{ fontSize: 15, marginTop: 10 }}>{passed ? (lang === "tr" ? "Tebrikler! Geçtiniz ✓" : lang === "en" ? "Congratulations! You passed ✓" : lang === "ar" ? "تهانينا! لقد نجحت ✓" : lang === "uk" ? "Вітаємо! Ви склали ✓" : lang === "fa" ? "تبریک! قبول شدید ✓" : "پیرۆزە! دەرچوویت ✓") : (lang === "tr" ? "Henüz daha fazla pratik yapmanız gerekiyor." : lang === "en" ? "You still need more practice." : lang === "ar" ? "ما زلت بحاجة إلى مزيد من التدريب." : lang === "uk" ? "Вам потрібно ще потренуватися." : lang === "fa" ? "هنوز باید بیشتر تمرین کنید." : "هێشتا پێویستت بە مەشقی زیاترە.")}</div>
+          <div style={{ fontSize: 15, marginTop: 10 }}>{passed ? (lang === "tr" ? "Tebrikler! Geçtiniz ✓" : lang === "en" ? "Congratulations! You passed ✓" : lang === "ar" ? "تهانينا! لقد نجحت ✓" : lang === "es" ? "¡Enhorabuena! Has aprobado ✓" : lang === "uk" ? "Вітаємо! Ви склали ✓" : lang === "fa" ? "تبریک! قبول شدید ✓" : "پیرۆزە! دەرچوویت ✓") : (lang === "tr" ? "Henüz daha fazla pratik yapmanız gerekiyor." : lang === "en" ? "You still need more practice." : lang === "ar" ? "ما زلت بحاجة إلى مزيد من التدريب." : lang === "es" ? "Aún necesitas practicar más." : lang === "uk" ? "Вам потрібно ще потренуватися." : lang === "fa" ? "هنوز باید بیشتر تمرین کنید." : "هێشتا پێویستت بە مەشقی زیاترە.")}</div>
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-          <button onClick={() => { setPhase("run"); setIdx(0); setData({}); setAns({}); setResult(null); }} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : "دووبارە"}</button>
-          <button onClick={onClose} style={{ flex: 1, background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Kapat" : lang === "en" ? "Close" : lang === "ar" ? "إغلاق" : lang === "uk" ? "Закрити" : lang === "fa" ? "بستن" : "داخستن"}</button>
+          <button onClick={() => { setPhase("run"); setIdx(0); setData({}); setAns({}); setResult(null); }} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "es" ? "Reintentar" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : "دووبارە"}</button>
+          <button onClick={onClose} style={{ flex: 1, background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Kapat" : lang === "en" ? "Close" : lang === "ar" ? "إغلاق" : lang === "es" ? "Cerrar" : lang === "uk" ? "Закрити" : lang === "fa" ? "بستن" : "داخستن"}</button>
         </div>
       </div>
     );
@@ -7849,16 +7849,16 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
   if (phase === "overview") {
     return (
       <div className="rise">
-        <h3 style={{ fontWeight: 700, fontSize: 20, marginBottom: 4 }}>📋 {lang === "tr" ? "Genel Bakış" : lang === "en" ? "Overview" : lang === "ar" ? "نظرة عامة" : lang === "uk" ? "Огляд" : lang === "fa" ? "نمای کلی" : "پێداچوونەوە"}</h3>
-        <p style={{ color: C.muted, fontSize: 14, marginBottom: 16 }}>{lang === "tr" ? "Göndermeden önce bölümleri kontrol edin." : lang === "en" ? "Check the sections before submitting." : lang === "ar" ? "تحقق من الأقسام قبل الإرسال." : lang === "uk" ? "Перевірте розділи перед надсиланням." : lang === "fa" ? "پیش از ارسال بخش‌ها را بررسی کنید." : "پێش ناردن، دڵنیابە لە بەشەکان."}</p>
+        <h3 style={{ fontWeight: 700, fontSize: 20, marginBottom: 4 }}>📋 {lang === "tr" ? "Genel Bakış" : lang === "en" ? "Overview" : lang === "ar" ? "نظرة عامة" : lang === "es" ? "Resumen" : lang === "uk" ? "Огляд" : lang === "fa" ? "نمای کلی" : "پێداچوونەوە"}</h3>
+        <p style={{ color: C.muted, fontSize: 14, marginBottom: 16 }}>{lang === "tr" ? "Göndermeden önce bölümleri kontrol edin." : lang === "en" ? "Check the sections before submitting." : lang === "ar" ? "تحقق من الأقسام قبل الإرسال." : lang === "es" ? "Revisa las secciones antes de enviar." : lang === "uk" ? "Перевірте розділи перед надсиланням." : lang === "fa" ? "پیش از ارسال بخش‌ها را بررسی کنید." : "پێش ناردن، دڵنیابە لە بەشەکان."}</p>
         <div style={{ display: "grid", gap: 10 }}>
           {SECS.map((s, i) => {
             const c = data[s.type]; const a = ans[s.type] || {};
-            let info = lang === "tr" ? "Tamamlanmadı" : lang === "en" ? "Not completed" : lang === "ar" ? "غير مكتمل" : lang === "uk" ? "Не завершено" : lang === "fa" ? "کامل نشده" : "نەکراوەتەوە";
+            let info = lang === "tr" ? "Tamamlanmadı" : lang === "en" ? "Not completed" : lang === "ar" ? "غير مكتمل" : lang === "es" ? "Sin completar" : lang === "uk" ? "Не завершено" : lang === "fa" ? "کامل نشده" : "نەکراوەتەوە";
             if (c && c !== "loading" && c !== "error") {
-              if (s.type === "schreiben") info = lang === "tr" ? "Elle (kağıt) ✍️" : lang === "en" ? "By hand (paper) ✍️" : lang === "ar" ? "بخط اليد (ورقة) ✍️" : lang === "uk" ? "Від руки (папір) ✍️" : lang === "fa" ? "با دست (کاغذ) ✍️" : "بە دەست (دەفتەر) ✍️";
-              else if (s.type === "muendlich") info = lang === "tr" ? "Sözlü 🗣️" : lang === "en" ? "Spoken 🗣️" : lang === "ar" ? "شفهي 🗣️" : lang === "uk" ? "Усно 🗣️" : lang === "fa" ? "شفاهی 🗣️" : "زارەکی 🗣️";
-              else { const n = Object.keys(a).length; info = lang === "tr" ? `${n} cevap` : lang === "en" ? `${n} answers` : lang === "ar" ? `${n} إجابة` : lang === "fa" ? `${n} پاسخ` : lang === "uk" ? `${n} відповідей` : `${n} وەڵام`; }
+              if (s.type === "schreiben") info = lang === "tr" ? "Elle (kağıt) ✍️" : lang === "en" ? "By hand (paper) ✍️" : lang === "ar" ? "بخط اليد (ورقة) ✍️" : lang === "es" ? "A mano (papel) ✍️" : lang === "uk" ? "Від руки (папір) ✍️" : lang === "fa" ? "با دست (کاغذ) ✍️" : "بە دەست (دەفتەر) ✍️";
+              else if (s.type === "muendlich") info = lang === "tr" ? "Sözlü 🗣️" : lang === "en" ? "Spoken 🗣️" : lang === "ar" ? "شفهي 🗣️" : lang === "es" ? "Oral 🗣️" : lang === "uk" ? "Усно 🗣️" : lang === "fa" ? "شفاهی 🗣️" : "زارەکی 🗣️";
+              else { const n = Object.keys(a).length; info = lang === "tr" ? `${n} cevap` : lang === "en" ? `${n} answers` : lang === "ar" ? `${n} إجابة` : lang === "fa" ? `${n} پاسخ` : lang === "es" ? `${n} respuestas` : lang === "uk" ? `${n} відповідей` : `${n} وەڵام`; }
             }
             return (
               <button key={s.type} onClick={() => { setPhase("run"); setIdx(i); }} style={{ textAlign: "right", background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "13px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -7869,8 +7869,8 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
           })}
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-          <button onClick={submit} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 14, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📨 {lang === "tr" ? "Gönder ve Puanı Al" : lang === "en" ? "Submit and Get Score" : lang === "ar" ? "إرسال والحصول على النتيجة" : lang === "uk" ? "Надіслати та отримати бал" : lang === "fa" ? "ارسال و دریافت امتیاز" : "ناردن و وەرگرتنی نمرە"}</button>
-          <button onClick={() => { setPhase("run"); setIdx(SECS.length - 1); }} style={{ background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: "14px 18px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Geri" : lang === "en" ? "Back" : lang === "ar" ? "رجوع" : lang === "uk" ? "Назад" : lang === "fa" ? "بازگشت" : "گەڕانەوە"}</button>
+          <button onClick={submit} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 14, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📨 {lang === "tr" ? "Gönder ve Puanı Al" : lang === "en" ? "Submit and Get Score" : lang === "ar" ? "إرسال والحصول على النتيجة" : lang === "es" ? "Enviar y obtener puntuación" : lang === "uk" ? "Надіслати та отримати бал" : lang === "fa" ? "ارسال و دریافت امتیاز" : "ناردن و وەرگرتنی نمرە"}</button>
+          <button onClick={() => { setPhase("run"); setIdx(SECS.length - 1); }} style={{ background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: "14px 18px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Geri" : lang === "en" ? "Back" : lang === "ar" ? "رجوع" : lang === "es" ? "Atrás" : lang === "uk" ? "Назад" : lang === "fa" ? "بازگشت" : "گەڕانەوە"}</button>
         </div>
       </div>
     );
@@ -7892,8 +7892,8 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
       </div>
       <p style={{ color: C.muted, fontSize: 13.5, marginBottom: 14 }}>{tC(sec, lang)}</p>
 
-      {content === "loading" && <div style={{ textAlign: "center", color: C.muted, padding: 24 }}>⏳ {lang === "tr" ? "AI bu bölümü oluşturuyor…" : lang === "en" ? "AI is generating this section…" : lang === "ar" ? "الذكاء الاصطناعي يُنشئ هذا القسم…" : lang === "uk" ? "ШІ генерує цей розділ…" : lang === "fa" ? "هوش مصنوعی در حال ساختن این بخش است…" : "ڕێبەر AI ئەم بەشە دروست دەکات…"}</div>}
-      {content === "error" && <div style={{ textAlign: "center", padding: 18, background: "#fbeae6", borderRadius: 12 }}><div style={{ color: C.redDk, marginBottom: 8 }}>{lang === "tr" ? "Hata oluştu." : lang === "en" ? "An error occurred." : lang === "ar" ? "حدث خطأ." : lang === "uk" ? "Сталася помилка." : lang === "fa" ? "خطایی رخ داد." : "هەڵە ڕوویدا."}</div><button onClick={() => gen(sec.type)} style={{ background: C.red, color: "#fff", border: "none", padding: "8px 16px", borderRadius: 9, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : "دووبارە"}</button></div>}
+      {content === "loading" && <div style={{ textAlign: "center", color: C.muted, padding: 24 }}>⏳ {lang === "tr" ? "AI bu bölümü oluşturuyor…" : lang === "en" ? "AI is generating this section…" : lang === "ar" ? "الذكاء الاصطناعي يُنشئ هذا القسم…" : lang === "es" ? "La IA está generando esta sección…" : lang === "uk" ? "ШІ генерує цей розділ…" : lang === "fa" ? "هوش مصنوعی در حال ساختن این بخش است…" : "ڕێبەر AI ئەم بەشە دروست دەکات…"}</div>}
+      {content === "error" && <div style={{ textAlign: "center", padding: 18, background: "#fbeae6", borderRadius: 12 }}><div style={{ color: C.redDk, marginBottom: 8 }}>{lang === "tr" ? "Hata oluştu." : lang === "en" ? "An error occurred." : lang === "ar" ? "حدث خطأ." : lang === "es" ? "Ocurrió un error." : lang === "uk" ? "Сталася помилка." : lang === "fa" ? "خطایی رخ داد." : "هەڵە ڕوویدا."}</div><button onClick={() => gen(sec.type)} style={{ background: C.red, color: "#fff", border: "none", padding: "8px 16px", borderRadius: 9, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "es" ? "Reintentar" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : "دووبارە"}</button></div>}
 
       {content && content !== "loading" && content !== "error" && (
         <div style={{ display: "grid", gap: 14 }}>
@@ -8001,7 +8001,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             {(content.rf || []).map((it, i) => (
               <div key={"rf" + i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14 }}>
                 <div style={{ fontSize: 13, color: C.muted, marginBottom: 6 }}>{it.situation}</div>
-                <button onClick={() => speakDe(it.transcript)} style={{ background: C.gold, color: "#fff", border: "none", borderRadius: 9, padding: "6px 12px", fontWeight: 700, fontSize: 13, marginBottom: 8, display:"inline-flex", alignItems:"center", gap:5 }}><Volume2 size={13} /> {lang === "tr" ? "Dinle" : lang === "en" ? "Listen" : lang === "ar" ? "استمع" : lang === "uk" ? "Слухати" : lang === "fa" ? "گوش دادن" : "گوێ بگرە"}</button>
+                <button onClick={() => speakDe(it.transcript)} style={{ background: C.gold, color: "#fff", border: "none", borderRadius: 9, padding: "6px 12px", fontWeight: 700, fontSize: 13, marginBottom: 8, display:"inline-flex", alignItems:"center", gap:5 }}><Volume2 size={13} /> {lang === "tr" ? "Dinle" : lang === "en" ? "Listen" : lang === "ar" ? "استمع" : lang === "es" ? "Escuchar" : lang === "uk" ? "Слухати" : lang === "fa" ? "گوش دادن" : "گوێ بگرە"}</button>
                 <div dir="ltr" style={{ marginBottom: 10 }}><De size={15}>{it.statement}</De></div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <Opt on={() => setA({ ...a, ["rf" + i]: true })} active={a["rf" + i] === true}>RICHTIG (+)</Opt>
@@ -8012,7 +8012,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             <div style={{ fontWeight: 700, color: C.muted, fontSize: 13, marginTop: 6 }}>Teil B — a / b</div>
             {(content.mc || []).map((it, i) => (
               <div key={"mc" + i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14 }}>
-                <button onClick={() => speakDe(it.transcript)} style={{ background: C.gold, color: "#fff", border: "none", borderRadius: 9, padding: "6px 12px", fontWeight: 700, fontSize: 13, marginBottom: 8, display:"inline-flex", alignItems:"center", gap:5 }}><Volume2 size={13} /> {lang === "tr" ? "Dinle" : lang === "en" ? "Listen" : lang === "ar" ? "استمع" : lang === "uk" ? "Слухати" : lang === "fa" ? "گوش دادن" : "گوێ بگرە"}</button>
+                <button onClick={() => speakDe(it.transcript)} style={{ background: C.gold, color: "#fff", border: "none", borderRadius: 9, padding: "6px 12px", fontWeight: 700, fontSize: 13, marginBottom: 8, display:"inline-flex", alignItems:"center", gap:5 }}><Volume2 size={13} /> {lang === "tr" ? "Dinle" : lang === "en" ? "Listen" : lang === "ar" ? "استمع" : lang === "es" ? "Escuchar" : lang === "uk" ? "Слухати" : lang === "fa" ? "گوش دادن" : "گوێ بگرە"}</button>
                 <div dir="ltr" style={{ marginBottom: 10 }}><De size={15}>{it.q}</De></div>
                 <div style={{ display: "grid", gap: 7 }}>{it.options.map((o, oi) => <Opt key={oi} on={() => setA({ ...a, ["mc" + i]: oi })} active={a["mc" + i] === oi}><span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif" }}>{String.fromCharCode(97 + oi)}) {o}</span></Opt>)}</div>
               </div>
@@ -8021,7 +8021,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
 
           {!content.parts && sec.type === "antworten" && (<>
             <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14 }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: C.muted, marginBottom: 8 }}>{lang === "tr" ? "Hazır cevaplar:" : lang === "en" ? "Ready-made answers:" : lang === "ar" ? "إجابات جاهزة:" : lang === "uk" ? "Готові відповіді:" : lang === "fa" ? "پاسخ‌های آماده:" : "وەڵامە ئامادەکان:"}</div>
+              <div style={{ fontWeight: 700, fontSize: 13, color: C.muted, marginBottom: 8 }}>{lang === "tr" ? "Hazır cevaplar:" : lang === "en" ? "Ready-made answers:" : lang === "ar" ? "إجابات جاهزة:" : lang === "es" ? "Respuestas listas:" : lang === "uk" ? "Готові відповіді:" : lang === "fa" ? "پاسخ‌های آماده:" : "وەڵامە ئامادەکان:"}</div>
               {content.responses.map((r, ri) => <div key={ri} dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 14, padding: "3px 0" }}>{String.fromCharCode(97 + ri)}) {r}</div>)}
             </div>
             {content.prompts.map((p, i) => (
@@ -8034,7 +8034,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
 
           {!content.parts && sec.type === "lesen" && (<>
             {content.teilA && (<>
-              <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }}>Teil A — {lang === "tr" ? "Metin için başlık seç" : lang === "en" ? "Choose a title for the text" : lang === "ar" ? "اختر عنوانًا للنص" : lang === "uk" ? "Оберіть заголовок для тексту" : lang === "fa" ? "برای متن یک عنوان انتخاب کنید" : "سەردێڕ بۆ دەق دیاری بکە"}</div>
+              <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }}>Teil A — {lang === "tr" ? "Metin için başlık seç" : lang === "en" ? "Choose a title for the text" : lang === "ar" ? "اختر عنوانًا للنص" : lang === "es" ? "Elige un título para el texto" : lang === "uk" ? "Оберіть заголовок для тексту" : lang === "fa" ? "برای متن یک عنوان انتخاب کنید" : "سەردێڕ بۆ دەق دیاری بکە"}</div>
               <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14 }}>
                 {content.teilA.headings.map((h, hi) => <div key={hi} dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 14, padding: "3px 0" }}>{String.fromCharCode(97 + hi)}) {h}</div>)}
               </div>
@@ -8061,7 +8061,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             </>)}
 
             {Array.isArray(content.teilC) && (<>
-              <div style={{ fontWeight: 700, color: C.muted, fontSize: 13, marginTop: 6 }}>Teil C — {lang === "tr" ? "Hangi ilan uyuyor? (a / b)" : lang === "en" ? "Which ad fits? (a / b)" : lang === "ar" ? "أي إعلان يناسب؟ (a / b)" : lang === "uk" ? "Яке оголошення підходить? (a / b)" : lang === "fa" ? "کدام آگهی مناسب است؟ (a / b)" : "کام ڕیکلام دەگونجێت؟ (a / b)"}</div>
+              <div style={{ fontWeight: 700, color: C.muted, fontSize: 13, marginTop: 6 }}>Teil C — {lang === "tr" ? "Hangi ilan uyuyor? (a / b)" : lang === "en" ? "Which ad fits? (a / b)" : lang === "ar" ? "أي إعلان يناسب؟ (a / b)" : lang === "es" ? "¿Qué anuncio encaja? (a / b)" : lang === "uk" ? "Яке оголошення підходить? (a / b)" : lang === "fa" ? "کدام آگهی مناسب است؟ (a / b)" : "کام ڕیکلام دەگونجێت؟ (a / b)"}</div>
               {content.teilC.map((it, i) => (
                 <div key={"C" + i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14 }}>
                   <div style={{ fontWeight: 600, marginBottom: 10 }} dir="auto">{it.situation}</div>
@@ -8099,26 +8099,26 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             )}
             <div style={{ background: "#eef6ef", border: `1px solid ${C.green}`, borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
               <div style={{ fontSize: 22 }}>✏️📓</div>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.green, marginTop: 4 }}>{lang === "tr" ? "Şimdi defter ve kalem zamanı 😊" : lang === "en" ? "Now it's notebook and pen time 😊" : lang === "ar" ? "الآن حان وقت الدفتر والقلم 😊" : lang === "uk" ? "Тепер час зошита та ручки 😊" : lang === "fa" ? "حالا وقت دفتر و خودکار است 😊" : "ئێستا کاتی دەفتەر و پێنووسەیە 😊"}</div>
-              <div style={{ fontSize: 13.5, color: C.muted, marginTop: 4, lineHeight: 1.8 }}>{lang === "tr" ? "Bu bölüm uygulamada değil — defterinize elle yazarak yazma pratiği yapın." : lang === "en" ? "This section isn't in the app — practice writing by hand in your notebook." : lang === "ar" ? "هذا القسم ليس في التطبيق — تدرّب على الكتابة بخط اليد في دفترك." : lang === "uk" ? "Цього розділу немає в застосунку — тренуйтеся писати від руки в зошиті." : lang === "fa" ? "این بخش در برنامه نیست — نوشتن با دست را در دفترتان تمرین کنید." : "ئەم بەشە لە ئەپدا مەنووسە — بە دەست لەسەر دەفتەرەکەت بنووسە بۆ مەشقی نووسین."}</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.green, marginTop: 4 }}>{lang === "tr" ? "Şimdi defter ve kalem zamanı 😊" : lang === "en" ? "Now it's notebook and pen time 😊" : lang === "ar" ? "الآن حان وقت الدفتر والقلم 😊" : lang === "es" ? "Ahora es momento de cuaderno y bolígrafo 😊" : lang === "uk" ? "Тепер час зошита та ручки 😊" : lang === "fa" ? "حالا وقت دفتر و خودکار است 😊" : "ئێستا کاتی دەفتەر و پێنووسەیە 😊"}</div>
+              <div style={{ fontSize: 13.5, color: C.muted, marginTop: 4, lineHeight: 1.8 }}>{lang === "tr" ? "Bu bölüm uygulamada değil — defterinize elle yazarak yazma pratiği yapın." : lang === "en" ? "This section isn't in the app — practice writing by hand in your notebook." : lang === "ar" ? "هذا القسم ليس في التطبيق — تدرّب على الكتابة بخط اليد في دفترك." : lang === "es" ? "Esta sección no está en la app — practica la escritura a mano en tu cuaderno." : lang === "uk" ? "Цього розділу немає в застосунку — тренуйтеся писати від руки в зошиті." : lang === "fa" ? "این بخش در برنامه نیست — نوشتن با دست را در دفترتان تمرین کنید." : "ئەم بەشە لە ئەپدا مەنووسە — بە دەست لەسەر دەفتەرەکەت بنووسە بۆ مەشقی نووسین."}</div>
             </div>
           </>)}
 
           {sec.type === "muendlich" && (<>
             <div style={{ background: "#fff8ec", border: `1px solid ${C.gold}`, borderRadius: 12, padding: 16, lineHeight: 1.9 }} dir="auto">{content.task}</div>
-            <div style={{ fontSize: 12.5, color: C.muted }}>ⓘ {lang === "tr" ? "Bu bölüm sözlü pratik içindir ve puanlara dahil edilmez — yüksek sesle konuşun." : lang === "en" ? "This section is for spoken practice and isn't scored — speak out loud." : lang === "ar" ? "هذا القسم للتدريب الشفهي ولا يُحتسب في الدرجات — تحدث بصوت عالٍ." : lang === "uk" ? "Цей розділ для усної практики й не оцінюється — говоріть уголос." : lang === "fa" ? "این بخش برای تمرین شفاهی است و امتیازدهی نمی‌شود — بلند صحبت کنید." : "ئەم بەشە بۆ مەشقی زارەکییە و لە نمرە ناژمێردرێت — بە دەنگی بەرز قسەی بکە."}</div>
+            <div style={{ fontSize: 12.5, color: C.muted }}>ⓘ {lang === "tr" ? "Bu bölüm sözlü pratik içindir ve puanlara dahil edilmez — yüksek sesle konuşun." : lang === "en" ? "This section is for spoken practice and isn't scored — speak out loud." : lang === "ar" ? "هذا القسم للتدريب الشفهي ولا يُحتسب في الدرجات — تحدث بصوت عالٍ." : lang === "es" ? "Esta sección es para practicar el habla y no se puntúa — habla en voz alta." : lang === "uk" ? "Цей розділ для усної практики й не оцінюється — говоріть уголос." : lang === "fa" ? "این بخش برای تمرین شفاهی است و امتیازدهی نمی‌شود — بلند صحبت کنید." : "ئەم بەشە بۆ مەشقی زارەکییە و لە نمرە ناژمێردرێت — بە دەنگی بەرز قسەی بکە."}</div>
           </>)}
         </div>
       )}
 
       <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-        {idx > 0 && <button onClick={() => setIdx(idx - 1)} style={{ background: "transparent", color: C.muted, border: `1.5px solid ${C.line}`, padding: "12px 14px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "→ Önceki" : lang === "en" ? "→ Previous" : lang === "ar" ? "→ السابق" : lang === "uk" ? "→ Попередній" : lang === "fa" ? "→ قبلی" : "→ پێشوو"}</button>}
+        {idx > 0 && <button onClick={() => setIdx(idx - 1)} style={{ background: "transparent", color: C.muted, border: `1.5px solid ${C.line}`, padding: "12px 14px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "→ Önceki" : lang === "en" ? "→ Previous" : lang === "ar" ? "→ السابق" : lang === "es" ? "→ Anterior" : lang === "uk" ? "→ Попередній" : lang === "fa" ? "→ قبلی" : "→ پێشوو"}</button>}
         {idx < SECS.length - 1 ? (
-          <button onClick={() => setIdx(idx + 1)} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>{lang === "tr" ? "Sonraki bölüm ←" : lang === "en" ? "Next section ←" : lang === "ar" ? "القسم التالي ←" : lang === "uk" ? "Наступний розділ ←" : lang === "fa" ? "بخش بعدی ←" : "بەشی دواتر ←"}</button>
+          <button onClick={() => setIdx(idx + 1)} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>{lang === "tr" ? "Sonraki bölüm ←" : lang === "en" ? "Next section ←" : lang === "ar" ? "القسم التالي ←" : lang === "es" ? "Siguiente sección ←" : lang === "uk" ? "Наступний розділ ←" : lang === "fa" ? "بخش بعدی ←" : "بەشی دواتر ←"}</button>
         ) : (
-          <button onClick={() => setPhase("overview")} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📋 {lang === "tr" ? "Genel Bakış ←" : lang === "en" ? "Overview ←" : lang === "ar" ? "نظرة عامة ←" : lang === "uk" ? "Огляд ←" : lang === "fa" ? "نمای کلی ←" : "پێداچوونەوە ←"}</button>
+          <button onClick={() => setPhase("overview")} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📋 {lang === "tr" ? "Genel Bakış ←" : lang === "en" ? "Overview ←" : lang === "ar" ? "نظرة عامة ←" : lang === "es" ? "Resumen ←" : lang === "uk" ? "Огляд ←" : lang === "fa" ? "نمای کلی ←" : "پێداچوونەوە ←"}</button>
         )}
-        <button onClick={onClose} style={{ background: "transparent", color: C.redDk, border: `1.5px solid ${C.line}`, padding: "13px 16px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Kapat" : lang === "en" ? "Close" : lang === "ar" ? "إغلاق" : lang === "uk" ? "Закрити" : lang === "fa" ? "بستن" : "داخستن"}</button>
+        <button onClick={onClose} style={{ background: "transparent", color: C.redDk, border: `1.5px solid ${C.line}`, padding: "13px 16px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Kapat" : lang === "en" ? "Close" : lang === "ar" ? "إغلاق" : lang === "es" ? "Cerrar" : lang === "uk" ? "Закрити" : lang === "fa" ? "بستن" : "داخستن"}</button>
       </div>
     </div>
   );
@@ -8751,7 +8751,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
         <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 24px ${lc}40` }}>
           <div style={{ display:"flex",alignItems:"center",gap:6,marginBottom:10 }}>
             <div style={{ width:26,height:26,borderRadius:7,background:"rgba(255,255,255,.2)",display:"grid",placeItems:"center" }}><Zap size={13} color="#fff" /></div>
-            <span style={{ fontSize:12.5,fontWeight:800,color:"#fff",letterSpacing:".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
+            <span style={{ fontSize:12.5,fontWeight:800,color:"#fff",letterSpacing:".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "es" ? "Frase para recordar (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
           </div>
           <div style={{ display:"flex",flexWrap:"wrap",gap:10 }}>
             {g.merksatz.map((m,mi) => (
@@ -8785,7 +8785,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       </div>
       {/* AI */}
       <div className="rise" style={{ animationDelay:"195ms" }}>
-        <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
+        <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "es" ? `Gramática: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
           pct={progress[level+"::"+g.de]||0} onBatch={mkBatch(level+"::"+g.de)} lang={lang} />
       </div>
     </div>
@@ -9680,11 +9680,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 {/* group body */}
                 <div style={{ padding: "14px 16px" }}>
-                  <SectionLabel icon={Pin} label={lang === "tr" ? "Kurallar" : lang === "en" ? "Rules" : lang === "ar" ? "القواعد" : lang === "uk" ? "Правила" : lang === "fa" ? "قواعد" : "یاساکان"} color={grp.color} />
+                  <SectionLabel icon={Pin} label={lang === "tr" ? "Kurallar" : lang === "en" ? "Rules" : lang === "ar" ? "القواعد" : lang === "es" ? "Reglas" : lang === "uk" ? "Правила" : lang === "fa" ? "قواعد" : "یاساکان"} color={grp.color} />
                   <ul style={{ margin: "0 0 14px", paddingInlineStart: 20, fontSize: 14.5, lineHeight: 2, color: "#2A3040" }}>
                     {(grp['rules' + lang.charAt(0).toUpperCase() + lang.slice(1)] || grp.rules).map((r, ri) => <li key={ri}>{r}</li>)}
                   </ul>
-                  <SectionLabel icon={FileText} label={lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} color={grp.color} />
+                  <SectionLabel icon={FileText} label={lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "es" ? "Ejemplos" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} color={grp.color} />
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {grp.words.map((w, wi) => (
                       <span key={wi} style={{ display: "inline-flex", flexDirection: "column", gap: 3, background: `${grp.color}0D`, border: `1.5px solid ${grp.color}25`, borderRadius: 12, padding: "8px 12px", minWidth: 92 }}>
@@ -9706,7 +9706,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center" }}>
                 <Zap size={14} color="#fff" />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", letterSpacing: ".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", letterSpacing: ".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "es" ? "Frase para recordar (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
               {g.merksatz.map((m, mi) => (
@@ -9721,7 +9721,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         {/* examples */}
         <div className="rise" style={{ animationDelay:"200ms", marginBottom: 4 }}>
-          <SectionLabel icon={BookOpen} label={`${lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} / Beispiele  (${exList.length})`} color={C.gold} />
+          <SectionLabel icon={BookOpen} label={`${lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "es" ? "Ejemplos" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} / Beispiele  (${exList.length})`} color={C.gold} />
           <div style={{ display: "grid", gap: 9 }}>
             {exList.map((e, i) => (
               <div key={i} className="rise" style={{ animationDelay:`${220 + i * 30}ms`, background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 16, padding: "13px 16px", display: "flex", gap: 12, alignItems: "flex-start", boxShadow: "0 1px 0 rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05)" }}>
@@ -9741,7 +9741,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </div>
 
         <div className="rise" style={{ animationDelay:"260ms" }}>
-          <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
+          <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "es" ? `Gramática: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
             pct={progress[level + "::" + g.de] || 0} onBatch={mkBatch(level + "::" + g.de)} lang={lang} />
         </div>
       </div>
@@ -9761,7 +9761,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         {/* back */}
         <button onClick={() => closeDetail()} style={{ border: `1.5px solid ${C.line}`, background: "#fff", color: C.muted, fontWeight: 700, fontSize: 13, marginBottom: 18, borderRadius: 99, padding: "7px 16px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 2px 6px rgba(0,0,0,.06)" }}>
-          <span style={{ fontSize: 15 }}>↩</span> {lang === "tr" ? "Tüm dersler" : lang === "en" ? "All lessons" : lang === "ar" ? "كل الدروس" : lang === "uk" ? "Усі уроки" : lang === "fa" ? "همه درس‌ها" : "هەموو وانەکان"}
+          <span style={{ fontSize: 15 }}>↩</span> {lang === "tr" ? "Tüm dersler" : lang === "en" ? "All lessons" : lang === "ar" ? "كل الدروس" : lang === "es" ? "Todas las lecciones" : lang === "uk" ? "Усі уроки" : lang === "fa" ? "همه درس‌ها" : "هەموو وانەکان"}
         </button>
 
         {/* hero */}
@@ -9772,7 +9772,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 11.5, fontWeight: 800 }}>{l.level}</span>
-                <span style={{ fontSize: 11.5, opacity: .8 }}>{lang === "tr" ? "Kelimeler" : lang === "en" ? "Words" : lang === "ar" ? "الكلمات" : lang === "uk" ? "Слова" : lang === "fa" ? "واژه‌ها" : "وشەکان"}</span>
+                <span style={{ fontSize: 11.5, opacity: .8 }}>{lang === "tr" ? "Kelimeler" : lang === "en" ? "Words" : lang === "ar" ? "الكلمات" : lang === "es" ? "Palabras" : lang === "uk" ? "Слова" : lang === "fa" ? "واژه‌ها" : "وشەکان"}</span>
               </div>
               <h2 style={{ fontWeight: 800, fontSize: 21, margin: 0, letterSpacing: "-.02em" }}>{tF(l, lang, 'title')}</h2>
               <div dir="ltr" style={{ fontSize: 13, opacity: .85, marginTop: 3, fontFamily: "'Satoshi',system-ui,sans-serif" }}>{l.de}</div>
@@ -9790,7 +9790,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div style={{ width: 26, height: 26, borderRadius: 7, background: `${C.gold}18`, display: "grid", placeItems: "center" }}>
               <AlertCircle size={13} color={C.gold} />
             </div>
-            <span style={{ fontSize: 12.5, fontWeight: 700, color: C.gold }}>{lang === "tr" ? "Dilbilgisi Notu" : lang === "en" ? "Grammar Note" : lang === "ar" ? "ملاحظة نحوية" : lang === "uk" ? "Граматична примітка" : lang === "fa" ? "نکته دستوری" : "تێبینی ڕێزمان"}</span>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: C.gold }}>{lang === "tr" ? "Dilbilgisi Notu" : lang === "en" ? "Grammar Note" : lang === "ar" ? "ملاحظة نحوية" : lang === "es" ? "Nota gramatical" : lang === "uk" ? "Граматична примітка" : lang === "fa" ? "نکته دستوری" : "تێبینی ڕێزمان"}</span>
           </div>
           <div style={{ fontSize: 14.5, lineHeight: 2, color: "#2A3040" }}>{tF(l, lang, 'grammar')}</div>
         </div>
@@ -9888,7 +9888,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {/* ── Page header ── */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20, gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "#1A1F2E", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : lang === "uk" ? "Уроки та граматика" : lang === "fa" ? "درس‌ها و دستور زبان" : "وانە و ڕێزمان"}</h2>
+          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "#1A1F2E", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : lang === "es" ? "Lecciones y gramática" : lang === "uk" ? "Уроки та граматика" : lang === "fa" ? "درس‌ها و دستور زبان" : "وانە و ڕێزمان"}</h2>
           <p style={{ color: C.muted, fontSize: 13.5, margin: "4px 0 0", lineHeight: 1.5 }}>
             {mode === "exam" ? tL("exam_pick_desc") : tL("lesson_pick_desc")}
           </p>
@@ -9900,7 +9900,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </div>
           <div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "#1A1F2E", lineHeight: 1 }}>{avgPct}%</div>
-            <div style={{ fontSize: 10, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
+            <div style={{ fontSize: 10, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "es" ? "temas" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
           </div>
         </div>
       </div>
@@ -10120,7 +10120,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <div style={{ textAlign: "center", padding: "48px 20px", color: C.muted }}>
             <div style={{ marginBottom: 12 }}><MessageCircle size={40} color={C.muted} /></div>
             <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{tL("dialog_no")}</div>
-            <div style={{ fontSize: 14 }}>{lang === "tr" ? `${level} seviyesi için henüz diyalog eklenmedi.` : lang === "en" ? `No dialogues have been added yet for level ${level}.` : lang === "ar" ? `لم تُضَف حوارات بعد لمستوى ${level}.` : lang === "fa" ? `هنوز گفتگویی برای سطح ${level} اضافه نشده است.` : lang === "uk" ? `Для рівня ${level} діалоги ще не додані.` : `بۆ ئاستی ${level} هێشتا دیالۆگ زیاد نەکراوە.`}</div>
+            <div style={{ fontSize: 14 }}>{lang === "tr" ? `${level} seviyesi için henüz diyalog eklenmedi.` : lang === "en" ? `No dialogues have been added yet for level ${level}.` : lang === "ar" ? `لم تُضَف حوارات بعد لمستوى ${level}.` : lang === "fa" ? `هنوز گفتگویی برای سطح ${level} اضافه نشده است.` : lang === "es" ? `Aún no se han añadido diálogos para el nivel ${level}.` : lang === "uk" ? `Для рівня ${level} діалоги ще не додані.` : `بۆ ئاستی ${level} هێشتا دیالۆگ زیاد نەکراوە.`}</div>
           </div>
         );
         return (
@@ -10411,8 +10411,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 : `دەستەواژە و پێکهاتە گرنگەکان بۆ ئامادەکاری تاقیکردنەوەی فەرمی ئاستی ${level} — لەگەڵ نموونە و وەرگێڕانی سۆرانی.`}
             </div>
           </div>
-          {level === "A1" && <PhrasePanel title={lang === "tr" ? "🗣️ A1 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A1 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A1 المهمة (بأمثلة)" : lang === "uk" ? "🗣️ A1 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A1 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A1 (بە نموونە)"} data={A1_REDEMITTEL} accent={C.red} lang={lang} />}
-          {level === "A2" && <PhrasePanel title={lang === "tr" ? "🗣️ A2 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A2 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A2 المهمة (بأمثلة)" : lang === "uk" ? "🗣️ A2 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A2 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A2 (بە نموونە)"} data={A2_REDEMITTEL} accent={C.green} lang={lang} />}
+          {level === "A1" && <PhrasePanel title={lang === "tr" ? "🗣️ A1 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A1 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A1 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A1 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A1 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A1 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A1 (بە نموونە)"} data={A1_REDEMITTEL} accent={C.red} lang={lang} />}
+          {level === "A2" && <PhrasePanel title={lang === "tr" ? "🗣️ A2 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A2 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A2 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A2 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A2 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A2 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A2 (بە نموونە)"} data={A2_REDEMITTEL} accent={C.green} lang={lang} />}
           {level === "B1" && <RedemittelPanel lang={lang} />}
           {level === "B2" && <PraesentationPanel lang={lang} />}
         </div>
@@ -10420,8 +10420,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
       {mode === "exam" && (() => {
         const PROV = {
-          telc:   { name: "telc Deutsch",      de: "telc",           Icon: BookMarked,    color: "#0e7c7a", note: lang === "tr" ? "«Sprachbausteine» soru formatı ve okuma anlama." : lang === "en" ? "«Sprachbausteine» question format and reading comprehension." : lang === "ar" ? "صيغة أسئلة «Sprachbausteine» وفهم القراءة." : lang === "uk" ? "Формат питань «Sprachbausteine» та розуміння прочитаного." : lang === "fa" ? "قالب سؤال‌های «Sprachbausteine» و درک مطلب." : "فۆرمی پرسیاری «Sprachbausteine» و تێگەیشتنی خوێندنەوە." },
-          goethe: { name: "Goethe-Zertifikat", de: "Goethe-Institut", Icon: BookOpenCheck, color: "#b8412e", note: lang === "tr" ? "Goethe tarzında dilbilgisi, kelime ve metin anlama." : lang === "en" ? "Goethe-style grammar, vocabulary, and text comprehension." : lang === "ar" ? "قواعد ومفردات وفهم نصوص بأسلوب Goethe." : lang === "uk" ? "Граматика, лексика та розуміння тексту у стилі Goethe." : lang === "fa" ? "دستور زبان، واژگان و درک متن به سبک Goethe." : "ڕێزمان، وشە و تێگەیشتنی دەق بە شێوازی Goethe." },
+          telc:   { name: "telc Deutsch",      de: "telc",           Icon: BookMarked,    color: "#0e7c7a", note: lang === "tr" ? "«Sprachbausteine» soru formatı ve okuma anlama." : lang === "en" ? "«Sprachbausteine» question format and reading comprehension." : lang === "ar" ? "صيغة أسئلة «Sprachbausteine» وفهم القراءة." : lang === "es" ? "Formato de preguntas «Sprachbausteine» y comprensión lectora." : lang === "uk" ? "Формат питань «Sprachbausteine» та розуміння прочитаного." : lang === "fa" ? "قالب سؤال‌های «Sprachbausteine» و درک مطلب." : "فۆرمی پرسیاری «Sprachbausteine» و تێگەیشتنی خوێندنەوە." },
+          goethe: { name: "Goethe-Zertifikat", de: "Goethe-Institut", Icon: BookOpenCheck, color: "#b8412e", note: lang === "tr" ? "Goethe tarzında dilbilgisi, kelime ve metin anlama." : lang === "en" ? "Goethe-style grammar, vocabulary, and text comprehension." : lang === "ar" ? "قواعد ومفردات وفهم نصوص بأسلوب Goethe." : lang === "es" ? "Gramática, vocabulario y comprensión de textos al estilo Goethe." : lang === "uk" ? "Граматика, лексика та розуміння тексту у стилі Goethe." : lang === "fa" ? "دستور زبان، واژگان و درک متن به سبک Goethe." : "ڕێزمان، وشە و تێگەیشتنی دەق بە شێوازی Goethe." },
         };
 
         // ── STEP 1: choose provider ───────────────────────────────────────
@@ -10435,7 +10435,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 <div>
                   <div style={{ fontWeight:800, fontSize:17, color:"#1A1F2E" }}>{tL("exam_formal")}</div>
-                  <div style={{ fontSize:12.5, color:C.muted }}>{lang === "tr" ? `${level} Seviyesi — Hangi sınavı istersiniz?` : lang === "en" ? `${level} Level — Which exam would you like?` : lang === "ar" ? `مستوى ${level} — أي اختبار تريد؟` : lang === "fa" ? `سطح ${level} — کدام آزمون را می‌خواهید؟` : lang === "uk" ? `Рівень ${level} — який іспит ви хочете?` : `ئاستی ${level} — کام تاقیکردنەوە دەتەوێت؟`}</div>
+                  <div style={{ fontSize:12.5, color:C.muted }}>{lang === "tr" ? `${level} Seviyesi — Hangi sınavı istersiniz?` : lang === "en" ? `${level} Level — Which exam would you like?` : lang === "ar" ? `مستوى ${level} — أي اختبار تريد؟` : lang === "fa" ? `سطح ${level} — کدام آزمون را می‌خواهید؟` : lang === "es" ? `Nivel ${level} — ¿Qué examen prefieres?` : lang === "uk" ? `Рівень ${level} — який іспит ви хочете?` : `ئاستی ${level} — کام تاقیکردنەوە دەتەوێت؟`}</div>
                 </div>
               </div>
               <div style={{ display:"grid", gap:12 }}>
@@ -10453,7 +10453,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         <div style={{ fontWeight:800, fontSize:16 }} dir="ltr">{p.name}</div>
                         <div style={{ color:C.muted, fontSize:12.5, marginTop:3, lineHeight:1.65 }}>{p.note}</div>
                         {sc > 0 && <div style={{ fontSize:11.5, color: sc>=95 ? C.green : C.gold, fontWeight:700, marginTop:4 }}>
-                          {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "fa" ? `✓ قبلاً ${Math.round(sc)}% گرفتید` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
+                          {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "fa" ? `✓ قبلاً ${Math.round(sc)}% گرفتید` : lang === "es" ? `✓ Antes obtuviste ${Math.round(sc)}%` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "es" ? `↻ Último resultado: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
                         </div>}
                       </div>
                       <div style={{ background:`${p.color}14`, borderRadius:10, padding:"8px 14px", fontSize:13, fontWeight:800, color:p.color, flexShrink:0 }}>
@@ -10473,7 +10473,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <div className="rise">
             <button onClick={() => { setExamType(null); setExamLevel(null); }}
               style={{ border:`1.5px solid ${C.line}`, background:"#fff", color:C.muted, fontWeight:700, fontSize:13, marginBottom:16, borderRadius:99, padding:"7px 16px", cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6, boxShadow:"0 2px 6px rgba(0,0,0,.06)" }}>
-              <span style={{ fontSize:15 }}>↩</span> {lang === "tr" ? "Sınav türünü değiştir" : lang === "en" ? "Change exam type" : lang === "ar" ? "تغيير نوع الاختبار" : lang === "uk" ? "Змінити тип іспиту" : lang === "fa" ? "تغییر نوع آزمون" : "گۆڕینی جۆری تاقیکردنەوە"}
+              <span style={{ fontSize:15 }}>↩</span> {lang === "tr" ? "Sınav türünü değiştir" : lang === "en" ? "Change exam type" : lang === "ar" ? "تغيير نوع الاختبار" : lang === "es" ? "Cambiar tipo de examen" : lang === "uk" ? "Змінити тип іспиту" : lang === "fa" ? "تغییر نوع آزمون" : "گۆڕینی جۆری تاقیکردنەوە"}
             </button>
             <ExamRunner provName={prov.name} provDe={prov.de} level={level} lang={lang}
               onClose={() => { setExamType(null); setExamLevel(null); }}
@@ -10567,8 +10567,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <Zap size={18} color="#fff" />
                 </div>
                 <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "es" ? "Verbos" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</div>
+                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="fiil"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -10589,7 +10589,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                         {tF(selectedVerb, lang, 'title')}</div>
                       <div style={{ fontSize:11, color:"#2D5C8A", fontWeight:600, marginTop:1 }}>
-                        {selectedVerb.words?.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                        {selectedVerb.words?.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                     </div>
                   </div>
                 )}>
@@ -10620,7 +10620,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
-                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                           </div>
                           <span style={{ fontSize:18, flexShrink:0 }}>{l.icon}</span>
                         </div>
@@ -10641,7 +10641,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedVerb, lang, 'title')}</div>
                         <div dir="ltr" style={{ fontSize:11.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVerb.de}</div>
                       </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedVerb.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedVerb.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
@@ -10670,8 +10670,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca fiiller (çekim ve cümlede kullanım)` : lang === "en" ? `German verbs at ${level} level (conjugation and use in sentences)` : lang === "ar" ? `الأفعال الألمانية لمستوى ${level} (التصريف والاستخدام في الجمل)` : lang === "fa" ? `فعل‌های آلمانی در سطح ${level} (صرف و کاربرد در جمله)` : lang === "uk" ? `Німецькі дієслова рівня ${level} (відмінювання та вживання в реченнях)` : `کرداری ئەڵمانی ئاستی ${level} (کێشان و بەکارهێنانیان لە ناو ڕستەدا)`} level={level}
-                  hint={lang === "tr" ? "Fiillerin cümlede kullanımı üzerine sorular: doğru fiil formu, zaman, çekim ve boşluk doldurma. Fiilin Kürtçe anlamını sorma." : lang === "en" ? "Questions on verb use in sentences: correct verb form, tense, conjugation, and fill-in-the-blank. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول استخدام الأفعال في الجمل: الصيغة الصحيحة، الزمن، التصريف، وملء الفراغات. لا تسأل عن المعنى بالكردية." : lang === "uk" ? "Питання про вживання дієслів у реченнях: правильна форма, час, дієвідмінювання та заповнення пропусків. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد افعال در جملات: شکل درست فعل، زمان، صرف و پر کردن جای خالی. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی کردارەکان بن لە ناو ڕستەدا: فۆرمی ڕاستی کردار، کات، کێشان و پڕکردنەوەی بۆشایی لە ڕستەدا. پرسیاری واتای کوردی کردارەکە مەکە."}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca fiiller (çekim ve cümlede kullanım)` : lang === "en" ? `German verbs at ${level} level (conjugation and use in sentences)` : lang === "ar" ? `الأفعال الألمانية لمستوى ${level} (التصريف والاستخدام في الجمل)` : lang === "fa" ? `فعل‌های آلمانی در سطح ${level} (صرف و کاربرد در جمله)` : lang === "es" ? `Verbos alemanes de nivel ${level} (conjugación y uso en frases)` : lang === "uk" ? `Німецькі дієслова рівня ${level} (відмінювання та вживання в реченнях)` : `کرداری ئەڵمانی ئاستی ${level} (کێشان و بەکارهێنانیان لە ناو ڕستەدا)`} level={level}
+                  hint={lang === "tr" ? "Fiillerin cümlede kullanımı üzerine sorular: doğru fiil formu, zaman, çekim ve boşluk doldurma. Fiilin Kürtçe anlamını sorma." : lang === "en" ? "Questions on verb use in sentences: correct verb form, tense, conjugation, and fill-in-the-blank. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول استخدام الأفعال في الجمل: الصيغة الصحيحة، الزمن، التصريف، وملء الفراغات. لا تسأل عن المعنى بالكردية." : lang === "es" ? "Preguntas sobre el uso de verbos en frases: forma verbal correcta, tiempo, conjugación y rellenar huecos. No preguntes el significado en español." : lang === "uk" ? "Питання про вживання дієслів у реченнях: правильна форма, час, дієвідмінювання та заповнення пропусків. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد افعال در جملات: شکل درست فعل، زمان، صرف و پر کردن جای خالی. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی کردارەکان بن لە ناو ڕستەدا: فۆرمی ڕاستی کردار، کات، کێشان و پڕکردنەوەی بۆشایی لە ڕستەدا. پرسیاری واتای کوردی کردارەکە مەکە."}
                   pct={progress[level + "::verbs"] || 0} onBatch={mkBatch(level + "::verbs")} lang={lang} />
               </div>
             </div>
@@ -10686,8 +10686,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <Type size={18} color="#fff" />
                 </div>
                 <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</div>
+                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "es" ? "Sustantivos" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</div>
+                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="vocab"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -10790,7 +10790,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "fa" ? `واژه‌های آلمانی در سطح ${level}، موضوع‌ها: ${vocabList.map((l) => l.title).join("، ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "fa" ? `واژه‌های آلمانی در سطح ${level}، موضوع‌ها: ${vocabList.map((l) => l.title).join("، ")}` : lang === "es" ? `Palabras alemanas de nivel ${level}, temas: ${vocabList.map((l) => l.title).join(", ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
                   pct={progress[level + "::vocab"] || 0} onBatch={mkBatch(level + "::vocab")} lang={lang} />
               </div>
             </div>
@@ -10806,8 +10806,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <Star size={18} color="#fff" />
                 </div>
                 <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Sıfatlar" : lang === "en" ? "Adjectives" : lang === "ar" ? "الصفات" : lang === "uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "ئەپیتاف"} — Adjektive</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Sıfatlar" : lang === "en" ? "Adjectives" : lang === "ar" ? "الصفات" : lang === "es" ? "Adjetivos" : lang === "uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "ئەپیتاف"} — Adjektive</div>
+                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -10827,7 +10827,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                         {tF(selectedAdj, lang, 'title')}</div>
                       <div style={{ fontSize:11, color:"#2D6B52", fontWeight:600, marginTop:1 }}>
-                        {selectedAdj.words?.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                        {selectedAdj.words?.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                     </div>
                   </div>
                 )}>
@@ -10856,7 +10856,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
-                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                           </div>
                           <span style={{ fontSize:18, flexShrink:0 }}>{l.icon}</span>
                         </div>
@@ -10877,7 +10877,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedAdj, lang, 'title')}</div>
                         <div dir="ltr" style={{ fontSize:11.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedAdj.de}</div>
                       </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedAdj.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedAdj.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
@@ -10906,8 +10906,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               )}
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
-                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca sıfatlar ve kullanımları` : lang === "en" ? `German adjectives at ${level} level and their usage` : lang === "ar" ? `الصفات الألمانية لمستوى ${level} واستخداماتها` : lang === "fa" ? `صفت‌های آلمانی در سطح ${level} و کاربردشان` : lang === "uk" ? `Німецькі прикметники рівня ${level} та їх вживання` : `ئەپیتافەکانی ئەڵمانی ئاستی ${level} و بەکارهێنانیان`} level={level}
-                  hint={lang === "tr" ? "Sıfatların cümlede doğru kullanımı, karşıtları ve edatlı sıfatlar üzerine sorular. Kelimenin Kürtçe anlamını sorma." : lang === "en" ? "Questions on correct adjective use in sentences, opposites, and preposition-linked adjectives. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول الاستخدام الصحيح للصفات في الجمل، الأضداد، والصفات المرتبطة بحروف الجر. لا تسأل عن المعنى بالكردية." : lang === "uk" ? "Питання про правильне вживання прикметників у реченнях, антоніми та прикметники з прийменниками. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد درست صفت‌ها در جملات، متضادها و صفت‌های همراه با حرف اضافه. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی ڕاستی ئەپیتافەکان لە ناو ڕستەدا، دژەواژەکان و ئەپیتافەکانی لەگەڵ داچەک."}
+                <AITest subject={lang === "tr" ? `${level} seviyesi Almanca sıfatlar ve kullanımları` : lang === "en" ? `German adjectives at ${level} level and their usage` : lang === "ar" ? `الصفات الألمانية لمستوى ${level} واستخداماتها` : lang === "fa" ? `صفت‌های آلمانی در سطح ${level} و کاربردشان` : lang === "es" ? `Adjetivos alemanes de nivel ${level} y su uso` : lang === "uk" ? `Німецькі прикметники рівня ${level} та їх вживання` : `ئەپیتافەکانی ئەڵمانی ئاستی ${level} و بەکارهێنانیان`} level={level}
+                  hint={lang === "tr" ? "Sıfatların cümlede doğru kullanımı, karşıtları ve edatlı sıfatlar üzerine sorular. Kelimenin Kürtçe anlamını sorma." : lang === "en" ? "Questions on correct adjective use in sentences, opposites, and preposition-linked adjectives. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول الاستخدام الصحيح للصفات في الجمل، الأضداد، والصفات المرتبطة بحروف الجر. لا تسأل عن المعنى بالكردية." : lang === "es" ? "Preguntas sobre el uso correcto de adjetivos en frases, antónimos y adjetivos con preposición. No preguntes el significado en español." : lang === "uk" ? "Питання про правильне вживання прикметників у реченнях, антоніми та прикметники з прийменниками. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد درست صفت‌ها در جملات، متضادها و صفت‌های همراه با حرف اضافه. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی ڕاستی ئەپیتافەکان لە ناو ڕستەدا، دژەواژەکان و ئەپیتافەکانی لەگەڵ داچەک."}
                   pct={progress[level + "::adj"] || 0} onBatch={mkBatch(level + "::adj")} lang={lang} />
               </div>
             </div>
@@ -11049,7 +11049,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <button onClick={() => toggleFav && toggleFav({ de: deWord, ku: masalDictEntry.ku || '', tr: masalDictEntry.tr || '', en: masalDictEntry.en || '', ar: masalDictEntry.ar || '', fa: masalDictEntry.fa || '', ex: masalDictEntry.ex || '', exku: masalDictEntry.ex_ku || '', extr: masalDictEntry.ex_tr || '', exen: masalDictEntry.ex_en || '', exar: masalDictEntry.ex_ar || '', exfa: masalDictEntry.ex_fa || '', es: masalDictEntry.es || '', exes: masalDictEntry.ex_es || '' })}
                         style={{ display:"flex", alignItems:"center", gap:5, background: isFav ? '#fff0f0' : 'none', border:`1.5px solid ${isFav ? '#ef4444' : '#d1d5db'}`, borderRadius:20, padding:'5px 14px', cursor:'pointer', color: isFav ? '#ef4444' : '#6b7280', fontSize:12, fontWeight:700 }}>
                         <Heart size={12} fill={isFav ? '#ef4444' : 'none'} color={isFav ? '#ef4444' : '#6b7280'} />
-                        {isFav ? (lang === "tr" ? "Favoride ✓" : lang === "en" ? "Favorited ✓" : lang === "ar" ? "في المفضلة ✓" : lang === "uk" ? "В обраному ✓" : lang === "fa" ? "در علاقه‌مندی‌ها ✓" : "لە دڵخوازەکان ✓") : (lang === "tr" ? "Favoriye ekle" : lang === "en" ? "Add to favorites" : lang === "ar" ? "أضف إلى المفضلة" : lang === "uk" ? "Додати в обране" : lang === "fa" ? "افزودن به علاقه‌مندی‌ها" : "زیادکردن بۆ دڵخواز")}
+                        {isFav ? (lang === "tr" ? "Favoride ✓" : lang === "en" ? "Favorited ✓" : lang === "ar" ? "في المفضلة ✓" : lang === "es" ? "En favoritos ✓" : lang === "uk" ? "В обраному ✓" : lang === "fa" ? "در علاقه‌مندی‌ها ✓" : "لە دڵخوازەکان ✓") : (lang === "tr" ? "Favoriye ekle" : lang === "en" ? "Add to favorites" : lang === "ar" ? "أضف إلى المفضلة" : lang === "es" ? "Añadir a favoritos" : lang === "uk" ? "Додати в обране" : lang === "fa" ? "افزودن به علاقه‌مندی‌ها" : "زیادکردن بۆ دڵخواز")}
                       </button>
                     </div>
                   </div>
@@ -11362,7 +11362,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
       {!fixedLevel && (
         <>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:4 }}>
-            <h2 style={{ fontWeight:700, fontSize:22, margin:0 }}>{lang === "tr" ? "Kelime Kartları" : lang === "en" ? "Flashcards" : lang === "ar" ? "بطاقات الكلمات" : lang === "uk" ? "Картки" : lang === "fa" ? "کارت‌ها" : "کارتی وشەکان"}</h2>
+            <h2 style={{ fontWeight:700, fontSize:22, margin:0 }}>{lang === "tr" ? "Kelime Kartları" : lang === "en" ? "Flashcards" : lang === "ar" ? "بطاقات الكلمات" : lang === "es" ? "Tarjetas" : lang === "uk" ? "Картки" : lang === "fa" ? "کارت‌ها" : "کارتی وشەکان"}</h2>
             {streak > 1 && (
               <div style={{ display:"flex", alignItems:"center", gap:4, background:"rgba(245,165,36,.15)", border:"1px solid rgba(245,165,36,.3)", borderRadius:99, padding:"4px 12px" }}>
                 <Zap size={14} color={C.gold} />
@@ -11370,7 +11370,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
               </div>
             )}
           </div>
-          <p style={{ color:C.muted, fontSize:13, marginBottom:14 }}>{lang === "tr" ? "Beyin hazır mı? Kelimeler savaşa hazır — kimin kazanacağını gör! ⚔️🧠" : lang === "en" ? "Brain ready? The words are ready to battle — see who wins! ⚔️🧠" : lang === "ar" ? "هل عقلك جاهز؟ الكلمات جاهزة للمعركة — انظر من سيفوز! ⚔️🧠" : lang === "uk" ? "Мозок готовий? Слова готові до бою — побач, хто переможе! ⚔️🧠" : lang === "fa" ? "مغزت آماده است؟ واژه‌ها آماده نبردند — ببین چه کسی می‌برد! ⚔️🧠" : "مێشکت ئامادەیە؟ وشەکان ئامادەی شەڕن — ببینە کێ دەبەرێت! ⚔️🧠"}</p>
+          <p style={{ color:C.muted, fontSize:13, marginBottom:14 }}>{lang === "tr" ? "Beyin hazır mı? Kelimeler savaşa hazır — kimin kazanacağını gör! ⚔️🧠" : lang === "en" ? "Brain ready? The words are ready to battle — see who wins! ⚔️🧠" : lang === "ar" ? "هل عقلك جاهز؟ الكلمات جاهزة للمعركة — انظر من سيفوز! ⚔️🧠" : lang === "es" ? "¿Cerebro listo? Las palabras están listas para la batalla — ¡mira quién gana! ⚔️🧠" : lang === "uk" ? "Мозок готовий? Слова готові до бою — побач, хто переможе! ⚔️🧠" : lang === "fa" ? "مغزت آماده است؟ واژه‌ها آماده نبردند — ببین چه کسی می‌برد! ⚔️🧠" : "مێشکت ئامادەیە؟ وشەکان ئامادەی شەڕن — ببینە کێ دەبەرێت! ⚔️🧠"}</p>
           <LevelPills value={level} onChange={changeLevel} />
           {/* Spaced-repetition review entry */}
           <div style={{ display:"flex", justifyContent:"center", marginTop:10 }}>
@@ -11380,7 +11380,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                 background: level === "REVIEW" ? "#7C3AED" : (dueCount ? "#7C3AED10" : "transparent"),
                 color: level === "REVIEW" ? "#fff" : (dueCount ? "#7C3AED" : C.muted), fontWeight:700, fontSize:13 }}>
               <RefreshCw size={14} />
-              {lang === "tr" ? "Tekrar" : lang === "en" ? "Review" : lang === "ar" ? "مراجعة" : lang === "uk" ? "Повторення" : lang === "fa" ? "مرور" : "پێداچوونەوە"}
+              {lang === "tr" ? "Tekrar" : lang === "en" ? "Review" : lang === "ar" ? "مراجعة" : lang === "es" ? "Repaso" : lang === "uk" ? "Повторення" : lang === "fa" ? "مرور" : "پێداچوونەوە"}
               {dueCount > 0 && (
                 <span style={{ background: level === "REVIEW" ? "rgba(255,255,255,.25)" : "#7C3AED", color:"#fff", borderRadius:99, padding:"1px 8px", fontSize:11, fontWeight:800 }}>{dueCount}</span>
               )}
@@ -11403,10 +11403,10 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
         <div className="rise" style={{ textAlign:"center", padding:"40px 20px" }}>
           <div style={{ fontSize:44, marginBottom:12 }}>✅</div>
           <h3 style={{ fontWeight:800, fontSize:20, margin:"0 0 6px" }}>
-            {lang === "tr" ? "Tekrar edilecek kelime yok" : lang === "en" ? "No words due for review" : lang === "ar" ? "لا توجد كلمات للمراجعة" : lang === "uk" ? "Немає слів для повторення" : lang === "fa" ? "واژه‌ای برای مرور نیست" : "هیچ وشەیەک بۆ پێداچوونەوە نییە"}
+            {lang === "tr" ? "Tekrar edilecek kelime yok" : lang === "en" ? "No words due for review" : lang === "ar" ? "لا توجد كلمات للمراجعة" : lang === "es" ? "No hay palabras para repasar" : lang === "uk" ? "Немає слів для повторення" : lang === "fa" ? "واژه‌ای برای مرور نیست" : "هیچ وشەیەک بۆ پێداچوونەوە نییە"}
           </h3>
           <p style={{ color:C.muted, fontSize:13.5, lineHeight:1.6, maxWidth:320, margin:"0 auto" }}>
-            {lang === "tr" ? "Kartları çalış; öğrendiğin kelimeler zamanı gelince burada tekrar için birikir." : lang === "en" ? "Practise the cards — the words you learn will show up here for review when they're due." : lang === "ar" ? "تدرّب على البطاقات — ستظهر الكلمات التي تتعلّمها هنا للمراجعة عند حلول موعدها." : lang === "uk" ? "Тренуйте картки — вивчені слова з'являться тут для повторення, коли настане час." : lang === "fa" ? "کارت‌ها را تمرین کنید — واژه‌های یادگرفته‌شده هنگام فرارسیدن زمان برای مرور اینجا ظاهر می‌شوند." : "کارتەکان مەشق بکە — ئەو وشانەی فێری دەبیت لێرە بۆ پێداچوونەوە کۆدەبنەوە کاتێک کاتیان دێت."}
+            {lang === "tr" ? "Kartları çalış; öğrendiğin kelimeler zamanı gelince burada tekrar için birikir." : lang === "en" ? "Practise the cards — the words you learn will show up here for review when they're due." : lang === "ar" ? "تدرّب على البطاقات — ستظهر الكلمات التي تتعلّمها هنا للمراجعة عند حلول موعدها." : lang === "es" ? "Practica las tarjetas — las palabras que aprendas aparecerán aquí para repasar cuando toque." : lang === "uk" ? "Тренуйте картки — вивчені слова з'являться тут для повторення, коли настане час." : lang === "fa" ? "کارت‌ها را تمرین کنید — واژه‌های یادگرفته‌شده هنگام فرارسیدن زمان برای مرور اینجا ظاهر می‌شوند." : "کارتەکان مەشق بکە — ئەو وشانەی فێری دەبیت لێرە بۆ پێداچوونەوە کۆدەبنەوە کاتێک کاتیان دێت."}
           </p>
         </div>
       ) : finished ? (
@@ -11415,14 +11415,14 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
           <div style={{ width:80, height:80, borderRadius:"50%", background:`linear-gradient(135deg,${lvColor},${C.gold})`, display:"grid", placeItems:"center", margin:"0 auto 16px", boxShadow:`0 12px 32px ${lvColor}55` }}>
             <Trophy size={36} color="#fff" />
           </div>
-          <h3 style={{ fontWeight:800, fontSize:26, margin:"0 0 8px" }}>{lang === "tr" ? "Tebrikler!" : lang === "en" ? "Congratulations!" : lang === "ar" ? "تهانينا!" : lang === "uk" ? "Вітаємо!" : lang === "fa" ? "تبریک!" : "تەواوت کرد!"}</h3>
+          <h3 style={{ fontWeight:800, fontSize:26, margin:"0 0 8px" }}>{lang === "tr" ? "Tebrikler!" : lang === "en" ? "Congratulations!" : lang === "ar" ? "تهانينا!" : lang === "es" ? "¡Enhorabuena!" : lang === "uk" ? "Вітаємо!" : lang === "fa" ? "تبریک!" : "تەواوت کرد!"}</h3>
           <p style={{ color:C.muted, fontSize:14, marginBottom:20 }}>
-            {scores.correct} {lang === "tr" ? "/ " : lang === "en" ? "/ " : lang === "ar" ? "/ " : lang === "uk" ? "/ " : lang === "fa" ? "/ " : "لە "}{total} — <strong style={{ color:lvColor }}>{accuracy}%</strong>
+            {scores.correct} {lang === "tr" ? "/ " : lang === "en" ? "/ " : lang === "ar" ? "/ " : lang === "es" ? "/ " : lang === "uk" ? "/ " : lang === "fa" ? "/ " : "لە "}{total} — <strong style={{ color:lvColor }}>{accuracy}%</strong>
           </p>
           <div style={{ display:"flex", gap:12, justifyContent:"center", marginBottom:24 }}>
             {[
-              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#16A06F" },
-              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#ef4444" },
+              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#16A06F" },
+              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#ef4444" },
             ].map(s => (
               <div key={s.label} style={{ background:C.panel, border:`1px solid ${C.line}`, borderRadius:16, padding:"16px 28px" }}>
                 <s.Icon size={24} color={s.color} style={{ margin:"0 auto 6px", display:"block" }} />
@@ -11433,7 +11433,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
           </div>
           <button onClick={() => reset(level)}
             style={{ background:`linear-gradient(135deg,${lvColor},${C.gold})`, color:"#fff", border:"none", padding:"13px 32px", borderRadius:16, fontWeight:700, fontSize:15, cursor:"pointer", display:"inline-flex", alignItems:"center", gap:8, boxShadow:`0 6px 20px ${lvColor}44` }}>
-            <RefreshCw size={16} /> {lang === "tr" ? "Tekrar Pratik Yap" : lang === "en" ? "Practice Again" : lang === "ar" ? "تدرّب مرة أخرى" : lang === "uk" ? "Потренуватися ще раз" : lang === "fa" ? "دوباره تمرین کن" : "دووبارە مەشق بکە"}
+            <RefreshCw size={16} /> {lang === "tr" ? "Tekrar Pratik Yap" : lang === "en" ? "Practice Again" : lang === "ar" ? "تدرّب مرة أخرى" : lang === "es" ? "Practicar de nuevo" : lang === "uk" ? "Потренуватися ще раз" : lang === "fa" ? "دوباره تمرین کن" : "دووبارە مەشق بکە"}
           </button>
         </div>
       ) : card ? (
@@ -11518,8 +11518,8 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                           {card.ex}
                         </div>
                       )}
-                      {(lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku) && (
-                        <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
+                      {(lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku) && (
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
                       )}
                       {/* TTS on back */}
                       <div style={{ marginTop:2 }}><Speak text={card.de} size={16} color="rgba(255,255,255,.5)" /></div>
@@ -11563,7 +11563,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                   <De size={13} color={C.muted}>{card.ex}</De>
                   <Speak text={card.ex} size={13} />
                 </div>
-                <div style={{ color:C.muted, fontSize:12, lineHeight:1.7 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
+                <div style={{ color:C.muted, fontSize:12, lineHeight:1.7 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
               </div>
             )}
           </div>
@@ -11653,7 +11653,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                     cursor: answered ? "pointer" : "not-allowed",
                     opacity: answered ? 1 : 0.5,
                     transition:"all .25s ease" }}>
-                  {lang === "tr" ? "İleri" : lang === "en" ? "Forward" : lang === "ar" ? "التالي" : lang === "uk" ? "Уперед" : lang === "fa" ? "به جلو" : "بەرەو پێشەوە"}
+                  {lang === "tr" ? "İleri" : lang === "en" ? "Forward" : lang === "ar" ? "التالي" : lang === "es" ? "Adelante" : lang === "uk" ? "Уперед" : lang === "fa" ? "به جلو" : "بەرەو پێشەوە"}
                 </button>
               </div>
             );
@@ -11812,18 +11812,18 @@ function Talk({ lang = "ku" }) {
         <div style={{ display:"flex", alignItems:"center", gap:20, position:"relative" }}>
           {/* Info */}
           <div style={{ flex:1 }}>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(6,182,212,.15)", border:"1px solid rgba(6,182,212,.3)", borderRadius:99, padding:"3px 12px", fontSize:11, color:"#67e8f9", fontWeight:700, marginBottom:8, letterSpacing:".06em" }}>✦ {lang === "tr" ? "Almanca Öğretmeni" : lang === "en" ? "German Teacher" : lang === "ar" ? "معلم الألمانية" : lang === "uk" ? "Учитель німецької" : lang === "fa" ? "معلم آلمانی" : "مامۆستای ئەڵمانیت"}</div>
+            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(6,182,212,.15)", border:"1px solid rgba(6,182,212,.3)", borderRadius:99, padding:"3px 12px", fontSize:11, color:"#67e8f9", fontWeight:700, marginBottom:8, letterSpacing:".06em" }}>✦ {lang === "tr" ? "Almanca Öğretmeni" : lang === "en" ? "German Teacher" : lang === "ar" ? "معلم الألمانية" : lang === "es" ? "Profesor de alemán" : lang === "uk" ? "Учитель німецької" : lang === "fa" ? "معلم آلمانی" : "مامۆستای ئەڵمانیت"}</div>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:20, fontWeight:700, color:"#fff", lineHeight:1.3, marginBottom:6 }}>
               {loading
-                ? <span style={{ color:"#fbbf24" }}>{lang === "tr" ? "Notlarıma bakıyorum… " : lang === "en" ? "Checking my notes… " : lang === "ar" ? "أتحقق من ملاحظاتي… " : lang === "uk" ? "Переглядаю свої нотатки… " : lang === "fa" ? "در حال مرور یادداشت‌هایم… " : "دەفتەرەکەم دەبینم… "}<span style={{ fontSize:17 }}>📓</span></span>
-                : <span>{lang === "tr" ? "Merhaba! " : lang === "en" ? "Hello! " : lang === "ar" ? "مرحبًا! " : lang === "uk" ? "Привіт! " : lang === "fa" ? "سلام! " : "باشە، "}<span className="gtext">{lang === "tr" ? "Ne öğrenmek istiyorsunuz?" : lang === "en" ? "What would you like to learn?" : lang === "ar" ? "ماذا تريد أن تتعلم؟" : lang === "uk" ? "Що б ви хотіли вивчити?" : lang === "fa" ? "چه چیزی می‌خواهید یاد بگیرید؟" : "چی دەتەوێت بزانیت؟"}</span></span>}
+                ? <span style={{ color:"#fbbf24" }}>{lang === "tr" ? "Notlarıma bakıyorum… " : lang === "en" ? "Checking my notes… " : lang === "ar" ? "أتحقق من ملاحظاتي… " : lang === "es" ? "Revisando mis notas… " : lang === "uk" ? "Переглядаю свої нотатки… " : lang === "fa" ? "در حال مرور یادداشت‌هایم… " : "دەفتەرەکەم دەبینم… "}<span style={{ fontSize:17 }}>📓</span></span>
+                : <span>{lang === "tr" ? "Merhaba! " : lang === "en" ? "Hello! " : lang === "ar" ? "مرحبًا! " : lang === "es" ? "¡Hola! " : lang === "uk" ? "Привіт! " : lang === "fa" ? "سلام! " : "باشە، "}<span className="gtext">{lang === "tr" ? "Ne öğrenmek istiyorsunuz?" : lang === "en" ? "What would you like to learn?" : lang === "ar" ? "ماذا تريد أن تتعلم؟" : lang === "es" ? "¿Qué te gustaría aprender?" : lang === "uk" ? "Що б ви хотіли вивчити?" : lang === "fa" ? "چه چیزی می‌خواهید یاد بگیرید؟" : "چی دەتەوێت بزانیت؟"}</span></span>}
             </div>
             {loading
               ? <div style={{ display:"flex", gap:5, alignItems:"center" }}>
                   {[0,1,2].map(d=>(<div key={d} style={{ width:7, height:7, borderRadius:"50%", background:"#fbbf24", animation:`thinkDot 1.4s ${d*.22}s ease infinite` }}/>))}
-                  <span style={{ color:"rgba(255,255,255,.5)", fontSize:12, marginInlineStart:6 }}>{lang === "tr" ? "Cevap hazırlanıyor…" : lang === "en" ? "Preparing an answer…" : lang === "ar" ? "جارٍ تحضير الإجابة…" : lang === "uk" ? "Готую відповідь…" : lang === "fa" ? "در حال آماده‌سازی پاسخ…" : "وەڵامەکە دیده دەکات…"}</span>
+                  <span style={{ color:"rgba(255,255,255,.5)", fontSize:12, marginInlineStart:6 }}>{lang === "tr" ? "Cevap hazırlanıyor…" : lang === "en" ? "Preparing an answer…" : lang === "ar" ? "جارٍ تحضير الإجابة…" : lang === "es" ? "Preparando una respuesta…" : lang === "uk" ? "Готую відповідь…" : lang === "fa" ? "در حال آماده‌سازی پاسخ…" : "وەڵامەکە دیده دەکات…"}</span>
                 </div>
-              : <div style={{ color:"rgba(255,255,255,.6)", fontSize:13, lineHeight:1.7 }}>{lang === "tr" ? "Her konu · Özgürce konuş" : lang === "en" ? "Any topic · Speak freely" : lang === "ar" ? "أي موضوع · تحدث بحرية" : lang === "uk" ? "Будь-яка тема · Говоріть вільно" : lang === "fa" ? "هر موضوعی · آزادانه صحبت کنید" : "هەر مەبەستێک · ئازادانە قسەبکە"}</div>}
+              : <div style={{ color:"rgba(255,255,255,.6)", fontSize:13, lineHeight:1.7 }}>{lang === "tr" ? "Her konu · Özgürce konuş" : lang === "en" ? "Any topic · Speak freely" : lang === "ar" ? "أي موضوع · تحدث بحرية" : lang === "es" ? "Cualquier tema · Habla libremente" : lang === "uk" ? "Будь-яка тема · Говоріть вільно" : lang === "fa" ? "هر موضوعی · آزادانه صحبت کنید" : "هەر مەبەستێک · ئازادانە قسەبکە"}</div>}
           </div>
           {/* SURI agent */}
           <div style={{ flexShrink:0, textAlign:"center" }}>
@@ -11865,7 +11865,7 @@ function Talk({ lang = "ku" }) {
 
         <div style={{ borderTop:"1px solid rgba(148,163,184,0.2)", padding:14, display:"flex", gap:10 }}>
           <input value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={(e)=>e.key==="Enter"&&send()}
-            placeholder={lang === "tr" ? "Buraya Almanca yazın… (örn: Ich heiße…)" : lang === "en" ? "Type in German here… (e.g. Ich heiße…)" : lang === "ar" ? "اكتب بالألمانية هنا… (مثال: Ich heiße…)" : lang === "uk" ? "Пишіть німецькою тут… (напр.: Ich heiße…)" : lang === "fa" ? "اینجا به آلمانی بنویسید… (مثلاً: Ich heiße…)" : "لێرە بە ئەڵمانی بنووسە… (نموونە: Ich heiße…)"}
+            placeholder={lang === "tr" ? "Buraya Almanca yazın… (örn: Ich heiße…)" : lang === "en" ? "Type in German here… (e.g. Ich heiße…)" : lang === "ar" ? "اكتب بالألمانية هنا… (مثال: Ich heiße…)" : lang === "es" ? `Escribe en alemán aquí… (p. ej. Ich heiße…)` : lang === "uk" ? "Пишіть німецькою тут… (напр.: Ich heiße…)" : lang === "fa" ? "اینجا به آلمانی بنویسید… (مثلاً: Ich heiße…)" : "لێرە بە ئەڵمانی بنووسە… (نموونە: Ich heiße…)"}
             style={{ flex:1, border:"1px solid rgba(148,163,184,0.3)", borderRadius:14, padding:"12px 16px", fontSize:15, outline:"none", background:"rgba(255,255,255,0.9)", color:C.ink, fontFamily:"inherit" }} />
           <button onClick={send} disabled={loading} style={{ background:loading?C.muted:"linear-gradient(135deg,#0ea5e9,#8b5cf6)", color:"#fff", border:"none", padding:"0 22px", borderRadius:14, fontWeight:700, fontSize:18, boxShadow:loading?"none":"0 4px 14px rgba(14,165,233,0.4)" }}>↑</button>
         </div>
@@ -24145,7 +24145,7 @@ function LiD({ lang = "ku" }) {
           style={{ background: "linear-gradient(135deg,#5B5BD6,#7B61FF)", color: "#fff", border: "none", borderRadius: 18, padding: "22px 16px", cursor: "pointer", textAlign: "center", boxShadow: "0 8px 24px rgba(91,91,214,.32)" }}>
           <div style={{ fontSize: 22, marginBottom: 6 }}>🎯</div>
           <div style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 800, fontSize: 15, marginBottom: 4 }}>
-            {lang === "ku" ? "تاقیکردنەوەی تاک" : lang === "ar" ? "تدريب فردي" : lang === "tr" ? "Bireysel Alıştırma" : lang === "uk" ? "Режим практики" : lang === "fa" ? "حالت تمرین" : "Practice Mode"}
+            {lang === "ku" ? "تاقیکردنەوەی تاک" : lang === "ar" ? "تدريب فردي" : lang === "tr" ? "Bireysel Alıştırma" : lang === "es" ? "Modo de práctica" : lang === "uk" ? "Режим практики" : lang === "fa" ? "حالت تمرین" : "Practice Mode"}
           </div>
           <div style={{ fontSize: 12, opacity: .8 }}>{t("practice_sub")}</div>
         </button>
@@ -24153,7 +24153,7 @@ function LiD({ lang = "ku" }) {
           style={{ background: "linear-gradient(135deg,#FF6B5E,#FF8C42)", color: "#fff", border: "none", borderRadius: 18, padding: "22px 16px", cursor: "pointer", textAlign: "center", boxShadow: "0 8px 24px rgba(255,107,94,.32)" }}>
           <div style={{ fontSize: 22, marginBottom: 6 }}>📋</div>
           <div style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 800, fontSize: 15, marginBottom: 4 }}>
-            {lang === "ku" ? "تاقیکردنەوەی فەرمی" : lang === "ar" ? "اختبار رسمي" : lang === "tr" ? "Resmi Test" : lang === "uk" ? "Офіційний тест" : lang === "fa" ? "آزمون رسمی" : "Official Test"}
+            {lang === "ku" ? "تاقیکردنەوەی فەرمی" : lang === "ar" ? "اختبار رسمي" : lang === "tr" ? "Resmi Test" : lang === "es" ? "Prueba oficial" : lang === "uk" ? "Офіційний тест" : lang === "fa" ? "آزمون رسمی" : "Official Test"}
           </div>
           <div style={{ fontSize: 12, opacity: .8 }}>{t("test_sub")}</div>
         </button>
@@ -24289,7 +24289,7 @@ function LiD({ lang = "ku" }) {
         <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
           <button onClick={() => testNav(-1)} disabled={testIdx === 0}
             style={{ flex: 1, padding: "13px", borderRadius: 12, border: `1px solid ${C.line}`, background: testIdx === 0 ? "#F4F4F8" : "#fff", color: testIdx === 0 ? C.muted : C.ink, fontWeight: 700, cursor: testIdx === 0 ? "not-allowed" : "pointer", fontSize: 15 }}>
-            ← {lang === "ar" ? "السابق" : lang === "ku" ? "پێشتر" : lang === "tr" ? "Önceki" : lang === "uk" ? "Попередній" : lang === "fa" ? "قبلی" : "Prev"}
+            ← {lang === "ar" ? "السابق" : lang === "ku" ? "پێشتر" : lang === "tr" ? "Önceki" : lang === "es" ? "Anterior" : lang === "uk" ? "Попередній" : lang === "fa" ? "قبلی" : "Prev"}
           </button>
           {!isChk
             ? <button onClick={testCheck} disabled={sel === null} style={{ flex: 1, padding: "13px", borderRadius: 12, border: "none", background: sel === null ? C.line : "rgba(91,91,214,.12)", color: sel === null ? C.muted : "#5B5BD6", fontWeight: 700, cursor: sel === null ? "not-allowed" : "pointer", fontSize: 15 }}>{t("check")}</button>

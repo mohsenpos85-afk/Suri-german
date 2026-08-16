@@ -1235,8 +1235,45 @@ function ProfileScreen({ lang="ku", onLogout }) {
   "es":{"title":"Perfil","level":"Nivel","journey":"Viaje","xp":"XP","logout":"Cerrar sesión","lang":"Idioma","stats":"Tus estadísticas","greeting":"Hola."}};
   T.uk = { title:"Профіль", level:"Рівень", journey:"Подорож", xp:"XP", logout:"Вийти", lang:"Мова", stats:"Твоя статистика", greeting:"Привіт" };
   T.fa = { title:"پروفایل", level:"سطح", journey:"سفر", xp:"XP", logout:"خروج", lang:"زبان", stats:"آمار تو", greeting:"سلام" };
+  const DEL = {
+    tr:{ delAccount:"Hesabı Sil", delTitle:"Hesabını silmek istiyor musun?", delWarn:"Bu işlem geri alınamaz. Hesabın ve tüm verilerin kalıcı olarak silinir.", delConfirm:"Evet, hesabımı sil", delCancel:"Vazgeç", delFail:"Silme başarısız oldu:" },
+    en:{ delAccount:"Delete Account", delTitle:"Delete your account?", delWarn:"This cannot be undone. Your account and all your data will be permanently deleted.", delConfirm:"Yes, delete my account", delCancel:"Cancel", delFail:"Deletion failed:" },
+    ku:{ delAccount:"سڕینەوەی هەژمار", delTitle:"هەژمارەکەت بسڕیتەوە؟", delWarn:"ئەم کارە ناگەڕێتەوە. هەژمار و هەموو داتاکانت بۆ هەمیشە دەسڕدرێنەوە.", delConfirm:"بەڵێ، هەژمارەکەم بسڕەوە", delCancel:"پاشگەزبوونەوە", delFail:"سڕینەوە سەرکەوتوو نەبوو:" },
+    ar:{ delAccount:"حذف الحساب", delTitle:"هل تريد حذف حسابك؟", delWarn:"لا يمكن التراجع عن هذا. سيتم حذف حسابك وجميع بياناتك نهائيًا.", delConfirm:"نعم، احذف حسابي", delCancel:"إلغاء", delFail:"فشل الحذف:" },
+    uk:{ delAccount:"Видалити акаунт", delTitle:"Видалити ваш акаунт?", delWarn:"Цю дію не можна скасувати. Ваш акаунт і всі дані буде видалено назавжди.", delConfirm:"Так, видалити акаунт", delCancel:"Скасувати", delFail:"Не вдалося видалити:" },
+    fa:{ delAccount:"حذف حساب", delTitle:"حساب خود را حذف می‌کنید؟", delWarn:"این کار قابل بازگشت نیست. حساب و همهٔ داده‌های شما برای همیشه حذف می‌شود.", delConfirm:"بله، حسابم را حذف کن", delCancel:"انصراف", delFail:"حذف ناموفق بود:" },
+    es:{ delAccount:"Eliminar cuenta", delTitle:"¿Eliminar tu cuenta?", delWarn:"Esta acción no se puede deshacer. Tu cuenta y todos tus datos se eliminarán permanentemente.", delConfirm:"Sí, eliminar mi cuenta", delCancel:"Cancelar", delFail:"Error al eliminar:" },
+  };
+  Object.keys(DEL).forEach(k => { if (T[k]) Object.assign(T[k], DEL[k]); });
   const t = k => (T[lang]||T.tr)[k]||k;
   const initials = name ? name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2) : "FX";
+  const dir = LANG_DIR[lang] === "rtl" ? "rtl" : "ltr";
+
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [delErr, setDelErr] = useState("");
+  async function deleteAccount() {
+    setDeleting(true); setDelErr("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${session.access_token}` },
+        });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e?.error || `HTTP ${res.status}`); }
+      }
+      // wipe local data
+      try {
+        ["ob_data","fuxi_progress","fuxi_streak","fuxi_xp","ferbun_onboarded","fuxi_journey",
+         "docassist_onboarded","docassist_privacy_ok","docassist_recent"].forEach(k => localStorage.removeItem(k));
+      } catch {}
+      await supabase.auth.signOut();
+      onLogout && onLogout();
+    } catch (e) {
+      setDelErr(String(e?.message || e)); setDeleting(false);
+    }
+  }
 
   return (
     <div style={{ maxWidth:480, margin:"0 auto", paddingBottom:20 }}>
@@ -1276,7 +1313,44 @@ function ProfileScreen({ lang="ku", onLogout }) {
           <LogOut size={18} color="#E5484D" />
           {t("logout")}
         </button>
+
+        {/* Delete account (store requirement) */}
+        <button onClick={() => { setDelErr(""); setShowDelete(true); }} style={{
+          width:"100%", marginTop:10, padding:"12px", borderRadius:14, border:"none",
+          background:"transparent", color:"#9ca3af", fontWeight:600, fontSize:13.5,
+          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+        }}>
+          <XCircle size={15} color="#9ca3af" />
+          {t("delAccount")}
+        </button>
       </div>
+
+      {showDelete && (
+        <div dir={dir} onClick={() => !deleting && setShowDelete(false)}
+          style={{ position:"fixed", inset:0, zIndex:400, background:"rgba(24,24,27,.45)", backdropFilter:"blur(3px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background:"#fff", width:"100%", maxWidth:380, borderRadius:20, padding:"26px 22px", boxShadow:"0 20px 60px rgba(0,0,0,.3)", textAlign:"center" }}>
+            <div style={{ width:60, height:60, borderRadius:18, background:"#FDECEC", display:"grid", placeItems:"center", margin:"0 auto 16px" }}>
+              <AlertTriangle size={28} color="#E5484D" />
+            </div>
+            <h3 style={{ fontSize:18, fontWeight:800, margin:"0 0 10px", color:"#18181B" }}>{t("delTitle")}</h3>
+            <p style={{ fontSize:14, lineHeight:1.55, color:"#71717A", margin:"0 0 20px" }}>{t("delWarn")}</p>
+            {delErr && <p style={{ fontSize:12.5, color:"#E5484D", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
+            <button onClick={deleteAccount} disabled={deleting} style={{
+              width:"100%", padding:"14px", borderRadius:13, border:"none", background:"#E5484D", color:"#fff",
+              fontWeight:700, fontSize:15, cursor: deleting ? "default" : "pointer", opacity: deleting ? .7 : 1, marginBottom:8,
+              display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+              {deleting ? <RefreshCw size={16} className="da-spin" /> : <XCircle size={16} />}
+              {t("delConfirm")}
+            </button>
+            <button onClick={() => setShowDelete(false)} disabled={deleting} style={{
+              width:"100%", padding:"12px", borderRadius:13, border:"none", background:"transparent",
+              color:"#71717A", fontWeight:600, fontSize:14, cursor:"pointer" }}>
+              {t("delCancel")}
+            </button>
+          </div>
+          <style>{`@keyframes daSpin{to{transform:rotate(360deg)}} .da-spin{animation:daSpin 1s linear infinite}`}</style>
+        </div>
+      )}
     </div>
   );
 }

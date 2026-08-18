@@ -1323,6 +1323,13 @@ function ProfileScreen({ lang="ku", onLogout }) {
           <XCircle size={15} color="#9ca3af" />
           {t("delAccount")}
         </button>
+
+        {/* Legal links (store requirement) */}
+        <div style={{ display:"flex", justifyContent:"center", gap:18, marginTop:14, fontSize:12.5 }}>
+          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
+          <span style={{ color:"#d1d5db" }}>·</span>
+          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Impressum</a>
+        </div>
       </div>
 
       {showDelete && (
@@ -2697,7 +2704,7 @@ export default function App() {
         {tab === "compare" && <LevelComparison lang={appLang} />}
         {tab === "spiel" && <DasSpiel lang={appLang} initialGame={spielInitialGame} onConsumeInitialGame={() => setSpielInitialGame(null)} setTab={setTab} />}
         {tab === "profile" && <ProfileScreen lang={appLang} onLogout={handleLogout} />}
-        {tab === "docs" && <DocAssistant lang={appLang} onBack={() => goToTab("home")} callClaude={callClaude} />}
+        {tab === "docs" && <DocAssistant lang={appLang} onBack={() => goToTab("home")} callClaude={callClaude} privacyUrl="/legal/datenschutz.html" impressumUrl="/legal/impressum.html" />}
       </main>}
 
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}

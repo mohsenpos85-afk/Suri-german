@@ -9379,6 +9379,15 @@ const MASALS = {
   ],
 };
 
+const SectionLabel = ({ icon: Icon, label, color = C.muted }) => (
+   <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12, marginTop: 4 }}>
+     <div style={{ width: 26, height: 26, borderRadius: 7, background: `${color}18`, display: "grid", placeItems: "center" }}>
+       <Icon size={13} color={color} />
+     </div>
+     <span style={{ fontSize: 12.5, fontWeight: 700, color, letterSpacing: ".03em" }}>{label}</span>
+   </div>
+ );
+
 function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null, setTab, favs = [], toggleFav, lang = "ku" }) {
   const tL = (key) => (APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku[key] || OB_TRANS[lang]?.[key] || OB_TRANS.en[key] || key);
   const [level] = useState(startLevel);
@@ -9468,15 +9477,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     const gtLtr = lang === "tr" || lang === "en" || (!!gt && (gt.headers[0] === "کەس" || gt.headers[0] === "ئەڵمانی"));
     const exList = (lang !== "ku" && g.ex?.length) ? g.ex : (GEXAMPLES[g.de] || g.ex);
     const lc = levelColor(level);
-    const SectionLabel = ({ icon: Icon, label, color = C.muted }) => (
-      <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12, marginTop: 4 }}>
-        <div style={{ width: 26, height: 26, borderRadius: 7, background: `${color}18`, display: "grid", placeItems: "center" }}>
-          <Icon size={13} color={color} />
-        </div>
-        <span style={{ fontSize: 12.5, fontWeight: 700, color, letterSpacing: ".03em" }}>{label}</span>
-      </div>
-    );
-    return (
+        return (
       <div>
         {/* back */}
         <button className="rise" onClick={() => closeDetail()}

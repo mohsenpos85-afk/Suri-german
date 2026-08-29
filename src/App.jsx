@@ -13,101 +13,11 @@ import {
 import DocAssistant from "./DocAssistant.jsx";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
-const _sharedVideoState = { el: null, ready: false, cbs: new Set() };
-function getSharedVideo() {
-  if (!_sharedVideoState.el) {
-    const v = document.createElement("video");
-    v.src = "/ai-agent.mp4"; v.muted = true; v.loop = true; v.playsInline = true;
-    v.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none";
-    document.body.appendChild(v);
-    v.addEventListener("canplay", () => {
-      _sharedVideoState.ready = true;
-      v.play().catch(() => {});
-      _sharedVideoState.cbs.forEach(fn => fn());
-    }, { once: true });
-    v.load();
-    _sharedVideoState.el = v;
-  }
-  return _sharedVideoState;
-}
 
 // ── Small static robot avatar (used for chat message icons ≤ 40px) ───
-function RobotAvatar({ size = 36, style, className }) {
-  return (
-    <img
-      src="/robot-mascot.webp"
-      width={size} height={size}
-      className={className}
-      style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0, ...style }}
-      alt="AI"
-    />
-  );
-}
 
 // ── Canvas chroma-key component — all instances share ONE video ──────
 // Uses setInterval at 8 fps to keep CPU usage minimal
-function RobotVideo({ width = 140, style, className }) {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    let ctx;
-    try { ctx = canvas.getContext("2d", { willReadFrequently: true }); }
-    catch { return; }
-
-    const state = getSharedVideo();
-
-    function paint() {
-      try {
-        const video = state.el;
-        if (!state.ready || !video || video.readyState < 2) return;
-        const vw = video.videoWidth, vh = video.videoHeight;
-        if (!vw || !vh) return;
-        const h = Math.round(width * vh / vw);
-        if (canvas.height !== h) canvas.height = h;
-        ctx.clearRect(0, 0, width, h);
-        ctx.drawImage(video, 0, 0, width, h);
-        try {
-          const img = ctx.getImageData(0, 0, width, h);
-          const d = img.data;
-          for (let i = 0; i < d.length; i += 4) {
-            const r = d[i], g = d[i+1], b = d[i+2];
-            const brightness = (r + g + b) / 3;
-            const colorfulness = Math.max(r,g,b) - Math.min(r,g,b);
-            // pure white with low color variation = background
-            if (brightness > 250 && colorfulness < 8) { d[i+3] = 0; }
-            // smooth feathered edge: bright + near-neutral pixels fade out gradually
-            else if (brightness > 230 && colorfulness < 20) {
-              const t = (brightness - 230) / 25;
-              d[i+3] = Math.round((1 - t) * 255);
-            }
-          }
-          ctx.putImageData(img, 0, 0);
-        } catch (_) { /* canvas tainted – skip chroma-key */ }
-      } catch { /* Video frame rendering is best-effort. */ }
-    }
-
-    let timerId;
-    const startPainting = () => {
-      paint();
-      timerId = setInterval(paint, 125); // 8 fps
-    };
-
-    if (state.ready) { startPainting(); }
-    else { state.cbs.add(startPainting); }
-
-    return () => {
-      clearInterval(timerId);
-      state.cbs.delete(startPainting);
-    };
-  }, [width]);
-
-  return (
-    <canvas ref={canvasRef} width={width} height={width}
-      className={className} style={style} />
-  );
-}
 
 // ── Claude proxy helper ────────────────────────────────────────────────
 // Calls flow through a Supabase Edge Function (supabase/functions/claude-proxy)
@@ -779,9 +689,7 @@ const OB_FOCUS = [
   {v:"all",        Icon: Star,       label:"Everything"},
 ];
 
-const GOAL_LABELS = {live:"Living in Germany",work:"Work & Career",edu:"Education",exam:"Citizenship / Exam",travel:"Travel",family:"Family & Friends",hobby:"Personal Interest"};
 const LANG_LABELS = {tr:"Turkish",en:"English",ar:"Arabic",es:"Spanish",fr:"French",ru:"Russian",ku:"Sorani Kurdish",fa:"Farsi",ko:"Korean",ja:"Japanese"};
-const FOCUS_LABELS = {speaking:"Speaking",listening:"Listening",reading:"Reading",writing:"Writing",grammar:"Grammar",vocabulary:"Vocabulary",all:"Everything"};
 
 // ── App UI Translations (main app, post-onboarding) ─────────────────
 // ku = default (Sorani Kurdish), tr = Turkish. Others added later.
@@ -1267,7 +1175,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
       try {
         ["ob_data","fuxi_progress","fuxi_streak","fuxi_xp","ferbun_onboarded","fuxi_journey",
          "docassist_onboarded","docassist_privacy_ok","docassist_recent"].forEach(k => localStorage.removeItem(k));
-      } catch {}
+      } catch { /* Local storage may be unavailable. */ }
       await supabase.auth.signOut();
       onLogout && onLogout();
     } catch (e) {
@@ -1363,15 +1271,6 @@ function ProfileScreen({ lang="ku", onLogout }) {
 }
 
 // ── Mobile breakpoint hook ────────────────────────────────────────────
-function useIsMobile(bp=768){
-  const [m,setM]=useState(()=>typeof window!=='undefined'&&window.innerWidth<bp);
-  useEffect(()=>{
-    const h=()=>setM(window.innerWidth<bp);
-    window.addEventListener('resize',h);
-    return()=>window.removeEventListener('resize',h);
-  },[bp]);
-  return m;
-}
 
 // Module-level translation helper for sub-components (outside Lessons)
 const tApp = (lang, key) => {
@@ -11025,7 +10924,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             return text.split(/(\s+)/).map((part, i) => {
               if (/^\s+$/.test(part)) return part;
               const currentAudioWord = audioWordIndex++;
-              const clean = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '').toLowerCase();
+              const clean = part.replace(/[.,!?;:"„"«»''()[\]]+/g, '').toLowerCase();
               const entry = STORY_DICT[clean] || BOOK_DICT[clean];
               if (!entry || seenWords.has(clean)) return <span key={i} data-audio-word-index={currentAudioWord}>{part}</span>;
               seenWords.add(clean);
@@ -11034,7 +10933,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   onClick={(e) => {
                     e.stopPropagation();
                     const r = e.currentTarget.getBoundingClientRect();
-                    const cleanWord = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '');
+                    const cleanWord = part.replace(/[.,!?;:"„"«»''()[\]]+/g, '');
                     setMasalDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom });
                   }}
                   style={{ borderBottom: '1.5px dotted ' + story.color, color: story.color, cursor: 'pointer', fontStyle: 'inherit' }}>
@@ -11309,7 +11208,7 @@ const WORD_META = {
 // Each entry: { ease, interval(days), reps, due(ms), last(ms) }.
 const SRS_DAY = 86400000;
 function srsLoad() { try { return JSON.parse(localStorage.getItem("fuxi_srs") || "{}"); } catch { return {}; } }
-function srsSave(s) { try { localStorage.setItem("fuxi_srs", JSON.stringify(s)); } catch {} }
+function srsSave(s) { try { localStorage.setItem("fuxi_srs", JSON.stringify(s)); } catch { /* Local storage may be unavailable. */ } }
 function srsGrade(de, correct) {
   if (!de) return;
   const s = srsLoad();
@@ -22538,12 +22437,12 @@ function extractChapterWords(scenes) {
       if (line.t !== 'n' && line.t !== 'd') continue;
       if (!line.s) continue;
       for (const part of line.s.split(/\s+/)) {
-        const clean = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '').toLowerCase();
+        const clean = part.replace(/[.,!?;:"„"«»''()[\]]+/g, '').toLowerCase();
         if (!clean || seen.has(clean)) continue;
         const entry = BOOK_DICT[clean];
         if (!entry) continue;
         seen.add(clean);
-        words.push({ word: part.replace(/[.,!?;:"„"«»''()\[\]]+/g, ''), key: clean, entry });
+        words.push({ word: part.replace(/[.,!?;:"„"«»''()[\]]+/g, ''), key: clean, entry });
       }
     }
   }
@@ -22767,7 +22666,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
     if (!text) return text;
     return text.split(/(\s+)/).map((part, i) => {
       if (/^\s+$/.test(part)) return part;
-      const clean = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '').toLowerCase();
+      const clean = part.replace(/[.,!?;:"„"«»''()[\]]+/g, '').toLowerCase();
       const entry = BOOK_DICT[clean];
       if (!entry || seenSet.has(clean)) return <span key={i}>{part}</span>;
       seenSet.add(clean);
@@ -22776,7 +22675,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
           onClick={(e) => {
             e.stopPropagation();
             const r = e.currentTarget.getBoundingClientRect();
-            const cleanWord = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '');
+            const cleanWord = part.replace(/[.,!?;:"„"«»''()[\]]+/g, '');
             setDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom });
             setSessionWords(prev => prev.includes(cleanWord) ? prev : [...prev, cleanWord]);
           }}

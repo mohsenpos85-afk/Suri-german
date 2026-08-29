@@ -3103,14 +3103,6 @@ const SIFAT_DATA = [
 ];
 
 // ── TTS helper ────────────────────────────────────────────────────
-function speak(text) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "de-DE";
-  u.rate = 0.9;
-  window.speechSynthesis.speak(u);
-}
 
 function SpeakBtn({ text, color = "#71717A", small = false }) {
   const [playing, setPlaying] = useState(false);
@@ -3840,112 +3832,6 @@ function Donut({ pct, size = 132 }) {
 }
 
 // ── StaticExercise — hardcoded questions ─────────────────────────────
-function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
-  const N = questions.length;
-  const [phase, setPhase] = useState("intro"); // intro | active | result
-  const [shuffled, setShuffled] = useState([]);
-  const [answers, setAnswers] = useState({});
-
-  function startQuiz() {
-    const sh = [...questions].sort(() => Math.random() - 0.5);
-    setShuffled(sh);
-    setAnswers({});
-    setPhase("active");
-  }
-
-  const correctCount = shuffled.reduce((n, q, i) => n + (answers[i] === q.correct ? 1 : 0), 0);
-
-  function check() {
-    const c = correctCount, w = shuffled.length - c;
-    onBatch && onBatch(c, w);
-    setPhase("result");
-  }
-
-  // ── INTRO ──
-  if (phase === "intro") return (
-    <div style={{ marginTop:26, background:C.panel, borderRadius:22, padding:"24px 20px", border:`1px solid ${C.line}`, boxShadow:"0 4px 24px rgba(0,0,0,.06)" }}>
-      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-        <div style={{ width:40, height:40, borderRadius:12, background:"linear-gradient(135deg,#f59e0b,#d97706)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 4px 12px rgba(245,158,11,.28)" }}>
-          <span style={{ fontSize:20 }}>✏️</span>
-        </div>
-        <div>
-          <div style={{ fontWeight:800, fontSize:16, color:C.ink }}>{lang === "tr" ? "Hazır Sorular" : lang === "en" ? "Ready-made Questions" : lang === "ar" ? "أسئلة جاهزة" : lang === "es" ? "Preguntas listas" : lang === "uk" ? "Готові питання" : lang === "fa" ? "سؤال‌های آماده" : lang === "fr" ? "Questions prêtes à être posées" : "پرسیارە ئامادەکراوەکان"}</div>
-          <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{N} {lang === "tr" ? "soru · Dört seçenekli" : lang === "en" ? "questions · 4 options" : lang === "ar" ? "سؤال · أربعة خيارات" : lang === "es" ? "preguntas · 4 opciones" : lang === "uk" ? "питань · 4 варіанти" : lang === "fa" ? "سؤال · ۴ گزینه" : lang === "fr" ? "questions · 4 options" : "پرسیار · چوار چاوی هەڵبژاردن"}</div>
-        </div>
-      </div>
-      <div style={{ display:"flex", justifyContent:"center", marginBottom:20 }}>
-        <Donut pct={pct} />
-      </div>
-      <button onClick={startQuiz} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,#f59e0b,#d97706)", color:"#fff", boxShadow:"0 4px 14px rgba(245,158,11,.32)" }}>
-        {pct > 0 ? `${tApp(lang,"quiz_continue")} — ${N} ${tApp(lang,"quiz_questions")}` : `${tApp(lang,"quiz_start")} — ${N} ${tApp(lang,"quiz_questions")}`}
-      </button>
-    </div>
-  );
-
-  // ── ACTIVE / RESULT ──
-  const reviewed = phase === "result";
-  return (
-    <div style={{ marginTop:26 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
-        <div style={{ fontWeight:700, fontSize:17 }}>✏️ {tApp(lang,"quiz_questions")}</div>
-        <span style={{ background: reviewed ? (correctCount >= shuffled.length * 0.7 ? "#10b981" : "#ef4444") : C.muted, color:"#fff", padding:"4px 13px", borderRadius:14, fontWeight:700, fontSize:14 }} dir="ltr">
-          {correctCount} / {shuffled.length}
-        </span>
-      </div>
-
-      {shuffled.map((q, i) => {
-        const chosen = answers[i];
-        return (
-          <div key={i} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:10, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.05)" }}>
-            <div style={{ fontWeight:700, fontSize:13.5, color:"#1A1F2E", marginBottom:10, lineHeight:1.65 }} dir="ltr">
-              {i + 1}. {q.q}
-            </div>
-            {q.options.map((opt, j) => {
-              let bg = "#F8F9FC", border = "1.5px solid #E4E8F0", color = "#1A1F2E";
-              if (reviewed) {
-                if (j === q.correct)      { bg = "rgba(16,185,129,.12)";  border = "1.5px solid #10b981"; color = "#065f46"; }
-                else if (j === chosen)    { bg = "rgba(239,68,68,.1)";    border = "1.5px solid #ef4444"; color = "#991b1b"; }
-              } else if (j === chosen)    { bg = "rgba(91,91,214,.1)";    border = "1.5px solid #5B5BD6"; color = "#3730a3"; }
-              return (
-                <button key={j}
-                  onClick={() => !reviewed && setAnswers(a => ({ ...a, [i]: j }))}
-                  style={{ width:"100%", textAlign:"start", background:bg, border, color, borderRadius:10, padding:"9px 13px", marginBottom:6, cursor: reviewed ? "default" : "pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:500, fontSize:13, display:"flex", alignItems:"center", gap:8 }}
-                  dir="ltr">
-                  <span style={{ fontWeight:700, opacity:.6, minWidth:16 }}>{["A","B","C"][j]}.</span>
-                  <span>{opt}</span>
-                  {reviewed && j === q.correct && <span style={{ marginInlineStart:"auto" }}>✓</span>}
-                  {reviewed && j === chosen && j !== q.correct && <span style={{ marginInlineStart:"auto" }}>✗</span>}
-                </button>
-              );
-            })}
-            {reviewed && q.why && (
-              <div style={{ marginTop:6, background:"rgba(91,91,214,.06)", borderRadius:8, padding:"7px 10px", fontSize:12, color:"#4338ca", fontWeight:600, lineHeight:1.7 }}>
-                💡 {q.why}
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      {!reviewed ? (
-        <button onClick={check}
-          disabled={Object.keys(answers).length < shuffled.length}
-          style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor: Object.keys(answers).length < shuffled.length ? "default" : "pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background: Object.keys(answers).length < shuffled.length ? "#E4E4E8" : "linear-gradient(135deg,#f59e0b,#d97706)", color: Object.keys(answers).length < shuffled.length ? "#A1A1AA" : "#fff", marginTop:4 }}>
-          {tApp(lang,"quiz_check")}
-        </button>
-      ) : (
-        <div style={{ display:"flex", flexDirection:"column", gap:10, marginTop:4 }}>
-          <div style={{ textAlign:"center", padding:"14px", background: correctCount >= shuffled.length * 0.7 ? "rgba(16,185,129,.1)" : "rgba(239,68,68,.08)", borderRadius:12, color: correctCount >= shuffled.length * 0.7 ? "#065f46" : "#991b1b", fontWeight:700, fontSize:15 }}>
-            {correctCount >= shuffled.length * 0.7 ? tApp(lang,"quiz_good") : tApp(lang,"quiz_study")} — {correctCount}/{shuffled.length} {tApp(lang,"quiz_right")}
-          </div>
-          <button onClick={startQuiz} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff" }}>
-            {tApp(lang,"quiz_retry")}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ── DragDropExercise — Sprachbausteine drag-and-drop ─────────────────
 function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = false, onToggle, headerless = false }) {
@@ -9547,12 +9433,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   }, [level]);
 
   // detail açılınca scroll'u kaydet, kapanınca geri dön
-  const openDetail = (id) => {
-    savedScrollRef.current = window.scrollY;
-    setOpen(id);
-    window.scrollTo({ top: 0, behavior: "instant" });
-  };
-  const closeDetail = () => {
+    const closeDetail = () => {
     setOpen(null);
     requestAnimationFrame(() =>
       window.scrollTo({ top: savedScrollRef.current, behavior: "instant" })
@@ -9579,8 +9460,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   // ── Grammar detail view ──
   if (open && open.startsWith("g:")) {
     const gid = open.slice(2);
-    const list = GRAMMAR[level] || Object.values(GRAMMAR).flat();
-    let g = (GRAMMAR[level] || []).find((x) => x.de === gid);
+        let g = (GRAMMAR[level] || []).find((x) => x.de === gid);
     if (!g) { for (const lv of Object.keys(GRAMMAR)) { const f = GRAMMAR[lv].find((x) => x.de === gid); if (f) { g = f; break; } } }
     const gt = GTABLES[g.de];
     const gtHeaders = gt ? (lang === "tr" ? (gt.headersTr || gt.headers) : lang === "en" ? (gt.headersEn || gt.headers) : lang === "ar" ? (gt.headersAr || gt.headers) : lang === "uk" ? (gt.headersUk || gt.headers) : lang === "fa" ? (gt.headersFa || gt.headers) : lang === "es" ? (gt.headersEs || gt.headersEn || gt.headers) : gt.headers) : null;
@@ -9808,24 +9688,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   }
 
   // ── Circular progress helper ──
-  const CircleProgress = ({ pct = 0, color = "#5B5BD6", size = 38, done = false }) => {
-    const r = 13, circ = 2 * Math.PI * r;
-    const offset = circ - (Math.min(pct, 100) / 100) * circ;
-    return (
-      <div style={{ position:"relative", width:size, height:size, flexShrink:0 }}>
-        <svg width={size} height={size} style={{ transform:"rotate(-90deg)", display:"block" }}>
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={`${color}25`} strokeWidth={2.5} />
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={done ? "#16A06F" : color} strokeWidth={2.5}
-            strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-            style={{ transition:"stroke-dashoffset .5s ease" }} />
-        </svg>
-        <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:9, fontWeight:800, color: done ? "#16A06F" : color }}>
-          {done ? "✓" : `${Math.round(pct)}%`}
-        </div>
-      </div>
-    );
-  };
 
   // ── List view ──
   const grammarList = GRAMMAR[level] || [];
@@ -9845,12 +9707,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const selectedVerb    = verbList[selVerbIdx]        || verbList[0]       || null;
   const selectedVocab   = vocabList[selVocabIdx]      || vocabList[0]      || null;
   const selectedAdj     = adjWordList[selAdjIdx]      || adjWordList[0]    || null;
-  const Tab = ({ id, label }) => (
-    <button onClick={() => setMode(id)}
-      style={{ flex: 1, border: "none", background: mode === id ? C.red : "transparent", color: mode === id ? "#fff" : C.muted, padding: "10px 6px", borderRadius: 9, fontWeight: 700, fontSize: 13.5 }}>
-      {label}
-    </button>
-  );
 
   // tab meta
   const TABS = [
@@ -10416,8 +10272,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         // ── STEP 1: choose provider ───────────────────────────────────────
         if (!examType) {
-          const prevScore = examType ? (progress[`${examType}::${level}::exam`] || 0) : 0;
-          return (
+                    return (
             <div className="rise">
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:18 }}>
                 <div style={{ width:42, height:42, borderRadius:13, background:`${C.green}18`, display:"grid", placeItems:"center" }}>
@@ -10910,7 +10765,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {/* ══ MASAL / Märchen ══════════════════════════════════════════ */}
       {mode === "masal" && level !== null && (() => {
         const masals = MASALS[level] || [];
-        const lc = levelColor(level);
 
         // ── Reader view ──
         if (selMasalId) {
@@ -11337,8 +11191,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
 
   const card     = deck[idx];
   const finished = idx >= deck.length;
-  const progress = deck.length > 0 ? Math.min((idx / deck.length) * 100, 100) : 0;
-  const total    = scores.correct + scores.wrong;
+    const total    = scores.correct + scores.wrong;
   const accuracy = total > 0 ? Math.round((scores.correct / total) * 100) : 0;
   const lvColor  = level === "REVIEW" ? "#7C3AED" : levelColor(level);
   const dueCount = srsDueCount();
@@ -22985,14 +22838,11 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   "es":{"title":"Su viaje","back":"Atrás","cont":"Continuar","level":"Nivel","done":"Terminado ✓","active":"Corriente","locked":"Bloqueado","xp":"XP","words":"palabras","lessons":"lecciones","start":"Comienzo","complete":"¡Lección hecha!","next":"Siguiente nivel desbloqueado","storyMode":"Modo de historia","storyIntro":"Llegaste a Alemania, empezando por cero.","storyEnd":"Estás listo, una nueva vida en Alemania.","chapter":"Capítulo de la historia","needKey":"Du brauchst eine Eintrittskarte! (Necesitas una tarjeta de entrada)"},"fr":{"title":"Votre voyage","back":"Précédent","cont":"Continuer","level":"Niveau","done":"Terminé ✓","active":"Actuellement","locked":"Verrouillé","xp":"xx","words":"mots","lessons":"leçons","start":"Démarrer","complete":"Leçon terminée!","next":"Niveau suivant déverrouillé -","storyMode":"Mode histoire","storyIntro":"Vous êtes arrivé en Allemagne, à partir de zéro.","storyEnd":"Tu es prête, une nouvelle vie en Allemagne.","chapter":"Chapitre historique","needKey":"Du brauchst eine Eintrittskarte! (Vous avez besoin d'une carte d'entrée)"}};
   const jt = k => (JT[lang]||JT.tr)[k]||(JT.tr[k]||k);
   const getNat = item => lang==='tr'?item.tr:lang==='ku'?item.ku:lang==='ar'?item.ar:lang==='uk'?(item.uk||item.en):lang==='fa'?(item.fa||item.en):(item[lang]||item.en);
-  const getStory = lv => lv.story?.[lang] || lv.story?.tr || '';
 
   // ── User profile from registration ──────────────────────────────────────
   const _obData    = (() => { try { return JSON.parse(localStorage.getItem("ob_data")||"{}"); } catch { return {}; } })();
   const userName   = _obData.name   || "X";
-  const userAge    = _obData.age    || "X";
-  const userGender = _obData.gender || null;
-  const getCefrLabel = cefr => (CEFR_META[cefr]?.label||{})[lang] || (CEFR_META[cefr]?.label?.tr||cefr);
+      const getCefrLabel = cefr => (CEFR_META[cefr]?.label||{})[lang] || (CEFR_META[cefr]?.label?.tr||cefr);
   const getCefrArc = cefr => (CEFR_META[cefr]?.arc||{})[lang] || (CEFR_META[cefr]?.arc?.tr||'');
 
   const [currentLevel, setCurrentLevel] = useState(()=>
@@ -23088,7 +22938,6 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   }, [dragging]);
 
   const completedCount = currentLevel - 1;
-  const pct = Math.round((completedCount/60)*100);
 
   // Node layout constants
   const CONTAINER_W = 360;

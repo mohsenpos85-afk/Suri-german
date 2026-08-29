@@ -3839,7 +3839,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   const [placements, setPlacements] = useState(() => exercises.map(() => ({})));
   const [selected,   setSelected]   = useState(null);
-  const [dragSrc,    setDragSrc]    = useState(null);
+  const [, setDragSrc] = useState(null);
   const [revealed,   setRevealed]   = useState(false);
   const wasDropped = useRef(false);          // flag: onDrop already handled this drag
   const dragSrcRef = useRef(null);           // sync ref so onDragEnd reads latest value
@@ -9406,7 +9406,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const mkBatch = (key) => (c, w) => setProgress && setProgress((p) => ({ ...p, [key]: Math.max(0, Math.min(100, (p[key] || 0) + (c - w))) }));
   const [examType, setExamType] = useState(null); // null | "telc" | "goethe"
   const [openDialogId, setOpenDialogId] = useState(null);
-  const [examLevel, setExamLevel] = useState(null); // null | "A1".."B2"
   const [openWordsSub, setOpenWordsSub] = useState(null);  // "fiil" | "vocab" | "adj" | null
   useEffect(() => { setOpenWordsSub(null); }, [mode, level]);
   const [selGrammarIdx, setSelGrammarIdx] = useState(0);  // wheel picker: selected grammar index
@@ -10278,7 +10277,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 {Object.entries(PROV).map(([k, p]) => {
                   const sc = progress[`${k}::${level}::exam`] || 0;
                   return (
-                    <button key={k} onClick={() => { setExamType(k); setExamLevel(level); }}
+                    <button key={k} onClick={() => { setExamType(k); }}
                       style={{ textAlign:"right", background:"#fff", border:`1.5px solid ${C.line}`, borderInlineStart:`5px solid ${p.color}`, borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer", boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)", transition:"transform .18s,box-shadow .18s" }}
                       onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 4px 0 rgba(0,0,0,.08),0 12px 24px ${p.color}33`;}}
                       onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)";}}>
@@ -10307,12 +10306,12 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         const prov = PROV[examType];
         return (
           <div className="rise">
-            <button onClick={() => { setExamType(null); setExamLevel(null); }}
+            <button onClick={() => { setExamType(null); }}
               style={{ border:`1.5px solid ${C.line}`, background:"#fff", color:C.muted, fontWeight:700, fontSize:13, marginBottom:16, borderRadius:99, padding:"7px 16px", cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6, boxShadow:"0 2px 6px rgba(0,0,0,.06)" }}>
               <span style={{ fontSize:15 }}>↩</span> {lang === "tr" ? "Sınav türünü değiştir" : lang === "en" ? "Change exam type" : lang === "ar" ? "تغيير نوع الاختبار" : lang === "es" ? "Cambiar tipo de examen" : lang === "uk" ? "Змінити тип іспиту" : lang === "fa" ? "تغییر نوع آزمون" : lang === "fr" ? "Changer de type d'examen" : "گۆڕینی جۆری تاقیکردنەوە"}
             </button>
             <ExamRunner provName={prov.name} provDe={prov.de} level={level} lang={lang}
-              onClose={() => { setExamType(null); setExamLevel(null); }}
+              onClose={() => { setExamType(null); }}
               onScore={(p) => setProgress && setProgress((pr) => ({ ...pr, [`${examType}::${level}::exam`]: p }))} />
           </div>
         );
@@ -12506,7 +12505,7 @@ function WordMatch({ lang = "ku", onBack }) {
   const [dropResult, setDropResult]= useState(null);
   const [wrongGuess, setWrongGuess]= useState(null);
   const [score,      setScore]     = useState(0);
-  const [dragging,   setDragging]  = useState(null);
+  const [, setDragging] = useState(null);
 
   const lc = (i) => ['#22c55e','#3b82f6','#6366f1','#f59e0b','#ef4444'][i];
 
@@ -22839,7 +22838,6 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   const [currentLevel, setCurrentLevel] = useState(()=>
     parseInt(localStorage.getItem('fuxi_journey')||'1')
   );
-  const [activeLevel, setActiveLevel] = useState(null);
   const [bookReader, setBookReader] = useState(null);
   const [justUnlocked, setJustUnlocked] = useState(null);
   const [quizGate, setQuizGate] = useState(null); // { levelId, scenes, sessionWords } — chapter finished, quiz must be passed to unlock
@@ -22862,7 +22860,6 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   };
 
   const completeLevel = (id) => {
-    setActiveLevel(null);
     if(id === currentLevel && currentLevel < 60){
       const next = currentLevel+1;
       localStorage.setItem('fuxi_journey', String(next));

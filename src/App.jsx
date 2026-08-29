@@ -3736,7 +3736,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
 
       {/* ══ STEP CARDS 3×2 ════════════════════════════════════════════ */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}>
-        {cards.map((lv, i) => (
+        {cards.map((lv) => (
           <div key={lv.id} className="step-card"
             onClick={() => { setLessonsLevel(lv.id); setTab("lessons"); }}
             style={{ background:"#fff", borderRadius:22, overflow:"hidden",
@@ -7665,7 +7665,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
           : `ئەرکی تاقیکردنەوەی زارەکی بە سێ پارچە: Teil 1 ناسیاوبوون، Teil 2 ئاڵوگۆڕی زانیاری، Teil 3 ڕێككەوتن لەسەر چالاکی. تەنها JSON: {"task":"هەر سێ پارچەکە بە ئەڵمانی + ڕوونکردنەوەی کورتی سۆرانی"}`));
     }
     try { const j = await callAI(prompt, tokens); setData((d) => ({ ...d, [type]: j })); }
-    catch (e) { setData((d) => ({ ...d, [type]: "error" })); }
+    catch { setData((d) => ({ ...d, [type]: "error" })); }
   }
 
   useEffect(() => {
@@ -9381,7 +9381,7 @@ const MASALS = {
 
 function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null, setTab, favs = [], toggleFav, lang = "ku" }) {
   const tL = (key) => (APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku[key] || OB_TRANS[lang]?.[key] || OB_TRANS.en[key] || key);
-  const [level, setLevel] = useState(startLevel);
+  const [level] = useState(startLevel);
 
   // Level-specific gradient (matches home step cards)
   const LEVEL_GRADS = {
@@ -9883,7 +9883,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             .ptab-strip::-webkit-scrollbar { display:none; }
           `}</style>
           <div className="ptab-strip" style={{ display:"flex", gap:9, overflowX:"auto", scrollbarWidth:"none", margin:"0 -2px", padding:"6px 2px 16px" }}>
-            {TABS.map((tb, i) => {
+            {TABS.map((tb) => {
               const active = mode === tb.id;
               return (
                 <div key={tb.id} className={`ptab${active?" ptab-active":""}`}
@@ -11104,7 +11104,7 @@ function srsDueCount() {
 }
 
 // ── کارت / Flashcards ──────────────────────────────────────────────
-function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = {}) {
+function Flashcards({ fixedLevel, favs = [], toggleFav, lang = "ku" } = {}) {
   const [level,    setLevel]    = useState(fixedLevel || "A1");
   const [deck,     setDeck]     = useState(() => mkDeck(fixedLevel || "A1"));
   const [idx,      setIdx]      = useState(0);
@@ -11637,7 +11637,7 @@ function Talk({ lang = "ku" }) {
       const data = await callClaude({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages: next.map((m) => ({ role: m.role, content: m.text })) });
       const reply = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
       setMsgs((m) => [...m, { role: "assistant", text: reply || "..." }]);
-    } catch (e) {
+    } catch {
       setMsgs((m) => [...m, { role: "assistant", text: tApp(lang,"chat_err") }]);
     } finally { setLoading(false); }
   }
@@ -22936,8 +22936,6 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
       window.removeEventListener('pointerup', onUp);
     };
   }, [dragging]);
-
-  const completedCount = currentLevel - 1;
 
   // Node layout constants
   const CONTAINER_W = 360;

@@ -1313,6 +1313,32 @@ const DICT_LANG_META = {
 "es":{"badge":"ES","bg":"#2563EB","rtl":false},"fr":{"badge":"FR","bg":"2563EB","rtl":false}};
 
 // ── Onboarding System ───────────────────────────────────────────────
+function OnboardingWrapper({ children, screen, progressIdx, progress, animKey, authMode, totalSteps }) {
+  return (
+    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"#fff", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
+      {screen !== "welcome" && screen !== "auth" && screen !== "login" && progressIdx >= 1 && authMode === "main" && (
+        <div style={{ flexShrink:0 }}>
+          <div style={{ height:3, background:"#F0F0F0" }}>
+            <div style={{ height:"100%", width:`${progress}%`, background:"linear-gradient(90deg,#5B5BD6,#FF6B5E)", transition:"width .4s ease" }} />
+          </div>
+          <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 20px 0", fontSize:13, color:"#71717A" }}>
+            <span style={{ fontWeight:600 }}>{progressIdx}/{totalSteps}</span>
+          </div>
+        </div>
+      )}
+      <div key={animKey} style={{ flex:1, padding:"28px 24px 40px", maxWidth:480, margin:"0 auto", width:"100%", animation:"ob-enter .28s ease both" }}>
+        {children}
+      </div>
+      <style>{`
+        @keyframes ob-enter { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+        .ob-btn { border:none; border-radius:14px; cursor:pointer; font-family:'Vazirmatn',sans-serif; font-weight:700; transition:all .15s; }
+        .ob-btn:hover { filter:brightness(.95); transform:translateY(-1px); }
+        .ob-btn:active { transform:translateY(0); }
+      `}</style>
+    </div>
+  );
+}
+
 function OnboardingSystem({ onDone, startAt = "welcome" }) {
   const FLOW = ["lang","welcome","level","goals","daily","focus","summary","auth"];
   const [screen, setScreen]   = useState(startAt);
@@ -1456,39 +1482,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   });
 
   // ── Wrapper — memoized so toggleMulti doesn't remount it ─────────
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const W = useCallback(({children, showBack=false, backTo}) => (
-    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"#fff", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
-      {/* Progress */}
-      {screen !== "welcome" && screen !== "auth" && screen !== "login" && progressIdx >= 1 && authMode === "main" && (
-        <div style={{ flexShrink:0 }}>
-          <div style={{ height:3, background:"#F0F0F0" }}>
-            <div style={{ height:"100%", width:`${progress}%`, background:"linear-gradient(90deg,#5B5BD6,#FF6B5E)", transition:"width .4s ease" }} />
-          </div>
-          <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 20px 0", fontSize:13, color:"#71717A" }}>
-            <span style={{ fontWeight:600 }}>{progressIdx}/{FLOW.length-1}</span>
-            {showBack && <button onClick={() => go(backTo)} style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontWeight:600, fontSize:13 }}>Back</button>}
-          </div>
-        </div>
-      )}
-      <div key={animKey} style={{ flex:1, padding:"28px 24px 40px", maxWidth:480, margin:"0 auto", width:"100%", animation:"ob-enter .28s ease both" }}>
-        {children}
-      </div>
-      <style>{`
-        @keyframes ob-enter { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-        .ob-btn { border:none; border-radius:14px; cursor:pointer; font-family:'Vazirmatn',sans-serif; font-weight:700; transition:all .15s; }
-        .ob-btn:hover { filter:brightness(.95); transform:translateY(-1px); }
-        .ob-btn:active { transform:translateY(0); }
-      `}</style>
-    </div>
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [screen, animKey, progress, progressIdx, dir, go, authMode]);
 
   // ══ SCREENS ═════════════════════════════════════════════════════
 
   // ── Forgot password — Step 1: enter email ───────────────────────
   if (authMode === "forgot_email") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ textAlign:"center", marginBottom:36 }}>
         <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(91,91,214,.28)" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1513,12 +1512,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {authLoading ? "…" : t("forgot_send")}
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // ── Forgot password — Step 2: enter OTP code ────────────────────
   if (authMode === "forgot_otp") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <button onClick={() => { setAuthMode("forgot_email"); setFormErr(""); }}
         style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontSize:13, fontWeight:600, marginBottom:24, padding:0 }}>{t("btn_back")}</button>
       <div style={{ textAlign:"center", marginBottom:36 }}>
@@ -1546,12 +1545,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         style={{ border:"none", background:"transparent", color:"#5B5BD6", fontSize:13, fontWeight:600, cursor:"pointer", display:"block", margin:"16px auto 0", textDecoration:"underline" }}>
         Resend code
       </button>
-    </W>
+    </OnboardingWrapper>
   );
 
   // ── Forgot password — Step 3: set new password ──────────────────
   if (authMode === "forgot_newpw") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ textAlign:"center", marginBottom:36 }}>
         <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#16A06F,#5B5BD6)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(22,160,111,.28)" }}>
           <Lock size={30} color="#fff" strokeWidth={1.8} />
@@ -1572,12 +1571,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#16A06F,#5B5BD6)", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
         {authLoading ? "…" : t("forgot_save")}
       </button>
-    </W>
+    </OnboardingWrapper>
   );
 
   // ── Check email (after registration) ────────────────────────────
   if (authMode === "check_email") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"80vh", textAlign:"center" }}>
         <div style={{ width:80, height:80, borderRadius:24, background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)", display:"grid", placeItems:"center", boxShadow:"0 16px 40px rgba(91,91,214,.3)", marginBottom:28 }}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1595,12 +1594,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           Go to Sign In
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Login
   if (screen === "login") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ display:"flex", flexDirection:"column", minHeight:"85vh", justifyContent:"center" }}>
         <div style={{ textAlign:"center", marginBottom:36 }}>
           <img src="/fuxi-mascot.png" alt="SURI"
@@ -1657,12 +1656,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           </div>
         )}
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Welcome
   if (screen === "welcome") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"80vh", textAlign:"center", gap:0 }}>
         <img src="/fuxi-mascot.png" alt="SURI"
           style={{ width:140, height:140, objectFit:"contain",
@@ -1679,12 +1678,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           I already have an account
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Language
   if (screen === "lang") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("lang_title")}</div>
       <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("lang_sub")}</div>
       <img src="/ob-p2.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
@@ -1719,12 +1718,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         }}>
         {answers.lang ? t("btn_continue") : "—"}
       </button>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Level
   if (screen === "level") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("level_title")}</div>
       <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("level_sub")}</div>
       <img src="/ob-p3.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
@@ -1762,12 +1761,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {t("btn_continue")}
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Goals (multi-select)
   if (screen === "goals") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("goals_title")}</div>
       <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("goals_sub")}</div>
       <img src="/ob-p4.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
@@ -1798,12 +1797,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {t("btn_continue")} {answers.goals.length > 0 ? `(${answers.goals.length})` : ""}
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Daily
   if (screen === "daily") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("daily_title")}</div>
       <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("daily_sub")}</div>
       <img src="/ob-p5.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
@@ -1837,12 +1836,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {t("btn_continue")}
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Focus (multi-select)
   if (screen === "focus") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("focus_title")}</div>
       <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("focus_sub")}</div>
       <img src="/ob-p6.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
@@ -1873,12 +1872,12 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {t("btn_continue")} {answers.focus.length > 0 ? `(${answers.focus.length})` : ""}
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Summary
   if (screen === "summary") return (
-    <W>
+    <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
       <div style={{ textAlign:"center", marginBottom:32, direction:dir }}>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("summary_title")}</div>
         <div style={{ fontSize:14, color:"#71717A", marginBottom:16 }}>{t("summary_sub")}</div>
@@ -1916,7 +1915,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {t("btn_continue")} →
         </button>
       </div>
-    </W>
+    </OnboardingWrapper>
   );
 
   // Auth
@@ -1924,7 +1923,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
 
     // Email form
     if (authMode === "email") return (
-      <W>
+      <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
         <button onClick={() => { setAuthMode("main"); setFormErr(""); }} style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontSize:13, fontWeight:600, marginBottom:24, padding:0 }}>Back</button>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6 }}>Create your account</div>
         <div style={{ fontSize:14, color:"#71717A", marginBottom:24 }}>Your progress will be saved and synced</div>
@@ -1989,14 +1988,14 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
           {authLoading ? "Creating account…" : "Create Account"}
         </button>
-      </W>
+      </OnboardingWrapper>
     );
 
     // (PIN setup removed — Supabase handles auth security)
 
     // Main auth screen
     return (
-      <W>
+      <OnboardingWrapper screen={screen} progressIdx={progressIdx} progress={progress} animKey={animKey} authMode={authMode} totalSteps={FLOW.length - 1}>
         <div style={{ display:"flex", flexDirection:"column", minHeight:"80vh", justifyContent:"center" }}>
           <div style={{ textAlign:"center", marginBottom:40 }}>
             <img src="/fuxi-mascot.png" alt="SURI"
@@ -2043,7 +2042,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           </div>
 
         </div>
-      </W>
+      </OnboardingWrapper>
     );
   }
 

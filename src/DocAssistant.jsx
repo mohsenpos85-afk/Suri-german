@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   ScanText, Upload, Camera, FileText, Sparkles, Calendar, AlertTriangle,
   Check, HelpCircle, ArrowRight, MessageCircle, Copy, Share2, Download,
@@ -253,8 +253,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [isPdf, setIsPdf] = useState(false);
-  const [docText, setDocText] = useState("");
+ const [docText, setDocText] = useState("");
   const [chat, setChat] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatBusy, setChatBusy] = useState(false);
@@ -282,7 +281,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
   const requestScan = (kind) => { if (consent) openPicker(kind); else { setAgree(false); setPending(kind); } };
   const acceptConsent = () => {
     if (!agree) return; // explicit consent required
-    try { localStorage.setItem("docassist_privacy_ok", "1"); } catch {}
+    try { localStorage.setItem("docassist_privacy_ok", "1"); } catch { /* Optional browser capability may be unavailable. */ }
     setConsent(true);
     const k = pending; setPending(null);
     openPicker(k); // still inside the user-gesture chain
@@ -346,7 +345,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
     }, "image/jpeg", 0.92);
   };
   function finishOnboarding() {
-    try { localStorage.setItem("docassist_onboarded", "1"); } catch {}
+    try { localStorage.setItem("docassist_onboarded", "1"); } catch { /* Optional browser capability may be unavailable. */ }
     setStage("home");
   }
 
@@ -354,8 +353,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
     if (!file) return;
     setError(null); setResult(null); setChat([]); setDocText("");
     const pdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
-    setIsPdf(pdf);
-    setStage("loading");
+   setStage("loading");
     try {
       const dataUrl = await fileToBase64(file);
       const b64 = dataUrl.split(",")[1];
@@ -437,7 +435,7 @@ Here is the full text of the user's document (may be in another language):
   }
 
   const copyText = (txt) => {
-    try { navigator.clipboard?.writeText(txt || ""); showToast(L(lang, "copied")); } catch {}
+    try { navigator.clipboard?.writeText(txt || ""); showToast(L(lang, "copied")); } catch { /* Optional browser capability may be unavailable. */ }
   };
 
   // ── shared styles ──────────────────────────────────────────────────────
@@ -913,21 +911,21 @@ ${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
     if (!w) { showToast(L(lang, "errTitle")); return; }
     w.document.write(buildReportHTML());
     w.document.close(); w.focus();
-    setTimeout(() => { try { w.print(); } catch {} }, 350);
+    setTimeout(() => { try { w.print(); } catch { /* Optional browser capability may be unavailable. */ } }, 350);
   }
   async function shareDoc() {
     const text = buildPlainText();
     try {
       if (navigator.share) { await navigator.share({ title: (result || {}).documentType || "Document", text }); showToast(L(lang, "shared")); }
       else { await navigator.clipboard.writeText(text); showToast(L(lang, "copied")); }
-    } catch {}
+    } catch { /* Optional browser capability may be unavailable. */ }
   }
   function pad(n) { return String(n).padStart(2, "0"); }
   function parseDate(str) {
     const s = String(str || "");
-    let m = s.match(/(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})/);      // dd.mm.yyyy
+    let m = s.match(/(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);      // dd.mm.yyyy
     if (m) { let y = +m[3]; if (y < 100) y += 2000; return `${y}${pad(+m[2])}${pad(+m[1])}`; }
-    m = s.match(/(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})/);            // yyyy-mm-dd
+    m = s.match(/(\d{4})[./-](\d{1,2})[./-](\d{1,2})/);            // yyyy-mm-dd
     if (m) return `${m[1]}${pad(+m[2])}${pad(+m[3])}`;
     return null;
   }
@@ -951,10 +949,10 @@ ${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
   function loadRecent() { try { return JSON.parse(localStorage.getItem("docassist_recent") || "[]"); } catch { return []; } }
   function saveRecent(entry) {
     const list = [entry, ...loadRecent().filter((x) => x.ts !== entry.ts)].slice(0, 8);
-    try { localStorage.setItem("docassist_recent", JSON.stringify(list)); } catch {}
+    try { localStorage.setItem("docassist_recent", JSON.stringify(list)); } catch { /* Optional browser capability may be unavailable. */ }
   }
   function openRecent(entry) {
-    setResult(entry.result); setDocText(entry.docText || ""); setPreview(null); setIsPdf(false);
+    setResult(entry.result); setDocText(entry.docText || ""); setPreview(null);
     setChat([]); setTransMode("app"); setStage("result");
   }
 

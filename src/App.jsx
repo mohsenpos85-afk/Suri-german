@@ -5,7 +5,7 @@ import {
   Home as HomeIcon, BookOpen, LayoutGrid, MessageCircle,
   AlertTriangle, GraduationCap, Briefcase,
   Library, Target, Trophy, Pin, BookMarked, BookOpenCheck,
-  CheckCircle2, XCircle, AlertCircle, RotateCcw, Zap, RefreshCw, Mic, Volume2,
+  CheckCircle2, XCircle, AlertCircle, Zap, RefreshCw, Mic, Volume2,
   Plane, Users, Heart, Globe, Clock, Lock, LogOut,
   Headphones, PenLine, FileText, Type, Star, TrendingUp, SlidersHorizontal, ClipboardCheck,
   ChevronDown, Gamepad2, User, Menu, ScanText
@@ -54,7 +54,7 @@ function RobotVideo({ width = 140, style, className }) {
     if (!canvas) return;
     let ctx;
     try { ctx = canvas.getContext("2d", { willReadFrequently: true }); }
-    catch (e) { return; }
+    catch { return; }
 
     const state = getSharedVideo();
 
@@ -85,7 +85,7 @@ function RobotVideo({ width = 140, style, className }) {
           }
           ctx.putImageData(img, 0, 0);
         } catch (_) { /* canvas tainted – skip chroma-key */ }
-      } catch (_) {}
+      } catch { /* Video frame rendering is best-effort. */ }
     }
 
     let timerId;
@@ -250,11 +250,11 @@ function pickGermanVoice() {
       de.find((v) => v.lang === "de-DE") ||
       // ٣) هەر دەنگێکی ئەڵمانی
       de[0] || null;
-  } catch (e) {}
+  } catch { /* Browser capability may be unavailable. */ }
 }
 if (typeof window !== "undefined" && window.speechSynthesis) {
   pickGermanVoice();
-  try { window.speechSynthesis.onvoiceschanged = pickGermanVoice; } catch (e) {}
+  try { window.speechSynthesis.onvoiceschanged = pickGermanVoice; } catch { /* Voice events are optional. */ }
 }
 function speakDe(text) {
   try {
@@ -268,7 +268,7 @@ function speakDe(text) {
     u.pitch = 0.8;
     u.volume = 1;
     synth.speak(u);
-  } catch (e) {}
+  } catch { /* Browser capability may be unavailable. */ }
 }
 
 function Speak({ text, size = 15 }) {
@@ -1520,21 +1520,29 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // ── Forgot Password ───────────────────────────────────
   async function submitForgotEmail() {
     if (!email.includes("@")) return setFormErr(t("err_email_invalid"));
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    setAuthLoading(true);
+    const normalizedEmail = email.trim();
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo: window.location.origin,
     });
+    setAuthLoading(false);
     if (error) { setFormErr(error.message); return; }
+    setOtpEmail(normalizedEmail);
     setAuthMode("otp");
   }
   async function submitForgotOtp() {
+    setAuthLoading(true);
     const { error } = await supabase.auth.verifyOtp({
-      email: email.trim(), token: otp, type: "recovery",
+      email: otpEmail || email.trim(), token: otpCode, type: "recovery",
     });
+    setAuthLoading(false);
     if (error) { setFormErr(error.message); return; }
     setAuthMode("newpw");
   }
   async function submitNewPw() {
+    setAuthLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPw });
+    setAuthLoading(false);
     if (error) { setFormErr(error.message); return; }
     const stored = JSON.parse(localStorage.getItem("ob_data") || "{}");
     onDone({ ...stored, auth: "reset" });
@@ -8421,9 +8429,9 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
       gn.gain.setValueAtTime(0.055, ctx.currentTime);
       gn.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.042);
       osc.start(); osc.stop(ctx.currentTime + 0.042);
-    } catch (_) {}
+    } catch { /* Video frame rendering is best-effort. */ }
   }
-  function haptic() { try { navigator.vibrate?.(6); } catch (_) {} }
+  function haptic() { try { navigator.vibrate?.(6); } catch { /* Video frame rendering is best-effort. */ } }
 
   function stopRAF() {
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
@@ -8474,7 +8482,7 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
     isDragRef.current = true; setIsDrag(true);
     lyRef.current = e.clientY; ltRef.current = performance.now();
     velRef.current = 0; totalMvRef.current = 0;
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* Video frame rendering is best-effort. */ }
   }
   function onPM(e) {
     if (!isDragRef.current) return;

@@ -9403,14 +9403,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const lg = level ? (LEVEL_GRADS[level] || { from: levelColor(level), to: levelColor(level) }) : null;
   const [mode, setMode] = useState(null); // null | grammar | words | cards | dialog | pre | exam | ubung
   useEffect(() => { setMode(null); }, [level]);
-  const [openSec, setOpenSec] = useState(null); // accordion: sadece bir bölüm açık
-  useEffect(() => { setOpenSec(null); }, [mode]); // mode değişince tüm bölümler kapansın
-  const toggleSec = (name) => setOpenSec(s => s === name ? null : name);
   const mkBatch = (key) => (c, w) => setProgress && setProgress((p) => ({ ...p, [key]: Math.max(0, Math.min(100, (p[key] || 0) + (c - w))) }));
   const [examType, setExamType] = useState(null); // null | "telc" | "goethe"
   const [openDialogId, setOpenDialogId] = useState(null);
   const [examLevel, setExamLevel] = useState(null); // null | "A1".."B2"
-  const [expandedVerb, setExpandedVerb] = useState(null);  // expanded verb card index
   const [openWordsSub, setOpenWordsSub] = useState(null);  // "fiil" | "vocab" | "adj" | null
   useEffect(() => { setOpenWordsSub(null); }, [mode, level]);
   const [selGrammarIdx, setSelGrammarIdx] = useState(0);  // wheel picker: selected grammar index
@@ -9459,11 +9455,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       window.scrollTo({ top: saved ?? 0, behavior: "instant" })
     );
   };
-
-  // Verb bölümünden ayrılınca açık kartı kapat
-  useEffect(() => {
-    if (mode !== "words") setExpandedVerb(null);
-  }, [mode, level]);
 
   // ── Grammar detail view ──
   if (open && open.startsWith("g:")) {

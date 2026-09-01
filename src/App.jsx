@@ -3247,7 +3247,7 @@ function LevelComparison({ lang = "ku" }) {
 
           <div style={{ textAlign:"center" }}>
             <div style={{ fontSize:9.5, fontWeight:800, color:"#FF7E2E", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
-              {isEmpty ? "A1" : `A1  ·  ${idx + 1} / ${total}`}
+              {isEmpty ? "A1" : `A1 · ${idx + 1} / ${total}`}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
               <span style={{ fontSize:16, fontWeight:700, color: isEmpty ? "#A1A1AA" : "#18181B", lineHeight:1.5, fontStyle: isEmpty ? "italic" : "normal" }}>

@@ -4598,17 +4598,19 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
   const allFilled = Object.keys(picks).length === ex.questions.length;
   const score = revealed ? ex.questions.filter((q, qi) => picks[qi] === q.answer).length : 0;
 
-  // Auto-reveal as soon as all options are selected
-  useEffect(() => { if (allFilled && !revealed) setRevealed(true); }, [allFilled]);
-
   function reset() { setPicks({}); setRevealed(false); }
 
   function select(qi, letter) {
     if (revealed) return;
-    setPicks(p => {
-      if (p[qi] === letter) { const c = {...p}; delete c[qi]; return c; }
-      return {...p, [qi]: letter};
-    });
+    if (picks[qi] === letter) {
+      const next = {...picks};
+      delete next[qi];
+      setPicks(next);
+      return;
+    }
+    const next = {...picks, [qi]: letter};
+    setPicks(next);
+    if (Object.keys(next).length === ex.questions.length) setRevealed(true);
   }
 
   return (

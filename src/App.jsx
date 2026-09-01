@@ -2161,6 +2161,18 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
   );
 }
 
+function loadDailyStreak() {
+  let previous;
+  try { previous = JSON.parse(localStorage.getItem("fuxi_streak") || '{"count":0,"lastDate":"","best":0}'); }
+  catch { previous = { count: 0, lastDate: "", best: 0 }; }
+  const today = new Date().toISOString().slice(0, 10);
+  if (previous.lastDate === today) return previous;
+  const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const count = previous.lastDate === yesterday ? previous.count + 1 : 1;
+  const updated = { count, lastDate: today, best: Math.max(previous.best || 0, count) };
+  localStorage.setItem("fuxi_streak", JSON.stringify(updated));
+  return updated;
+}
 export default function App() {
   const [appLang, setAppLang] = useState(() => { try { return JSON.parse(localStorage.getItem("ob_data")||"{}").lang || "tr"; } catch { return "tr"; } });
   const [intro, setIntro]           = useState(false);
@@ -2179,10 +2191,7 @@ export default function App() {
   });
 
   // ── Streak ───────────────────────────────────────────────────────
-  const [streak, setStreak] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("fuxi_streak") || '{"count":0,"lastDate":"","best":0}'); }
-    catch { return { count: 0, lastDate: "", best: 0 }; }
-  });
+  const [streak] = useState(loadDailyStreak);
 
   // ── Online / offline indicator ───────────────────────────────────
   const [isOnline, setIsOnline] = useState(() => typeof navigator === "undefined" || navigator.onLine);
@@ -2215,17 +2224,6 @@ export default function App() {
   }, [progress]);
 
   // ── Streak: her gün ilk açılışta güncelle ────────────────────────
-  useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    setStreak(prev => {
-      if (prev.lastDate === today) return prev;
-      const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
-      const newCount = prev.lastDate === yesterday ? prev.count + 1 : 1;
-      const updated = { count: newCount, lastDate: today, best: Math.max(prev.best || 0, newCount) };
-      localStorage.setItem("fuxi_streak", JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
 
   // ── Scroll management ────────────────────────────────────────────
   const scrollSave = useRef({});

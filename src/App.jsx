@@ -3152,8 +3152,6 @@ function LevelComparison({ lang = "ku" }) {
                    : categ === "sifat" ? SIFAT_DATA
                    : LEVEL_COMPARISON_DATA;
 
-  useEffect(() => { setIdx(0); }, [categ]);
-
   const total   = activeData.length;
   const isEmpty = total === 0;
   const row     = isEmpty ? null : activeData[Math.min(idx, total - 1)];
@@ -23755,7 +23753,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
 
 function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTab }) {
   const [activeGame, setActiveGame] = useState(initialGame);
-  useEffect(() => { if (initialGame && onConsumeInitialGame) onConsumeInitialGame(); }, []);
+  useEffect(() => { if (initialGame && onConsumeInitialGame) onConsumeInitialGame(); }, [initialGame, onConsumeInitialGame]);
 
   if (activeGame === 'word-match') return <WordMatch lang={lang} onBack={()=>setActiveGame(null)} />;
   if (activeGame === 'artikel')    return <ArtikelQuiz lang={lang} onBack={()=>setActiveGame(null)} />;

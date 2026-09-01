@@ -2241,15 +2241,21 @@ export default function App() {
 
   useEffect(() => {
     // ── Check existing Supabase session on mount ──────────────────
+    const applyDevStartup = (screen = null) => queueMicrotask(() => {
+      if (screen) setObStartScreen(screen);
+      setIntro(false);
+      setOnboarding(Boolean(screen));
+      setAppLoaded(true);
+    });
     if (import.meta.env.DEV && import.meta.env.VITE_DEV_SKIP_AUTH === "1") {
-      setIntro(false); setOnboarding(false); setAppLoaded(true); return;
+      applyDevStartup(); return;
     }
     if (localStorage.getItem("__dev_skip") === "1") {
-      setIntro(false); setOnboarding(false); setAppLoaded(true); return;
+      applyDevStartup(); return;
     }
     const __devScreen = localStorage.getItem("__dev_skip");
     if (__devScreen && __devScreen !== "0") {
-      setObStartScreen(__devScreen); setIntro(false); setOnboarding(true); setAppLoaded(true); return;
+      applyDevStartup(__devScreen); return;
     }
     let sessionSettled = false;
     const finishSessionCheck = (session = null) => {
@@ -3486,8 +3492,9 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
   const ownedCards = getOwnedCards();
 
   const currentLevelId = LEVELS[Math.min(5, Math.max(0, Math.ceil(journeyLevel/10) - 1))].id;
-  const [selectedLevelId, setSelectedLevelId] = useState(currentLevelId);
-  useEffect(() => { setSelectedLevelId(currentLevelId); }, [currentLevelId]);
+  const [levelSelection, setLevelSelection] = useState(() => ({ journeyLevelId: currentLevelId, selectedLevelId: currentLevelId }));
+  const selectedLevelId = levelSelection.journeyLevelId === currentLevelId ? levelSelection.selectedLevelId : currentLevelId;
+  const selectLevelId = (nextLevelId) => setLevelSelection({ journeyLevelId: currentLevelId, selectedLevelId: nextLevelId });
 
   const levelsWithStats = LEVELS.map(lv => ({ ...lv, stats: computeLevelStats(progress, lv.id, journeyLevel, ownedCards) }));
   const selectedStats = levelsWithStats.find(l => l.id === selectedLevelId)?.stats || levelsWithStats[0].stats;
@@ -3644,7 +3651,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
             <div style={{ fontSize:10.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
-              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} />
+              selectedLevelId={selectedLevelId} onSelect={selectLevelId} lang={lang} />
           </div>
 
           {/* Hexagon */}
@@ -7666,8 +7673,17 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
   }
 
   useEffect(() => {
-    if (phase === "run" && data[sec.type] === undefined) gen(sec.type);
-  }, [idx, phase]);
+    queueMicrotask(() => gen(SECS[0].type));
+    // This intentionally starts only the first section on mount; navigation loads later sections.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function openSection(nextIdx) {
+    const nextType = SECS[nextIdx].type;
+    setPhase("run");
+    setIdx(nextIdx);
+    if (data[nextType] === undefined) gen(nextType);
+  }
 
   function submit() {
     let correct = 0, total = 0;
@@ -7711,7 +7727,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
           <div style={{ fontSize: 15, marginTop: 10 }}>{passed ? (lang === "tr" ? "Tebrikler! Geçtiniz ✓" : lang === "en" ? "Congratulations! You passed ✓" : lang === "ar" ? "تهانينا! لقد نجحت ✓" : lang === "es" ? "¡Enhorabuena! Has aprobado ✓" : lang === "uk" ? "Вітаємо! Ви склали ✓" : lang === "fa" ? "تبریک! قبول شدید ✓" : lang === "fr" ? "Félicitations! Vous avez passé ✓" : "پیرۆزە! دەرچوویت ✓") : (lang === "tr" ? "Henüz daha fazla pratik yapmanız gerekiyor." : lang === "en" ? "You still need more practice." : lang === "ar" ? "ما زلت بحاجة إلى مزيد من التدريب." : lang === "es" ? "Aún necesitas practicar más." : lang === "uk" ? "Вам потрібно ще потренуватися." : lang === "fa" ? "هنوز باید بیشتر تمرین کنید." : lang === "fr" ? "Il te faut encore plus d'entraînement." : "هێشتا پێویستت بە مەشقی زیاترە.")}</div>
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-          <button onClick={() => { setPhase("run"); setIdx(0); setData({}); setAns({}); setResult(null); }} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "es" ? "Reintentar" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : lang === "fr" ? "Réessayer" : "دووبارە"}</button>
+          <button onClick={() => { setData({}); setAns({}); setResult(null); gen(SECS[0].type); openSection(0); }} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Tekrar" : lang === "en" ? "Retry" : lang === "ar" ? "إعادة" : lang === "es" ? "Reintentar" : lang === "uk" ? "Повторити" : lang === "fa" ? "تکرار" : lang === "fr" ? "Réessayer" : "دووبارە"}</button>
           <button onClick={onClose} style={{ flex: 1, background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: 13, borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Kapat" : lang === "en" ? "Close" : lang === "ar" ? "إغلاق" : lang === "es" ? "Cerrar" : lang === "uk" ? "Закрити" : lang === "fa" ? "بستن" : lang === "fr" ? "Fermer" : "داخستن"}</button>
         </div>
       </div>
@@ -7734,7 +7750,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
               else { const n = Object.keys(a).length; info = lang === "tr" ? `${n} cevap` : lang === "en" ? `${n} answers` : lang === "ar" ? `${n} إجابة` : lang === "fa" ? `${n} پاسخ` : lang === "es" ? `${n} respuestas` : lang === "uk" ? `${n} відповідей` : lang === "fr" ? `Réponses` : `${n} وەڵام`; }
             }
             return (
-              <button key={s.type} onClick={() => { setPhase("run"); setIdx(i); }} style={{ textAlign: "right", background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "13px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <button key={s.type} onClick={() => openSection(i)} style={{ textAlign: "right", background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "13px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span><b dir="ltr">{i + 1}. {s.de}</b> <span style={{ color: C.muted, fontSize: 13 }}>· {tC(s, lang)}</span></span>
                 <span style={{ color: C.muted, fontSize: 13 }}>{info}</span>
               </button>
@@ -7743,7 +7759,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
           <button onClick={submit} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 14, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📨 {lang === "tr" ? "Gönder ve Puanı Al" : lang === "en" ? "Submit and Get Score" : lang === "ar" ? "إرسال والحصول على النتيجة" : lang === "es" ? "Enviar y obtener puntuación" : lang === "uk" ? "Надіслати та отримати бал" : lang === "fa" ? "ارسال و دریافت امتیاز" : lang === "fr" ? "Soumettre et obtenir un score" : "ناردن و وەرگرتنی نمرە"}</button>
-          <button onClick={() => { setPhase("run"); setIdx(SECS.length - 1); }} style={{ background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: "14px 18px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Geri" : lang === "en" ? "Back" : lang === "ar" ? "رجوع" : lang === "es" ? "Atrás" : lang === "uk" ? "Назад" : lang === "fa" ? "بازگشت" : lang === "fr" ? "Précédent" : "گەڕانەوە"}</button>
+          <button onClick={() => openSection(SECS.length - 1)} style={{ background: "transparent", color: C.ink, border: `1.5px solid ${C.line}`, padding: "14px 18px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "Geri" : lang === "en" ? "Back" : lang === "ar" ? "رجوع" : lang === "es" ? "Atrás" : lang === "uk" ? "Назад" : lang === "fa" ? "بازگشت" : lang === "fr" ? "Précédent" : "گەڕانەوە"}</button>
         </div>
       </div>
     );
@@ -7985,9 +8001,9 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
       )}
 
       <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-        {idx > 0 && <button onClick={() => setIdx(idx - 1)} style={{ background: "transparent", color: C.muted, border: `1.5px solid ${C.line}`, padding: "12px 14px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "→ Önceki" : lang === "en" ? "→ Previous" : lang === "ar" ? "→ السابق" : lang === "es" ? "→ Anterior" : lang === "uk" ? "→ Попередній" : lang === "fa" ? "→ قبلی" : lang === "fr" ? "→ Précédent" : "→ پێشوو"}</button>}
+        {idx > 0 && <button onClick={() => openSection(idx - 1)} style={{ background: "transparent", color: C.muted, border: `1.5px solid ${C.line}`, padding: "12px 14px", borderRadius: 11, fontWeight: 700 }}>{lang === "tr" ? "→ Önceki" : lang === "en" ? "→ Previous" : lang === "ar" ? "→ السابق" : lang === "es" ? "→ Anterior" : lang === "uk" ? "→ Попередній" : lang === "fa" ? "→ قبلی" : lang === "fr" ? "→ Précédent" : "→ پێشوو"}</button>}
         {idx < SECS.length - 1 ? (
-          <button onClick={() => setIdx(idx + 1)} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>{lang === "tr" ? "Sonraki bölüm ←" : lang === "en" ? "Next section ←" : lang === "ar" ? "القسم التالي ←" : lang === "es" ? "Siguiente sección ←" : lang === "uk" ? "Наступний розділ ←" : lang === "fa" ? "بخش بعدی ←" : lang === "fr" ? "Section suivante ←" : "بەشی دواتر ←"}</button>
+          <button onClick={() => openSection(idx + 1)} style={{ flex: 1, background: C.red, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>{lang === "tr" ? "Sonraki bölüm ←" : lang === "en" ? "Next section ←" : lang === "ar" ? "القسم التالي ←" : lang === "es" ? "Siguiente sección ←" : lang === "uk" ? "Наступний розділ ←" : lang === "fa" ? "بخش بعدی ←" : lang === "fr" ? "Section suivante ←" : "بەشی دواتر ←"}</button>
         ) : (
           <button onClick={() => setPhase("overview")} style={{ flex: 1, background: C.green, color: "#fff", border: "none", padding: 13, borderRadius: 11, fontWeight: 700, fontSize: 15 }}>📋 {lang === "tr" ? "Genel Bakış ←" : lang === "en" ? "Overview ←" : lang === "ar" ? "نظرة عامة ←" : lang === "es" ? "Resumen ←" : lang === "uk" ? "Огляд ←" : lang === "fa" ? "نمای کلی ←" : lang === "fr" ? "Aperçu ←" : "پێداچوونەوە ←"}</button>
         )}

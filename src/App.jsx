@@ -12067,32 +12067,10 @@ function SatzPuzzle({ lang = "ku", onBack }) {
     setStatus(null);
   };
 
-  const addWord = (chip) => {
-    if(status) return;
-    setBank(b=>b.filter(c=>c.id!==chip.id));
-    setAnswer(a=>[...a,chip]);
-  };
-
-  const removeWord = (chip) => {
-    if(status) return;
-    setAnswer(a=>a.filter(c=>c.id!==chip.id));
-    setBank(b=>[...b,chip]);
-  };
-
-  // Auto-check when all words placed
-  useEffect(()=>{
-    if(phase!=='game' || !questions[qIdx]) return;
-    const q = questions[qIdx];
-    const total = q.de.replace(/[.,!?]/g,'').split(' ').filter(Boolean).length;
-    if(answer.length === total && bank.length === 0){
-      checkAnswer();
-    }
-  },[answer, bank]);
-
-  const checkAnswer = () => {
+  const checkAnswer = (submittedAnswer) => {
     const q = questions[qIdx];
     const correct = q.de.replace(/[.,!?]/g,'').split(' ').filter(Boolean);
-    const given   = answer.map(c=>c.word);
+    const given   = submittedAnswer.map(c=>c.word);
     const isRight = JSON.stringify(correct)===JSON.stringify(given);
     setStatus(isRight ? 'correct' : 'wrong');
     if(isRight) setScore(s=>s+1);
@@ -12107,6 +12085,21 @@ function SatzPuzzle({ lang = "ku", onBack }) {
     }, isRight ? 1300 : 2200);
   };
 
+  const addWord = (chip) => {
+    if(status) return;
+    const nextAnswer = [...answer, chip];
+    setBank(b=>b.filter(c=>c.id!==chip.id));
+    setAnswer(nextAnswer);
+    const q = questions[qIdx];
+    const total = q?.de.replace(/[.,!?]/g,'').split(' ').filter(Boolean).length;
+    if (nextAnswer.length === total && bank.length === 1) checkAnswer(nextAnswer);
+  };
+
+  const removeWord = (chip) => {
+    if(status) return;
+    setAnswer(a=>a.filter(c=>c.id!==chip.id));
+    setBank(b=>[...b,chip]);
+  };
   useEffect(()=>()=>{if(timerRef.current)clearTimeout(timerRef.current);},[]);
 
   /* SETUP */
@@ -23555,7 +23548,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   const words        = getPuzzleWords(selLvl, selPuzz);
 
   // hint: first letter of first word
-  const hintNum = useMemo(() => words.length ? l2n[words[0].w[0]] : null, [words, l2n]);
+  const hintNum = words.length ? l2n[words[0].w[0]] : null;
   const hintLet = hintNum ? n2l[hintNum] : null;
 
   function startGame(lvl, puzz) {

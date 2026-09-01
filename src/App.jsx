@@ -23551,8 +23551,8 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   const [checked,  setChecked]  = useState(false);
   const [solved,   setSolved]   = useState(false);
 
-  const { l2n, n2l } = useMemo(() => buildCipher(selLvl, selPuzz), [selLvl, selPuzz]);
-  const words        = useMemo(() => getPuzzleWords(selLvl, selPuzz), [selLvl, selPuzz]);
+  const { l2n, n2l } = buildCipher(selLvl, selPuzz);
+  const words        = getPuzzleWords(selLvl, selPuzz);
 
   // hint: first letter of first word
   const hintNum = useMemo(() => words.length ? l2n[words[0].w[0]] : null, [words, l2n]);

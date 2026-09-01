@@ -22875,18 +22875,18 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
     }
   };
 
-  const unlockWithKey = () => {
+  const unlockWithKey = useCallback(() => {
     if (!pendingKey) return;
     const target = pendingKey.toLevelId;
     localStorage.removeItem('fuxi_pending_key');
     setPendingKey(null);
     setJustUnlocked(target);
     setTimeout(()=>setJustUnlocked(null), 2500);
-  };
+  }, [pendingKey]);
 
   // Position the key at its resting spot next to the target lock whenever it (re)appears
   useEffect(() => {
-    if (!pendingKey) { setKeyHome(null); return; }
+    if (!pendingKey) return;
     const update = () => {
       if (targetNodeRef.current) {
         const rect = targetNodeRef.current.getBoundingClientRect();
@@ -22928,7 +22928,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
     };
-  }, [dragging]);
+  }, [dragging, unlockWithKey]);
 
   // Node layout constants
   const CONTAINER_W = 360;

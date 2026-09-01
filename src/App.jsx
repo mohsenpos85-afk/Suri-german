@@ -9404,12 +9404,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   };
   const lg = level ? (LEVEL_GRADS[level] || { from: levelColor(level), to: levelColor(level) }) : null;
   const [mode, setMode] = useState(null); // null | grammar | words | cards | dialog | pre | exam | ubung
-  useEffect(() => { setMode(null); }, [level]);
   const mkBatch = (key) => (c, w) => setProgress && setProgress((p) => ({ ...p, [key]: Math.max(0, Math.min(100, (p[key] || 0) + (c - w))) }));
   const [examType, setExamType] = useState(null); // null | "telc" | "goethe"
   const [openDialogId, setOpenDialogId] = useState(null);
   const [openWordsSub, setOpenWordsSub] = useState(null);  // "fiil" | "vocab" | "adj" | null
-  useEffect(() => { setOpenWordsSub(null); }, [mode, level]);
   const [selGrammarIdx, setSelGrammarIdx] = useState(0);  // wheel picker: selected grammar index
   const [selVerbIdx,    setSelVerbIdx]    = useState(0);  // wheel picker: selected verb index
   const [selVocabIdx,   setSelVocabIdx]   = useState(0);  // wheel picker: selected vocab topic index
@@ -9418,10 +9416,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [selMasalId,    setSelMasalId]    = useState(null); // masal reader: selected story id
   const [masalDictEntry, setMasalDictEntry] = useState(null); // masal reader: tapped-word dictionary popup
   const [dialogDictEntry, setDialogDictEntry] = useState(null); // dialog reader: tapped umgangssprachlich word popup
-  useEffect(() => { setDialogDictEntry(null); }, [mode, level, openDialogId]);
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
-  useEffect(() => { setSelGrammarIdx(0); setSelVerbIdx(0); setSelVocabIdx(0); setSelUbungIdx(0); setSelMasalId(null); window.scrollTo(0, 0); }, [mode, level]);
 
   // ── Scroll management inside Lessons ────────────────────────────
   // Sadece yeni seviyeye ilk girildiğinde başa scroll yap.
@@ -9432,7 +9428,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   useEffect(() => {
     if (level && level !== prevLevelRef.current) {
       window.scrollTo({ top: 0, behavior: "instant" });
-      modeScrollRef.current = {}; // yeni seviyede mode scroll geçmişini sıfırla
     }
     prevLevelRef.current = level;
   }, [level]);
@@ -9449,7 +9444,14 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const modeScrollRef = useRef({});
   const goToMode = (newMode) => {
     if (newMode === mode) return;
-    modeScrollRef.current[mode] = window.scrollY;
+    modeScrollRef.current = { ...modeScrollRef.current, [mode]: window.scrollY };
+    setOpenWordsSub(null);
+    setDialogDictEntry(null);
+    setSelGrammarIdx(0);
+    setSelVerbIdx(0);
+    setSelVocabIdx(0);
+    setSelUbungIdx(0);
+    setSelMasalId(null);
     setMode(newMode);
     const saved = modeScrollRef.current[newMode];
     requestAnimationFrame(() =>
@@ -9992,7 +9994,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   {/* ── Header ── */}
                   <button
                     className="dlg-card-btn"
-                    onClick={() => setOpenDialogId(isOpen ? null : dlg.id)}
+                    onClick={() => {
+                      setDialogDictEntry(null);
+                      setOpenDialogId(isOpen ? null : dlg.id);
+                    }}
                     style={{
                       width: "100%", border: "none",
                       background: isOpen

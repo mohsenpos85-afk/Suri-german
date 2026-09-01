@@ -8304,12 +8304,12 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
       el.removeEventListener("wheel", onWheel);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
     };
-  }, []); // eslint-disable-line
+  }, []);
 
   // sync external selIdx (level/mode reset fires this)
   useEffect(() => {
     if (!isDragRef.current) snapRef.current?.(selIdx);
-  }, [selIdx]); // eslint-disable-line
+  }, [selIdx]);
 
   const curIdx = Math.max(0, Math.min(items.length - 1, Math.round(off / WP_IH)));
   const iColors = items.length
@@ -8506,7 +8506,7 @@ function CollapsingPickerHeader({ children, compact, accent = "#5B5BD6" }) {
       if (rafRef.current)     { cancelAnimationFrame(rafRef.current);     rafRef.current     = null; }
       if (expandRafRef.current) { cancelAnimationFrame(expandRafRef.current); expandRafRef.current = null; }
     };
-  }, []); // eslint-disable-line
+  }, []);
 
   return (
     <div ref={outerRef}
@@ -11113,7 +11113,7 @@ function Flashcards({ fixedLevel, favs = [], toggleFav, lang = "ku" } = {}) {
   }
 
   // ── build 3 options: 1 correct + 2 random wrong ──
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const options = useMemo(() => {
     const card = deck[idx];
     if (!card) return [];

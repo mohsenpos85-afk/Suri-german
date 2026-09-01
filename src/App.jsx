@@ -349,7 +349,7 @@ function Intro({ onDone }) {
     const t1 = setTimeout(() => { clearInterval(iv); setOut(true); }, 5500);
     const t2 = setTimeout(() => onDone(), 6000);
     return () => { clearInterval(iv); clearTimeout(t1); clearTimeout(t2); setWords([]); };
-  }, []);
+  }, [onDone]);
 
   return (
     <div style={{
@@ -2176,6 +2176,7 @@ function loadDailyStreak() {
 export default function App() {
   const [appLang, setAppLang] = useState(() => { try { return JSON.parse(localStorage.getItem("ob_data")||"{}").lang || "tr"; } catch { return "tr"; } });
   const [intro, setIntro]           = useState(false);
+  const finishIntro = useCallback(() => setIntro(false), []);
   const [onboarding, setOnboarding] = useState(false);
   const [obStartScreen, setObStartScreen] = useState("lang");
   const [appLoaded, setAppLoaded]   = useState(false); // true once session check is done
@@ -2323,7 +2324,7 @@ export default function App() {
           <img src="/fuxi-mascot.png" alt="SURI" style={{ width:120, height:120, objectFit:"contain" }} />
         </div>
       )}
-      {intro && <Intro onDone={() => setIntro(false)} />}
+      {intro && <Intro onDone={finishIntro} />}
       {!intro && onboarding && <OnboardingSystem onDone={(data) => {
         setAppLang(data?.lang || "ku");
         setOnboarding(false);
@@ -8260,9 +8261,11 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
     }
     rafRef.current = requestAnimationFrame(frame);
   }
-  snapRef.current   = snapToIdx;
-  applyRef.current  = apply;
-  stopRAFRef.current = stopRAF;
+  useEffect(() => {
+    snapRef.current = snapToIdx;
+    applyRef.current = apply;
+    stopRAFRef.current = stopRAF;
+  });
 
   function momentumFlick() {
     stopRAF();

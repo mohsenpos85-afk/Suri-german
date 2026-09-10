@@ -28,6 +28,10 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+  },
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
     strictPort: false,

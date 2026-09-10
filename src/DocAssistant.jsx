@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
+import { Camera as NativeCamera, CameraResultType, CameraSource } from "@capacitor/camera";
 import {
   ScanText, Upload, Camera, FileText, Sparkles, Calendar, AlertTriangle,
   Check, HelpCircle, ArrowRight, MessageCircle, Copy, Share2, Download,
@@ -277,7 +279,38 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
 
   const showToast = (m) => { setToast(m); setTimeout(() => setToast(""), 1600); };
 
-  const openPicker = (kind) => { if (kind === "cam") { setCameraError(""); setCameraOpen(true); } else fileRef.current?.click(); };
+  const openNativeCamera = async () => {
+    try {
+      const photo = await NativeCamera.getPhoto({
+        source: CameraSource.Camera,
+        resultType: CameraResultType.Uri,
+        quality: 92,
+        correctOrientation: true,
+        saveToGallery: false,
+      });
+      if (!photo.webPath) return;
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const format = photo.format || "jpeg";
+      const file = new File([blob], `scan.${format}`, { type: blob.type || `image/${format}` });
+      await analyze(file);
+    } catch (e) {
+      const message = String(e?.message || e || "").toLowerCase();
+      if (message.includes("cancel")) return;
+      const denied = message.includes("denied") || message.includes("permission");
+      setError(CL(lang, denied ? "denied" : "failed"));
+      setStage("error");
+    }
+  };
+
+  const openPicker = (kind) => {
+    if (kind === "cam") {
+      if (Capacitor.isNativePlatform()) void openNativeCamera();
+      else { setCameraError(""); setCameraOpen(true); }
+      return;
+    }
+    fileRef.current?.click();
+  };
   const requestScan = (kind) => { if (consent) openPicker(kind); else { setAgree(false); setPending(kind); } };
   const acceptConsent = () => {
     if (!agree) return; // explicit consent required

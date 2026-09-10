@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"; // ku
 import { createPortal } from "react-dom";
+import { Capacitor } from "@capacitor/core";
+import { App as NativeApp } from "@capacitor/app";
 import { supabase } from "./lib/supabase.js";
 import {
   Home as HomeIcon, BookOpen, LayoutGrid, MessageCircle,
@@ -2233,6 +2235,18 @@ export default function App() {
     scrollSave.current[tab] = window.scrollY;
     setTab(newTab);
   }, [tab]);
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return undefined;
+    let listener;
+    void NativeApp.addListener("backButton", () => {
+      if (showMenu) { setShowMenu(false); return; }
+      if (firstJourneyStage) { setFirstJourneyStage(null); return; }
+      if (openLesson) { setOpenLesson(null); return; }
+      if (tab !== "home") { goToTab("home"); return; }
+      void NativeApp.exitApp();
+    }).then((handle) => { listener = handle; });
+    return () => { void listener?.remove(); };
+  }, [firstJourneyStage, goToTab, openLesson, showMenu, tab]);
   useEffect(() => {
     const saved = scrollSave.current[tab];
     requestAnimationFrame(() =>

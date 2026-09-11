@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Android signing keys must never be committed
+*.jks
+*.keystore
+
 # Environment variables (keep secrets out of git!)
 .env
 .env.local

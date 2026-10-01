@@ -492,7 +492,7 @@ const OB_TRANS = {
     ubung_label:"Practice",
     welcome_have_acc:"I have an account",welcome_im_new:"I'm new",
     err_name:"Please enter your full name.",err_email_invalid:"Please enter a valid email.",err_pw_weak:"Password: min 8 chars, 1 uppercase, 1 number.",err_pw_match:"Passwords do not match.",err_email_exists:"This email is already registered. Redirecting to sign in…",
-    profile_title:"Tell us about you",profile_sub:"Your stories will adapt to match",profile_name:"Your name",profile_age:"Your age",profile_male:"Male",profile_female:"Female",profile_no_say:"Prefer not to say",err_age:"Please enter your age.",
+    profile_title:"Tell us about you",profile_sub:"You will follow Suri's journey",profile_name:"Your name",profile_age:"Your age",profile_male:"Male",profile_female:"Female",profile_no_say:"Prefer not to say",err_age:"Please enter your age.",
   },
   tr:{
     level_title:"Mevcut Almanca seviyeniz nedir?",level_sub:"Dürüst olun — hızınıza göre uyarlayacağız",
@@ -512,7 +512,7 @@ const OB_TRANS = {
     ubung_label:"Alıştırma",
     welcome_have_acc:"Hesabım var",welcome_im_new:"Yeniyim",
     err_name:"Lütfen tam adınızı girin.",err_email_invalid:"Geçerli bir e-posta girin.",err_pw_weak:"Şifre: en az 8 karakter, 1 büyük harf, 1 rakam.",err_pw_match:"Şifreler eşleşmiyor.",err_email_exists:"Bu e-posta zaten kayıtlı. Giriş sayfasına yönlendiriliyorsunuz…",
-    profile_title:"Seni tanıyalım",profile_sub:"Hikayeler sana göre şekillenecek",profile_name:"Adın",profile_age:"Yaşın",profile_male:"Erkek",profile_female:"Kadın",profile_no_say:"Belirtmek istemiyorum",err_age:"Lütfen yaşını gir.",
+    profile_title:"Seni tanıyalım",profile_sub:"Suri’nin yolculuğunu takip edeceksin",profile_name:"Adın",profile_age:"Yaşın",profile_male:"Erkek",profile_female:"Kadın",profile_no_say:"Belirtmek istemiyorum",err_age:"Lütfen yaşını gir.",
   },
   ku:{
     level_title:"ئاستی ئەڵمانیت چەندە؟",level_sub:"ڕاستگۆبە — ئاستت ئامادە دەکەین",
@@ -532,7 +532,7 @@ const OB_TRANS = {
     ubung_label:"ڕاهێنان",
     welcome_have_acc:"ئەکاونتم هەیە",welcome_im_new:"تازەم",
     err_name:"تکایە ناوی تەواوت بنووسە.",err_email_invalid:"ئیمەیڵی دروست بنووسە.",err_pw_weak:"ووشەی تێپەڕین: کەم ٨ پیت، ١ پیتی گەورە، ١ ژمارە.",err_pw_match:"ووشەکانی تێپەڕین یەکسان نین.",err_email_exists:"ئەم ئیمەیڵە پێشتر تۆمارکراوە. بۆ چوونەژوورەوە ئاراستەت دەکرێیت…",
-    profile_title:"دەستت ناسین",profile_sub:"چیرۆکەکان بەپێی تۆ گۆڕان دەخون",profile_name:"ناوت",profile_age:"تەمەنت",profile_male:"نێر",profile_female:"مێ",profile_no_say:"نامەوێت بڵێم",err_age:"تکایە تەمەنت بنووسە.",
+    profile_title:"دەستت ناسین",profile_sub:"گەشتی Suri بەدوادا دەکەیت",profile_name:"ناوت",profile_age:"تەمەنت",profile_male:"نێر",profile_female:"مێ",profile_no_say:"نامەوێت بڵێم",err_age:"تکایە تەمەنت بنووسە.",
   },
   ar:{
     level_title:"ما مستواك الحالي في الألمانية؟",level_sub:"كن صادقاً — سنتكيّف مع وتيرتك",
@@ -552,7 +552,7 @@ const OB_TRANS = {
     ubung_label:"تمرين",
     welcome_have_acc:"لديّ حساب",welcome_im_new:"أنا جديد",
     err_name:"من فضلك أدخل اسمك الكامل.",err_email_invalid:"من فضلك أدخل بريداً إلكترونياً صحيحاً.",err_pw_weak:"كلمة المرور: 8 أحرف على الأقل، حرف كبير، رقم.",err_pw_match:"كلمتا المرور غير متطابقتين.",err_email_exists:"هذا البريد مسجّل بالفعل. جاري التحويل إلى تسجيل الدخول…",
-    profile_title:"تعرّف علينا",profile_sub:"ستتكيّف القصص معك",profile_name:"اسمك",profile_age:"عمرك",profile_male:"ذكر",profile_female:"أنثى",profile_no_say:"أفضّل عدم الذكر",err_age:"من فضلك أدخل عمرك.",
+    profile_title:"تعرّف علينا",profile_sub:"ستتابع رحلة Suri",profile_name:"اسمك",profile_age:"عمرك",profile_male:"ذكر",profile_female:"أنثى",profile_no_say:"أفضّل عدم الذكر",err_age:"من فضلك أدخل عمرك.",
   },
   fa:{
     level_title:"سطح فعلی آلمانی شما چیست؟",level_sub:"صادق باشید — سرعت شما را تنظیم می‌کنیم",
@@ -572,7 +572,7 @@ const OB_TRANS = {
     ubung_label:"تمرین",
     welcome_have_acc:"حساب دارم",welcome_im_new:"تازه‌کارم",
     err_name:"لطفاً نام کامل خود را وارد کنید.",err_email_invalid:"لطفاً یک ایمیل معتبر وارد کنید.",err_pw_weak:"رمز عبور: حداقل ۸ کاراکتر، ۱ حرف بزرگ، ۱ عدد.",err_pw_match:"رمزهای عبور مطابقت ندارند.",err_email_exists:"این ایمیل قبلاً ثبت شده است. در حال انتقال به صفحه ورود…",
-    profile_title:"بیشتر بشناسیمت",profile_sub:"داستان‌ها با مشخصات تو تطبیق می‌یابند",profile_name:"نامت",profile_age:"سنت",profile_male:"مرد",profile_female:"زن",profile_no_say:"ترجیح می‌دهم نگویم",err_age:"لطفاً سن خود را وارد کنید.",
+    profile_title:"بیشتر بشناسیمت",profile_sub:"سفر سوری را دنبال می‌کنید",profile_name:"نامت",profile_age:"سنت",profile_male:"مرد",profile_female:"زن",profile_no_say:"ترجیح می‌دهم نگویم",err_age:"لطفاً سن خود را وارد کنید.",
   },
   es:{
     level_title:"¿Cuál es tu nivel actual de alemán?",level_sub:"Sé honesto — adaptaremos tu ritmo",
@@ -592,7 +592,7 @@ const OB_TRANS = {
     ubung_label:"Práctica",
     welcome_have_acc:"Tengo una cuenta",welcome_im_new:"Soy nuevo/a",
     err_name:"Por favor, introduce tu nombre completo.",err_email_invalid:"Por favor, introduce un email válido.",err_pw_weak:"Contraseña: mín. 8 caracteres, 1 mayúscula, 1 número.",err_pw_match:"Las contraseñas no coinciden.",err_email_exists:"Este email ya está registrado. Redirigiendo a inicio de sesión…",
-    profile_title:"Cuéntanos sobre ti",profile_sub:"Las historias se adaptarán a ti",profile_name:"Tu nombre",profile_age:"Tu edad",profile_male:"Hombre",profile_female:"Mujer",profile_no_say:"Prefiero no decir",err_age:"Por favor, introduce tu edad.",
+    profile_title:"Cuéntanos sobre ti",profile_sub:"Seguirás el viaje de Suri",profile_name:"Tu nombre",profile_age:"Tu edad",profile_male:"Hombre",profile_female:"Mujer",profile_no_say:"Prefiero no decir",err_age:"Por favor, introduce tu edad.",
   },
   fr:{
     level_title:"Quel est votre niveau actuel en allemand ?",level_sub:"Soyez honnête — nous adapterons votre rythme",
@@ -612,7 +612,7 @@ const OB_TRANS = {
     ubung_label:"Exercices",
     welcome_have_acc:"J'ai un compte",welcome_im_new:"Je suis nouveau",
     err_name:"Veuillez entrer votre nom complet.",err_email_invalid:"Veuillez entrer un e-mail valide.",err_pw_weak:"Mot de passe : min 8 caractères, 1 majuscule, 1 chiffre.",err_pw_match:"Les mots de passe ne correspondent pas.",err_email_exists:"Cet e-mail est déjà enregistré. Redirection vers la connexion…",
-    profile_title:"Parlez-nous de vous",profile_sub:"Les histoires s'adapteront à votre profil",profile_name:"Votre prénom",profile_age:"Votre âge",profile_male:"Homme",profile_female:"Femme",profile_no_say:"Préfère ne pas dire",err_age:"Veuillez entrer votre âge.",
+    profile_title:"Parlez-nous de vous",profile_sub:"Vous suivrez le parcours de Suri",profile_name:"Votre prénom",profile_age:"Votre âge",profile_male:"Homme",profile_female:"Femme",profile_no_say:"Préfère ne pas dire",err_age:"Veuillez entrer votre âge.",
   },
   uk:{
     level_title:"Який ваш поточний рівень німецької?",level_sub:"Будьте чесні — ми підлаштуємося під ваш темп",
@@ -632,7 +632,7 @@ const OB_TRANS = {
     ubung_label:"Вправи",
     welcome_have_acc:"У мене є акаунт",welcome_im_new:"Я новачок",
     err_name:"Будь ласка, введіть повне ім'я.",err_email_invalid:"Будь ласка, введіть дійсний email.",err_pw_weak:"Пароль: мін. 8 символів, 1 велика літера, 1 цифра.",err_pw_match:"Паролі не збігаються.",err_email_exists:"Цей email уже зареєстровано. Перенаправлення на вхід…",
-    profile_title:"Розкажіть про себе",profile_sub:"Історії підлаштуються під вас",profile_name:"Ваше ім'я",profile_age:"Ваш вік",profile_male:"Чоловіча",profile_female:"Жіноча",profile_no_say:"Не хочу вказувати",err_age:"Будь ласка, введіть вік.",
+    profile_title:"Розкажіть про себе",profile_sub:"Ви стежитимете за подорожжю Сурі",profile_name:"Ваше ім'я",profile_age:"Ваш вік",profile_male:"Чоловіча",profile_female:"Жіноча",profile_no_say:"Не хочу вказувати",err_age:"Будь ласка, введіть вік.",
   },
   ja:{
     level_title:"現在のドイツ語レベルは？",level_sub:"正直に — ペースに合わせます",
@@ -652,7 +652,7 @@ const OB_TRANS = {
     ubung_label:"練習",
     welcome_have_acc:"アカウントがある",welcome_im_new:"初めてです",
     err_name:"フルネームを入力してください。",err_email_invalid:"有効なメールアドレスを入力してください。",err_pw_weak:"パスワード：8文字以上、大文字1つ、数字1つ。",err_pw_match:"パスワードが一致しません。",err_email_exists:"このメールはすでに登録されています。ログイン画面へ移動します…",
-    profile_title:"あなたのことを教えてください",profile_sub:"ストーリーはあなたに合わせて変わります",profile_name:"お名前",profile_age:"年齢",profile_male:"男性",profile_female:"女性",profile_no_say:"答えたくない",err_age:"年齢を入力してください。",
+    profile_title:"あなたのことを教えてください",profile_sub:"スリの旅をたどります",profile_name:"お名前",profile_age:"年齢",profile_male:"男性",profile_female:"女性",profile_no_say:"答えたくない",err_age:"年齢を入力してください。",
   },
 };
 
@@ -12951,6 +12951,23 @@ const JOURNEY_LEVELS = [
    l:10,w:60,xp:600,"es":"Pasando la entrevista de ciudadanía","fr":"Passage de l'entrevue sur la citoyenneté"},
 ];
 
+const JOURNEY_HERO_STORY_TR = ["Suri uçaktan inip Almanya'daki ilk adımını atıyor. Bavulu hazır; Almancası henüz başlangıç seviyesinde.","Suri kapıdan çıkınca ilk kez Almanca selamlaşıyor.","Suri 'Ich bin...' diyerek kendini tanıtıyor ve ilk Almanca cümlesini kuruyor.","Suri trene ulaşmak için Almanca yol tarifi soruyor.","Suri ilk Alman kahvesini sipariş etmek için sıraya giriyor.","Suri market alışverişini yapıp kasada Almanca konuşuyor.","Ahmet, Suri'nin restorandaki ilk iş fırsatını bulmasına yardım ediyor.","Suri yazılı ve sözlü A1 sınavına girerek öğrendiklerini gösteriyor.","Suri anahtarı çevirip Almanya'daki yeni evine giriyor.","Suri restorandaki ilk çalışma gününde mutfaktaki görevlerini öğreniyor.","Suri telefon hattı almak için mağazaya giriyor.","Suri banka hesabı açmak için evraklarıyla bankaya gidiyor.","Boğazı ağrıyan Suri, Almanca telefon görüşmesiyle doktor randevusu alıyor.","Suri menüyü inceliyor ve yaklaşan garsona Almanca sipariş veriyor.","Suri iş görüşmesi için kıyafet seçiyor ve Almanca beden soruyor.","Maya, Suri'yi doğum gününe davet ediyor; Suri uygun bir hediye hazırlıyor.","Suri ilk boş hafta sonunda Almanya'yı keşfetmek için plan yapıyor.","Suri Almanca bir film izleyip anladığı kelimeleri fark ediyor.","Suri bisiklet kiralayıp şehri ve yeni kelimeleri keşfediyor.","Suri'nin yeni arkadaşlıkları Almanya'yı giderek daha çok ev gibi hissettiriyor.","Geçici konaklaması biten Suri kalıcı bir ev arıyor ve Almanca sözleşmeyi inceliyor.","Suri Almanca özgeçmişini hazırlayıp hayatını tek sayfada anlatıyor.","Suri bir iş görüşmesi daveti alıyor ve heyecanla hazırlanıyor.","Suri işe kabul ediliyor; ofisteki ilk gününde ekibi ve görevleriyle tanışıyor.","Suri ilk resmi iş e-postasını hazırlayıp kontrol ederek patronuna gönderiyor.","Suri yeni Almanca kursunda gramer, alıştırma ve ödevlerle ilerliyor.","Suri danışmanlık alıyor, üniversite başvurusunu yapıyor ve kabulünü alıyor.","Suri ilk derse girip sınıf arkadaşlarıyla ve üniversite hayatıyla tanışıyor.","Suri arkadaşlarıyla Münih yolculuğunu planlayıp biletleri alıyor.","Suri Münih'e varıp oteli, Marienplatz'ı ve şehrin kültürünü keşfediyor.","Suri otuz kişilik bir dinleyici grubuna Almanca sunum yapıyor.","Suri doğru anda söz alıp fikrini Almanca ifade ediyor.","Proje lideri Suri, ekibin takvimini, bütçesini ve planını yönetiyor.","Suri memnun olmayan müşteriyi sakin biçimde dinleyip çözüm üretiyor.","Suri meslektaşıyla görüş ayrılığını konuşup fikrini Almanca savunuyor.","Suri Alman çalışma kültüründeki kurallarla esneklik arasındaki dengeyi öğreniyor.","Suri arkadaşlarını davet edip Almanca davetiyeler ve sohbetlerle bir buluşma düzenliyor.","Suri araba seçerken sözleşmeyi okuyor ve Almanca pazarlık yapıyor.","Suri bankadan kredi isterken her kelimeyi ve rakamı dikkatle değerlendiriyor.","Patronu Suri'yi çağırıyor; Suri 'Beförderung' kelimesini duyunca gülümsüyor.","Suri beş yüz kişilik salonda sahneye çıkıp Almanca konuşuyor.","Suri profesörlerle aynı masada, eşit bir uzman olarak tartışıyor.","Suri milyonluk sözleşme görüşmesinde her kelimeyi dikkatle seçiyor.","Suri Almanya'nın politika, ekonomi ve kültür gündemini takip ediyor.","Suri yeşil enerji ve iklim krizi tartışmasında söz alıyor.","Suri resmi kurumda bürokratik Almancayı kullanıp haklarını savunuyor.","Suri artık anlatan tarafta; o konuşurken diğerleri not alıyor.","Suri karmaşık bir soruna çözüm buluyor; Almanca artık onun için bir araç.","Suri kamera karşısında canlı yayında sakin ve akıcı Almanca konuşuyor.","Suri havaalanında kaybolan birine, kendi ilk gününü hatırlayarak yardım ediyor.","Suri Almanya'da kendi işini kurmak için evrak ve sermaye planını hazırlıyor.","Suri on ülkeden liderin bulunduğu toplantıda Almancayı bir köprü olarak kullanıyor.","Suri avukatıyla yaptığı görüşmede her hukuki ifadeyi dikkatle değerlendiriyor.","Suri doktorlarla teşhis, tedavi ve terminoloji üzerine teknik Almanca konuşuyor.","Suri araştırmasını uluslararası akademik sahnede akıcı ve güvenli biçimde sunuyor.","Milyonlar Suri'yi izliyor; o canlı yayında akıcı ve sakin Almanca konuşuyor.","Herkes çözüm ararken Suri söz alıp uygulanabilir yolu açıklıyor.","Suri uluslararası müzakere masasını dil engeli olmadan yönetiyor.","Suri büyük konferansın açılış konuşmasını Almanca yapıyor; tüm gözler onda.","Suri son vatandaşlık sorusunu yanıtlayıp Almanya'daki yeni hayatına güvenle devam ediyor."];
+const JOURNEY_HERO_STORY = {
+  en: lv => `This chapter follows Suri: ${lv.en}.`,
+  ku: lv => `ئەم بەشە چیرۆکی Suri بەردەوام دەکات: ${lv.ku}.`,
+  ar: lv => `يتابع هذا الفصل قصة Suri: ${lv.ar}.`,
+  uk: lv => `У цьому розділі триває історія Сурі: ${lv.uk}.`,
+  fa: lv => `در این فصل داستان سوری ادامه پیدا می‌کند: ${lv.fa}.`,
+  es: lv => `Este capítulo sigue la historia de Suri: ${lv.es}.`,
+  fr: lv => `Ce chapitre poursuit l'histoire de Suri : ${lv.fr}.`,
+};
+JOURNEY_LEVELS.forEach((lv, index) => {
+  lv.story.tr = JOURNEY_HERO_STORY_TR[index];
+  Object.entries(JOURNEY_HERO_STORY).forEach(([lang, format]) => {
+    lv.story[lang] = format(lv);
+  });
+});
+
 const CEFR_META = {
   A1:{ grad:"linear-gradient(135deg,#FF6B6B,#FF8E53)", border:"#FF6B6B",
        label:{ku:"دەستپێک",    tr:"Başlangıç",   en:"Beginner",        ar:"مبتدئ", uk:"Початковий", fa:"مبتدی","es":"Principiante","fr":"Débutant"},
@@ -22834,7 +22851,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
          done:"Completed ✓", active:"Current", locked:"Locked",
          xp:"XP", words:"words", lessons:"lessons", start:"Start",
          complete:"Lesson done!", next:"Next level unlocked 🎉",
-         storyMode:"Story Mode", storyIntro:"You arrived in Germany. Starting from zero.", storyEnd:"You're ready. A new life in Germany.",
+         storyMode:"Story Mode", storyIntro:"Suri arrived in Germany. He is starting from zero.", storyEnd:"Suri is ready for a new life in Germany.",
          chapter:"Story Chapter", needKey:"Du brauchst eine Eintrittskarte! (You need an entry card)" },
     ar:{ title:"رحلتك", back:"رجوع", cont:"استمر", level:"المستوى",
          done:"مكتمل ✓", active:"الحالي", locked:"مقفل",
@@ -22855,6 +22872,17 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
          storyMode:"حالت داستان", storyIntro:"به آلمان رسیدی. از صفر شروع می‌کنی.", storyEnd:"آماده‌ای. زندگی جدید در آلمان.",
          chapter:"فصل داستان", needKey:"Du brauchst eine Eintrittskarte! (به بلیت ورود نیاز داری)" },
   "es":{"title":"Su viaje","back":"Atrás","cont":"Continuar","level":"Nivel","done":"Terminado ✓","active":"Corriente","locked":"Bloqueado","xp":"XP","words":"palabras","lessons":"lecciones","start":"Comienzo","complete":"¡Lección hecha!","next":"Siguiente nivel desbloqueado","storyMode":"Modo de historia","storyIntro":"Llegaste a Alemania, empezando por cero.","storyEnd":"Estás listo, una nueva vida en Alemania.","chapter":"Capítulo de la historia","needKey":"Du brauchst eine Eintrittskarte! (Necesitas una tarjeta de entrada)"},"fr":{"title":"Votre voyage","back":"Précédent","cont":"Continuer","level":"Niveau","done":"Terminé ✓","active":"Actuellement","locked":"Verrouillé","xp":"xx","words":"mots","lessons":"leçons","start":"Démarrer","complete":"Leçon terminée!","next":"Niveau suivant déverrouillé -","storyMode":"Mode histoire","storyIntro":"Vous êtes arrivé en Allemagne, à partir de zéro.","storyEnd":"Tu es prête, une nouvelle vie en Allemagne.","chapter":"Chapitre historique","needKey":"Du brauchst eine Eintrittskarte! (Vous avez besoin d'une carte d'entrée)"}};
+  const JOURNEY_SURI_COPY = {
+    tr:{ storyIntro:"Suri Almanya'ya geldi. Sıfırdan başlıyor.", storyEnd:"Suri hazır. Almanya'da yeni bir hayat kuruyor." },
+    ku:{ storyIntro:"Suri هاتە ئەڵمانیا و لە سفرەوە دەست پێدەکات.", storyEnd:"Suri ئامادەیە و ژیانێکی نوێ لە ئەڵمانیا دروست دەکات." },
+    en:{ storyIntro:"Suri arrived in Germany. He is starting from zero.", storyEnd:"Suri is ready for a new life in Germany." },
+    ar:{ storyIntro:"وصل Suri إلى ألمانيا ويبدأ من الصفر.", storyEnd:"Suri مستعد لبناء حياة جديدة في ألمانيا." },
+    uk:{ storyIntro:"Сурі прибув до Німеччини й починає з нуля.", storyEnd:"Сурі готовий будувати нове життя в Німеччині." },
+    fa:{ storyIntro:"سوری به آلمان رسیده و از صفر شروع می‌کند.", storyEnd:"سوری آماده است زندگی تازه‌ای در آلمان بسازد." },
+    es:{ storyIntro:"Suri llegó a Alemania y empieza desde cero.", storyEnd:"Suri está listo para construir una nueva vida en Alemania." },
+    fr:{ storyIntro:"Suri arrive en Allemagne et repart de zéro.", storyEnd:"Suri est prêt à construire une nouvelle vie en Allemagne." },
+  };
+  Object.entries(JOURNEY_SURI_COPY).forEach(([code, copy]) => Object.assign(JT[code], copy));
   const jt = k => (JT[lang]||JT.tr)[k]||(JT.tr[k]||k);
   const getNat = item => lang==='tr'?item.tr:lang==='ku'?item.ku:lang==='ar'?item.ar:lang==='uk'?(item.uk||item.en):lang==='fa'?(item.fa||item.en):(item[lang]||item.en);
 

@@ -15,7 +15,8 @@
     "native:sync": "npm run build && cap sync",
     "native:android": "npm run build && cap sync android",
     "native:ios": "npm run build && cap sync ios",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:journey": "node scripts/audit-journey.cjs --strict"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",

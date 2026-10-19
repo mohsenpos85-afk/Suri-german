@@ -38,7 +38,7 @@ export default defineConfig({
       },
     },
     warmup: {
-      clientFiles: ['./src/App.jsx', './src/storiesData.js'],
+      clientFiles: ['./src/App.jsx', './src/data/journey.js'],
     },
   },
 })

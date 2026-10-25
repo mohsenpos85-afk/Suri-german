@@ -8,6 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "check:i18n": "node scripts/check-i18n.cjs",
+    "check:translations": "node scripts/check-i18n.cjs && node scripts/check-es.cjs && node scripts/check-fr.cjs && node scripts/check-fa.cjs && node scripts/check-uk.cjs",
+    "verify": "npm run lint && npm test && npm run check:translations && npm run check:journey && npm run build",
     "check:es": "node scripts/check-es.cjs --list",
     "check:fr": "node scripts/check-fr.cjs --list",
     "preview": "vite preview",
@@ -21,6 +23,7 @@
   "dependencies": {
     "@capacitor/android": "^8.5.1",
     "@capacitor/app": "^8.1.1",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/camera": "^8.2.3",
     "@capacitor/core": "^8.5.1",
     "@capacitor/ios": "^8.5.1",

@@ -13,9 +13,46 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+  background: #fbfbfc;
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
+}
+
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid rgba(91, 91, 214, 0.72) !important;
+  outline-offset: 3px;
+}
+
+button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
+
+@media (pointer: coarse) {
+  button, [role="button"] { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body { overflow-wrap: anywhere; }
+}
+
+.screen-loader {
+  min-height: 55vh;
+  display: grid;
+  place-items: center;
+  color: #5b5bd6;
+  font-weight: 750;
 }

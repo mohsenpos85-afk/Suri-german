@@ -1,1 +1,75 @@
-const fs=require('fs');const parser=require('@babel/parser');const src=fs.readFileSync('src/App.jsx','utf8');const ast=parser.parse(src,{sourceType:'module',plugins:['jsx']});const value=n=>n&&(n.type==='StringLiteral'?n.value:n.type==='NumericLiteral'?n.value:n.type==='Identifier'?n.name:undefined);const wanted=['s_ku','s_en','s_ar','s_uk','s_fa','s_es','s_fr','s_ja'];const rows=[];for(const st of ast.program.body){if(st.type!=='VariableDeclaration')continue;for(const d of st.declarations){const name=d.id?.name;if(!name?.endsWith('_STORY')||d.init?.type!=='ArrayExpression')continue;let total=0;const found=Object.fromEntries(wanted.map(k=>[k,0]));for(const scene of d.init.elements||[]){if(scene?.type!=='ObjectExpression')continue;for(const prop of scene.properties||[]){if(value(prop.key)!=='lines'||prop.value.type!=='ArrayExpression')continue;for(const line of prop.value.elements||[]){if(line?.type!=='ObjectExpression')continue;total++;const fields=Object.fromEntries(line.properties.map(p=>[value(p.key),value(p.value)]));for(const key of wanted)if(fields[key])found[key]++;}}}rows.push({name,total,...found});}}const totals=Object.fromEntries(wanted.map(k=>[k,rows.reduce((n,r)=>n+r[k],0)]));const lineTotal=rows.reduce((n,r)=>n+r.total,0);console.log('Journey lines:',lineTotal);for(const key of wanted)console.log(key.padEnd(5),String(totals[key]).padStart(5),'/',lineTotal,'missing',lineTotal-totals[key]);if(process.argv.includes('--strict')&&wanted.some(k=>totals[k]!==lineTotal))process.exit(1);
+const fs = require('fs');
+const parser = require('@babel/parser');
+
+const source = fs.readFileSync('src/App.jsx', 'utf8');
+const ast = parser.parse(source, { sourceType: 'module', plugins: ['jsx'] });
+const languages = ['ku', 'en', 'ar', 'uk', 'fa', 'es', 'fr', 'ja'];
+const translatedLineTypes = new Set(['n', 'i', 'sms']);
+const value = node => node && (
+  node.type === 'StringLiteral' || node.type === 'NumericLiteral'
+    ? node.value
+    : node.type === 'Identifier' ? node.name : undefined
+);
+
+const stats = Object.fromEntries(languages.map(lang => [lang, {
+  requiredLines: 0,
+  translatedLines: 0,
+  requiredPlaces: 0,
+  translatedPlaces: 0,
+  incompleteStories: [],
+}]));
+
+for (const statement of ast.program.body) {
+  if (statement.type !== 'VariableDeclaration') continue;
+  for (const declaration of statement.declarations) {
+    const storyName = declaration.id?.name;
+    if (!storyName?.endsWith('_STORY') || declaration.init?.type !== 'ArrayExpression') continue;
+
+    const storyMissing = Object.fromEntries(languages.map(lang => [lang, 0]));
+    for (const scene of declaration.init.elements || []) {
+      if (scene?.type !== 'ObjectExpression') continue;
+      const fields = Object.fromEntries(scene.properties.map(prop => [value(prop.key), value(prop.value)]));
+
+      if (fields.place) {
+        for (const lang of languages) {
+          stats[lang].requiredPlaces++;
+          if (fields[`place_${lang}`]) stats[lang].translatedPlaces++;
+          else storyMissing[lang]++;
+        }
+      }
+
+      const linesProperty = scene.properties.find(prop => value(prop.key) === 'lines');
+      if (linesProperty?.value.type !== 'ArrayExpression') continue;
+      for (const line of linesProperty.value.elements || []) {
+        if (line?.type !== 'ObjectExpression') continue;
+        const lineFields = Object.fromEntries(line.properties.map(prop => [value(prop.key), value(prop.value)]));
+        if (!translatedLineTypes.has(lineFields.t)) continue;
+        for (const lang of languages) {
+          stats[lang].requiredLines++;
+          if (lineFields[`s_${lang}`]) stats[lang].translatedLines++;
+          else storyMissing[lang]++;
+        }
+      }
+    }
+
+    for (const lang of languages) {
+      if (storyMissing[lang]) stats[lang].incompleteStories.push(`${storyName} (${storyMissing[lang]} missing)`);
+    }
+  }
+}
+
+let failed = false;
+console.log('Journey localization audit (German dialogue/system lines intentionally excluded)');
+for (const lang of languages) {
+  const item = stats[lang];
+  const required = item.requiredLines + item.requiredPlaces;
+  const translated = item.translatedLines + item.translatedPlaces;
+  const missing = required - translated;
+  if (missing) failed = true;
+  console.log(`${lang.padEnd(2)} ${String(translated).padStart(4)} / ${required} translated; missing ${missing}; incomplete stories ${item.incompleteStories.length}`);
+  if (process.argv.includes('--list') && item.incompleteStories.length) {
+    console.log(`  ${item.incompleteStories.join(', ')}`);
+  }
+}
+
+if (process.argv.includes('--strict') && failed) process.exit(1);

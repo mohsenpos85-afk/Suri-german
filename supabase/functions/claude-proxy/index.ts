@@ -9,6 +9,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+const MAX_BODY_BYTES = 15 * 1024 * 1024;
+const MAX_REQUESTS_PER_MINUTE = 12;
+const ALLOWED_MODELS = new Set(["claude-sonnet-4-20250514"]);
+const requestBuckets = new Map<string, { startedAt: number; count: number }>();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,6 +28,14 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const contentLength = Number(req.headers.get("content-length") || 0);
+  if (contentLength > MAX_BODY_BYTES) {
+    return new Response(JSON.stringify({ error: "FILE_TOO_LARGE" }), {
+      status: 413,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
@@ -47,6 +59,19 @@ Deno.serve(async (req) => {
     });
   }
 
+  const now = Date.now();
+  const bucket = requestBuckets.get(user.id);
+  if (!bucket || now - bucket.startedAt >= 60_000) {
+    requestBuckets.set(user.id, { startedAt: now, count: 1 });
+  } else if (bucket.count >= MAX_REQUESTS_PER_MINUTE) {
+    return new Response(JSON.stringify({ error: "RATE_LIMITED" }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" },
+    });
+  } else {
+    bucket.count += 1;
+  }
+
   let body;
   try {
     body = await req.json();
@@ -57,6 +82,19 @@ Deno.serve(async (req) => {
     });
   }
 
+  if (!body || !ALLOWED_MODELS.has(body.model) || !Array.isArray(body.messages) || body.messages.length > 30) {
+    return new Response(JSON.stringify({ error: "Invalid request" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const safeBody = {
+    model: body.model,
+    max_tokens: Math.min(Math.max(Number(body.max_tokens) || 1200, 1), 4000),
+    messages: body.messages,
+    ...(typeof body.system === "string" ? { system: body.system.slice(0, 30_000) } : {}),
+  };
+
   try {
     const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -65,7 +103,7 @@ Deno.serve(async (req) => {
         "x-api-key": ANTHROPIC_API_KEY ?? "",
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(safeBody),
     });
 
     const data = await anthropicRes.json();

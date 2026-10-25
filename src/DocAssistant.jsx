@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Capacitor } from "@capacitor/core";
 import { Camera as NativeCamera, CameraResultType, CameraSource } from "@capacitor/camera";
+import { readJson, readText, removeStored, writeJson, writeText } from "./lib/storage.js";
 import {
   ScanText, Upload, Camera, FileText, Sparkles, Calendar, AlertTriangle,
   Check, HelpCircle, ArrowRight, MessageCircle, Copy, Share2, Download,
@@ -17,6 +18,8 @@ import {
    ──────────────────────────────────────────────────────────────────────── */
 
 const RTL = new Set(["ar", "ku", "fa"]);
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const ACCEPTED_FILE_TYPES = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"]);
 const LANG_NAME = {
   es: "Spanish", en: "English", ar: "Arabic", tr: "Turkish", fr: "French",
   uk: "Ukrainian", ku: "Sorani Kurdish", fa: "Persian", ja: "Japanese", de: "German",
@@ -183,13 +186,13 @@ Object.keys(PV).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV[k
 
 // Extra strings (PDF / share / calendar / recent)
 const XTRA = {
-  en: { qa_pdf: "Export as PDF", qa_share: "Share", qa_calendar: "Add to calendar", noDates: "No dates found", shared: "Shared", openRecent: "Open" },
-  tr: { qa_pdf: "PDF olarak dışa aktar", qa_share: "Paylaş", qa_calendar: "Takvime ekle", noDates: "Tarih bulunamadı", shared: "Paylaşıldı", openRecent: "Aç" },
-  ar: { qa_pdf: "تصدير كـ PDF", qa_share: "مشاركة", qa_calendar: "أضف إلى التقويم", noDates: "لا توجد تواريخ", shared: "تمت المشاركة", openRecent: "فتح" },
-  fa: { qa_pdf: "خروجی PDF", qa_share: "اشتراک", qa_calendar: "افزودن به تقویم", noDates: "تاریخی یافت نشد", shared: "به اشتراک گذاشته شد", openRecent: "باز کردن" },
-  ku: { qa_pdf: "هەناردە بکە وەک PDF", qa_share: "هاوبەشکردن", qa_calendar: "زیادکردن بۆ ساڵنامە", noDates: "هیچ بەروارێک نەدۆزرایەوە", shared: "هاوبەشکرا", openRecent: "کردنەوە" },
-  es: { qa_pdf: "Exportar como PDF", qa_share: "Compartir", qa_calendar: "Añadir al calendario", noDates: "No se encontraron fechas", shared: "Compartido", openRecent: "Abrir" },
-"fr":{"qa_pdf":"Exporter en format PDF","qa_share":"Partager","qa_calendar":"Ajouter à l'agenda","noDates":"Aucune date trouvée","shared":"Partage","openRecent":"Ouvrir"}};
+  en: { qa_pdf: "Export as PDF", qa_share: "Share", qa_calendar: "Add to calendar", noDates: "No dates found", shared: "Shared", openRecent: "Open", clearRecent: "Clear recent scans", withdrawConsent: "Withdraw AI consent", consentWithdrawn: "Consent withdrawn and recent scans deleted" },
+  tr: { qa_pdf: "PDF olarak dışa aktar", qa_share: "Paylaş", qa_calendar: "Takvime ekle", noDates: "Tarih bulunamadı", shared: "Paylaşıldı", openRecent: "Aç", clearRecent: "Son taramaları temizle", withdrawConsent: "AI onayını geri çek", consentWithdrawn: "Onay geri çekildi ve son taramalar silindi" },
+  ar: { qa_pdf: "تصدير كـ PDF", qa_share: "مشاركة", qa_calendar: "أضف إلى التقويم", noDates: "لا توجد تواريخ", shared: "تمت المشاركة", openRecent: "فتح", clearRecent: "مسح عمليات الفحص الأخيرة", withdrawConsent: "سحب الموافقة على الذكاء الاصطناعي", consentWithdrawn: "تم سحب الموافقة وحذف عمليات الفحص الأخيرة" },
+  fa: { qa_pdf: "خروجی PDF", qa_share: "اشتراک", qa_calendar: "افزودن به تقویم", noDates: "تاریخی یافت نشد", shared: "به اشتراک گذاشته شد", openRecent: "باز کردن", clearRecent: "پاک کردن اسکن‌های اخیر", withdrawConsent: "پس گرفتن رضایت هوش مصنوعی", consentWithdrawn: "رضایت پس گرفته شد و اسکن‌های اخیر حذف شدند" },
+  ku: { qa_pdf: "هەناردە بکە وەک PDF", qa_share: "هاوبەشکردن", qa_calendar: "زیادکردن بۆ ساڵنامە", noDates: "هیچ بەروارێک نەدۆزرایەوە", shared: "هاوبەشکرا", openRecent: "کردنەوە", clearRecent: "سڕینەوەی سکانە دواییەکان", withdrawConsent: "پاشگەزبوونەوە لە ڕەزامەندی AI", consentWithdrawn: "ڕەزامەندی پاشگەزکرایەوە و سکانە دواییەکان سڕانەوە" },
+  es: { qa_pdf: "Exportar como PDF", qa_share: "Compartir", qa_calendar: "Añadir al calendario", noDates: "No se encontraron fechas", shared: "Compartido", openRecent: "Abrir", clearRecent: "Borrar escaneos recientes", withdrawConsent: "Retirar el consentimiento de IA", consentWithdrawn: "Consentimiento retirado y escaneos recientes eliminados" },
+"fr":{"qa_pdf":"Exporter en format PDF","qa_share":"Partager","qa_calendar":"Ajouter à l'agenda","noDates":"Aucune date trouvée","shared":"Partage","openRecent":"Ouvrir","clearRecent":"Effacer les analyses récentes","withdrawConsent":"Retirer le consentement à l’IA","consentWithdrawn":"Consentement retiré et analyses récentes supprimées"}};
 Object.keys(XTRA).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, XTRA[k]); });
 
 // GDPR/DSGVO consent strings
@@ -204,6 +207,13 @@ const PV2 = {
 Object.keys(PV2).forEach((k) => { LABELS[k] = Object.assign(LABELS[k] || {}, PV2[k]); });
 
 const L = (lang, key) => (LABELS[lang]?.[key] ?? LABELS.en[key] ?? key);
+
+const REQUEST_ERRORS = {
+  en: { FILE_TOO_LARGE:"The file is too large. Choose a document smaller than 10 MB.", UNSUPPORTED_FILE:"Choose a PDF, JPEG, PNG, WebP or HEIC document.", REQUEST_TIMEOUT:"The analysis took too long. Check your connection and try again.", RATE_LIMITED:"Too many requests were sent. Please wait a moment and try again.", SERVICE_UNAVAILABLE:"The analysis service is temporarily unavailable. Please try again.", OFFLINE:"You are offline. Reconnect and try again.", NETWORK_ERROR:"The document could not be sent. Check your connection and try again.", REQUEST_FAILED:"The document could not be analysed. Please try again." },
+  tr: { FILE_TOO_LARGE:"Dosya çok büyük. 10 MB'den küçük bir belge seçin.", UNSUPPORTED_FILE:"PDF, JPEG, PNG, WebP veya HEIC belge seçin.", REQUEST_TIMEOUT:"Analiz çok uzun sürdü. Bağlantınızı kontrol edip tekrar deneyin.", RATE_LIMITED:"Çok fazla istek gönderildi. Biraz bekleyip tekrar deneyin.", SERVICE_UNAVAILABLE:"Analiz hizmeti geçici olarak kullanılamıyor. Lütfen tekrar deneyin.", OFFLINE:"Çevrimdışısınız. İnternete bağlanıp tekrar deneyin.", NETWORK_ERROR:"Belge gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.", REQUEST_FAILED:"Belge analiz edilemedi. Lütfen tekrar deneyin." },
+  de: { FILE_TOO_LARGE:"Die Datei ist zu groß. Wählen Sie ein Dokument unter 10 MB.", UNSUPPORTED_FILE:"Wählen Sie ein PDF-, JPEG-, PNG-, WebP- oder HEIC-Dokument.", REQUEST_TIMEOUT:"Die Analyse hat zu lange gedauert. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.", RATE_LIMITED:"Zu viele Anfragen. Bitte warten Sie kurz und versuchen Sie es erneut.", SERVICE_UNAVAILABLE:"Der Analysedienst ist vorübergehend nicht verfügbar.", OFFLINE:"Sie sind offline. Stellen Sie die Verbindung wieder her.", NETWORK_ERROR:"Das Dokument konnte nicht gesendet werden.", REQUEST_FAILED:"Das Dokument konnte nicht analysiert werden." },
+};
+const requestError = (lang, code) => REQUEST_ERRORS[lang]?.[code] ?? REQUEST_ERRORS.en[code] ?? code;
 
 const CAMERA_LABELS = {
   en: { title:"Camera", hint:"Position the document inside the frame", capture:"Take photo", cancel:"Cancel", flip:"Switch camera", unavailable:"Camera access is unavailable in this browser.", denied:"Camera permission was denied. Allow camera access in the browser settings and try again.", failed:"The camera could not be started. Close other apps using the camera and try again." },
@@ -249,8 +259,7 @@ function extractJSON(text) {
 export default function DocAssistant({ lang = "en", onBack, callClaude, privacyUrl, impressumUrl }) {
   const dir = RTL.has(lang) ? "rtl" : "ltr";
   const langName = LANG_NAME[lang] || "English";
-  const [stage, setStage] = useState(() =>
-    (typeof localStorage !== "undefined" && localStorage.getItem("docassist_onboarded")) ? "home" : "onboarding");
+  const [stage, setStage] = useState(() => readText("docassist_onboarded") ? "home" : "onboarding");
   const [obStep, setObStep] = useState(0);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
@@ -261,14 +270,13 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
   const [chatBusy, setChatBusy] = useState(false);
   const [transMode, setTransMode] = useState("app");
   const [toast, setToast] = useState("");
-  const [consent, setConsent] = useState(() => {
-    try { return !!localStorage.getItem("docassist_privacy_ok"); } catch { return false; }
-  });
+  const [consent, setConsent] = useState(() => Boolean(readText("docassist_privacy_ok")));
   const [pending, setPending] = useState(null); // 'cam' | 'file' | null
   const [agree, setAgree] = useState(false);     // GDPR explicit consent checkbox
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraFacing, setCameraFacing] = useState("environment");
   const [cameraError, setCameraError] = useState("");
+  const [, setRecentVersion] = useState(0);
   const fileRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -314,7 +322,7 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
   const requestScan = (kind) => { if (consent) openPicker(kind); else { setAgree(false); setPending(kind); } };
   const acceptConsent = () => {
     if (!agree) return; // explicit consent required
-    try { localStorage.setItem("docassist_privacy_ok", "1"); } catch { /* Optional browser capability may be unavailable. */ }
+    writeText("docassist_privacy_ok", "1");
     setConsent(true);
     const k = pending; setPending(null);
     openPicker(k); // still inside the user-gesture chain
@@ -378,12 +386,22 @@ export default function DocAssistant({ lang = "en", onBack, callClaude, privacyU
     }, "image/jpeg", 0.92);
   };
   function finishOnboarding() {
-    try { localStorage.setItem("docassist_onboarded", "1"); } catch { /* Optional browser capability may be unavailable. */ }
+    writeText("docassist_onboarded", "1");
     setStage("home");
   }
 
   async function analyze(file) {
     if (!file) return;
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      setError(requestError(lang, "OFFLINE")); setStage("error"); return;
+    }
+    const inferredType = file.type || (/\.pdf$/i.test(file.name || "") ? "application/pdf" : "");
+    if (file.size > MAX_FILE_BYTES) {
+      setError(requestError(lang, "FILE_TOO_LARGE")); setStage("error"); return;
+    }
+    if (!ACCEPTED_FILE_TYPES.has(inferredType)) {
+      setError(requestError(lang, "UNSUPPORTED_FILE")); setStage("error"); return;
+    }
     setError(null); setResult(null); setChat([]); setDocText("");
     const pdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
    setStage("loading");
@@ -431,17 +449,18 @@ If the image is not a readable document, still return the schema with confidence
       if (!parsed) throw new Error("PARSE");
       setResult(parsed);
       setDocText(parsed.originalText || "");
-      saveRecent({ ts: Date.now(), documentType: parsed.documentType || "", detectedLanguage: parsed.detectedLanguage || "", summary: parsed.summary || "", result: parsed, docText: parsed.originalText || "" });
+      const recentResult = { ...parsed, originalText: "" };
+      saveRecent({ ts: Date.now(), documentType: parsed.documentType || "", detectedLanguage: parsed.detectedLanguage || "", summary: parsed.summary || "", result: recentResult, docText: "" });
       setStage("result");
     } catch (e) {
-      const msg = String(e?.message || e);
-      setError(msg === "NOT_SIGNED_IN" ? L(lang, "signIn") : (msg === "PARSE" ? L(lang, "errTitle") : msg));
+      const code = e?.code || String(e?.message || e);
+      setError(code === "NOT_SIGNED_IN" ? L(lang, "signIn") : (code === "PARSE" ? L(lang, "errTitle") : requestError(lang, code)));
       setStage("error");
     }
   }
 
   async function sendChat(text) {
-    const q = (text ?? chatInput).trim();
+    const q = (text ?? chatInput).trim().slice(0, 2000);
     if (!q || chatBusy) return;
     const next = [...chat, { role: "user", text: q }];
     setChat(next); setChatInput(""); setChatBusy(true);
@@ -455,13 +474,13 @@ Here is the full text of the user's document (may be in another language):
         model: "claude-sonnet-4-20250514",
         max_tokens: 1200,
         system,
-        messages: next.map((m) => ({ role: m.role, content: m.text })),
+        messages: next.slice(-12).map((m) => ({ role: m.role, content: m.text })),
       });
       const answer = data?.content?.[0]?.text || "…";
       setChat((c) => [...c, { role: "assistant", text: answer }]);
     } catch (e) {
-      const msg = String(e?.message || e);
-      setChat((c) => [...c, { role: "assistant", text: msg === "NOT_SIGNED_IN" ? L(lang, "signIn") : msg }]);
+      const code = e?.code || String(e?.message || e);
+      setChat((c) => [...c, { role: "assistant", text: code === "NOT_SIGNED_IN" ? L(lang, "signIn") : requestError(lang, code) }]);
     } finally {
       setChatBusy(false);
     }
@@ -514,7 +533,7 @@ Here is the full text of the user's document (may be in another language):
   // ─────────────────────────────────────────────────── LOADING
   if (stage === "loading") {
     return (
-      <div style={{ ...wrap, minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 22 }}>
+      <div role="status" aria-live="polite" aria-busy="true" style={{ ...wrap, minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 22 }}>
         <div style={{ position: "relative", width: 96, height: 96 }}>
           <div style={{ position: "absolute", inset: 0, borderRadius: 26, background: T.accentSoft }} />
           <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
@@ -542,7 +561,7 @@ Here is the full text of the user's document (may be in another language):
     return (
       <div style={wrap}>
         {topBar(L(lang, "back"))}
-        <div style={{ ...cardStyle, textAlign: "center", padding: "40px 24px" }}>
+        <div role="alert" style={{ ...cardStyle, textAlign: "center", padding: "40px 24px" }}>
           <div style={{ width: 68, height: 68, borderRadius: 20, background: T.roseSoft, display: "grid", placeItems: "center", margin: "0 auto 18px" }}>
             <AlertTriangle size={30} color={T.rose} />
           </div>
@@ -612,7 +631,7 @@ Here is the full text of the user's document (may be in another language):
             </div>
           </div>
         )}
-        <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; analyze(file); }} />
+        <input ref={fileRef} type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; analyze(file); }} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
           <button onClick={() => requestScan("cam")} style={bigBtn(T.accent, "#fff", true)}>
@@ -631,7 +650,11 @@ Here is the full text of the user's document (may be in another language):
           if (!rec.length) return null;
           return (
             <div style={{ marginBottom: 22 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: T.faint, textTransform: "uppercase", letterSpacing: ".06em", margin: "0 4px 10px" }}>{L(lang, "recent")}</div>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, margin:"0 4px 10px" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: T.faint, textTransform: "uppercase", letterSpacing: ".06em" }}>{L(lang, "recent")}</div>
+                <button type="button" onClick={() => { removeStored("docassist_recent"); setRecentVersion((v) => v + 1); }}
+                  style={{ border:"none", background:"transparent", color:T.rose, fontSize:12, fontWeight:700, padding:"5px 8px" }}>{L(lang,"clearRecent")}</button>
+              </div>
               <div style={{ display: "grid", gap: 9 }}>
                 {rec.map((it) => (
                   <button key={it.ts} onClick={() => openRecent(it)}
@@ -654,8 +677,20 @@ Here is the full text of the user's document (may be in another language):
           <p style={{ fontSize: 12.5, lineHeight: 1.55, color: T.muted, margin: 0 }}>{L(lang, "disclaimer")}</p>
         </div>
 
+        {consent && (
+          <button type="button" onClick={() => {
+            removeStored("docassist_privacy_ok");
+            removeStored("docassist_recent");
+            setConsent(false);
+            setRecentVersion((v) => v + 1);
+            showToast(L(lang,"consentWithdrawn"));
+          }} style={{ width:"100%", marginTop:12, border:"none", background:"transparent", color:T.rose, fontSize:13, fontWeight:700, padding:10 }}>
+            {L(lang,"withdrawConsent")}
+          </button>
+        )}
+
         {pending && (
-          <div dir={dir} onClick={() => setPending(null)}
+          <div dir={dir} role="dialog" aria-modal="true" aria-label={L(lang,"pv_title")} onClick={() => setPending(null)}
             style={{ position: "fixed", inset: 0, zIndex: 400, background: "rgba(24,24,27,.42)", backdropFilter: "blur(3px)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
             <div onClick={(e) => e.stopPropagation()} className="da-sheet"
               style={{ background: T.card, width: "100%", maxWidth: 480, maxHeight: "92vh", overflowY: "auto", borderRadius: "24px 24px 0 0", padding: "24px 22px calc(24px + env(safe-area-inset-bottom))", boxShadow: "0 -8px 40px rgba(0,0,0,.2)" }}>
@@ -681,7 +716,7 @@ Here is the full text of the user's document (may be in another language):
                 <a href={impressumUrl || "#"} target="_blank" rel="noopener noreferrer" style={{ color: T.accent, textDecoration: "underline" }}>{L(lang, "pv_impressum")}</a>
               </div>
 
-              <button onClick={() => setAgree(!agree)}
+              <button type="button" role="checkbox" aria-checked={agree} onClick={() => setAgree(!agree)}
                 style={{ display: "flex", gap: 11, alignItems: "flex-start", textAlign: "start", width: "100%", background: agree ? T.accentSoft : T.line2, border: `1.5px solid ${agree ? T.accent : T.line}`, borderRadius: 14, padding: "13px 14px", cursor: "pointer", marginBottom: 16 }}>
                 <span style={{ width: 22, height: 22, borderRadius: 7, flexShrink: 0, marginTop: 1, display: "grid", placeItems: "center", background: agree ? T.accent : T.card, border: `1.5px solid ${agree ? T.accent : T.faint}` }}>
                   {agree && <Check size={14} color="#fff" strokeWidth={3} />}
@@ -979,10 +1014,10 @@ ${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
   }
 
   // ── recent scans (localStorage) ──────────────────────────────────────
-  function loadRecent() { try { return JSON.parse(localStorage.getItem("docassist_recent") || "[]"); } catch { return []; } }
+  function loadRecent() { return readJson("docassist_recent", []); }
   function saveRecent(entry) {
     const list = [entry, ...loadRecent().filter((x) => x.ts !== entry.ts)].slice(0, 8);
-    try { localStorage.setItem("docassist_recent", JSON.stringify(list)); } catch { /* Optional browser capability may be unavailable. */ }
+    writeJson("docassist_recent", list);
   }
   function openRecent(entry) {
     setResult(entry.result); setDocText(entry.docText || ""); setPreview(null);

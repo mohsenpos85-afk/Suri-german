@@ -1143,7 +1143,7 @@ const APP_TRANS = {
     ai_start:"Start Exam", ai_continue10:"Continue — 10 Questions",
     ai_submit:"Check Answers", ai_more10:"10 More Questions", ai_later:"Later",
     ai_unanswered:"questions unanswered", ai_unanswered2:"Unanswered counted as wrong",
-    exam_locked_h:"Exam Locked", chat_err:"Sorry, connection failed. Please try again.",
+    chat_err:"Sorry, connection failed. Please try again.",
     result_great:"Excellent! Well done", result_good:"Good! Keep going", result_keep:"Keep going, try again",
     // Nav & layout
     nav_home: "Home", nav_talk: "Talk", nav_favs: "Favourites", nav_lid: "Life in DE", nav_compare: "Compare", nav_spiel: "Games", nav_menu: "Menu", nav_profile: "Profile", nav_levels: "Levels",
@@ -1190,7 +1190,7 @@ const APP_TRANS = {
     ai_start:"ابدأ الاختبار", ai_continue10:"تابع — 10 أسئلة",
     ai_submit:"تحقق من الإجابات", ai_more10:"10 أسئلة أخرى", ai_later:"لاحقًا",
     ai_unanswered:"أسئلة لم يُجَب عليها", ai_unanswered2:"غير المجاب عليها تُحتسب خطأ",
-    exam_locked_h:"الاختبار مقفل", chat_err:"عذرًا، فشل الاتصال. حاول مرة أخرى.",
+    chat_err:"عذرًا، فشل الاتصال. حاول مرة أخرى.",
     result_great:"ممتاز! أحسنت", result_good:"جيد! واصل", result_keep:"واصل، حاول مجددًا",
     nav_home: "الرئيسية", nav_talk: "محادثة", nav_favs: "المفضلة", nav_lid: "الحياة في DE", nav_compare: "مقارنة", nav_spiel: "الألعاب", nav_menu: "القائمة", nav_profile: "الملف", nav_levels: "المستويات",
     app_subtitle: "عربي · DE · A1–C2",
@@ -1619,7 +1619,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   }
   async function submitForgotOtp() {
     const { error } = await supabase.auth.verifyOtp({
-      email: email.trim(), token: otp, type: "recovery",
+      email: email.trim(), token: otpCode.trim(), type: "recovery",
     });
     if (error) { setFormErr(error.message); return; }
     setAuthMode("newpw");
@@ -19326,24 +19326,33 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
 
   const resolveName = s => s.replace(/\[N\]/g, userName);
 
+  // Fixed colours for the recurring cast so each friend is recognisable across all 60 chapters;
+  // every other named speaker (Frau/Herr …, roles) gets a stable colour hashed from the name.
+  const CAST_COLORS = {
+    'Stefan':'#1B5E20', 'Klaus':'#8B4513', 'Chef Klaus':'#8B4513', 'Lisa':'#C2185B', 'Maria':'#6A1B9A',
+    'Mama':'#AD1457', 'Ahmet':'#00695C', 'Thomas':'#0D47A1', 'Anna':'#E65100', 'Petra':'#00838F',
+    'Jörg':'#4E342E', 'Clara':'#F57C00', 'Lukas':'#558B2F', 'Youssef':'#8E24AA', 'Sarah':'#AD1457',
+    'Herr Schmidt':'#283593', 'Frau Schneider':'#5E35B1', 'Frau Dr. Wagner':'#00695C', 'Frau Dr. Brandt':'#3949AB',
+    'Herr Okafor':'#2E7D32', 'Herr Keller':'#6D4C41', 'Herr Lindner':'#37474F', 'Alle':'#455A64',
+  };
+  const HASH_COLORS = ['#1A237E','#880E4F','#004D40','#BF360C','#311B92','#33691E','#006064','#4A148C','#827717','#3E2723'];
   const charColor = who => {
     const w = (who || '').replace(/\[N\]/g, userName);
     if (w === userName) return '#7B3F00';
-    if (w.startsWith('Stefan')) return '#1B5E20';
-    if (w === 'Klaus') return '#8B4513';
-    if (w.startsWith('Frau')) return '#1A237E';
-    if (w === 'Lisa') return '#880E4F';
-    if (w === 'Maria') return '#6A1B9A';
-    if (w === 'Mama') return '#AD1457';
-    if (w === 'Ahmet') return '#00695C';
-    if (w === 'Thomas') return '#0D47A1';
-    if (w === 'Anna') return '#BF360C';
-    if (w.startsWith('Herr') || w.startsWith('Dr.') || w.startsWith('Prof')) return '#283593';
-    if (w === 'Alle') return '#455A64';
-    return '#4A3520';
+    if (CAST_COLORS[w]) return CAST_COLORS[w];
+    if (w.startsWith('Stefan')) return CAST_COLORS['Stefan'];
+    let h = 0; for (let i = 0; i < w.length; i++) h = (h * 31 + w.charCodeAt(i)) >>> 0;
+    return HASH_COLORS[h % HASH_COLORS.length];
   };
 
-  const WHO_KU = { 'Mama':'دایک', 'Flugbegleiterin':'میهماندار', 'Alle':'هەموو کەس', 'Chef Klaus':'Chef Klaus' };
+  const WHO_KU = {
+    'Mama':'دایک', 'Flugbegleiterin':'میهماندار', 'Alle':'هەموو کەس', 'Chef Klaus':'Chef Klaus',
+    'Moderator':'پێشکەشکار', 'Teilnehmer':'بەشداربوو', 'Teilnehmerin':'بەشداربوو', 'Beamter':'کارمەند',
+    'Journalist':'ڕۆژنامەنووس', 'Garson':'گارسۆن', 'Kassierer':'قاسەدار', 'Kassiererin':'قاسەدار',
+    'Verkäufer':'فرۆشیار', 'Professor':'پرۆفیسۆر', 'Student':'خوێندکار', 'Studentin':'خوێندکار',
+    'Arzt':'پزیشک', 'Notar':'نۆتار', 'Richterin':'دادوەر', 'Redakteur':'سەرنووسەر', 'Berater':'ڕاوێژکار',
+    'Beraterin':'ڕاوێژکار', 'Makler':'دەلاڵ', 'Partner':'هاوبەش', 'Stimme':'دەنگ', 'Paketbote':'کوریەر',
+  };
   const resolveWho = who => {
     const base = resolveName(who || '');
     return userLang === 'ku' ? (WHO_KU[base] || base) : base;
@@ -19820,7 +19829,21 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   const targetNodeRef = useRef(null);
   const streakCount = (() => { try { return JSON.parse(localStorage.getItem('fuxi_streak')||'{}').count || 0; } catch { return 0; } })();
 
+  // The last chapter has no "next level", so completion is stored separately.
+  const [journeyDone, setJourneyDone] = useState(() => { try { return localStorage.getItem('fuxi_journey_done') === '1'; } catch { return false; } });
+  const DONE_T = {
+    tr:{ t:'Yolculuk tamamlandı!', s:'60 bölümü bitirdin. Suri ile birlikte A1\'den C2\'ye geldin.' },
+    en:{ t:'Journey complete!', s:'You finished all 60 chapters. With Suri you went from A1 to C2.' },
+    ku:{ t:'گەشتەکە تەواو بوو!', s:'هەر ٦٠ بەشەکەت تەواو کرد. لەگەڵ Suri لە A1ـەوە گەیشتیتە C2.' },
+    ar:{ t:'اكتملت الرحلة!', s:'أنهيت الفصول الستين. مع Suri انتقلت من A1 إلى C2.' },
+    uk:{ t:'Подорож завершено!', s:'Ти пройшов усі 60 розділів. Разом із Сурі ти дійшов від A1 до C2.' },
+    fa:{ t:'سفر به پایان رسید!', s:'هر ۶۰ فصل را تمام کردی. با Suri از A1 به C2 رسیدی.' },
+    es:{ t:'¡Viaje completado!', s:'Terminaste los 60 capítulos. Con Suri llegaste de A1 a C2.' },
+  };
+  const doneT = DONE_T[lang] || DONE_T.tr;
+
   const getState = id => {
+    if (journeyDone && id === 60) return 'done';
     if (id < currentLevel) return 'done';
     if (id === currentLevel) return pendingKey?.toLevelId === id ? 'locked' : 'active';
     return 'locked';
@@ -19828,6 +19851,11 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
   const completeLevel = (id) => {
     setActiveLevel(null);
+    if (id === 60 && currentLevel === 60) {
+      try { localStorage.setItem('fuxi_journey_done', '1'); } catch { /* ignore */ }
+      setJourneyDone(true);
+      return;
+    }
     if(id === currentLevel && currentLevel < 60){
       const next = currentLevel+1;
       localStorage.setItem('fuxi_journey', String(next));
@@ -19893,7 +19921,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
     };
   }, [dragging]);
 
-  const completedCount = currentLevel - 1;
+  const completedCount = journeyDone ? 60 : currentLevel - 1;
   const pct = Math.round((completedCount/60)*100);
 
   // Node layout constants
@@ -20044,8 +20072,8 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
         <div style={{ textAlign:'center', marginTop:24, padding:'20px 24px',
           background:'linear-gradient(135deg,#f7971e22,#ffd20022)', border:'2px dashed #f7971e44', borderRadius:20 }}>
           <div style={{ fontSize:36 }}>🏆</div>
-          <div style={{ fontWeight:800, fontSize:16, color:'#f7971e', marginTop:6 }}>Mastery Complete</div>
-          <div style={{ fontSize:12, color:'#aaa', marginTop:4 }}>C2 · Level 60</div>
+          <div style={{ fontWeight:800, fontSize:16, color:'#f7971e', marginTop:6 }}>{journeyDone ? doneT.t : 'Mastery Complete'}</div>
+          <div style={{ fontSize:12, color: journeyDone ? '#b7791f' : '#aaa', marginTop:4 }}>{journeyDone ? doneT.s : 'C2 · Level 60'}</div>
         </div>
       </div>
 

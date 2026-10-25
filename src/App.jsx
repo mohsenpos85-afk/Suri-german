@@ -1312,7 +1312,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
   const name  = ob.name  || "";
   const email = ob.email || "";
   const level = ob.level || "A1";
-  const jLevel= parseInt(localStorage.getItem("fuxi_journey")||"1");
+  const jLevel= getJourneyLevel();
 
   const T = {
     ku:{ title:"پرۆفایل", level:"ئاست", journey:"گەشتی", xp:"XP", logout:"دەرچوون", lang:"زمان",
@@ -1357,7 +1357,9 @@ function ProfileScreen({ lang="ku", onLogout }) {
       // wipe local data
       try {
         ["ob_data","fuxi_progress","fuxi_streak","fuxi_xp","ferbun_onboarded","fuxi_journey",
-         "docassist_onboarded","docassist_privacy_ok","docassist_recent"].forEach(k => localStorage.removeItem(k));
+         "docassist_onboarded","docassist_privacy_ok","docassist_recent",
+         "fuxi_journey_done","fuxi_pending_key","fuxi_cards","fuxi_favs","fuxi_srs",
+         "fuxi_trcache_v1","fuxi_trhint","fuxi_reader_pos_v1"].forEach(k => localStorage.removeItem(k));
       } catch {}
       await supabase.auth.signOut();
       onLogout && onLogout();
@@ -2265,10 +2267,16 @@ function JourneyIntroTransition({ lang = "tr", onDone }) {
 // ── XP ledger ────────────────────────────────────────────────────────
 // Migrates from the old derived (level-1)*120 display so existing users
 // don't see their XP drop when this counter is introduced.
+// Always a whole number in 1..60, even if localStorage holds junk.
+function getJourneyLevel() {
+  let n = 1;
+  try { n = parseInt(localStorage.getItem('fuxi_journey') || '1', 10); } catch { /* storage blocked */ }
+  return Number.isFinite(n) ? Math.min(60, Math.max(1, n)) : 1;
+}
 function getXp() {
   const stored = localStorage.getItem('fuxi_xp');
   if (stored !== null) return parseInt(stored) || 0;
-  const jLevel = parseInt(localStorage.getItem('fuxi_journey') || '1');
+  const jLevel = getJourneyLevel();
   const migrated = (jLevel - 1) * 120;
   localStorage.setItem('fuxi_xp', String(migrated));
   return migrated;
@@ -2348,6 +2356,12 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
 
 export default function App() {
   const [appLang, setAppLang] = useState(() => { try { return JSON.parse(localStorage.getItem("ob_data")||"{}").lang || "tr"; } catch { return "tr"; } });
+  useEffect(() => {
+    try {
+      document.documentElement.lang = appLang;
+      document.documentElement.dir = LANG_DIR[appLang] === "rtl" ? "rtl" : "ltr";
+    } catch { /* non-browser */ }
+  }, [appLang]);
   const [intro, setIntro]           = useState(false);
   const [onboarding, setOnboarding] = useState(false);
   const [obStartScreen, setObStartScreen] = useState("lang");
@@ -2431,10 +2445,10 @@ export default function App() {
     if (import.meta.env.DEV && import.meta.env.VITE_DEV_SKIP_AUTH === "1") {
       setIntro(false); setOnboarding(false); setAppLoaded(true); return;
     }
-    if (localStorage.getItem("__dev_skip") === "1") {
+    if (import.meta.env.DEV && localStorage.getItem("__dev_skip") === "1") {
       setIntro(false); setOnboarding(false); setAppLoaded(true); return;
     }
-    const __devScreen = localStorage.getItem("__dev_skip");
+    const __devScreen = import.meta.env.DEV ? localStorage.getItem("__dev_skip") : null;
     if (__devScreen && __devScreen !== "0") {
       setObStartScreen(__devScreen); setIntro(false); setOnboarding(true); setAppLoaded(true); return;
     }
@@ -2534,7 +2548,7 @@ export default function App() {
           lang={appLang}
           onCancel={() => setFirstJourneyStage(null)}
           onPass={() => {
-            if (parseInt(localStorage.getItem("fuxi_journey") || "1") === 1) {
+            if (getJourneyLevel() === 1) {
               localStorage.setItem("fuxi_journey", "2");
               localStorage.setItem("fuxi_pending_key", JSON.stringify({ fromLevelId: 1, toLevelId: 2 }));
             }
@@ -3678,7 +3692,7 @@ function SkillHexagon({ data, size = 240 }) {
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
 function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
-  const journeyLevel = parseInt(localStorage.getItem('fuxi_journey')||'1');
+  const journeyLevel = getJourneyLevel();
   const journeyPct   = Math.round((journeyLevel-1)/60*100);
   const xp = getXp();
   const ownedCards = getOwnedCards();
@@ -19811,7 +19825,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   const getCefrArc = cefr => (CEFR_META[cefr]?.arc||{})[lang] || (CEFR_META[cefr]?.arc?.tr||'');
 
   const [currentLevel, setCurrentLevel] = useState(()=>
-    parseInt(localStorage.getItem('fuxi_journey')||'1')
+    getJourneyLevel()
   );
   const [activeLevel, setActiveLevel] = useState(null);
   const [bookReader, setBookReader] = useState(null);

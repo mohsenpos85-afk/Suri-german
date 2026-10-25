@@ -40,6 +40,7 @@ Deno.serve(async (req) => {
   //    Add every table that stores user data, keyed by the user id.
   try {
     await admin.from("profiles").delete().eq("id", user.id);
+    await admin.from("user_state").delete().eq("user_id", user.id);
     // await admin.from("progress").delete().eq("user_id", user.id);
     // await admin.from("favorites").delete().eq("user_id", user.id);
   } catch (_) { /* ignore missing tables */ }

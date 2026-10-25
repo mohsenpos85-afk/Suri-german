@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"; // ku
 import { createPortal } from "react-dom";
 import { supabase } from "./lib/supabase.js";
+import { startSync, stopSync, syncNow, clearLocalState } from "./lib/sync.js";
 import {
   Home as HomeIcon, BookOpen, LayoutGrid, MessageCircle,
   AlertTriangle, GraduationCap, Briefcase,
@@ -1361,6 +1362,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
          "fuxi_journey_done","fuxi_pending_key","fuxi_cards","fuxi_favs","fuxi_srs",
          "fuxi_trcache_v1","fuxi_trhint","fuxi_reader_pos_v1"].forEach(k => localStorage.removeItem(k));
       } catch {}
+      stopSync();
       await supabase.auth.signOut();
       onLogout && onLogout();
     } catch (e) {
@@ -2470,12 +2472,28 @@ export default function App() {
       }
       setAppLoaded(true);
     };
+    // Cloud sync of progress. If the first pull brought newer data from another device,
+    // reload once so every screen reads the merged localStorage (guarded against reload loops).
+    const beginSync = (session) => {
+      if (!session || !session.user) return;
+      startSync(supabase, session.user.id, () => {
+        try {
+          const last = Number(sessionStorage.getItem("fuxi_sync_reload")) || 0;
+          if (Date.now() - last > 60000) {
+            sessionStorage.setItem("fuxi_sync_reload", String(Date.now()));
+            window.location.reload();
+          }
+        } catch { /* sessionStorage blocked: skip the reload, data is merged anyway */ }
+      });
+    };
     const sessionTimer = setTimeout(() => finishSessionCheck(null), 3500);
     supabase.auth.getSession()
-      .then(({ data }) => { clearTimeout(sessionTimer); finishSessionCheck(data?.session || null); })
+      .then(({ data }) => { clearTimeout(sessionTimer); finishSessionCheck(data?.session || null); beginSync(data?.session || null); })
       .catch(() => { clearTimeout(sessionTimer); finishSessionCheck(null); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") beginSync(session);
       if (event === "SIGNED_OUT") {
+        stopSync();
         setIntro(false);
         setObStartScreen("lang");
         setOnboarding(true);
@@ -2486,7 +2504,15 @@ export default function App() {
   }, []);
 
   async function handleLogout() {
+    // Save progress to the account first, then clear it from this device.
+    let saved = true;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) await syncNow(supabase, session.user.id);
+    } catch { saved = false; }
+    stopSync();
     await supabase.auth.signOut();
+    if (saved) clearLocalState();
     setIntro(false);
     setObStartScreen("lang");
     setOnboarding(true);

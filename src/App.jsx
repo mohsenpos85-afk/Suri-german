@@ -2529,6 +2529,7 @@ export default function App() {
       )}
       {firstJourneyStage === "reading" && (
         <BookReaderModal
+          resumeKey={"L" + JOURNEY_LEVELS[0].id}
           scenes={JOURNEY_STORIES[JOURNEY_LEVELS[0].id]}
           onClose={(result) => {
             if (result?.finished) {
@@ -19294,8 +19295,30 @@ function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
 
 // ── JourneyScreen ──────────────────────────────────────────────────────
 // ── BookReaderModal — premium full-screen page-flip story reader ───────────
-function BookReaderModal({ scenes, onClose, userName, userLang }) {
-  const [page, setPage] = useState(0);
+const READER_POS_KEY = 'fuxi_reader_pos_v1';
+function readerPosLoad(key) {
+  try { const p = JSON.parse(localStorage.getItem(READER_POS_KEY) || '{}')[key]; return Number.isInteger(p) ? p : 0; } catch { return 0; }
+}
+function readerPosSave(key, page) {
+  try {
+    const m = JSON.parse(localStorage.getItem(READER_POS_KEY) || '{}');
+    if (page > 0) m[key] = page; else delete m[key];
+    localStorage.setItem(READER_POS_KEY, JSON.stringify(m));
+  } catch { /* storage unavailable */ }
+}
+
+function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
+  // Resume where the reader left off (only for chapters that pass a resumeKey).
+  const [page, setPage] = useState(() => {
+    if (!resumeKey) return 0;
+    const p = readerPosLoad(resumeKey);
+    return p > 0 && p < scenes.length - 1 ? p : 0;
+  });
+  useEffect(() => {
+    if (!resumeKey) return;
+    // Reaching the last scene counts as finished, so the next visit starts from the top again.
+    readerPosSave(resumeKey, page >= scenes.length - 1 ? 0 : page);
+  }, [page, resumeKey, scenes.length]);
   const [flipping, setFlipping] = useState(false);
   const [flipDir, setFlipDir] = useState(null);
   const [dictEntry, setDictEntry] = useState(null);
@@ -19325,6 +19348,8 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
     if (dir === 'fwd' && page >= total - 1) return;
     if (dir === 'bwd' && page <= 0) return;
     clearTimeout(flipTimer.current);
+    const reduceMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) { setPage(p => (dir === 'fwd' ? p + 1 : p - 1)); return; }
     setFlipDir(dir);
     setFlipping(true);
     if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(8);
@@ -19334,6 +19359,19 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
       setFlipDir(null);
     }, FLIP_MS);
   };
+
+  // Keyboard: ← → turn pages, Esc closes the dictionary first and then the reader.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        if (dictEntry) setDictEntry(null);
+        else onClose({ finished: page === total - 1, sessionWords });
+      } else if (!dictEntry && e.key === 'ArrowRight') go('fwd');
+      else if (!dictEntry && e.key === 'ArrowLeft') go('bwd');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
 
   const bgScene = flipping ? scenes[flipDir === 'fwd' ? page + 1 : page - 1] : scenes[page];
   const fgScene = scenes[page];
@@ -19662,7 +19700,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
           <div style={{ display: 'flex', gap: 5, alignItems: 'center', maxWidth: 200, overflow: 'hidden' }}>
             {total <= 14
               ? scenes.map((_, i) => (
-                  <div key={i} onClick={() => { if (!flipping) setPage(i); }} style={{ height: 5, borderRadius: 3, width: i === page ? 18 : 5, background: i === page ? '#c09060' : i < page ? 'rgba(180,130,60,.4)' : 'rgba(180,130,60,.18)', transition: 'all .35s cubic-bezier(.4,0,.2,1)', flexShrink: 0, cursor: 'pointer' }} />
+                  <div key={i} role="button" tabIndex={0} aria-label={'Scene ' + (i + 1)} aria-current={i === page ? 'step' : undefined} onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !flipping) { e.preventDefault(); setPage(i); } }} onClick={() => { if (!flipping) setPage(i); }} style={{ height: 5, borderRadius: 3, width: i === page ? 18 : 5, background: i === page ? '#c09060' : i < page ? 'rgba(180,130,60,.4)' : 'rgba(180,130,60,.18)', transition: 'all .35s cubic-bezier(.4,0,.2,1)', flexShrink: 0, cursor: 'pointer' }} />
                 ))
               : <span style={{ fontSize: 13, color: '#b08050', fontFamily: 'Georgia,serif' }}>{page + 1} / {total}</span>
             }
@@ -19836,6 +19874,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
     try { return JSON.parse(localStorage.getItem('fuxi_pending_key') || 'null'); } catch { return null; }
   }); // { fromLevelId, toLevelId } — a key has been earned and is waiting to be dragged onto its lock
   const [dragging, setDragging] = useState(false);
+  const dragMoved = useRef(false); // distinguishes a tap on the key card (unlock) from a drag
   const [dragPos, setDragPos] = useState(null); // {x,y} while dragging the key
   const [keyHome, setKeyHome] = useState(null); // {x,y} resting position of the key, near its target lock
   const [lockedMsg, setLockedMsg] = useState(null); // {x,y} — shows a brief "you need a key" toast above the tapped locked door
@@ -19912,6 +19951,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
     if (!dragging) return;
     const onMove = (e) => {
       const p = e.touches ? e.touches[0] : e;
+      if (keyHome && Math.hypot(p.clientX - keyHome.x, p.clientY - keyHome.y) > 10) dragMoved.current = true;
       setDragPos({ x: p.clientX, y: p.clientY });
     };
     const onUp = (e) => {
@@ -19933,7 +19973,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
     };
-  }, [dragging]);
+  }, [dragging, keyHome]);
 
   const completedCount = journeyDone ? 60 : currentLevel - 1;
   const pct = Math.round((completedCount/60)*100);
@@ -20094,7 +20134,11 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
       {/* ── Draggable key: earned from the previous chapter, drop it on its lock to unlock ── */}
       {pendingKey && keyHome && (
         <div
-          onPointerDown={(e) => { e.preventDefault(); setDragging(true); setDragPos({ x: e.clientX, y: e.clientY }); }}
+          role="button" tabIndex={0}
+          aria-label={jt('needKey')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); unlockWithKey(); } }}
+          onClick={() => { if (!dragMoved.current) unlockWithKey(); dragMoved.current = false; }}
+          onPointerDown={(e) => { e.preventDefault(); dragMoved.current = false; setDragging(true); setDragPos({ x: e.clientX, y: e.clientY }); }}
           style={{
             position:'fixed', zIndex:60, touchAction:'none',
             left: (dragging && dragPos ? dragPos.x : keyHome.x) - 34,
@@ -20149,6 +20193,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
       {bookReader && (
         <BookReaderModal
+          resumeKey={"L" + bookReader.levelId}
           scenes={bookReader.scenes}
           onClose={(result) => {
             const finishedId = bookReader.levelId;

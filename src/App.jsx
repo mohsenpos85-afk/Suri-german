@@ -131,6 +131,96 @@ async function callClaude(body) {
   return res.json();
 }
 
+// ── Story translation (tap a line / tap a word) ────────────────────────
+// Lines and words that have no pre-written translation are translated on
+// demand by the claude-proxy edge function (mode:"translate") and cached in
+// localStorage, so every line is only ever paid for once per language.
+const TR_CACHE_KEY = "fuxi_trcache_v1";
+const TR_CACHE_MAX = 800;
+let _trCache = null;
+const _trInflight = new Map();
+
+function _trHash(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36) + s.length.toString(36);
+}
+function _trLoad() {
+  if (_trCache) return _trCache;
+  try { _trCache = JSON.parse(localStorage.getItem(TR_CACHE_KEY) || "{}"); } catch { _trCache = {}; }
+  if (!_trCache || typeof _trCache !== "object") _trCache = {};
+  return _trCache;
+}
+function _trSave() {
+  const c = _trLoad();
+  const keys = Object.keys(c);
+  if (keys.length > TR_CACHE_MAX) { // drop the oldest entries (insertion order)
+    keys.slice(0, keys.length - TR_CACHE_MAX).forEach(k => delete c[k]);
+  }
+  try { localStorage.setItem(TR_CACHE_KEY, JSON.stringify(c)); } catch { /* storage full or blocked */ }
+}
+function trCached(kind, text, lang) {
+  return _trLoad()[`${kind}|${lang}|${_trHash(text)}`] || null;
+}
+
+// Rough "is this German?" test so we only offer translation where it is needed.
+const _DE_STOP = new Set(("ich du er sie es wir ihr der die das den dem des ein eine einen einem einer und oder aber nicht kein keine " +
+  "ist sind bin bist war waren hat haben habe hatte wird werden wurde kann können muss möchte will mit von zu zum zur bei nach aus auf " +
+  "für über unter durch im in an am um ob dass wenn weil dann doch noch schon auch nur sehr mal ja nein bitte danke hallo guten " +
+  "mein meine dein deine sein seine ihre unser wie was wer wo wann warum hier dort heute morgen jetzt immer nie gern gut").split(" "));
+function looksGerman(text) {
+  if (!text) return false;
+  if ((text.match(/[ğşıİ]/g) || []).length >= 2) return false; // Turkish text with a few German words
+  const toks = text.toLowerCase().replace(/[^a-zäöüß\s]/g, " ").split(/\s+/).filter(Boolean);
+  if (toks.length === 0) return false;
+  const hits = toks.filter(t => _DE_STOP.has(t)).length;
+  return hits >= 2 || (toks.length <= 3 && hits >= 1) || hits / toks.length >= 0.22;
+}
+
+// kind: "line" → { translation } · "word" → { base, article, type, translation }
+async function translateViaProxy(kind, text, lang, context = "") {
+  const clean = String(text).trim();
+  const key = `${kind}|${lang}|${_trHash(clean)}`;
+  const hit = _trLoad()[key];
+  if (hit) return hit;
+  if (_trInflight.has(key)) return _trInflight.get(key);
+  const p = (async () => {
+    const data = await callClaude({ mode: "translate", kind, text: clean, target: lang, context: kind === "word" ? context : undefined });
+    const val = kind === "word"
+      ? { base: data.base || "", article: data.article || "", type: data.type || "phrase", translation: data.translation || "" }
+      : { translation: data.translation || "" };
+    if (!val.translation) throw new Error("EMPTY");
+    _trLoad()[key] = val;
+    _trSave();
+    return val;
+  })().finally(() => _trInflight.delete(key));
+  _trInflight.set(key, p);
+  return p;
+}
+function trErrorKind(e) {
+  const m = String(e?.message || e);
+  if (m === "NOT_SIGNED_IN") return "auth";
+  if (/Too many|limit/i.test(m) || /429/.test(m)) return "limit";
+  if (!navigator.onLine || /Failed to fetch|NetworkError|Load failed/i.test(m)) return "offline";
+  return "fail";
+}
+const TR_UI = {
+  tr: { hint: "Kelimeye dokun: anlamı. 🌐'ye dokun: cümlenin çevirisi.", line: "Cümleyi çevir", loading: "Çevriliyor…", retry: "Tekrar dene", close: "Kapat",
+        auth: "Çeviri için giriş yapmalısın.", limit: "Çok fazla istek. Biraz sonra tekrar dene.", offline: "İnternet yok. Çeviri için bağlantı gerekli.", fail: "Çeviri şu an alınamadı." },
+  en: { hint: "Tap a word for its meaning. Tap 🌐 to translate the sentence.", line: "Translate line", loading: "Translating…", retry: "Retry", close: "Close",
+        auth: "Sign in to use translation.", limit: "Too many requests. Try again shortly.", offline: "You are offline. Translation needs a connection.", fail: "Translation is unavailable right now." },
+  ku: { hint: "پەنجە بە وشەکە بنێ بۆ مانا. پەنجە بە 🌐 بنێ بۆ وەرگێڕانی ڕستە.", line: "وەرگێڕانی ڕستە", loading: "وەردەگێڕدرێت…", retry: "دووبارە", close: "داخستن",
+        auth: "بۆ وەرگێڕان پێویستە بچیتە ژوورەوە.", limit: "داواکاری زۆرە. کەمێکی تر هەوڵ بدەرەوە.", offline: "ئینتەرنێت نییە. وەرگێڕان پێویستی بە پەیوەندی هەیە.", fail: "وەرگێڕان ئێستا بەردەست نییە." },
+  ar: { hint: "المس كلمة لمعناها. المس 🌐 لترجمة الجملة.", line: "ترجمة الجملة", loading: "جارٍ الترجمة…", retry: "أعد المحاولة", close: "إغلاق",
+        auth: "سجّل الدخول لاستخدام الترجمة.", limit: "طلبات كثيرة. حاول بعد قليل.", offline: "لا يوجد اتصال بالإنترنت.", fail: "الترجمة غير متاحة الآن." },
+  uk: { hint: "Торкнись слова — значення. Торкнись 🌐 — переклад речення.", line: "Перекласти речення", loading: "Перекладаю…", retry: "Ще раз", close: "Закрити",
+        auth: "Увійди, щоб користуватись перекладом.", limit: "Забагато запитів. Спробуй трохи згодом.", offline: "Немає інтернету.", fail: "Переклад зараз недоступний." },
+  fa: { hint: "روی کلمه بزن تا معنایش را ببینی. روی 🌐 بزن تا جمله ترجمه شود.", line: "ترجمهٔ جمله", loading: "در حال ترجمه…", retry: "تلاش دوباره", close: "بستن",
+        auth: "برای ترجمه وارد شو.", limit: "درخواست‌ها زیاد است. کمی بعد دوباره امتحان کن.", offline: "اینترنت وصل نیست.", fail: "ترجمه الان در دسترس نیست." },
+  es: { hint: "Toca una palabra para ver su significado. Toca 🌐 para traducir la frase.", line: "Traducir frase", loading: "Traduciendo…", retry: "Reintentar", close: "Cerrar",
+        auth: "Inicia sesión para usar la traducción.", limit: "Demasiadas solicitudes. Inténtalo en un momento.", offline: "Sin conexión a internet.", fail: "La traducción no está disponible ahora." },
+};
+
 // ── ناوەڕۆک / Content ──────────────────────────────────────────────
 // ڕووکار: سۆرانی (RTL) · فێرکردن: ئەڵمانی · ئاست: A1–B2
 
@@ -19259,32 +19349,86 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
     return userLang === 'ku' ? (WHO_KU[base] || base) : base;
   };
 
-  const renderWithDict = (text, seenSet) => {
+  // ── On-demand translation (lines + words) ───────────────────────────
+  const trUI = TR_UI[userLang] || TR_UI.tr;
+  const trRtl = userLang === 'ku' || userLang === 'ar' || userLang === 'fa';
+  const [lineTr, setLineTr] = useState({}); // "scene:line" → { open, status:'loading'|'ok'|'err', text, err }
+  const [hintSeen, setHintSeen] = useState(() => { try { return !!localStorage.getItem('fuxi_trhint'); } catch { return true; } });
+  const dismissHint = () => { setHintSeen(true); try { localStorage.setItem('fuxi_trhint', '1'); } catch { /* ignore */ } };
+  const NAME_WORDS = useMemo(() => new Set(['suri','thomas','lisa','anna','ahmet','stefan','petra','jörg','clara','lukas','mama','bello','klaus','maria','sarah','youssef','leyla','schmidt','berlin','brandt','okafor','keller','wagner','lindner','wolf','özdemir','schneider','müller','weber','hoffmann','krause', String(userName || '').toLowerCase()]), [userName]);
+
+  const toggleLineTr = async (key, de) => {
+    const cur = lineTr[key];
+    if (cur && cur.open && cur.status !== 'err') { setLineTr(p => ({ ...p, [key]: { ...cur, open: false } })); return; }
+    dismissHint();
+    const cached = trCached('line', de, userLang);
+    if (cached) { setLineTr(p => ({ ...p, [key]: { open: true, status: 'ok', text: cached.translation } })); return; }
+    setLineTr(p => ({ ...p, [key]: { open: true, status: 'loading' } }));
+    try {
+      const r = await translateViaProxy('line', de, userLang);
+      setLineTr(p => ({ ...p, [key]: { open: true, status: 'ok', text: r.translation } }));
+    } catch (e) {
+      setLineTr(p => ({ ...p, [key]: { open: true, status: 'err', err: trErrorKind(e) } }));
+    }
+  };
+
+  const lookupWord = async (word, context, x, y) => {
+    const cachedW = trCached('word', word, userLang);
+    const base = { word, type: 'ai', _ai: true, _x: x, _y: y };
+    if (cachedW) { setDictEntry({ ...base, status: 'ok', article: cachedW.article, base: cachedW.base, type: cachedW.type, [userLang]: cachedW.translation }); return; }
+    setDictEntry({ ...base, status: 'loading' });
+    try {
+      const r = await translateViaProxy('word', word, userLang, context);
+      setDictEntry(prev => (prev && prev.word === word ? { ...prev, status: 'ok', article: r.article, base: r.base, type: r.type, [userLang]: r.translation } : prev));
+    } catch (e) {
+      setDictEntry(prev => (prev && prev.word === word ? { ...prev, status: 'err', err: trErrorKind(e), _ctx: context } : prev));
+    }
+  };
+
+  const renderWithDict = (text, seenSet, wordLookup = false) => {
     if (!text) return text;
     return text.split(/(\s+)/).map((part, i) => {
       if (/^\s+$/.test(part)) return part;
       const clean = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '').toLowerCase();
       const entry = BOOK_DICT[clean];
-      if (!entry || seenSet.has(clean)) return <span key={i}>{part}</span>;
-      seenSet.add(clean);
-      return (
-        <span key={i}
-          onClick={(e) => {
-            e.stopPropagation();
-            const r = e.currentTarget.getBoundingClientRect();
-            const cleanWord = part.replace(/[.,!?;:"„"«»''()\[\]]+/g, '');
-            setDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom });
-            setSessionWords(prev => prev.includes(cleanWord) ? prev : [...prev, cleanWord]);
-          }}
-          style={{ borderBottom: '1.5px dotted #5B5BD6', color: '#3D37A8', cursor: 'pointer', fontStyle: 'inherit' }}>
-          {part}
-        </span>
-      );
+      const cleanWord = part.replace(/[.,!?;:"„"“”«»''’()\[\]…–—]+/g, '');
+      if (entry && !seenSet.has(clean)) {
+        seenSet.add(clean);
+        return (
+          <span key={i}
+            onClick={(e) => {
+              e.stopPropagation();
+              const r = e.currentTarget.getBoundingClientRect();
+              setDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom });
+              setSessionWords(prev => prev.includes(cleanWord) ? prev : [...prev, cleanWord]);
+            }}
+            style={{ borderBottom: '1.5px dotted #5B5BD6', color: '#3D37A8', cursor: 'pointer', fontStyle: 'inherit' }}>
+            {part}
+          </span>
+        );
+      }
+      // Every other German word is tappable too: dictionary first, AI lookup as fallback.
+      if (wordLookup && /^[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß-]+$/.test(cleanWord) && !NAME_WORDS.has(clean)) {
+        return (
+          <span key={i} role="button" tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation();
+              const r = e.currentTarget.getBoundingClientRect();
+              if (entry) { setDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom }); return; }
+              lookupWord(cleanWord, text, r.left, r.bottom);
+            }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
+            style={{ cursor: 'pointer' }}>
+            {part}
+          </span>
+        );
+      }
+      return <span key={i}>{part}</span>;
     });
   };
 
-  const renderLine = (line, i, seenSet) => {
-    // Pick narration text by UI language: ku→s_ku (no dict), en→s_en, ar→s_ar (rtl), else Turkish s. German learning-words stay embedded so the tap-word dictionary keeps working for tr/en/ar.
+  // Which text the reader shows for a line, in the user's language (German copy if no translation exists).
+  const pickRaw = (line) => {
     let raw = line.s, rtl = false, useDict = true, langLabel = line.lang;
     if (userLang === 'ku' && line.s_ku) { raw = line.s_ku; rtl = true; useDict = false; langLabel = 'کوردی'; }
     else if (userLang === 'en' && line.s_en) { raw = line.s_en; rtl = false; useDict = true; langLabel = 'English'; }
@@ -19292,9 +19436,51 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
     else if (userLang === 'uk' && line.s_uk) { raw = line.s_uk; rtl = false; useDict = true; langLabel = 'Українська'; }
     else if (userLang === 'fa' && line.s_fa) { raw = line.s_fa; rtl = true; useDict = true; langLabel = 'فارسی'; }
     else if (userLang === 'es' && line.s_es) { raw = line.s_es; rtl = false; useDict = true; langLabel = 'Español'; }
+    return { raw, rtl, useDict, langLabel };
+  };
+
+  // Wraps renderLineCore: adds the 🌐 button and the translation panel under every German-language line.
+  const renderLine = (line, i, seenSet, sceneKey) => {
+    const { raw } = pickRaw(line);
+    const de = resolveName(raw || '');
+    const german = line.t === 'd' ? (raw === line.s || looksGerman(de)) : looksGerman(de); // dialogue is always German
+    const core = renderLineCore(line, i, seenSet, german);
+    if (!core || !german) return core;
+    const key = `${sceneKey}:${i}`;
+    const st = lineTr[key];
+    return (
+      <div key={i}>
+        {core}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -10, marginBottom: st && st.open ? 4 : 12, direction: 'ltr' }}>
+          <button type="button" onClick={(e) => { e.stopPropagation(); toggleLineTr(key, de); }}
+            aria-label={trUI.line} aria-expanded={!!(st && st.open)} title={trUI.line}
+            style={{ background: st && st.open ? 'rgba(91,91,214,.14)' : 'rgba(120,80,30,.07)', border: 'none', borderRadius: 14, padding: '4px 10px', minHeight: 28, fontSize: 13, cursor: 'pointer', opacity: st && st.open ? 1 : 0.75 }}>
+            🌐
+          </button>
+        </div>
+        {st && st.open && (
+          <div dir={trRtl ? 'rtl' : 'ltr'} style={{ margin: '0 0 14px', padding: '9px 12px', background: 'rgba(91,91,214,.07)', borderRadius: 10, borderLeft: trRtl ? 'none' : '3px solid rgba(91,91,214,.45)', borderRight: trRtl ? '3px solid rgba(91,91,214,.45)' : 'none', fontSize: 14, lineHeight: 1.7, color: '#2b2670', fontFamily: 'Georgia,serif', textAlign: trRtl ? 'right' : 'left' }}>
+            {st.status === 'loading' && <span style={{ opacity: 0.7 }}>{trUI.loading}</span>}
+            {st.status === 'ok' && st.text}
+            {st.status === 'err' && (
+              <span>
+                {trUI[st.err] || trUI.fail}{' '}
+                {st.err !== 'auth' && (
+                  <button type="button" onClick={(e) => { e.stopPropagation(); toggleLineTr(key, de); }} style={{ background: 'none', border: 'none', color: '#5B5BD6', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline', fontSize: 13 }}>{trUI.retry}</button>
+                )}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderLineCore = (line, i, seenSet, german = false) => {
+    const { raw, rtl, useDict, langLabel } = pickRaw(line);
     const s = resolveName(raw);
     const rtlStyle = rtl ? { direction:'rtl', textAlign:'right' } : {};
-    const body = useDict ? renderWithDict(s, seenSet) : s;
+    const body = useDict ? renderWithDict(s, seenSet, german) : s;
     if (line.t === 'n') return (
       <p key={i} style={{ margin: '0 0 14px', fontSize: 15, color: '#2c1a08', lineHeight: 1.82, fontFamily: 'Georgia,serif', ...rtlStyle }}>
         {body}
@@ -19361,7 +19547,13 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
           {scene.place && (
             <div style={{ fontSize: 12.5, color: '#6B4A2A', fontStyle: 'italic', marginBottom: 18, lineHeight: 1.55 }}>📍 {scene['place_' + userLang] || (userLang === 'ku' && scene.place_ku ? scene.place_ku : scene.place)}</div>
           )}
-          {(() => { const ss = new Set(); return scene.lines.map((l, i) => renderLine(l, i, ss)); })()}
+          {!hintSeen && (
+            <div style={{ display:'flex', alignItems:'center', gap:8, margin:'0 0 16px', padding:'8px 12px', background:'rgba(91,91,214,.08)', borderRadius:10, fontSize:12.5, color:'#3D37A8', lineHeight:1.5 }} dir={trRtl ? 'rtl' : 'ltr'}>
+              <span style={{ flex:1 }}>💡 {trUI.hint}</span>
+              <button type="button" onClick={dismissHint} aria-label={trUI.close} style={{ background:'none', border:'none', fontSize:16, cursor:'pointer', color:'#3D37A8', padding:'2px 6px' }}>✕</button>
+            </div>
+          )}
+          {(() => { const ss = new Set(); return scene.lines.map((l, i) => renderLine(l, i, ss, scene.n)); })()}
         </div>
       </div>
     </div>
@@ -19492,13 +19684,29 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
                 <span style={{ fontSize:16, fontWeight:800, color:'#18181B', fontFamily:'Georgia,serif' }}>
                   {dictEntry.word}
                 </span>
-                <span style={{ fontSize:10, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
-                  {TYPE_LABEL[dictEntry.type] || dictEntry.type}
-                </span>
+                {!(dictEntry._ai && dictEntry.status !== 'ok') && (
+                  <span style={{ fontSize:10, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
+                    {TYPE_LABEL[dictEntry.type] || dictEntry.type}
+                  </span>
+                )}
+                {dictEntry._ai && dictEntry.status === 'ok' && dictEntry.base && dictEntry.base.toLowerCase() !== dictEntry.word.toLowerCase() && (
+                  <span style={{ fontSize:11, color:'#71717A', fontFamily:'Georgia,serif', fontStyle:'italic' }}>→ {dictEntry.base}</span>
+                )}
               </div>
+              {dictEntry._ai && dictEntry.status === 'loading' && (
+                <div style={{ fontSize:13, color:'#71717A' }}>{trUI.loading}</div>
+              )}
+              {dictEntry._ai && dictEntry.status === 'err' && (
+                <div style={{ fontSize:12.5, color:'#b42318', lineHeight:1.5 }}>
+                  {trUI[dictEntry.err] || trUI.fail}{' '}
+                  {dictEntry.err !== 'auth' && (
+                    <button type="button" onClick={() => lookupWord(dictEntry.word, dictEntry._ctx || dictEntry.word, dictEntry._x, dictEntry._y)} style={{ background:'none', border:'none', color:'#5B5BD6', fontWeight:700, cursor:'pointer', textDecoration:'underline', fontSize:12.5 }}>{trUI.retry}</button>
+                  )}
+                </div>
+              )}
               {/* Translations */}
               <div style={{ display:'flex', flexDirection:'column', gap:4, marginBottom: dictEntry.ex ? 8 : 0 }}>
-                {(() => {
+                {!(dictEntry._ai && dictEntry.status !== 'ok') && (() => {
                   const meta = DICT_LANG_META[userLang] || DICT_LANG_META.tr;
                   const val = userLang === 'uk' ? dictEntry.uk : (dictEntry[userLang] || dictEntry.tr || dictEntry.ku);
                   return val ? (
@@ -19520,7 +19728,8 @@ function BookReaderModal({ scenes, onClose, userName, userLang }) {
               )}
               {/* Favori button */}
               {(() => {
-                const de = (dictEntry.article ? dictEntry.article + ' ' : '') + dictEntry.word;
+                const de = (dictEntry.article ? dictEntry.article + ' ' : '') + ((dictEntry._ai && dictEntry.base) || dictEntry.word);
+                if (dictEntry._ai && dictEntry.status !== 'ok') return null;
                 const isFav = favWords.has(de.toLowerCase());
                 return (
                   <div style={{ marginTop:10, display:'flex', justifyContent:'flex-end' }}>

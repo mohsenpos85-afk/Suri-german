@@ -1362,7 +1362,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
       try {
         ["ob_data","fuxi_progress","fuxi_streak","fuxi_xp","ferbun_onboarded","fuxi_journey",
          "docassist_onboarded","docassist_privacy_ok","docassist_recent",
-         "fuxi_journey_done","fuxi_pending_key","fuxi_cards","fuxi_favs","fuxi_srs",
+         "fuxi_journey_done","fuxi_pending_key","fuxi_cards","fuxi_favs","fuxi_srs","fuxi_srs_journey",
          "fuxi_trcache_v1","fuxi_trhint","fuxi_reader_pos_v1"].forEach(k => localStorage.removeItem(k));
       } catch {}
       stopSync();
@@ -11572,13 +11572,42 @@ function srsGrade(de, correct) {
   srsSave(s);
 }
 // Word objects (from all levels) whose review is due now.
+// Journey words: tapping a dictionary word in a story chapter stores a flashcard-shaped
+// copy in 'fuxi_srs_journey' and seeds an SRS entry (first review due the next day).
+function journeyDeckLoad() { try { return JSON.parse(localStorage.getItem("fuxi_srs_journey") || "{}"); } catch { return {}; } }
+function journeySrsAdd(word, entry) {
+  try {
+    const key = (word || "").toLowerCase();
+    if (!key || !entry) return;
+    const inCards = Object.values(FLASHCARDS).flat().some((w) => (w.de || "").toLowerCase() === key);
+    if (!inCards) {
+      const deck = journeyDeckLoad();
+      if (!deck[key]) {
+        const art = entry.type === "noun" && entry.article ? entry.article + " " : "";
+        const base = entry.type === "noun" ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+        deck[key] = {
+          de: art + base, ku: entry.ku, tr: entry.tr, en: entry.en, ar: entry.ar, uk: entry.uk, fa: entry.fa, es: entry.es,
+          ex: entry.ex, exku: entry.ex_ku, extr: entry.ex_tr, exen: entry.ex_en, exar: entry.ex_ar, exuk: entry.ex_uk, exfa: entry.ex_fa, exes: entry.ex_es,
+        };
+        localStorage.setItem("fuxi_srs_journey", JSON.stringify(deck));
+      }
+    }
+    const s = srsLoad();
+    const cardKey = inCards ? key : (journeyDeckLoad()[key]?.de || key).toLowerCase();
+    if (!s[cardKey]) {
+      s[cardKey] = { ease: 2.5, interval: 0, reps: 0, due: Date.now() + SRS_DAY, last: Date.now() };
+      srsSave(s);
+    }
+  } catch { /* storage unavailable */ }
+}
 function srsDueWords() {
   const s = srsLoad();
   const now = Date.now();
   const dueKeys = new Set(Object.keys(s).filter((k) => (s[k].due || 0) <= now));
   if (!dueKeys.size) return [];
   const seen = new Set();
-  return Object.values(FLASHCARDS).flat().filter((w) => {
+  const jd = Object.values(journeyDeckLoad()).filter((w) => dueKeys.has((w.de || "").toLowerCase()));
+  return [...Object.values(FLASHCARDS).flat(), ...jd].filter((w) => {
     const k = (w.de || "").toLowerCase();
     if (!dueKeys.has(k) || seen.has(k)) return false;
     seen.add(k);
@@ -19604,6 +19633,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               const r = e.currentTarget.getBoundingClientRect();
               setDictEntry({ word: cleanWord, ...entry, _x: r.left, _y: r.bottom });
               setSessionWords(prev => prev.includes(cleanWord) ? prev : [...prev, cleanWord]);
+              journeySrsAdd(cleanWord, entry);
             }}
             style={{ borderBottom: '1.5px dotted #5B5BD6', color: '#3D37A8', cursor: 'pointer', fontStyle: 'inherit' }}>
             {part}

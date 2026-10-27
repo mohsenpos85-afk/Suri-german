@@ -247,6 +247,8 @@ import { GRAMMAR, GTABLES, GEXAMPLES } from './data/grammar';
 import { VERBS } from './data/verbs';
 import { BUNDESLAENDER, GENERAL_QUESTIONS, STATE_QUESTIONS } from './data/lidData';
 import { lidTr } from './data/lidTranslations';
+import { UBUNG_DATA } from './data/ubung';
+import { GRAMMAR_QUIZ } from './data/grammarQuiz';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -8767,6 +8769,112 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
   );
 }
 
+// ── Static quizzes (Übung tab + grammar mini-quiz) ───────────────────
+const QZ_T = {
+  ku:{check:"پشکنین",next:"دواتر",finish:"ئەنجام",again:"دووبارە",score:"ئەنجام",right:"ڕاستە ✓",wrong:"هەڵەیە ✗",correct_was:"وەڵامی ڕاست:",mini:"مینی-تاقیکردنەوە",empty:"ڕاهێنان نییە بۆ ئەم ئاستە"},
+  tr:{check:"Kontrol et",next:"Sonraki",finish:"Sonuç",again:"Tekrar",score:"Sonuç",right:"Doğru ✓",wrong:"Yanlış ✗",correct_was:"Doğru cevap:",mini:"Mini test",empty:"Bu seviye için alıştırma yok"},
+  en:{check:"Check",next:"Next",finish:"Result",again:"Again",score:"Score",right:"Correct ✓",wrong:"Wrong ✗",correct_was:"Correct answer:",mini:"Mini quiz",empty:"No exercises for this level"},
+  ar:{check:"تحقق",next:"التالي",finish:"النتيجة",again:"إعادة",score:"النتيجة",right:"صحيح ✓",wrong:"خطأ ✗",correct_was:"الإجابة الصحيحة:",mini:"اختبار مصغر",empty:"لا تمارين لهذا المستوى"},
+  fa:{check:"بررسی",next:"بعدی",finish:"نتیجه",again:"دوباره",score:"نتیجه",right:"درست ✓",wrong:"نادرست ✗",correct_was:"پاسخ درست:",mini:"آزمون کوتاه",empty:"برای این سطح تمرینی نیست"},
+  uk:{check:"Перевірити",next:"Далі",finish:"Результат",again:"Ще раз",score:"Результат",right:"Правильно ✓",wrong:"Неправильно ✗",correct_was:"Правильна відповідь:",mini:"Міні-тест",empty:"Немає вправ для цього рівня"},
+  es:{check:"Comprobar",next:"Siguiente",finish:"Resultado",again:"Repetir",score:"Resultado",right:"Correcto ✓",wrong:"Incorrecto ✗",correct_was:"Respuesta correcta:",mini:"Mini test",empty:"No hay ejercicios para este nivel"},
+};
+const qzT = (lang, k) => (QZ_T[lang] || QZ_T.en)[k] ?? QZ_T.en[k];
+
+function QuizRunner({ items, lang = "ku", accent = "#5B5BD6" }) {
+  const [run, setRun]         = useState(0);
+  const [idx, setIdx]         = useState(0);
+  const [sel, setSel]         = useState(null);
+  const [checked, setChecked] = useState(false);
+  const [score, setScore]     = useState(0);
+  const perms = useMemo(() => (items || []).map(it => {
+    const a = it.options.map((_, i) => i);
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }), [items, run]);
+  useEffect(() => { setIdx(0); setSel(null); setChecked(false); setScore(0); }, [items, run]);
+  if (!items || !items.length) return null;
+
+  if (idx >= items.length) {
+    const pct = Math.round((score / items.length) * 100);
+    return (
+      <div style={{ background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "26px 18px", textAlign: "center" }}>
+        <div style={{ fontSize: 40, marginBottom: 6 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</div>
+        <div style={{ fontWeight: 800, fontSize: 24, color: accent }}>{score} / {items.length}</div>
+        <div style={{ color: C.muted, fontSize: 13, margin: "4px 0 16px" }}>{qzT(lang, "score")} · {pct}%</div>
+        <button onClick={() => setRun(r => r + 1)} style={{ background: accent, color: "#fff", border: "none", borderRadius: 12, padding: "10px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>↺ {qzT(lang, "again")}</button>
+      </div>
+    );
+  }
+
+  const it   = items[idx];
+  const perm = perms[idx] || it.options.map((_, i) => i);
+  const useTr = lang === "tr" && it.optionsTr;
+  const baseOpts = useTr ? it.optionsTr : it.options;
+  const opts = perm.map(i => baseOpts[i]);
+  const crt  = perm.indexOf(it.correct);
+  const qText = lang === "tr" && it.qTr ? it.qTr : it.q;
+  const why  = lang === "ku" ? it.why : lang === "tr" ? it.whyTr : "";
+  const ok   = checked && sel === crt;
+
+  function check() { if (sel === null || checked) return; setChecked(true); if (sel === crt) setScore(x => x + 1); }
+  function next()  { setIdx(i => i + 1); setSel(null); setChecked(false); }
+
+  return (
+    <div style={{ background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "16px 16px 14px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: C.muted }}>{idx + 1} / {items.length}</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: C.green }}>✓ {score}</span>
+      </div>
+      <div style={{ height: 4, borderRadius: 99, background: C.line, marginBottom: 14 }}>
+        <div style={{ height: "100%", borderRadius: 99, background: accent, width: `${(idx / items.length) * 100}%`, transition: "width .3s" }} />
+      </div>
+      <div dir="auto" style={{ fontWeight: 700, fontSize: 16.5, lineHeight: 1.6, color: C.ink, marginBottom: 12 }}>{qText}</div>
+      {opts.map((o, i) => {
+        const isSel = sel === i, isC = checked && i === crt, isW = checked && isSel && i !== crt;
+        return (
+          <button key={i} disabled={checked} onClick={() => setSel(i)} dir="auto"
+            style={{ display: "block", width: "100%", textAlign: "start", marginBottom: 8, padding: "11px 14px", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: checked ? "default" : "pointer",
+              border: `2px solid ${isC ? "#16A06F" : isW ? "#E5484D" : isSel ? accent : C.line}`,
+              background: isC ? "rgba(22,160,111,.08)" : isW ? "rgba(229,72,77,.07)" : isSel ? `${accent}10` : "#FBFBFC", color: C.ink }}>
+            {o}{isC ? " ✓" : isW ? " ✗" : ""}
+          </button>
+        );
+      })}
+      {checked && (
+        <div style={{ borderRadius: 12, padding: "10px 14px", margin: "4px 0 10px", background: ok ? "rgba(22,160,111,.09)" : "rgba(229,72,77,.07)" }}>
+          <div style={{ fontWeight: 800, fontSize: 14.5, color: ok ? "#16A06F" : "#E5484D" }}>{ok ? qzT(lang, "right") : qzT(lang, "wrong")}</div>
+          {!ok && <div dir="auto" style={{ fontSize: 13.5, color: C.ink, marginTop: 3 }}><span style={{ color: C.muted }}>{qzT(lang, "correct_was")}</span> <strong>{opts[crt]}</strong></div>}
+          {why && <div dir="auto" style={{ fontSize: 13, color: C.muted, marginTop: 5, lineHeight: 1.6 }}>💡 {why}</div>}
+        </div>
+      )}
+      {!checked
+        ? <button onClick={check} disabled={sel === null} style={{ width: "100%", background: sel === null ? C.line : accent, color: sel === null ? C.muted : "#fff", border: "none", borderRadius: 12, padding: "11px", fontWeight: 800, fontSize: 14.5, cursor: sel === null ? "default" : "pointer" }}>{qzT(lang, "check")}</button>
+        : <button onClick={next} style={{ width: "100%", background: accent, color: "#fff", border: "none", borderRadius: 12, padding: "11px", fontWeight: 800, fontSize: 14.5, cursor: "pointer" }}>{idx + 1 >= items.length ? qzT(lang, "finish") : qzT(lang, "next")} →</button>}
+    </div>
+  );
+}
+
+function UbungQuiz({ level, kind, lang, accent }) {
+  const items = UBUNG_DATA[level]?.[kind];
+  if (!items?.length) return <p style={{ textAlign: "center", color: C.muted, padding: 24 }}>{qzT(lang, "empty")}</p>;
+  return <div style={{ paddingTop: 14 }}><QuizRunner items={items} lang={lang} accent={accent} /></div>;
+}
+
+function GrammarMiniQuiz({ level, g, lang, accent }) {
+  const items = GRAMMAR_QUIZ[level + "::" + g.de];
+  const [open, setOpen] = useState(false);
+  if (!items?.length) return null;
+  return (
+    <div className="rise" style={{ animationDelay: "170ms" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: "100%", textAlign: "start", background: `${accent}12`, border: `1.5px solid ${accent}40`, color: accent, borderRadius: 14, padding: "12px 14px", fontWeight: 800, fontSize: 14.5, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span>📝 {qzT(lang, "mini")} · {items.length}</span><span>{open ? "▲" : "▼"}</span>
+      </button>
+      {open && <div style={{ marginTop: 10 }}><QuizRunner items={items} lang={lang} accent={accent} /></div>}
+    </div>
+  );
+}
+
 // ── Übung section metadata (used by WheelPicker in ubung mode) ──────
 const UBUNG_SECTIONS = [
   { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків", subFa:"پر کردن جای خالی",   emoji:"🧩", color:"#5B5BD6" },
@@ -8777,6 +8885,9 @@ const UBUNG_SECTIONS = [
   { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       subUk:"Вільне письмо", subFa:"نوشتن آزاد",           emoji:"📝", color:"#BE185D" },
   { id:"mundlichA", label:"Mündlich A",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення", subFa:"آمادگی برای صحبت",  emoji:"🗣️", color:"#0F766E" },
   { id:"mundlichB", label:"Mündlich B",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення", subFa:"آمادگی برای صحبت",  emoji:"💬", color:"#1D4ED8" },
+  { id:"qLuecke",   label:"Lückentext",      sub:"پڕکردنەوەی ڕستە",     subTr:"Cümle tamamlama",    subUk:"Доповни речення", subFa:"تکمیل جمله",          emoji:"✏️", color:"#0E7C7A" },
+  { id:"qTrans",    label:"Übersetzung",     sub:"واتای دەستەواژە",     subTr:"İfade anlamı",        subUk:"Значення фрази", subFa:"معنی عبارت",         emoji:"🔤", color:"#C2410C" },
+  { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"#6D28D9" },
 ];
 
 // ── Collapsing Picker Header ─────────────────────────────────────────
@@ -9000,6 +9111,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
           ))}
         </div>
       </div>
+      <GrammarMiniQuiz level={level} g={g} lang={lang} accent={lc} />
       {/* AI */}
       <div className="rise" style={{ animationDelay:"195ms" }}>
         <AITest subject={lang === "tr" ? `Dilbilgisi: «${g.de}» (${tC(g, lang)})` : lang === "en" ? `Grammar: «${g.de}» (${tC(g, lang)})` : lang === "ar" ? `القواعد: «${g.de}» (${tC(g, lang)})` : lang === "fa" ? `دستور زبان: «${g.de}» (${tC(g, lang)})` : lang === "es" ? `Gramática: «${g.de}» (${tC(g, lang)})` : lang === "uk" ? `Граматика: «${g.de}» (${tC(g, lang)})` : `ڕێزمان: «${g.de}» (${tC(g, lang)})`} level={level}
@@ -10614,6 +10726,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <div style={{ display: selUbungIdx===7 ? "" : "none" }}>
             <MündlichBSection  lang={lang} open={true} onToggle={()=>{}} />
           </div>
+          {selUbungIdx===8  && <UbungQuiz level={level} kind="luecke" lang={lang} accent={UBUNG_SECTIONS[8].color} />}
+          {selUbungIdx===9  && <UbungQuiz level={level} kind="trans"  lang={lang} accent={UBUNG_SECTIONS[9].color} />}
+          {selUbungIdx===10 && <UbungQuiz level={level} kind="satz"   lang={lang} accent={UBUNG_SECTIONS[10].color} />}
         </div>
       )}
 

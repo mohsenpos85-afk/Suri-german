@@ -119,14 +119,14 @@ function extractLiteral(marker, openChar) {
   });
 
   // ---- Journey stories (array literals of scene objects with .lines[].s_uk) ----
-  const storyConsts = ['ANKUNFT_STORY','BOLUM2_STORY','BOLUM3_STORY','BOLUM4_STORY','BOLUM6_STORY','BOLUM7_STORY','BOLUM8_STORY','BOLUM9_STORY','BOLUM10_STORY','BOLUM_ARBEITSSUCHE_STORY'];
-  storyConsts.forEach((name) => {
-    const arr = extractLiteral('const ' + name + ' = [', '[');
-    if (!arr) return;
-    arr.forEach((scene, si) => (scene.lines || []).forEach((ln, i) => {
-      // narration lines carry .s (German/base); need .s_uk. Dialogue lines with .de are learning-words (stay German).
-      if (ln.s && !ln.s_uk) report('JOURNEY ' + name, 'scene[' + si + '] line[' + i + ']');
-    }));
+  const { JOURNEY_STORIES } = await import('file://' + path.join(ROOT, 'src/data/journey.js').replace(/\\/g, '/'));
+  Object.entries(JOURNEY_STORIES).forEach(([lvl, arr]) => {
+    const name = 'L' + lvl;
+    arr.forEach((scene, si) => {
+      (scene.lines || []).forEach((ln, i) => {
+        if (ln.s && !ln.s_uk) report('JOURNEY line', name + ' scene[' + si + '] line[' + i + ']');
+      });
+    });
   });
 
   console.log('--- missing uk fields by bucket ---');

@@ -246,6 +246,7 @@ import { FLASHCARDS } from './data/flashcards';
 import { GRAMMAR, GTABLES, GEXAMPLES } from './data/grammar';
 import { VERBS } from './data/verbs';
 import { BUNDESLAENDER, GENERAL_QUESTIONS, STATE_QUESTIONS } from './data/lidData';
+import { lidTr } from './data/lidTranslations';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -20908,6 +20909,18 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
 function LiD({ lang = "ku" }) {
   const t = (k) => tLid(lang, k);
 
+  // Translation overlay (Turkish / Sorani) shown under the German question + options
+  const hasTr = lang === "tr" || lang === "ku";
+  const [showTr, setShowTr] = useState(() => { try { return localStorage.getItem("suri_lid_tr") !== "0"; } catch { return true; } });
+  const toggleTr = () => setShowTr(v => { const n = !v; try { localStorage.setItem("suri_lid_tr", n ? "1" : "0"); } catch {} return n; });
+  const trOf = (q, isSt) => (hasTr && showTr) ? lidTr(lang, q, isSt ? bundesland : null) : null;
+  const trLabel = lang === "tr" ? "Türkçe çeviri" : "وەرگێڕان";
+  const TrToggle = hasTr ? (
+    <button onClick={toggleTr} style={{ background: showTr ? "rgba(91,91,214,.1)" : "transparent", border: "1px solid " + (showTr ? "#5B5BD6" : C.line), color: showTr ? "#5B5BD6" : C.muted, borderRadius: 10, padding: "4px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+      🌐 {trLabel}: {showTr ? "✓" : "✗"}
+    </button>
+  ) : null;
+
   const [view, setView]              = useState("menu");
   const [bundesland, setBundesland]  = useState("");
   const [stateWarn, setStateWarn]    = useState(false);
@@ -21101,6 +21114,7 @@ function LiD({ lang = "ku" }) {
           <span style={{ fontSize: 13, color: C.muted, fontWeight: 600 }}>{pracIdx + 1} / {pracQ.length}</span>
           <span style={{ fontSize: 14, fontWeight: 700, color: C.green }}>✓ {pracCorrect}</span>
         </div>
+        {TrToggle && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>{TrToggle}</div>}
         <div style={{ height: 5, borderRadius: 99, background: C.line, marginBottom: 24 }}>
           <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg,#5B5BD6,#FF6B5E)", width: `${(pracIdx / pracQ.length) * 100}%`, transition: "width .3s" }} />
         </div>
@@ -21108,16 +21122,18 @@ function LiD({ lang = "ku" }) {
         <div style={card}>
           {isStQ && <div style={{ fontSize: 11, fontWeight: 700, color: "#5B5BD6", background: "rgba(91,91,214,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
           <p style={{ fontSize: 13, color: C.muted, fontWeight: 600, margin: "0 0 4px" }}>Aufgabe {q.n}</p>
-          <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
+          <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: trOf(q, isStQ) ? "0 0 6px" : "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
+          {trOf(q, isStQ) && <p dir="auto" style={{ fontSize: 14.5, color: C.muted, margin: "0 0 22px", lineHeight: 1.6 }}>{trOf(q, isStQ).q}</p>}
           {q.o.map((opt, i) => (
             <button key={i} disabled={pracChecked} onClick={() => !pracChecked && setPracSel(i)} style={optStyle(pracSel === i, pracChecked, i, q.a)}>
               <span style={{ marginRight: 10, opacity: .5, fontSize: 13 }}>{String.fromCharCode(65 + i)}.</span>{opt}
+              {trOf(q, isStQ) && <span dir="auto" style={{ display: "block", fontSize: 12.5, opacity: .7, fontWeight: 500, marginTop: 3, paddingLeft: 24 }}>{trOf(q, isStQ).o[i]}</span>}
             </button>
           ))}
           {pracChecked && (
             <div style={{ borderRadius: 12, padding: "12px 16px", marginTop: 12, background: isCrt ? "rgba(22,160,111,.1)" : "rgba(229,72,77,.08)", border: `1px solid ${isCrt ? "#16A06F" : "#E5484D"}44` }}>
               <p style={{ margin: "0 0 4px", fontWeight: 800, fontSize: 16, color: isCrt ? "#16A06F" : "#E5484D" }}>{isCrt ? t("correct") : t("wrong")}</p>
-              {isWrg && <p style={{ margin: 0, fontSize: 14, color: C.ink }}><span style={{ color: C.muted }}>{t("correct_was")}</span> <strong>{q.o[q.a]}</strong></p>}
+              {isWrg && <p style={{ margin: 0, fontSize: 14, color: C.ink }}><span style={{ color: C.muted }}>{t("correct_was")}</span> <strong>{q.o[q.a]}</strong>{trOf(q, isStQ) && <span dir="auto" style={{ display: "block", fontSize: 13, color: C.muted, marginTop: 2 }}>{trOf(q, isStQ).o[q.a]}</span>}</p>}
             </div>
           )}
         </div>
@@ -21173,6 +21189,7 @@ function LiD({ lang = "ku" }) {
           </div>
           <span style={{ fontSize: 13, color: C.muted, fontWeight: 600 }}>{answered}/33 {t("answered")}</span>
         </div>
+        {TrToggle && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>{TrToggle}</div>}
 
         {/* dot strip */}
         <div style={{ display: "flex", gap: 3, marginBottom: 20, flexWrap: "wrap" }}>
@@ -21187,10 +21204,12 @@ function LiD({ lang = "ku" }) {
         <div style={card}>
           {isStQ && <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B5E", background: "rgba(255,107,94,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
           <p style={{ fontSize: 13, color: C.muted, fontWeight: 600, margin: "0 0 4px" }}>Aufgabe {q.n}</p>
-          <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
+          <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: trOf(q, isStQ) ? "0 0 6px" : "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
+          {trOf(q, isStQ) && <p dir="auto" style={{ fontSize: 14.5, color: C.muted, margin: "0 0 22px", lineHeight: 1.6 }}>{trOf(q, isStQ).q}</p>}
           {q.o.map((opt, i) => (
             <button key={i} onClick={() => !isChk && setTestSel(prev => ({ ...prev, [testIdx]: i }))} style={optStyle(sel === i, isChk, i, q.a)}>
               <span style={{ marginRight: 10, opacity: .5, fontSize: 13 }}>{String.fromCharCode(65 + i)}.</span>{opt}
+              {trOf(q, isStQ) && <span dir="auto" style={{ display: "block", fontSize: 12.5, opacity: .7, fontWeight: 500, marginTop: 3, paddingLeft: 24 }}>{trOf(q, isStQ).o[i]}</span>}
             </button>
           ))}
           {isChk && (
@@ -21266,14 +21285,17 @@ function LiD({ lang = "ku" }) {
         {testQ.map((q, i) => {
           const ua  = testSel[i] ?? -1;
           const ok  = ua === q.a;
+          const isStO = (STATE_QUESTIONS[bundesland] || []).some(s => s.n === q.n && s.q === q.q);
+          const trO = trOf(q, isStO);
           return (
             <div key={i} style={{ background: "#fff", borderRadius: 14, border: `1px solid ${ok ? "#16A06F33" : "#E5484D33"}`, padding: "14px 18px", marginBottom: 10 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                 <span style={{ fontSize: 18, flexShrink: 0 }}>{ok ? "✅" : "❌"}</span>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: "0 0 6px", fontSize: 14, fontWeight: 700, fontFamily: "'Satoshi',system-ui,sans-serif", color: C.ink, lineHeight: 1.4 }}>{q.q}</p>
-                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#E5484D" }}>✗ {q.o[ua]}</p>}
-                  <p style={{ margin: 0, fontSize: 13, color: "#16A06F" }}>✓ {q.o[q.a]}</p>
+                  {trO && <p dir="auto" style={{ margin: "0 0 6px", fontSize: 12.5, color: C.muted, lineHeight: 1.5 }}>{trO.q}</p>}
+                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#E5484D" }}>✗ {q.o[ua]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[ua]}</span>}</p>}
+                  <p style={{ margin: 0, fontSize: 13, color: "#16A06F" }}>✓ {q.o[q.a]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[q.a]}</span>}</p>
                 </div>
               </div>
             </div>

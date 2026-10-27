@@ -649,6 +649,17 @@ export const GENERAL_QUESTIONS = [
     "a": 1
   },
   {
+    "n": 59,
+    "q": "Vor wie vielen Jahren gab es erstmals eine jüdische Gemeinde auf dem Gebiet des heutigen Deutschlands?",
+    "o": [
+      "vor etwa 300 Jahren",
+      "vor etwa 700 Jahren",
+      "vor etwa 1150 Jahren",
+      "vor etwa 1700 Jahren"
+    ],
+    "a": 3
+  },
+  {
     "n": 60,
     "q": "In Deutschland gehören der Bundestag und der Bundesrat zur …",
     "o": [
@@ -713,6 +724,17 @@ export const GENERAL_QUESTIONS = [
       "das Bundeskabinett zu bilden."
     ],
     "a": 3
+  },
+  {
+    "n": 66,
+    "q": "Welche Städte haben die größten jüdischen Gemeinden in Deutschland?",
+    "o": [
+      "Berlin und München",
+      "Hamburg und Essen",
+      "Nürnberg und Stuttgart",
+      "Worms und Speyer"
+    ],
+    "a": 0
   },
   {
     "n": 67,
@@ -1034,6 +1056,17 @@ export const GENERAL_QUESTIONS = [
     "a": 1
   },
   {
+    "n": 96,
+    "q": "Wie kann jemand, der den Holocaust leugnet, bestraft werden?",
+    "o": [
+      "Kürzung sozialer Leistungen",
+      "bis zu 100 Sozialstunden",
+      "gar nicht, Holocaustleugnung ist erlaubt",
+      "mit Freiheitsstrafe bis zu fünf Jahren oder mit Geldstrafe"
+    ],
+    "a": 3
+  },
+  {
     "n": 97,
     "q": "Was bezahlt man in Deutschland automatisch, wenn man fest angestellt ist?",
     "o": [
@@ -1188,6 +1221,17 @@ export const GENERAL_QUESTIONS = [
     "a": 2
   },
   {
+    "n": 111,
+    "q": "Welche Handlung mit Bezug auf den Staat Israel ist in Deutschland verboten?",
+    "o": [
+      "Die Politik Israels öffentlich kritisieren.",
+      "Das Aufhängen einer israelischen Flagge auf dem Privatgrundstück.",
+      "Eine Diskussion über die Politik Israels.",
+      "Der öffentliche Aufruf zur Vernichtung Israels."
+    ],
+    "a": 3
+  },
+  {
     "n": 112,
     "q": "Die Wahlen in Deutschland sind …",
     "o": [
@@ -1252,6 +1296,17 @@ export const GENERAL_QUESTIONS = [
       "6%"
     ],
     "a": 2
+  },
+  {
+    "n": 118,
+    "q": "Wer darf bei den rund 40 jüdischen Makkabi-Sportvereinen Mitglied werden?",
+    "o": [
+      "nur Deutsche",
+      "nur Israelis",
+      "nur religiöse Menschen",
+      "alle Menschen"
+    ],
+    "a": 3
   },
   {
     "n": 119,
@@ -1571,6 +1626,17 @@ export const GENERAL_QUESTIONS = [
       "die Einhaltung von Gesetzen zu überwachen"
     ],
     "a": 3
+  },
+  {
+    "n": 149,
+    "q": "Was ist ein Beispiel für antisemitisches Verhalten?",
+    "o": [
+      "ein jüdisches Fest besuchen",
+      "die israelische Regierung kritisieren",
+      "den Holocaust leugnen",
+      "gegen Juden Fußball spielen"
+    ],
+    "a": 2
   },
   {
     "n": 150,
@@ -1925,6 +1991,17 @@ export const GENERAL_QUESTIONS = [
     "a": 1
   },
   {
+    "n": 182,
+    "q": "Wie heißt das jüdische Gebetshaus?",
+    "o": [
+      "Basilika",
+      "Moschee",
+      "Synagoge",
+      "Kirche"
+    ],
+    "a": 2
+  },
+  {
     "n": 183,
     "q": "Wann war in der Bundesrepublik Deutschland das \"Wirtschaftswunder\"?",
     "o": [
@@ -1934,6 +2011,17 @@ export const GENERAL_QUESTIONS = [
       "80er Jahre"
     ],
     "a": 1
+  },
+  {
+    "n": 184,
+    "q": "Auf welcher rechtlichen Grundlage wurde der Staat Israel gegründet?",
+    "o": [
+      "eine Resolution der Vereinten Nationen",
+      "ein Beschluss des Zionistenkongresses",
+      "ein Vorschlag der Bundesregierung",
+      "ein Vorschlag der UdSSR"
+    ],
+    "a": 0
   },
   {
     "n": 185,
@@ -2165,6 +2253,17 @@ export const GENERAL_QUESTIONS = [
       "zur Europäischen Verteidigungsgemeinschaft."
     ],
     "a": 0
+  },
+  {
+    "n": 206,
+    "q": "Woran erinnern die sogenannten „Stolpersteine“ in Deutschland?",
+    "o": [
+      "an berühmte deutsche Politikerinnen und Politiker",
+      "an die Opfer des Nationalsozialismus",
+      "an Verkehrstote",
+      "an bekannte jüdische Musiker"
+    ],
+    "a": 1
   },
   {
     "n": 207,
@@ -3034,6 +3133,17 @@ export const GENERAL_QUESTIONS = [
       "die Versicherungspflicht"
     ],
     "a": 2
+  },
+  {
+    "n": 288,
+    "q": "Woraus begründet sich Deutschlands besondere Verantwortung für Israel?",
+    "o": [
+      "aus der Mitgliedschaft in der Europäischen Union (EU)",
+      "aus den nationalsozialistischen Verbrechen gegen Juden",
+      "aus dem Grundgesetz der Bundesrepublik Deutschland",
+      "aus der christlichen Tradition"
+    ],
+    "a": 1
   },
   {
     "n": 289,

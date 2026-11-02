@@ -11747,6 +11747,11 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
               )}
             </button>
           </div>
+          {Object.keys(journeyDeckLoad()).length > 0 && (
+            <div style={{ textAlign:"center", marginTop:6, fontSize:12, color:C.muted }}>
+              📖 {Object.keys(journeyDeckLoad()).length} {lang === "tr" ? "Journey kelimesi tekrar destesinde" : lang === "en" ? "Journey words in your review deck" : lang === "ar" ? "كلمات من الرحلة في مجموعة المراجعة" : lang === "es" ? "palabras de Journey en tu mazo de repaso" : lang === "uk" ? "слів із Journey у колоді повторення" : lang === "fa" ? "واژه از Journey در مجموعه مرور" : "وشەی Journey لە کۆمەڵەی پێداچوونەوەدا"}
+            </div>
+          )}
         </>
       )}
       {/* ── When embedded: streak badge ── */}

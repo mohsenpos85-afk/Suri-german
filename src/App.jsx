@@ -12,6 +12,7 @@ import {
   ChevronDown, Gamepad2, User, Menu, ScanText
 } from "lucide-react";
 import DocAssistant from "./DocAssistant.jsx";
+import { KU_DIALECTS, KU_DIALECT_UI, kuDialect } from "./data/kuDialects.js";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -650,7 +651,7 @@ const OB_LANGS = [
   {v:"tr",    code:"TR", label:"Turkish",   native:"Türkçe"},
   {v:"fr",    code:"FR", label:"French",    native:"Français"},
   {v:"uk",    code:"UK", label:"Ukrainian", native:"Українська"},
-  {v:"ku",    code:"KU", label:"Sorani Kurdish", native:"سۆرانی"},
+  {v:"ku",    code:"KU", label:"Kurdish", native:"Kurdî · کوردی"},
   {v:"fa",    code:"FA", label:"Farsi",         native:"فارسی"},
   {v:"ja",    code:"JA", label:"Japanese",      native:"日本語"},
 ];
@@ -1401,6 +1402,19 @@ function ProfileScreen({ lang="ku", onLogout }) {
         ))}
       </div>
 
+      {/* Kurdish dialect */}
+      {ob.lang === "ku" && (
+        <div style={{ padding:"0 16px 12px", display:"flex", gap:8 }}>
+          {KU_DIALECTS.map(dv => (
+            <button key={dv.v} onClick={() => { try { const o = JSON.parse(localStorage.getItem("ob_data")||"{}"); o.kuDialect = dv.v; localStorage.setItem("ob_data", JSON.stringify(o)); } catch {} window.location.reload(); }}
+              style={{ flex:1, padding:"12px 6px", borderRadius:14, cursor:"pointer", fontWeight:700, fontSize:13,
+                border:`1.5px solid ${kuDialect()===dv.v ? "#5B5BD6" : C.line}`, background: kuDialect()===dv.v ? "#F0F0FF" : "transparent", color: kuDialect()===dv.v ? "#5B5BD6" : C.ink }}>
+              {dv.label}<div style={{ fontSize:12, fontWeight:500, color:C.muted }}>{dv.native}</div>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Theme */}
       <div style={{ padding:"0 16px 12px" }}>
         <button onClick={() => { const d = document.documentElement.dataset.theme !== "dark"; document.documentElement.dataset.theme = d ? "dark" : "light"; try { localStorage.setItem("suri_theme", d ? "dark" : "light"); } catch {} }}
@@ -1481,6 +1495,7 @@ function useIsMobile(bp=768){
 
 // Module-level translation helper for sub-components (outside Lessons)
 const tApp = (lang, key) => {
+  if (lang === "ku") { const dv = kuDialect(); if (dv !== "sorani") { const o = KU_DIALECT_UI[dv]?.[key]; if (o) return o; } }
   if (lang === "uk") return APP_TRANS.uk?.[key] || key;
   return APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku?.[key] || key;
 };
@@ -1899,6 +1914,20 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           </button>
         ))}
       </div>
+      {answers.lang === "ku" && (
+        <div style={{ marginTop:16 }}>
+          <div style={{ fontSize:13, fontWeight:700, color:"#18181B", textAlign:"center", marginBottom:8 }}>Kurdî · کوردی — Sorani / Badini / Kurmanji</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+            {KU_DIALECTS.map(dv => (
+              <button key={dv.v} onClick={() => save("kuDialect", dv.v)}
+                style={{ ...card(answers.kuDialect===dv.v), padding:"12px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+                <span style={{ fontWeight:700, fontSize:13, color: answers.kuDialect===dv.v ? "#5B5BD6" : "#18181B" }}>{dv.label}</span>
+                <span style={{ fontSize:12, color:"#A1A1AA" }}>{dv.native}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {answers.lang && (
         <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:18, padding:"12px 16px", borderRadius:12, background:"#F0F0FF", border:"1px solid #E0E0FF" }}>
           <Globe size={18} color="#5B5BD6" strokeWidth={2} />
@@ -1907,13 +1936,13 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       )}
       <button
         className="ob-btn"
-        disabled={!answers.lang}
+        disabled={!answers.lang || (answers.lang === "ku" && !answers.kuDialect)}
         onClick={() => go("level")}
         style={{
           marginTop:20, width:"100%", padding:"16px", fontSize:16,
-          background: answers.lang ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
-          color: answers.lang ? "#fff" : "#A1A1AA",
-          cursor: answers.lang ? "pointer" : "not-allowed",
+          background: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+          color: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "#fff" : "#A1A1AA",
+          cursor: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "pointer" : "not-allowed",
           borderRadius:16, transition:"all .2s",
         }}>
         {answers.lang ? t("btn_continue") : "—"}
@@ -2367,7 +2396,7 @@ export default function App() {
   useEffect(() => {
     try {
       document.documentElement.lang = appLang;
-      document.documentElement.dir = LANG_DIR[appLang] === "rtl" ? "rtl" : "ltr";
+      document.documentElement.dir = (LANG_DIR[appLang] === "rtl" && !(appLang === "ku" && kuDialect() === "kurmanji")) ? "rtl" : "ltr";
     } catch { /* non-browser */ }
   }, [appLang]);
   const [intro, setIntro]           = useState(false);

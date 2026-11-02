@@ -12,6 +12,7 @@ import {
   ChevronDown, Gamepad2, User, Menu, ScanText
 } from "lucide-react";
 import DocAssistant from "./DocAssistant.jsx";
+import { SB_EXTRA } from "./data/sprachbausteine.js";
 import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
@@ -4540,6 +4541,12 @@ function SbQuiz({ exercises, lang = "ku" }) {
     </div>
   );
 }
+// 10 Sprachbausteine exercises per level (A1 = 5 built-in + 5 extra).
+function sbForLevel(level) {
+  const lv = SB_EXTRA[level] ? level : "A1";
+  const list = lv === "A1" ? [...A1_DRAG_EXERCISES, ...SB_EXTRA.A1] : SB_EXTRA[lv];
+  return list.map(e => ({ ...e, words: [...e.words].sort((a, b) => a.localeCompare(b, "de")) }));
+}
 // ── DragDropExercise — Sprachbausteine drag-and-drop ─────────────────
 function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = false, onToggle, headerless = false }) {
   const secRef = useRef(null);
@@ -4561,7 +4568,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
           </div>
           <div>
             <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang==="tr" ? "Sprachbausteine — Boşluk Doldurma" : lang==="en" ? "Sprachbausteine — Fill the Gap" : lang==="ar" ? "Sprachbausteine — املأ الفراغ" : lang === "es" ? "Sprachbausteine — Rellena el hueco" : lang === "uk" ? "Sprachbausteine — Заповніть пропуск" : lang === "fa" ? "Sprachbausteine — جای خالی را پر کنید" : "Sprachbausteine — بۆشایی پڕکردنەوە"}</div>
-            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? "5 ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang==="tr" ? exercises.length + " alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? exercises.length + " exercises · Drag words into the gaps" : lang==="ar" ? exercises.length + " تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? exercises.length + " ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? exercises.length + " вправ · Перетягніть слова в пропуски" : lang === "fa" ? exercises.length + " تمرین · واژه‌ها را به جای خالی بکشید" : exercises.length + " وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
           </div>
         </div>
         <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -10698,7 +10705,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
           {/* Section bodies — only selected is visible; all stay mounted to preserve state */}
           <div style={{ display: selUbungIdx===0 ? "" : "none" }}>
-            <DragDropExercise  lang={lang} open={true} onToggle={()=>{}} />
+            <DragDropExercise key={level || "A1"} exercises={sbForLevel(level || "A1")} lang={lang} open={true} onToggle={()=>{}} />
           </div>
           <div style={{ display: selUbungIdx===1 ? "" : "none" }}>
             <LesenASection     lang={lang} open={true} onToggle={()=>{}} />

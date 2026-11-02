@@ -4218,6 +4218,9 @@ const GAP_T = {
 };
 function GapFill({ text, gaps, bank, get, onPick, lang = "ku" }) {
   const T = GAP_T[lang] || GAP_T.en;
+  const K = { bg:"#ECECE6", card:"#F3F3EE", ink:"#2F3B36", sage:"#8FAE9A", sageDk:"#6F9482", slate:"#7C93A0", slateDk:"#5F7886", lavGlow:"rgba(167,150,230,.55)",
+    raisedSm:"3px 3px 8px rgba(160,160,146,.4), -3px -3px 8px rgba(255,255,255,.9)", raised:"6px 6px 14px rgba(160,160,146,.42), -6px -6px 14px rgba(255,255,255,.9)",
+    inset:"inset 3px 3px 7px rgba(160,160,146,.45), inset -3px -3px 7px rgba(255,255,255,.85)" };
   const [active, setActive] = useState(0);
   const segs = useMemo(() => {
     const out = []; let last = 0; let m; const re = /_{2,}\s*(\d+)\s*_{2,}/g; const src = String(text || "");
@@ -4242,25 +4245,25 @@ function GapFill({ text, gaps, bank, get, onPick, lang = "ku" }) {
     const v = get(gi), on = gi === cur;
     return (
       <button key={"g" + gi} onClick={() => setActive(gi)} aria-label={`Gap ${gaps[gi].n}`}
-        style={{ margin: "0 3px", minWidth: 54, padding: "2px 12px", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif",
-          border: `2px ${v !== undefined ? "solid" : "dashed"} ${on ? C.red : v !== undefined ? C.green : "#C4CAD8"}`,
-          background: v !== undefined ? "rgba(16,185,129,.1)" : on ? "rgba(229,72,77,.07)" : "#fff",
-          color: v !== undefined ? "#065f46" : C.muted, boxShadow: on ? "0 0 0 3px rgba(229,72,77,.15)" : "none", transition: "all .15s" }}>
+        style={{ margin: "0 3px", minWidth: 58, height: 38, padding: "0 16px", borderRadius: 99, fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .18s",
+          border: `2px solid ${on && v === undefined ? "#B9AEE6" : "transparent"}`,
+          background: v !== undefined ? K.sage : K.bg, color: v !== undefined ? "#fff" : "#7D877F",
+          boxShadow: v !== undefined ? `0 4px 0 ${K.sageDk}` : on ? `${K.inset}, 0 0 0 4px ${K.lavGlow}` : K.inset }}>
         {v !== undefined ? (bank ? bank[v] : gaps[gi].options[v]) : gaps[gi].n}
       </button>
     );
   };
   return (
     <div style={{ display: "grid", gap: 12 }}>
-      <div dir="ltr" style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 18px", lineHeight: 2.5, fontSize: 15.5, fontFamily: "'Satoshi',system-ui,sans-serif" }}>
+      <div dir="ltr" style={{ background: K.card, borderRadius: 24, padding: "22px 20px", lineHeight: 2.6, fontSize: 16.5, color: K.ink, boxShadow: K.raised, fontFamily: "'Satoshi',system-ui,sans-serif" }}>
         {inline ? segs.map((s, i) => s.gap !== undefined ? chip(s.gap) : <span key={i}>{s.t}</span>) : <De size={15}>{text}</De>}
       </div>
       {!inline && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{gaps.map((g, gi) => chip(gi))}</div>
       )}
-      <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14 }}>
+      <div style={{ background: K.bg, borderRadius: 24, padding: 16, boxShadow: K.inset }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <span style={{ fontWeight: 700, fontSize: 13, color: C.red }}>{T.pick} {gaps[cur]?.n}</span>
+          <span style={{ fontWeight: 800, fontSize: 13, color: K.slateDk }}>{T.pick} {gaps[cur]?.n}</span>
           <span dir="ltr" style={{ fontSize: 12, color: C.muted }}>{answered}/{gaps.length} {T.done}</span>
         </div>
         <div dir="ltr" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -4269,9 +4272,9 @@ function GapFill({ text, gaps, bank, get, onPick, lang = "ku" }) {
             const usedElsewhere = !!bank && gaps.some((_, gi) => gi !== cur && get(gi) === oi);
             return (
               <button key={oi} onClick={() => pick(oi)} aria-pressed={on}
-                style={{ padding: "10px 18px", borderRadius: 99, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .12s",
-                  border: `1.5px solid ${on ? C.red : "#D5DAE6"}`, background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, opacity: usedElsewhere ? 0.45 : 1,
-                  boxShadow: on ? "0 6px 14px rgba(229,72,77,.28)" : "0 1px 3px rgba(0,0,0,.06)" }}>{o}</button>
+                style={{ padding: "11px 20px", borderRadius: 99, fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .12s",
+                  border: "none", background: on ? K.slate : K.card, color: on ? "#fff" : K.ink, opacity: usedElsewhere ? 0.45 : 1,
+                  boxShadow: on ? `0 4px 0 ${K.slateDk}` : K.raisedSm }}>{o}</button>
             );
           })}
         </div>
@@ -4393,60 +4396,71 @@ function SbQuiz({ exercises, lang = "ku" }) {
   const reset = () => { setIdx(0); setFills(exercises.map(() => ({}))); setWrongBlanks({}); setTimedOut({}); setFinished(false); setSelected(null); setTimeLeft(45); };
   const sentence = (e, exi, upto) => e.parts.map((p, i) => p + (i < e.answers.length ? (upto || fills[exi][i] !== undefined ? e.answers[i] : "…") : "")).join("");
   const title = (e) => lang === "tr" ? (e.titleTr || e.titleKu) : lang === "en" ? (e.titleEn || e.titleKu) : lang === "ar" ? (e.titleAr || e.titleKu) : lang === "uk" ? (e.titleUk || e.titleEn || e.titleKu) : e.titleKu;
-  const accent = "#5B5BD6";
+  // Soft clay / neumorphic palette: cream surface, sage, slate-blue, lavender glow
+  const K = {
+    bg: "#ECECE6", card: "#F3F3EE", ink: "#2F3B36", muted: "#7D877F",
+    sage: "#8FAE9A", sageDk: "#6F9482", sagePale: "#D3E0D6", slate: "#7C93A0", slateDk: "#5F7886",
+    lav: "#B9AEE6", lavGlow: "rgba(167,150,230,.55)", blush: "#E7B9B0", blushDk: "#C98B80",
+    raised: "6px 6px 14px rgba(160,160,146,.42), -6px -6px 14px rgba(255,255,255,.9)",
+    raisedSm: "3px 3px 8px rgba(160,160,146,.4), -3px -3px 8px rgba(255,255,255,.9)",
+    inset: "inset 3px 3px 7px rgba(160,160,146,.45), inset -3px -3px 7px rgba(255,255,255,.85)",
+  };
+  const btn3d = (c, dk) => ({ border: "none", cursor: "pointer", background: c, color: "#fff", fontWeight: 800, fontSize: 15, borderRadius: 18, padding: "15px", width: "100%", boxShadow: `0 5px 0 ${dk}, 0 10px 18px rgba(95,120,110,.25)`, transition: "transform .1s, box-shadow .1s" });
 
   if (finished) {
     const R = 46, Cc = 2 * Math.PI * R;
     const words = [...new Set(Object.keys(wrongBlanks).map(k => { const [a, b] = k.split("-").map(Number); return exercises[a].answers[b]; }))];
     return (
-      <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
-        <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
-          <circle cx="60" cy="60" r={R} fill="none" stroke="#E8ECF5" strokeWidth="10" />
-          <circle cx="60" cy="60" r={R} fill="none" stroke={pct === 100 ? "#10b981" : pct >= 60 ? "#F59E0B" : "#EF4444"} strokeWidth="10" strokeLinecap="round"
-            strokeDasharray={Cc} strokeDashoffset={Cc * (1 - pct / 100)} transform="rotate(-90 60 60)" style={{ transition: "stroke-dashoffset .8s ease" }} />
-          <text x="60" y="67" textAnchor="middle" fontSize="24" fontWeight="800" fill="#1A1F2E">{pct}%</text>
-        </svg>
-        <div style={{ fontSize: 20, fontWeight: 800, color: C.ink, marginTop: 6 }}>{pct === 100 ? T.perfect : pct >= 60 ? T.good : T.keep}</div>
-        <div style={{ fontSize: 13, color: C.muted, marginTop: 2 }}>{score} / {totalBlanks} {T.correct}</div>
+      <div style={{ background: K.bg, borderRadius: 28, padding: "24px 18px 18px", textAlign: "center" }}>
+        <div style={{ width: 150, height: 150, margin: "0 auto", borderRadius: "50%", background: K.card, boxShadow: K.raised, display: "grid", placeItems: "center" }}>
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r={R} fill="none" stroke="#DDDED6" strokeWidth="10" />
+            <circle cx="60" cy="60" r={R} fill="none" stroke={pct === 100 ? K.sageDk : pct >= 60 ? K.lav : K.blushDk} strokeWidth="10" strokeLinecap="round"
+              strokeDasharray={Cc} strokeDashoffset={Cc * (1 - pct / 100)} transform="rotate(-90 60 60)" style={{ transition: "stroke-dashoffset .8s ease" }} />
+            <text x="60" y="68" textAnchor="middle" fontSize="24" fontWeight="800" fill={K.ink}>{pct}%</text>
+          </svg>
+        </div>
+        <div style={{ fontSize: 21, fontWeight: 800, color: K.ink, marginTop: 14 }}>{pct === 100 ? T.perfect : pct >= 60 ? T.good : T.keep}</div>
+        <div style={{ fontSize: 13, color: K.muted, marginTop: 2 }}>{score} / {totalBlanks} {T.correct}</div>
         {words.length > 0 && (
-          <div style={{ marginTop: 16, textAlign: "start" }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: C.ink, marginBottom: 8 }}>{T.mistakes}</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div style={{ marginTop: 18, textAlign: "start" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: K.ink, marginBottom: 10 }}>{T.mistakes}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               {words.map(w => (
                 <button key={w} onClick={() => speakDe(w)} aria-label={`${w} 🔊`}
-                  style={{ padding: "7px 14px", borderRadius: 99, border: "1.5px solid #FCA5A5", background: "#FEF2F2", color: "#991B1B", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>{w} 🔊</button>
+                  style={{ padding: "9px 16px", borderRadius: 99, border: "none", background: K.card, color: K.blushDk, fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: K.raisedSm }}>{w} 🔊</button>
               ))}
             </div>
           </div>
         )}
-        <button onClick={reset} style={{ marginTop: 18, width: "100%", padding: "14px", borderRadius: 14, border: "none", cursor: "pointer", background: `linear-gradient(135deg,${accent},#818cf8)`, color: "#fff", fontWeight: 800, fontSize: 15 }}>↺ {T.retry}</button>
+        <button onClick={reset} style={{ ...btn3d(K.sage, K.sageDk), marginTop: 22 }}>↺ {T.retry}</button>
       </div>
     );
   }
 
   const isLast = idx === exercises.length - 1;
   return (
-    <div style={{ paddingTop: 4, userSelect: "none", WebkitUserSelect: "none" }}>
+    <div style={{ background: K.bg, borderRadius: 28, padding: "18px 16px 18px", userSelect: "none", WebkitUserSelect: "none" }}>
       {/* progress + exam toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-        <div style={{ flex: 1, display: "flex", gap: 4 }} role="progressbar" aria-valuemin={0} aria-valuemax={exercises.length} aria-valuenow={idx + 1}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <div style={{ flex: 1, display: "flex", gap: 6, padding: 5, borderRadius: 99, background: K.bg, boxShadow: K.inset }} role="progressbar" aria-valuemin={0} aria-valuemax={exercises.length} aria-valuenow={idx + 1}>
           {exercises.map((_, i) => (
-            <div key={i} style={{ flex: 1, height: 6, borderRadius: 99, background: i < idx || (i === idx && complete) ? "#10b981" : i === idx ? accent : "#E8ECF5", transition: "background .25s" }} />
+            <div key={i} style={{ flex: 1, height: 8, borderRadius: 99, background: i < idx || (i === idx && complete) ? K.sage : i === idx ? K.lav : "transparent", transition: "background .25s" }} />
           ))}
         </div>
         <button onClick={() => setExam(v => !v)} aria-pressed={exam}
-          style={{ padding: "6px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${exam ? "#EF4444" : C.line}`, background: exam ? "#FEF2F2" : "transparent", color: exam ? "#B91C1C" : C.muted }}>
+          style={{ padding: "8px 14px", borderRadius: 99, fontSize: 12, fontWeight: 800, cursor: "pointer", border: "none", background: K.card, color: exam ? K.blushDk : K.slateDk, boxShadow: exam ? K.inset : K.raisedSm }}>
           ⏱ {exam ? `${Math.max(0, timeLeft)}s` : T.exam}
         </button>
       </div>
 
-      <div style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{T.of} {idx + 1}/{exercises.length}</div>
-      <div style={{ fontWeight: 800, fontSize: 17, color: C.ink, margin: "2px 0 14px" }}>
-        {ex.title} <span style={{ fontSize: 13, fontWeight: 500, color: C.muted }}>· {title(ex)}</span>
+      <div style={{ fontSize: 12, color: K.muted, fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase" }}>{T.of} {idx + 1}/{exercises.length}</div>
+      <div style={{ fontWeight: 800, fontSize: 18, color: K.ink, margin: "3px 0 14px" }}>
+        {ex.title} <span style={{ fontSize: 13, fontWeight: 600, color: K.muted }}>· {title(ex)}</span>
       </div>
 
       {/* sentence */}
-      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px 7px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: "#1A1F2E", background: "#fff", borderRadius: 20, padding: "22px 20px", marginBottom: 18, border: "1px solid #ECEEF6", boxShadow: "0 8px 28px rgba(91,91,214,.08)" }}>
+      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 8px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: K.ink, background: K.card, borderRadius: 24, padding: "24px 20px", marginBottom: 20, boxShadow: K.raised }}>
         {ex.parts.flatMap((part, pi) => {
           const out = [<span key={"t" + pi}>{part}</span>];
           if (pi < ex.answers.length) {
@@ -4454,22 +4468,25 @@ function SbQuiz({ exercises, lang = "ku" }) {
             const isFlash = flash && flash.exi === idx && flash.bi === bi;
             const hot = hoverBi === bi && !filled;
             const missedHere = timedOut[idx] && !filled;
+            const waiting = selected !== null && !filled;
             out.push(
               <span key={"b" + bi} data-sb-bi={bi} role="button" tabIndex={0} aria-label={filled ? ex.answers[bi] : `blank ${bi + 1}`}
                 onClick={() => selected !== null && place(idx, bi, selected)}
                 onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected !== null) { e.preventDefault(); place(idx, bi, selected); } }}
                 style={{
-                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(5, ex.answers[bi].length + 2)}ch`, height: 40, padding: "0 14px", borderRadius: 12,
-                  fontWeight: 800, fontSize: 18, transition: "all .18s cubic-bezier(.22,1,.36,1)", cursor: selected !== null && !filled ? "pointer" : "default",
-                  animation: isFlash ? "sbShake .35s" : filled ? "sbPop .32s cubic-bezier(.34,1.56,.64,1)" : (selected !== null || hot) ? "sbPulse 1.2s ease-in-out infinite" : undefined,
-                  border: "none",
-                  borderBottom: `3px solid ${filled ? "#059669" : isFlash || missedHere ? "#ef4444" : hot ? accent : selected !== null ? accent : "#C7CBEA"}`,
-                  background: filled ? "linear-gradient(135deg,#10b981,#34d399)" : isFlash || missedHere ? "rgba(239,68,68,.14)" : hot ? "rgba(91,91,214,.22)" : "linear-gradient(180deg,#F4F5FF,#ECEEFF)",
-                  color: filled ? "#fff" : isFlash || missedHere ? "#991b1b" : "#9AA0D6",
-                  transform: hot && !filled ? "scale(1.08)" : "none",
-                  boxShadow: filled ? "0 4px 12px rgba(16,185,129,.3)" : hot ? "0 6px 16px rgba(91,91,214,.3)" : "none",
+                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(5, ex.answers[bi].length + 2)}ch`, height: 42, padding: "0 16px", borderRadius: 99,
+                  fontWeight: 800, fontSize: 17, transition: "all .2s cubic-bezier(.22,1,.36,1)", cursor: waiting ? "pointer" : "default",
+                  animation: isFlash ? "sbShake .35s" : filled ? "sbPop .32s cubic-bezier(.34,1.56,.64,1)" : undefined,
+                  border: filled || isFlash || missedHere ? "none" : `2px solid ${hot || waiting ? K.lav : "transparent"}`,
+                  background: filled ? K.sage : isFlash || missedHere ? K.blush : K.bg,
+                  color: filled ? "#fff" : isFlash || missedHere ? "#7A3B32" : K.muted,
+                  boxShadow: filled ? `0 4px 0 ${K.sageDk}, 0 8px 14px rgba(111,148,130,.3)`
+                    : isFlash || missedHere ? `0 4px 0 ${K.blushDk}`
+                    : hot ? `${K.inset}, 0 0 0 4px ${K.lavGlow}, 0 0 18px ${K.lavGlow}`
+                    : waiting ? `${K.inset}, 0 0 0 3px ${K.lavGlow}` : K.inset,
+                  transform: hot && !filled ? "scale(1.07)" : "none",
                 }}>
-                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : <span style={{ fontSize: 13, fontWeight: 700, opacity: .8 }}>{bi + 1}</span>}
+                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : <span style={{ fontSize: 13, fontWeight: 800, opacity: .6 }}>{bi + 1}</span>}
               </span>
             );
           }
@@ -4480,8 +4497,8 @@ function SbQuiz({ exercises, lang = "ku" }) {
       {/* word bank / done state */}
       {!complete ? (
         <>
-          <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>{T.hint}</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          <div style={{ fontSize: 12, color: K.muted, marginBottom: 10, fontWeight: 600 }}>{T.hint}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
             {ex.words.map((w, wi) => {
               const used = Object.values(placed).includes(wi); const sel = selected === wi;
               return (
@@ -4490,9 +4507,10 @@ function SbQuiz({ exercises, lang = "ku" }) {
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(s => (s === wi ? null : wi)); } }}
                   aria-pressed={sel}
                   style={{
-                    touchAction: "none", padding: "10px 18px", borderRadius: 99, fontWeight: 700, fontSize: 16, cursor: used ? "default" : "grab", transition: "transform .12s, box-shadow .12s",
-                    border: sel ? `2px solid ${accent}` : "1.5px solid #D5DAE6", background: sel ? "rgba(91,91,214,.12)" : "#fff", color: used ? "#C0C4CE" : sel ? "#3730a3" : "#1A1F2E",
-                    opacity: used ? 0.4 : 1, transform: sel ? "translateY(-2px) scale(1.04)" : "none", boxShadow: sel ? "0 6px 14px rgba(91,91,214,.25)" : "0 1px 3px rgba(0,0,0,.06)",
+                    touchAction: "none", padding: "12px 22px", borderRadius: 99, fontWeight: 800, fontSize: 16, cursor: used ? "default" : "grab", transition: "all .15s",
+                    border: sel ? `2px solid ${K.lav}` : "2px solid transparent", background: K.card, color: used ? "#B5BBB4" : sel ? K.slateDk : K.ink,
+                    boxShadow: used ? K.inset : sel ? `${K.raised}, 0 0 0 4px ${K.lavGlow}, 0 0 18px ${K.lavGlow}` : K.raisedSm,
+                    transform: sel ? "translateY(-3px) scale(1.05)" : "none",
                   }}>{w}</button>
               );
             })}
@@ -4500,24 +4518,23 @@ function SbQuiz({ exercises, lang = "ku" }) {
         </>
       ) : (
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14, background: timedOut[idx] ? "#FEF2F2" : "rgba(16,185,129,.1)", border: `1.5px solid ${timedOut[idx] ? "#FCA5A5" : "#86EFAC"}`, marginBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", borderRadius: 20, background: timedOut[idx] ? "#F4DCD7" : K.sagePale, boxShadow: K.inset, marginBottom: 16 }}>
             <span style={{ fontSize: 20 }}>{timedOut[idx] ? "⏰" : "✓"}</span>
-            <span style={{ flex: 1, fontWeight: 700, color: timedOut[idx] ? "#991B1B" : "#065f46", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
+            <span style={{ flex: 1, fontWeight: 800, color: timedOut[idx] ? "#7A3B32" : "#3F6454", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
             <button onClick={() => speakDe(sentence(ex, idx, true))} aria-label="Play sentence"
-              style={{ width: 40, height: 40, borderRadius: 12, border: "none", background: "#fff", cursor: "pointer", fontSize: 18, boxShadow: "0 1px 4px rgba(0,0,0,.12)" }}>🔊</button>
+              style={{ width: 42, height: 42, borderRadius: 14, border: "none", background: K.card, cursor: "pointer", fontSize: 18, boxShadow: K.raisedSm }}>🔊</button>
           </div>
-          <button onClick={() => (isLast ? setFinished(true) : setIdx(idx + 1))}
-            style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none", cursor: "pointer", background: `linear-gradient(135deg,${accent},#818cf8)`, color: "#fff", fontWeight: 800, fontSize: 15, boxShadow: "0 6px 16px rgba(91,91,214,.3)" }}>
+          <button onClick={() => (isLast ? setFinished(true) : setIdx(idx + 1))} style={btn3d(K.slate, K.slateDk)}>
             {isLast ? T.finish : T.check} →
           </button>
         </div>
       )}
 
       {ghost && createPortal(
-        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "10px 18px", borderRadius: 99, background: accent, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: "0 12px 28px rgba(91,91,214,.45)" }}>
+        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "12px 22px", borderRadius: 99, background: K.sage, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: `0 5px 0 ${K.sageDk}, 0 16px 30px rgba(95,120,110,.4)` }}>
           {ex.words[ghost.wi]}
         </div>, document.body)}
-      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes sbPulse{0%,100%{box-shadow:0 0 0 0 rgba(91,91,214,.35)}50%{box-shadow:0 0 0 6px rgba(91,91,214,0)}}`}</style>
+      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}`}</style>
     </div>
   );
 }

@@ -4209,207 +4209,243 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
   );
 }
 
+// ── Sprachbausteine — modern one-at-a-time quiz (touch drag, instant feedback) ──
+const SB_T = {
+  tr:{ exam:"Sınav modu", check:"Devam", finish:"Bitir", retry:"Yeniden başla", perfect:"Mükemmel!", good:"İyi iş!", keep:"Biraz daha çalış", mistakes:"Hata yaptığın kelimeler", hint:"Kelimeyi boşluğa sürükle ya da dokunarak seç", ok:"Doğru", of:"Alıştırma", timeout:"Süre doldu", correct:"doğru" },
+  en:{ exam:"Exam mode", check:"Continue", finish:"Finish", retry:"Start over", perfect:"Perfect!", good:"Nice work!", keep:"Keep practising", mistakes:"Words you missed", hint:"Drag a word into the gap, or tap it to select", ok:"Correct", of:"Exercise", timeout:"Time's up", correct:"correct" },
+  ar:{ exam:"وضع الاختبار", check:"متابعة", finish:"إنهاء", retry:"ابدأ من جديد", perfect:"ممتاز!", good:"عمل جيد!", keep:"واصل التدرب", mistakes:"كلمات أخطأت فيها", hint:"اسحب الكلمة إلى الفراغ أو المسها لاختيارها", ok:"صحيح", of:"تمرين", timeout:"انتهى الوقت", correct:"صحيح" },
+  es:{ exam:"Modo examen", check:"Continuar", finish:"Terminar", retry:"Empezar de nuevo", perfect:"¡Perfecto!", good:"¡Buen trabajo!", keep:"Sigue practicando", mistakes:"Palabras que fallaste", hint:"Arrastra la palabra al hueco o tócala para elegirla", ok:"Correcto", of:"Ejercicio", timeout:"Se acabó el tiempo", correct:"correctas" },
+  uk:{ exam:"Режим іспиту", check:"Далі", finish:"Завершити", retry:"Почати знову", perfect:"Чудово!", good:"Гарна робота!", keep:"Практикуйся далі", mistakes:"Слова з помилками", hint:"Перетягни слово в пропуск або торкнись, щоб вибрати", ok:"Правильно", of:"Вправа", timeout:"Час вичерпано", correct:"правильно" },
+  fa:{ exam:"حالت آزمون", check:"ادامه", finish:"پایان", retry:"شروع دوباره", perfect:"عالی!", good:"کار خوب!", keep:"بیشتر تمرین کن", mistakes:"واژه‌هایی که اشتباه کردی", hint:"واژه را به جای خالی بکش یا برای انتخاب لمس کن", ok:"درست", of:"تمرین", timeout:"زمان تمام شد", correct:"درست" },
+  ku:{ exam:"دۆخی تاقیکردنەوە", check:"بەردەوامبە", finish:"تەواو", retry:"دووبارە دەستپێبکە", perfect:"نایاب!", good:"کارێکی باش!", keep:"زیاتر ڕاهێنان بکە", mistakes:"ئەو وشانەی هەڵەت تێدا کرد", hint:"وشەکە ڕابکێشە بۆ بۆشاییەکە یان دەستی پێوە بنێ", ok:"ڕاستە", of:"ڕاهێنان", timeout:"کات تەواو بوو", correct:"ڕاست" },
+};
+function sbFeedback(ok) {
+  try { navigator.vibrate?.(ok ? 12 : [30, 40, 30]); } catch { /* unsupported */ }
+  try {
+    const A = window.AudioContext || window.webkitAudioContext; if (!A) return;
+    const c = sbFeedback.ctx || (sbFeedback.ctx = new A());
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.value = ok ? 880 : 200; g.gain.value = 0.04;
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + (ok ? 0.09 : 0.2));
+  } catch { /* audio blocked */ }
+}
+function SbQuiz({ exercises, lang = "ku" }) {
+  const T = SB_T[lang] || (lang === "fr" || lang === "ja" ? SB_T.en : SB_T.en);
+  const [idx, setIdx] = useState(0);
+  const [fills, setFills] = useState(() => exercises.map(() => ({})));     // exi → { bi: wi } (only correct, locked)
+  const [wrongBlanks, setWrongBlanks] = useState({});                       // "exi-bi" → [wrong words]
+  const [flash, setFlash] = useState(null);                                 // { exi, bi, word }
+  const [selected, setSelected] = useState(null);                           // word index in current exercise
+  const [ghost, setGhost] = useState(null);                                 // { wi, x, y }
+  const [exam, setExam] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [timedOut, setTimedOut] = useState({});                             // exi → true
+  const [finished, setFinished] = useState(false);
+  const drag = useRef(null);
+  const placeRef = useRef(null);
+  const ex = exercises[idx];
+  const placed = fills[idx] || {};
+  const blanks = ex ? ex.answers.length : 0;
+  const complete = ex ? (Object.keys(placed).length === blanks || !!timedOut[idx]) : false;
+
+  const place = (exi, bi, wi) => {
+    const e = exercises[exi];
+    if (!e || fills[exi][bi] !== undefined || Object.values(fills[exi]).includes(wi)) return;
+    if (e.words[wi] === e.answers[bi]) {
+      sbFeedback(true);
+      setFills(f => f.map((p, i) => i === exi ? { ...p, [bi]: wi } : p));
+    } else {
+      sbFeedback(false);
+      setWrongBlanks(w => ({ ...w, [`${exi}-${bi}`]: [...(w[`${exi}-${bi}`] || []), e.words[wi]] }));
+      setFlash({ exi, bi, word: e.words[wi] });
+      setTimeout(() => setFlash(f => (f && f.exi === exi && f.bi === bi ? null : f)), 650);
+    }
+    setSelected(null);
+  };
+  placeRef.current = place;
+
+  // Pointer-based drag (works with touch and mouse)
+  useEffect(() => {
+    const move = (e) => {
+      const d = drag.current; if (!d) return;
+      if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 8) return;
+      d.moved = true; setGhost({ wi: d.wi, x: e.clientX, y: e.clientY });
+    };
+    const up = (e) => {
+      const d = drag.current; if (!d) return;
+      drag.current = null; setGhost(null);
+      if (!d.moved) { setSelected(s => (s === d.wi ? null : d.wi)); return; }
+      const els = document.elementsFromPoint(e.clientX, e.clientY);
+      let target = els.map(n => n.closest?.("[data-sb-bi]")).find(Boolean);
+      if (!target) {
+        let best = null, bd = 60;
+        document.querySelectorAll("[data-sb-bi]").forEach(n => {
+          const r = n.getBoundingClientRect(); const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+          if (dist < bd) { bd = dist; best = n; }
+        });
+        target = best;
+      }
+      if (target) placeRef.current(d.exi, Number(target.dataset.sbBi), d.wi);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
+  }, []);
+
+  // Exam mode countdown (45 s per exercise)
+  useEffect(() => { setTimeLeft(45); setSelected(null); }, [idx, exam]);
+  useEffect(() => {
+    if (!exam || finished || complete) return;
+    const t = setInterval(() => setTimeLeft(s => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [exam, finished, complete, idx]);
+  useEffect(() => {
+    if (exam && !finished && !complete && timeLeft <= 0) {
+      sbFeedback(false);
+      setTimedOut(t => ({ ...t, [idx]: true }));
+      setWrongBlanks(w => { const c = { ...w }; ex.answers.forEach((_, bi) => { if (fills[idx][bi] === undefined && !c[`${idx}-${bi}`]) c[`${idx}-${bi}`] = ["·"]; }); return c; });
+    }
+  }, [timeLeft]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const totalBlanks = exercises.reduce((n, e) => n + e.answers.length, 0);
+  const missed = Object.keys(wrongBlanks).length;
+  const score = Math.max(0, totalBlanks - missed);
+  const pct = totalBlanks ? Math.round((score / totalBlanks) * 100) : 0;
+  const reset = () => { setIdx(0); setFills(exercises.map(() => ({}))); setWrongBlanks({}); setTimedOut({}); setFinished(false); setSelected(null); setTimeLeft(45); };
+  const sentence = (e, exi, upto) => e.parts.map((p, i) => p + (i < e.answers.length ? (upto || fills[exi][i] !== undefined ? e.answers[i] : "…") : "")).join("");
+  const title = (e) => lang === "tr" ? (e.titleTr || e.titleKu) : lang === "en" ? (e.titleEn || e.titleKu) : lang === "ar" ? (e.titleAr || e.titleKu) : lang === "uk" ? (e.titleUk || e.titleEn || e.titleKu) : e.titleKu;
+  const accent = "#5B5BD6";
+
+  if (finished) {
+    const R = 46, Cc = 2 * Math.PI * R;
+    const words = [...new Set(Object.keys(wrongBlanks).map(k => { const [a, b] = k.split("-").map(Number); return exercises[a].answers[b]; }))];
+    return (
+      <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
+        <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r={R} fill="none" stroke="#E8ECF5" strokeWidth="10" />
+          <circle cx="60" cy="60" r={R} fill="none" stroke={pct === 100 ? "#10b981" : pct >= 60 ? "#F59E0B" : "#EF4444"} strokeWidth="10" strokeLinecap="round"
+            strokeDasharray={Cc} strokeDashoffset={Cc * (1 - pct / 100)} transform="rotate(-90 60 60)" style={{ transition: "stroke-dashoffset .8s ease" }} />
+          <text x="60" y="67" textAnchor="middle" fontSize="24" fontWeight="800" fill="#1A1F2E">{pct}%</text>
+        </svg>
+        <div style={{ fontSize: 20, fontWeight: 800, color: C.ink, marginTop: 6 }}>{pct === 100 ? T.perfect : pct >= 60 ? T.good : T.keep}</div>
+        <div style={{ fontSize: 13, color: C.muted, marginTop: 2 }}>{score} / {totalBlanks} {T.correct}</div>
+        {words.length > 0 && (
+          <div style={{ marginTop: 16, textAlign: "start" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.ink, marginBottom: 8 }}>{T.mistakes}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {words.map(w => (
+                <button key={w} onClick={() => speakDe(w)} aria-label={`${w} 🔊`}
+                  style={{ padding: "7px 14px", borderRadius: 99, border: "1.5px solid #FCA5A5", background: "#FEF2F2", color: "#991B1B", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>{w} 🔊</button>
+              ))}
+            </div>
+          </div>
+        )}
+        <button onClick={reset} style={{ marginTop: 18, width: "100%", padding: "14px", borderRadius: 14, border: "none", cursor: "pointer", background: `linear-gradient(135deg,${accent},#818cf8)`, color: "#fff", fontWeight: 800, fontSize: 15 }}>↺ {T.retry}</button>
+      </div>
+    );
+  }
+
+  const isLast = idx === exercises.length - 1;
+  return (
+    <div style={{ paddingTop: 4, userSelect: "none", WebkitUserSelect: "none" }}>
+      {/* progress + exam toggle */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+        <div style={{ flex: 1, display: "flex", gap: 4 }} role="progressbar" aria-valuemin={0} aria-valuemax={exercises.length} aria-valuenow={idx + 1}>
+          {exercises.map((_, i) => (
+            <div key={i} style={{ flex: 1, height: 6, borderRadius: 99, background: i < idx || (i === idx && complete) ? "#10b981" : i === idx ? accent : "#E8ECF5", transition: "background .25s" }} />
+          ))}
+        </div>
+        <button onClick={() => setExam(v => !v)} aria-pressed={exam}
+          style={{ padding: "6px 12px", borderRadius: 99, fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${exam ? "#EF4444" : C.line}`, background: exam ? "#FEF2F2" : "transparent", color: exam ? "#B91C1C" : C.muted }}>
+          ⏱ {exam ? `${Math.max(0, timeLeft)}s` : T.exam}
+        </button>
+      </div>
+
+      <div style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{T.of} {idx + 1}/{exercises.length}</div>
+      <div style={{ fontWeight: 800, fontSize: 17, color: C.ink, margin: "2px 0 14px" }}>
+        {ex.title} <span style={{ fontSize: 13, fontWeight: 500, color: C.muted }}>· {title(ex)}</span>
+      </div>
+
+      {/* sentence */}
+      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 6px", lineHeight: 2.6, fontSize: 17, fontWeight: 500, color: "#1A1F2E", background: "#F8F9FC", borderRadius: 16, padding: "14px 16px", marginBottom: 16 }}>
+        {ex.parts.flatMap((part, pi) => {
+          const out = [<span key={"t" + pi}>{part}</span>];
+          if (pi < ex.answers.length) {
+            const bi = pi, wi = placed[bi], filled = wi !== undefined;
+            const isFlash = flash && flash.exi === idx && flash.bi === bi;
+            const missedHere = timedOut[idx] && !filled;
+            out.push(
+              <span key={"b" + bi} data-sb-bi={bi} role="button" tabIndex={0} aria-label={filled ? ex.answers[bi] : `blank ${bi + 1}`}
+                onClick={() => selected !== null && place(idx, bi, selected)}
+                onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected !== null) { e.preventDefault(); place(idx, bi, selected); } }}
+                style={{
+                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(4, ex.answers[bi].length + 1)}ch`, height: 36, padding: "0 12px", borderRadius: 10,
+                  fontWeight: 700, fontSize: 16, transition: "all .18s", cursor: selected !== null && !filled ? "pointer" : "default",
+                  animation: isFlash ? "sbShake .35s" : undefined,
+                  border: filled ? "2px solid #10b981" : isFlash || missedHere ? "2px solid #ef4444" : selected !== null ? `2px dashed ${accent}` : "2px dashed #C4CAD8",
+                  background: filled ? "rgba(16,185,129,.14)" : isFlash || missedHere ? "rgba(239,68,68,.12)" : selected !== null ? "rgba(91,91,214,.08)" : "#fff",
+                  color: filled ? "#065f46" : isFlash || missedHere ? "#991b1b" : "#B0B4BF",
+                }}>
+                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : "···"}
+              </span>
+            );
+          }
+          return out;
+        })}
+      </div>
+
+      {/* word bank / done state */}
+      {!complete ? (
+        <>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>{T.hint}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {ex.words.map((w, wi) => {
+              const used = Object.values(placed).includes(wi); const sel = selected === wi;
+              return (
+                <button key={wi} disabled={used}
+                  onPointerDown={(e) => { if (used) return; drag.current = { wi, exi: idx, x0: e.clientX, y0: e.clientY, moved: false }; }}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(s => (s === wi ? null : wi)); } }}
+                  aria-pressed={sel}
+                  style={{
+                    touchAction: "none", padding: "10px 18px", borderRadius: 99, fontWeight: 700, fontSize: 16, cursor: used ? "default" : "grab", transition: "transform .12s, box-shadow .12s",
+                    border: sel ? `2px solid ${accent}` : "1.5px solid #D5DAE6", background: sel ? "rgba(91,91,214,.12)" : "#fff", color: used ? "#C0C4CE" : sel ? "#3730a3" : "#1A1F2E",
+                    opacity: used ? 0.4 : 1, transform: sel ? "translateY(-2px) scale(1.04)" : "none", boxShadow: sel ? "0 6px 14px rgba(91,91,214,.25)" : "0 1px 3px rgba(0,0,0,.06)",
+                  }}>{w}</button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14, background: timedOut[idx] ? "#FEF2F2" : "rgba(16,185,129,.1)", border: `1.5px solid ${timedOut[idx] ? "#FCA5A5" : "#86EFAC"}`, marginBottom: 12 }}>
+            <span style={{ fontSize: 20 }}>{timedOut[idx] ? "⏰" : "✓"}</span>
+            <span style={{ flex: 1, fontWeight: 700, color: timedOut[idx] ? "#991B1B" : "#065f46", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
+            <button onClick={() => speakDe(sentence(ex, idx, true))} aria-label="Play sentence"
+              style={{ width: 40, height: 40, borderRadius: 12, border: "none", background: "#fff", cursor: "pointer", fontSize: 18, boxShadow: "0 1px 4px rgba(0,0,0,.12)" }}>🔊</button>
+          </div>
+          <button onClick={() => (isLast ? setFinished(true) : setIdx(idx + 1))}
+            style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none", cursor: "pointer", background: `linear-gradient(135deg,${accent},#818cf8)`, color: "#fff", fontWeight: 800, fontSize: 15, boxShadow: "0 6px 16px rgba(91,91,214,.3)" }}>
+            {isLast ? T.finish : T.check} →
+          </button>
+        </div>
+      )}
+
+      {ghost && (
+        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-130%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "10px 18px", borderRadius: 99, background: accent, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: "0 12px 28px rgba(91,91,214,.45)" }}>
+          {ex.words[ghost.wi]}
+        </div>
+      )}
+      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}`}</style>
+    </div>
+  );
+}
 // ── DragDropExercise — Sprachbausteine drag-and-drop ─────────────────
 function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = false, onToggle, headerless = false }) {
   const secRef = useRef(null);
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
-  const [placements, setPlacements] = useState(() => exercises.map(() => ({})));
-  const [selected,   setSelected]   = useState(null);
-  const [dragSrc,    setDragSrc]    = useState(null);
-  const [revealed,   setRevealed]   = useState(false);
-  const wasDropped = useRef(false);          // flag: onDrop already handled this drag
-  const dragSrcRef = useRef(null);           // sync ref so onDragEnd reads latest value
-
-  const totalBlanks = exercises.reduce((n, ex) => n + ex.answers.length, 0);
-  const filledCount = placements.reduce((n, p) => n + Object.keys(p).length, 0);
-  const allFilled   = filledCount === totalBlanks;
-
-  function handleWordClick(exi, wi) {
-    if (revealed) return;
-    setSelected(prev => prev?.exIdx === exi && prev?.wordIdx === wi ? null : { exIdx: exi, wordIdx: wi });
-  }
-
-  function handleBlankClick(exi, bi) {
-    if (revealed) return;
-    const wi = placements[exi][bi];
-    if (wi !== undefined) {
-      setPlacements(prev => { const c = prev.map(p => ({...p})); delete c[exi][bi]; return c; });
-    } else if (selected?.exIdx === exi) {
-      setPlacements(prev => { const c = prev.map(p => ({...p})); c[exi][bi] = selected.wordIdx; return c; });
-      setSelected(null);
-    }
-  }
-
-  function onDragOver(e) { e.preventDefault(); }
-
-  function handleWordDragStart(exi, wi, fromBlank) {
-    const src = { exIdx: exi, wordIdx: wi, fromBlank: fromBlank ?? null };
-    dragSrcRef.current = src;
-    wasDropped.current = false;
-    setDragSrc(src);
-    setSelected(null);
-  }
-
-  // Proximity snap: fires when drag ends anywhere; finds nearest blank within 90px
-  function handleWordDragEnd(e) {
-    if (wasDropped.current) { wasDropped.current = false; return; }
-    const src = dragSrcRef.current;
-    if (!src) return;
-    const x = e.clientX, y = e.clientY;
-    if (!x && !y) { setDragSrc(null); dragSrcRef.current = null; return; } // cancelled (Esc)
-    const exi = src.exIdx;
-    const blankEls = document.querySelectorAll(`[data-blank-exi="${exi}"]`);
-    let nearestBi = null, nearestDist = Infinity;
-    blankEls.forEach(el => {
-      const r = el.getBoundingClientRect();
-      const dist = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
-      if (dist < nearestDist) { nearestDist = dist; nearestBi = Number(el.dataset.blankBi); }
-    });
-    if (nearestBi !== null && nearestDist < 90) {
-      setPlacements(prev => {
-        const c = prev.map(p => ({...p}));
-        if (src.fromBlank !== null) delete c[exi][src.fromBlank];
-        c[exi][nearestBi] = src.wordIdx;
-        return c;
-      });
-    }
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function handleBlankDrop(exi, bi, e) {
-    e.preventDefault();
-    const src = dragSrcRef.current;
-    if (!src || src.exIdx !== exi) return;
-    wasDropped.current = true;
-    setPlacements(prev => {
-      const c = prev.map(p => ({...p}));
-      if (src.fromBlank !== null) delete c[exi][src.fromBlank];
-      c[exi][bi] = src.wordIdx;
-      return c;
-    });
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function handlePoolDrop(exi, e) {
-    e.preventDefault();
-    const src = dragSrcRef.current;
-    if (!src || src.exIdx !== exi || src.fromBlank === null) return;
-    wasDropped.current = true;
-    setPlacements(prev => { const c = prev.map(p => ({...p})); delete c[exi][src.fromBlank]; return c; });
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function reset() {
-    setPlacements(exercises.map(() => ({})));
-    setSelected(null);
-    setRevealed(false);
-  }
-
-  const score = !revealed ? 0 : exercises.reduce((tot, ex, exi) =>
-    tot + ex.answers.reduce((n, ans, bi) => {
-      const wi = placements[exi][bi];
-      return n + (wi !== undefined && ex.words[wi] === ans ? 1 : 0);
-    }, 0), 0);
-
-  if (headerless) return (
-    <div style={{ padding:"4px 0 4px" }}>
-      {exercises.map((ex, exi) => {
-        const placed   = placements[exi];
-        const isTarget = selected?.exIdx === exi;
-        return (
-          <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
-            <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
-              {exi + 1}. {ex.title}
-              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
-            </div>
-            <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
-              {ex.parts.flatMap((part, pi) => {
-                const els = [<span key={"t"+pi} style={{ fontSize:14, fontWeight:500, color:"#1A1F2E" }}>{part}</span>];
-                if (pi < ex.parts.length - 1) {
-                  const bi = pi, wi = placed[bi], hasW = wi !== undefined;
-                  const word = hasW ? ex.words[wi] : null;
-                  const right = revealed && hasW ? ex.words[wi] === ex.answers[bi] : null;
-                  els.push(
-                    <span key={"b"+bi} data-blank-exi={exi} data-blank-bi={bi}
-                      draggable={hasW && !revealed}
-                      onDragStart={hasW && !revealed ? () => handleWordDragStart(exi, wi, bi) : undefined}
-                      onDragEnd={hasW && !revealed ? handleWordDragEnd : undefined}
-                      onDragOver={onDragOver} onDrop={e => handleBlankDrop(exi, bi, e)}
-                      onClick={() => handleBlankClick(exi, bi)}
-                      style={{
-                        display:"inline-flex", alignItems:"center", justifyContent:"center",
-                        minWidth: hasW ? undefined : 70, height:30, padding:"0 10px",
-                        borderRadius:8, cursor:"pointer", position:"relative",
-                        userSelect:"none", transition:"all .15s",
-                        border: revealed ? (right ? "2px solid #10b981" : "2px solid #ef4444")
-                          : hasW ? "1.5px solid #5B5BD6" : isTarget ? "2px dashed #5B5BD6" : "2px dashed #C4CAD8",
-                        background: revealed ? (right ? "rgba(16,185,129,.13)" : "rgba(239,68,68,.1)")
-                          : hasW ? "rgba(91,91,214,.1)" : isTarget ? "rgba(91,91,214,.05)" : "#F8F9FC",
-                        color: revealed ? (right ? "#065f46" : "#991b1b") : hasW ? "#3730a3" : "#B0B4BF",
-                        fontWeight: hasW ? 700 : 400, fontSize:13,
-                      }}
-                    >
-                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
-                      {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
-                          ✓ {ex.answers[bi]}
-                        </span>
-                      )}
-                    </span>
-                  );
-                }
-                return els;
-              })}
-            </div>
-            {!revealed && (
-              <div onDragOver={onDragOver} onDrop={e => handlePoolDrop(exi, e)}
-                style={{ display:"flex", flexWrap:"wrap", gap:8, minHeight:36, padding:"4px 2px" }}>
-                {ex.words.map((w, wi) => {
-                  const isPlaced = Object.values(placed).includes(wi);
-                  const isSel    = selected?.exIdx === exi && selected?.wordIdx === wi;
-                  return (
-                    <span key={wi} draggable={!isPlaced}
-                      onDragStart={!isPlaced ? () => handleWordDragStart(exi, wi, null) : undefined}
-                      onDragEnd={!isPlaced ? handleWordDragEnd : undefined}
-                      onClick={!isPlaced ? () => handleWordClick(exi, wi) : undefined}
-                      style={{
-                        padding:"5px 14px", borderRadius:20, fontWeight:700, fontSize:13,
-                        userSelect:"none", transition:"all .12s",
-                        cursor: isPlaced ? "default" : "grab", opacity: isPlaced ? .42 : 1,
-                        pointerEvents: isPlaced ? "none" : "auto",
-                        border: isSel ? "2px solid #5B5BD6" : isPlaced ? "1.5px solid #E8EBF2" : "1.5px solid #C4CAD8",
-                        background: isSel ? "rgba(91,91,214,.12)" : isPlaced ? "#F5F6FA" : "#fff",
-                        color: isSel ? "#3730a3" : isPlaced ? "#C0C4CE" : "#1A1F2E",
-                      }}
-                    >{w}</span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-      {!revealed ? (
-        <button onClick={() => setRevealed(true)} disabled={!allFilled}
-          style={{ width:"100%", padding:"10px", borderRadius:12, border:"none", marginTop:8, cursor: allFilled ? "pointer":"not-allowed",
-            background: allFilled ? "linear-gradient(135deg,#5B5BD6,#818cf8)" : "#E4E4E8",
-            color: allFilled ? "#fff":"#A1A1AA", fontWeight:700, fontSize:14 }}>
-          {allFilled ? `✓ ${DONE_WORD[lang]||"تەواو"}` : `${filledCount} / ${totalBlanks} ${tApp(lang,"ubung_blanks")} ${tApp(lang,"ubung_filled")}`}
-        </button>
-      ) : (
-        <div style={{ textAlign:"center", marginTop:10 }}>
-          <div style={{ fontSize:18, fontWeight:800, color: score===totalBlanks?"#16A34A":score>=totalBlanks*0.6?"#F59E0B":"#EF4444" }}>
-            {score} / {totalBlanks} ✓
-          </div>
-          <button onClick={reset} style={{ marginTop:8, padding:"8px 24px", borderRadius:10, border:"none", cursor:"pointer", background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff", fontWeight:700 }}>{tApp(lang,"ubung_reset")}</button>
-        </div>
-      )}
-    </div>
-  );
+  if (headerless) return <SbQuiz exercises={exercises} lang={lang} />;
 
   return (
     <div ref={secRef} style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
@@ -4432,146 +4468,8 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
       </div>
 
       {/* ── Collapsible content ── */}
-      <div style={{ padding:"4px 18px 18px", borderTop:"1px solid #E4E4E8", display: open ? "" : "none" }}>
-
-      {exercises.map((ex, exi) => {
-        const placed   = placements[exi];
-        const isTarget = selected?.exIdx === exi;
-        return (
-          <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
-            <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
-              {exi + 1}. {ex.title}
-              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
-            </div>
-
-            <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
-              {ex.parts.flatMap((part, pi) => {
-                const els = [
-                  <span key={"t"+pi} style={{ fontSize:14, fontWeight:500, color:"#1A1F2E" }}>{part}</span>
-                ];
-                if (pi < ex.parts.length - 1) {
-                  const bi   = pi;
-                  const wi   = placed[bi];
-                  const hasW = wi !== undefined;
-                  const word = hasW ? ex.words[wi] : null;
-                  const right = revealed && hasW ? ex.words[wi] === ex.answers[bi] : null;
-                  els.push(
-                    <span
-                      key={"b"+bi}
-                      data-blank-exi={exi}
-                      data-blank-bi={bi}
-                      draggable={hasW && !revealed}
-                      onDragStart={hasW && !revealed ? () => handleWordDragStart(exi, wi, bi) : undefined}
-                      onDragEnd={hasW && !revealed ? handleWordDragEnd : undefined}
-                      onDragOver={onDragOver}
-                      onDrop={e => handleBlankDrop(exi, bi, e)}
-                      onClick={() => handleBlankClick(exi, bi)}
-                      style={{
-                        display:"inline-flex", alignItems:"center", justifyContent:"center",
-                        minWidth: hasW ? undefined : 70, height:30, padding:"0 10px",
-                        borderRadius:8, cursor:"pointer", position:"relative",
-                        userSelect:"none", transition:"all .15s",
-                        border: revealed
-                          ? (right ? "2px solid #10b981" : "2px solid #ef4444")
-                          : hasW ? "1.5px solid #5B5BD6"
-                          : isTarget ? "2px dashed #5B5BD6" : "2px dashed #C4CAD8",
-                        background: revealed
-                          ? (right ? "rgba(16,185,129,.13)" : "rgba(239,68,68,.1)")
-                          : hasW ? "rgba(91,91,214,.1)"
-                          : isTarget ? "rgba(91,91,214,.05)" : "#F8F9FC",
-                        color: revealed
-                          ? (right ? "#065f46" : "#991b1b")
-                          : hasW ? "#3730a3" : "#B0B4BF",
-                        fontWeight: hasW ? 700 : 400, fontSize:13,
-                      }}
-                    >
-                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
-                      {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
-                          ✓ {ex.answers[bi]}
-                        </span>
-                      )}
-                    </span>
-                  );
-                }
-                return els;
-              })}
-            </div>
-
-            {!revealed && (
-              <div
-                onDragOver={onDragOver}
-                onDrop={e => handlePoolDrop(exi, e)}
-                style={{ display:"flex", flexWrap:"wrap", gap:8, minHeight:36, padding:"4px 2px" }}
-              >
-                {ex.words.map((w, wi) => {
-                  const isPlaced = Object.values(placed).includes(wi);
-                  const isSel    = selected?.exIdx === exi && selected?.wordIdx === wi;
-                  return (
-                    <span
-                      key={wi}
-                      draggable={!isPlaced}
-                      onDragStart={!isPlaced ? () => handleWordDragStart(exi, wi, null) : undefined}
-                      onDragEnd={!isPlaced ? handleWordDragEnd : undefined}
-                      onClick={!isPlaced ? () => handleWordClick(exi, wi) : undefined}
-                      style={{
-                        padding:"5px 14px", borderRadius:20, fontWeight:700, fontSize:13,
-                        userSelect:"none", transition:"all .12s",
-                        cursor:    isPlaced ? "default" : "grab",
-                        opacity:   isPlaced ? .42 : 1,
-                        pointerEvents: isPlaced ? "none" : "auto",
-                        border:    isSel    ? "2px solid #5B5BD6"
-                                 : isPlaced ? "1.5px solid #E8EBF2" : "1.5px solid #C4CAD8",
-                        background: isSel  ? "rgba(91,91,214,.12)"
-                                 : isPlaced ? "#F5F6FA" : "#fff",
-                        color:     isSel   ? "#3730a3"
-                                 : isPlaced ? "#C0C4CE" : "#1A1F2E",
-                      }}
-                    >
-                      {w}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      {!revealed ? (
-        <button
-          onClick={() => setRevealed(true)}
-          disabled={!allFilled}
-          style={{
-            width:"100%", padding:"13px", borderRadius:14, border:"none",
-            fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15,
-            cursor: allFilled ? "pointer" : "default",
-            background: allFilled ? "linear-gradient(135deg,#5B5BD6,#818cf8)" : "#E4E4E8",
-            color:      allFilled ? "#fff" : "#A1A1AA",
-            boxShadow:  allFilled ? "0 4px 14px rgba(91,91,214,.3)" : "none",
-            transition:"all .2s",
-          }}
-        >
-          {allFilled ? `✓ ${DONE_WORD[lang] || "تەواو"}` : `${filledCount} / ${totalBlanks} ${tApp(lang,"ubung_blanks")} ${tApp(lang,"ubung_filled")}`}
-        </button>
-      ) : (
-        <div>
-          <div style={{ textAlign:"center", padding:"16px", borderRadius:12, marginBottom:10,
-            background: score/totalBlanks >= .6 ? "rgba(16,185,129,.1)" : "rgba(239,68,68,.08)",
-            color:      score/totalBlanks >= .6 ? "#065f46" : "#991b1b" }}>
-            <div style={{ fontWeight:800, fontSize:20 }}>
-              {score >= totalBlanks*.8 ? "🎉" : score >= totalBlanks*.6 ? "👍" : "📚"}{" "}
-              {score} / {totalBlanks} {tApp(lang,"quiz_right")}
-            </div>
-            <div style={{ fontSize:13, marginTop:4, opacity:.8 }}>
-              {score >= totalBlanks*.8 ? tApp(lang,"result_great") : score >= totalBlanks*.6 ? tApp(lang,"result_good") : tApp(lang,"result_keep")}
-            </div>
-          </div>
-          <button onClick={reset} style={{ width:"100%", padding:"12px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:14, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff" }}>
-            {tApp(lang,"quiz_retry")} 🔄
-          </button>
-        </div>
-      )}
+      <div style={{ padding:"14px 18px 18px", borderTop:"1px solid #E4E4E8", display: open ? "" : "none" }}>
+        <SbQuiz exercises={exercises} lang={lang} />
       </div>
     </div>
   );

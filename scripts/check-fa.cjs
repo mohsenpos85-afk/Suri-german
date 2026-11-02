@@ -136,10 +136,9 @@ function extractLiteral(marker, openChar) {
   else Object.keys(lid.en).forEach((key) => { if (!lid.fa[key]) report('LID_T', 'missing fa.' + key); });
 
   // ---- All Journey stories (scene locations and lines) ----
-  const storyConsts = [...src.matchAll(/const\s+([A-Z0-9_]+_STORY)\s*=\s*\[/g)].map((m) => m[1]);
-  storyConsts.forEach((name) => {
-    const arr = extractLiteral('const ' + name + ' = [', '[');
-    if (!arr) return;
+  const { JOURNEY_STORIES } = await import('file://' + path.join(ROOT, 'src/data/journey.js').replace(/\\/g, '/'));
+  Object.entries(JOURNEY_STORIES).forEach(([lvl, arr]) => {
+    const name = 'L' + lvl;
     arr.forEach((scene, si) => {
       if (scene.place && !scene.place_fa) report('JOURNEY place', name + ' scene[' + si + ']');
       (scene.lines || []).forEach((ln, i) => {

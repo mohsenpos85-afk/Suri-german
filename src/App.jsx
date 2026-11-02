@@ -12,7 +12,7 @@ import {
   ChevronDown, Gamepad2, User, Menu, ScanText
 } from "lucide-react";
 import DocAssistant from "./DocAssistant.jsx";
-import { KU_DIALECTS, KU_DIALECT_UI, kuDialect } from "./data/kuDialects.js";
+import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -1559,8 +1559,9 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   const [newPw2, setNewPw2]       = useState("");
 
   const lang = answers.lang || "en";
-  const t = (key) => (OB_TRANS[lang]?.[key] ?? OB_TRANS.en[key] ?? key);
-  const dir = LANG_DIR[lang] || "ltr";
+  const _kd = lang === "ku" ? (answers.kuDialect || kuDialect()) : "sorani";
+  const t = (key) => (_kd !== "sorani" && KU_DIALECT_OB[_kd]?.[key]) || (OB_TRANS[lang]?.[key] ?? OB_TRANS.en[key] ?? key);
+  const dir = _kd === "kurmanji" ? "ltr" : (LANG_DIR[lang] || "ltr");
 
   const progressIdx = FLOW.indexOf(screen);
   const progress    = progressIdx <= 0 ? 0 : (progressIdx / (FLOW.length - 1)) * 100;

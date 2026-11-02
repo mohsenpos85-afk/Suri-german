@@ -4209,6 +4209,77 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
   );
 }
 
+// ── GapFill — inline gap chips + big option pills (exam Sprachbausteine) ──
+const GAP_T = {
+  tr:{ pick:"Boşluk için seç", done:"cevaplandı" }, en:{ pick:"Choose for gap", done:"answered" },
+  ar:{ pick:"اختر للفراغ", done:"تمت الإجابة" }, es:{ pick:"Elige para el hueco", done:"respondidas" },
+  uk:{ pick:"Обери для пропуску", done:"відповіді" }, fa:{ pick:"برای جای خالی انتخاب کن", done:"پاسخ داده" },
+  ku:{ pick:"بۆ بۆشایی هەڵبژێرە", done:"وەڵام دراوە" },
+};
+function GapFill({ text, gaps, bank, get, onPick, lang = "ku" }) {
+  const T = GAP_T[lang] || GAP_T.en;
+  const [active, setActive] = useState(0);
+  const segs = useMemo(() => {
+    const out = []; let last = 0; let m; const re = /_{2,}\s*(\d+)\s*_{2,}/g; const src = String(text || "");
+    while ((m = re.exec(src))) {
+      let gi = gaps.findIndex(g => String(g.n) === m[1]); if (gi < 0) gi = out.filter(s => s.gap !== undefined).length;
+      out.push({ t: src.slice(last, m.index) }); out.push({ gap: gi }); last = m.index + m[0].length;
+    }
+    out.push({ t: src.slice(last) });
+    return out;
+  }, [text, gaps]);
+  const inline = segs.some(s => s.gap !== undefined);
+  const answered = gaps.filter((_, i) => get(i) !== undefined).length;
+  const cur = Math.min(active, gaps.length - 1);
+  const opts = bank || gaps[cur]?.options || [];
+  const pick = (oi) => {
+    onPick(cur, oi);
+    const next = gaps.findIndex((_, i) => i !== cur && (i > cur) && get(i) === undefined);
+    const any = next >= 0 ? next : gaps.findIndex((_, i) => i !== cur && get(i) === undefined);
+    if (any >= 0) setActive(any);
+  };
+  const chip = (gi) => {
+    const v = get(gi), on = gi === cur;
+    return (
+      <button key={"g" + gi} onClick={() => setActive(gi)} aria-label={`Gap ${gaps[gi].n}`}
+        style={{ margin: "0 3px", minWidth: 54, padding: "2px 12px", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif",
+          border: `2px ${v !== undefined ? "solid" : "dashed"} ${on ? C.red : v !== undefined ? C.green : "#C4CAD8"}`,
+          background: v !== undefined ? "rgba(16,185,129,.1)" : on ? "rgba(229,72,77,.07)" : "#fff",
+          color: v !== undefined ? "#065f46" : C.muted, boxShadow: on ? "0 0 0 3px rgba(229,72,77,.15)" : "none", transition: "all .15s" }}>
+        {v !== undefined ? (bank ? bank[v] : gaps[gi].options[v]) : gaps[gi].n}
+      </button>
+    );
+  };
+  return (
+    <div style={{ display: "grid", gap: 12 }}>
+      <div dir="ltr" style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 18px", lineHeight: 2.5, fontSize: 15.5, fontFamily: "'Satoshi',system-ui,sans-serif" }}>
+        {inline ? segs.map((s, i) => s.gap !== undefined ? chip(s.gap) : <span key={i}>{s.t}</span>) : <De size={15}>{text}</De>}
+      </div>
+      {!inline && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{gaps.map((g, gi) => chip(gi))}</div>
+      )}
+      <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <span style={{ fontWeight: 700, fontSize: 13, color: C.red }}>{T.pick} {gaps[cur]?.n}</span>
+          <span dir="ltr" style={{ fontSize: 12, color: C.muted }}>{answered}/{gaps.length} {T.done}</span>
+        </div>
+        <div dir="ltr" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {opts.map((o, oi) => {
+            const on = get(cur) === oi;
+            const usedElsewhere = !!bank && gaps.some((_, gi) => gi !== cur && get(gi) === oi);
+            return (
+              <button key={oi} onClick={() => pick(oi)} aria-pressed={on}
+                style={{ padding: "10px 18px", borderRadius: 99, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .12s",
+                  border: `1.5px solid ${on ? C.red : "#D5DAE6"}`, background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, opacity: usedElsewhere ? 0.45 : 1,
+                  boxShadow: on ? "0 6px 14px rgba(229,72,77,.28)" : "0 1px 3px rgba(0,0,0,.06)" }}>{o}</button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Sprachbausteine — modern one-at-a-time quiz (touch drag, instant feedback) ──
 const SB_T = {
   tr:{ exam:"Sınav modu", check:"Devam", finish:"Bitir", retry:"Yeniden başla", perfect:"Mükemmel!", good:"İyi iş!", keep:"Biraz daha çalış", mistakes:"Hata yaptığın kelimeler", hint:"Kelimeyi boşluğa sürükle ya da dokunarak seç", ok:"Doğru", of:"Alıştırma", timeout:"Süre doldu", correct:"doğru" },
@@ -8031,7 +8102,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
   const a = ans[sec.type] || {};
   const setA = (v) => setAns((p) => ({ ...p, [sec.type]: v }));
   const Opt = ({ on, active, children }) => (
-    <button onClick={on} style={{ textAlign: "right", background: active ? "#e3f0ef" : "#fff", border: `1.5px solid ${active ? C.red : C.line}`, color: C.ink, padding: "9px 13px", borderRadius: 9, fontSize: 14.5, fontWeight: active ? 700 : 400 }}>{children}</button>
+    <button onClick={on} style={{ textAlign: "right", background: active ? "#fdecec" : "#fff", border: `1.5px solid ${active ? C.red : C.line}`, color: C.ink, padding: "12px 16px", borderRadius: 12, cursor: "pointer", transition: "all .12s", fontSize: 14.5, fontWeight: active ? 700 : 400 }}>{children}</button>
   );
 
   return (
@@ -8053,34 +8124,9 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
               <div key={pi} style={{ display: "grid", gap: 12 }}>
                 {p.instruction && <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }} dir="auto">{p.instruction}</div>}
 
-                {(p.kind === "gap") && (<>
-                  <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{p.text}</De></div>
-                  {p.gaps.map((g, i) => (
-                    <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                      {g.options.map((o, oi) => {
-                        const on = a[pi + "_" + i] === oi;
-                        return <button key={oi} onClick={() => setPA(i, oi)} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 8, padding: "5px 11px", fontSize: 14, fontWeight: on ? 700 : 400 }}><span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif" }}>{o}</span></button>;
-                      })}
-                    </div>
-                  ))}
-                </>)}
+                {(p.kind === "gap") && <GapFill lang={lang} text={p.text} gaps={p.gaps} get={(i) => a[pi + "_" + i]} onPick={(i, oi) => setPA(i, oi)} />}
 
-                {(p.kind === "wordbank") && (<>
-                  <div style={{ background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 }}>
-                    {p.options.map((o, oi) => <span key={oi} dir="ltr" style={{ display: "inline-block", margin: 3, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 8, padding: "4px 9px", fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 13.5 }}>{String.fromCharCode(97 + oi)}) {o}</span>)}
-                  </div>
-                  <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{p.text}</De></div>
-                  {p.gaps.map((g, i) => (
-                    <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                      {p.options.map((o, oi) => {
-                        const on = a[pi + "_" + i] === oi;
-                        return <button key={oi} onClick={() => setPA(i, oi)} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 7, padding: "5px 10px", fontSize: 13.5, fontWeight: 700 }}><span dir="ltr">{String.fromCharCode(97 + oi)}</span></button>;
-                      })}
-                    </div>
-                  ))}
-                </>)}
+                {(p.kind === "wordbank") && <GapFill lang={lang} text={p.text} gaps={p.gaps} bank={p.options} get={(i) => a[pi + "_" + i]} onPick={(i, oi) => setPA(i, oi)} />}
 
                 {(p.kind === "rf") && (<>
                   {p.text && <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 1.9 }} dir="ltr"><De size={14.5}>{p.text}</De></div>}
@@ -8133,18 +8179,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             );
           })}
 
-          {!content.parts && sec.type === "sprachbausteine" && (<>
-            <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{content.text}</De></div>
-            {content.gaps.map((g, i) => (
-              <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                {g.options.map((o, oi) => {
-                  const on = a[i] === oi;
-                  return <button key={oi} onClick={() => setA({ ...a, [i]: oi })} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 8, padding: "5px 11px", fontSize: 14, fontWeight: on ? 700 : 400 }}><span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif" }}>{o}</span></button>;
-                })}
-              </div>
-            ))}
-          </>)}
+          {!content.parts && sec.type === "sprachbausteine" && <GapFill lang={lang} text={content.text} gaps={content.gaps} get={(i) => a[i]} onPick={(i, oi) => setA({ ...a, [i]: oi })} />}
 
           {!content.parts && sec.type === "hoeren" && (<>
             <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }}>Teil A — RICHTIG (+) / FALSCH (–)</div>

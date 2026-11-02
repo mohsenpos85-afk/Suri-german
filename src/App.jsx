@@ -251,6 +251,7 @@ import { BUNDESLAENDER, GENERAL_QUESTIONS, STATE_QUESTIONS } from './data/lidDat
 import { lidTr } from './data/lidTranslations';
 import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
+import { useNavLayer, useNavState, navBack } from './lib/nav';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -2393,6 +2394,26 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
   );
 }
 
+const BACK_LABEL = { ku:"گەڕانەوە", tr:"Geri", de:"Zurück", en:"Back", fa:"بازگشت", es:"Atrás", uk:"Назад", ar:"رجوع" };
+function GlobalBackButton({ lang }) {
+  const { canBack, modal } = useNavState();
+  if (!canBack) return null;
+  const label = BACK_LABEL[lang] || "Back";
+  return (
+    <button type="button" aria-label={label} onClick={() => navBack()}
+      style={{
+        position:"fixed", top:12, insetInlineStart:12, zIndex: modal ? 100001 : 210,
+        display:"flex", alignItems:"center", gap:4, height:40, padding:"0 14px 0 10px",
+        borderRadius:20, border:"1px solid rgba(91,91,214,.18)", background:"rgba(255,255,255,.94)",
+        backdropFilter:"blur(8px)", boxShadow:"0 2px 10px rgba(30,30,60,.12)", color:"#5B5BD6",
+        fontWeight:700, fontSize:14, cursor:"pointer", WebkitTapHighlightColor:"transparent",
+      }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: (typeof document!=="undefined" && document.dir==="rtl") ? "scaleX(-1)" : "none" }}><path d="M15 18l-6-6 6-6"/></svg>
+      {label}
+    </button>
+  );
+}
+
 export default function App() {
   const [appLang, setAppLang] = useState(() => { try { return JSON.parse(localStorage.getItem("ob_data")||"{}").lang || "tr"; } catch { return "tr"; } });
   useEffect(() => {
@@ -2408,8 +2429,22 @@ export default function App() {
   const [firstJourneyStage, setFirstJourneyStage] = useState(null); // null | "intro" | "reading" | "summary" — auto-start Chapter 1 for brand-new users
   const [firstJourneySummary, setFirstJourneySummary] = useState(null); // { xpEarned, sessionWords }
   const [spielInitialGame, setSpielInitialGame] = useState(null); // deep-link Das Spiel into a specific game (e.g. from the practice CTA)
-  const [tab, setTab] = useState("home");
+  const [tab, setTabRaw] = useState("home");
+  const tabRef = useRef("home"); tabRef.current = tab;
+  const tabHist = useRef([]);
+  const setTab = useCallback((n) => {
+    const p = tabRef.current;
+    if (n === p) return;
+    if (n === "home") tabHist.current = []; else tabHist.current.push(p);
+    if (tabHist.current.length > 40) tabHist.current.shift();
+    tabRef.current = n; setTabRaw(n);
+  }, []);
+  useNavLayer(tab !== "home", () => {
+    const prev = tabHist.current.pop() || "home";
+    tabRef.current = prev; setTabRaw(prev);
+  }, { depth: 0 }, tab);
   const [showMenu, setShowMenu] = useState(false);
+  useNavLayer(showMenu, () => setShowMenu(false), { depth: 8, modal: true });
   const [openLesson, setOpenLesson] = useState(null);
   const [lessonsLevel, setLessonsLevel] = useState(null);
   const [progress, setProgress] = useState(() => {
@@ -2471,7 +2506,7 @@ export default function App() {
     if (newTab === tab) return; // aynı sayfadaysa hareket etme
     scrollSave.current[tab] = window.scrollY;
     setTab(newTab);
-  }, [tab]);
+  }, [tab, setTab]);
   useEffect(() => {
     const saved = scrollSave.current[tab];
     requestAnimationFrame(() =>
@@ -2877,6 +2912,7 @@ export default function App() {
         {tab === "docs" && <DocAssistant lang={appLang} onBack={() => goToTab("home")} callClaude={callClaude} privacyUrl="/legal/datenschutz.html" impressumUrl="/legal/impressum.html" />}
       </main>}
 
+      {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}
       {!intro && !onboarding && streak.count > 0 && (
         <div style={{
@@ -9869,6 +9905,13 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [masalDictEntry, setMasalDictEntry] = useState(null); // masal reader: tapped-word dictionary popup
   const [dialogDictEntry, setDialogDictEntry] = useState(null); // dialog reader: tapped umgangssprachlich word popup
   useEffect(() => { setDialogDictEntry(null); }, [mode, level, openDialogId]);
+  useNavLayer(!!level, () => setLevel(null), { depth: 1 });
+  useNavLayer(!!mode, () => setMode(null), { depth: 2 });
+  useNavLayer(!!examType, () => setExamType(null), { depth: 3 });
+  useNavLayer(!!examLevel, () => setExamLevel(null), { depth: 4 });
+  useNavLayer(!!openDialogId, () => setOpenDialogId(null), { depth: 3 });
+  useNavLayer(!!openWordsSub, () => setOpenWordsSub(null), { depth: 3 });
+  useNavLayer(!!selMasalId, () => setSelMasalId(null), { depth: 3 });
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
   useEffect(() => { setSelGrammarIdx(0); setSelVerbIdx(0); setSelVocabIdx(0); setSelUbungIdx(0); setSelMasalId(null); window.scrollTo(0, 0); }, [mode, level]);
@@ -20059,6 +20102,9 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   const [justUnlocked, setJustUnlocked] = useState(null);
   const [quizGate, setQuizGate] = useState(null); // { levelId, scenes, sessionWords } — chapter finished, quiz must be passed to unlock
   const [sessionSummary, setSessionSummary] = useState(null); // { xpEarned, sessionWords, card } — shown after passing the quiz
+  useNavLayer(!!bookReader, () => setBookReader(null), { depth: 5, modal: true });
+  useNavLayer(!!quizGate, () => setQuizGate(null), { depth: 6, modal: true });
+  useNavLayer(!!sessionSummary, () => setSessionSummary(null), { depth: 7, modal: true });
   const [pendingKey, setPendingKey] = useState(() => {
     try { return JSON.parse(localStorage.getItem('fuxi_pending_key') || 'null'); } catch { return null; }
   }); // { fromLevelId, toLevelId } — a key has been earned and is waiting to be dragged onto its lock
@@ -20996,6 +21042,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
 
 function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTab }) {
   const [activeGame, setActiveGame] = useState(initialGame);
+  useNavLayer(!!activeGame, () => setActiveGame(null), { depth: 1 });
   useEffect(() => { if (initialGame && onConsumeInitialGame) onConsumeInitialGame(); }, []);
 
   if (activeGame === 'word-match') return <WordMatch lang={lang} onBack={()=>setActiveGame(null)} />;
@@ -21084,6 +21131,7 @@ function LiD({ lang = "ku" }) {
   ) : null;
 
   const [view, setView]              = useState("menu");
+  useNavLayer(view !== "menu", () => setView("menu"), { depth: 1 });
   const [bundesland, setBundesland]  = useState("");
   const [stateWarn, setStateWarn]    = useState(false);
 

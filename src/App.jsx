@@ -488,7 +488,7 @@ function LevelPills({ value, onChange }) {
               transform: active ? "translateY(-1px)" : "none",
             }}>
             <span style={{ fontSize: 16, fontWeight: 800, lineHeight: 1 }}>{lv.id}</span>
-            <span style={{ fontSize: 11, fontWeight: 600, opacity: active ? .9 : .75, letterSpacing: ".01em" }}>{lv.label}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, opacity: active ? .9 : .75, letterSpacing: ".01em" }}>{lv.label}</span>
           </button>
         );
       })}
@@ -616,7 +616,7 @@ function Intro({ onDone }) {
           }}>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:i===2?15:22, color:"#5B5BD6", fontVariantNumeric:"tabular-nums", lineHeight:1.3 }}>{s.val}</div>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:600, fontSize:13, color:"#18181B", marginTop:3 }}>{s.label}</div>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:11, color:"#A1A1AA", marginTop:2 }}>{s.sub}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#A1A1AA", marginTop:2 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -1396,9 +1396,17 @@ function ProfileScreen({ lang="ku", onLogout }) {
           <div key={i} style={{ background:"#fff", borderRadius:16, padding:"14px 10px", textAlign:"center",
             border:"1px solid rgba(0,0,0,0.06)", boxShadow:"0 2px 8px rgba(0,0,0,0.04)" }}>
             <div style={{ fontSize:18, fontWeight:900, color:"#5B5BD6" }}>{s.val}</div>
-            <div style={{ fontSize:11, color:"#71717A", marginTop:3 }}>{s.label}</div>
+            <div style={{ fontSize:12, color:"#71717A", marginTop:3 }}>{s.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* Theme */}
+      <div style={{ padding:"0 16px 12px" }}>
+        <button onClick={() => { const d = document.documentElement.dataset.theme !== "dark"; document.documentElement.dataset.theme = d ? "dark" : "light"; try { localStorage.setItem("suri_theme", d ? "dark" : "light"); } catch {} }}
+          style={{ width:"100%", padding:"14px", borderRadius:14, border:`1.5px solid ${C.line}`, background:"transparent", color:C.ink, fontWeight:700, fontSize:15, cursor:"pointer" }}>
+          🌓 {({ tr:"Karanlık / Aydınlık mod", en:"Dark / Light mode", ar:"الوضع الداكن / الفاتح", es:"Modo oscuro / claro", uk:"Темна / світла тема", fa:"حالت تیره / روشن", ku:"دۆخی تاریک / ڕووناک" })[lang] || "Dark / Light mode"}
+        </button>
       </div>
 
       {/* Logout */}
@@ -1887,7 +1895,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               <span style={{ fontWeight:800, fontSize:12, letterSpacing:"1px", color: answers.lang===l.v ? "#fff" : "#71717A" }}>{l.code}</span>
             </div>
             <span style={{ fontWeight:700, fontSize:13, color: answers.lang===l.v ? "#5B5BD6" : "#18181B" }}>{l.label}</span>
-            <span style={{ fontSize:11, color:"#A1A1AA" }}>{l.native}</span>
+            <span style={{ fontSize:12, color:"#A1A1AA" }}>{l.native}</span>
           </button>
         ))}
       </div>
@@ -2009,7 +2017,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
             <div style={{ fontWeight:600, fontSize:12, color: answers.daily===d.v ? "#5B5BD6" : "#71717A" }}>
               {t("unit_min")}
             </div>
-            <div style={{ fontSize:11, color:"#A1A1AA", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
+            <div style={{ fontSize:12, color:"#A1A1AA", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
           </button>
         ))}
       </div>
@@ -2143,7 +2151,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
                     border: regGender===g.v ? "2px solid #5B5BD6" : "1.5px solid #E4E4E8",
                     background: regGender===g.v ? "rgba(91,91,214,.1)" : "#fff",
                     color: regGender===g.v ? "#5B5BD6" : "#71717A",
-                    fontWeight:700, fontSize:11, cursor:"pointer", transition:"all .15s" }}>
+                    fontWeight:700, fontSize:12, cursor:"pointer", transition:"all .15s" }}>
                   {g.label}
                 </button>
               ))}
@@ -2316,11 +2324,6 @@ const SESSION_COMPLETE_T = {
 function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
   const t = (k) => SESSION_COMPLETE_T[lang]?.[k] ?? SESSION_COMPLETE_T.tr[k];
 
-  useEffect(() => {
-    const timer = setTimeout(onContinue, 4000);
-    return () => clearTimeout(timer);
-  }, [onContinue]);
-
   const topWords = sessionWords.slice(0, 5);
 
   return (
@@ -2340,7 +2343,7 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
       {streakCount > 0 && (
         <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "14px 20px", textAlign: "center", minWidth: 96 }}>
           <div style={{ fontSize: 24, fontWeight: 900, color: "#fb923c" }}>🔥{streakCount}</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.65)", marginTop: 2 }}>{t("streak")}</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)", marginTop: 2 }}>{t("streak")}</div>
         </div>
       )}
       {topWords.length > 0 && (
@@ -2797,7 +2800,7 @@ export default function App() {
                     </span>
                     <span style={{ minWidth:0 }}>
                       <span style={{ display:"block", fontWeight:800, fontSize:14.5, color:C.ink }}>{dt}</span>
-                      <span style={{ display:"block", fontSize:11.5, color:C.muted, marginTop:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{ds}</span>
+                      <span style={{ display:"block", fontSize:12.5, color:C.muted, marginTop:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{ds}</span>
                     </span>
                   </button>
                 );
@@ -2864,7 +2867,7 @@ export default function App() {
             fontVariantNumeric: 'tabular-nums',
           }}>{streak.count}</span>
           {streak.count >= 7 && (
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,.85)', fontWeight: 600 }}>gün</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,.85)', fontWeight: 600 }}>gün</span>
           )}
         </div>
       )}
@@ -2905,7 +2908,7 @@ export default function App() {
                   transition:'background .2s ease',
                 }}>
                 <Icon size={21} strokeWidth={active?2.2:1.7} color={active?'#5B5BD6':'#9ca3af'} fill={active&&key==='favs'?'#5B5BD6':'none'} />
-                <span style={{ fontSize:9.5, fontWeight:active?700:400, letterSpacing:'.01em', marginTop:1 }}>
+                <span style={{ fontSize:12.5, fontWeight:active?700:400, letterSpacing:'.01em', marginTop:1 }}>
                   {tApp(appLang, labelKey)}
                 </span>
               </button>
@@ -3484,7 +3487,7 @@ function LevelComparison({ lang = "ku" }) {
             }}>›</button>
 
           <div style={{ textAlign:"center" }}>
-            <div style={{ fontSize:9.5, fontWeight:800, color:"#FF7E2E", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
+            <div style={{ fontSize:12.5, fontWeight:800, color:"#FF7E2E", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
               {isEmpty ? "A1" : `A1  ·  ${idx + 1} / ${total}`}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
@@ -3537,7 +3540,7 @@ function LevelComparison({ lang = "ku" }) {
             border:`1.5px solid ${lv.from}30`,
             minHeight:60, display:"flex", flexDirection:"column", justifyContent:"center",
           }}>
-            <div style={{ fontSize:9.5, fontWeight:800, color:lv.from, letterSpacing:".1em", marginBottom:7, textTransform:"uppercase" }}>
+            <div style={{ fontSize:12.5, fontWeight:800, color:lv.from, letterSpacing:".1em", marginBottom:7, textTransform:"uppercase" }}>
               {lv.label}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", gap:6 }}>
@@ -3826,7 +3829,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
                 <div style={{ marginTop:7 }}>
                   <div style={{ display:"inline-flex", alignItems:"center", gap:4,
                     background:"linear-gradient(135deg,#FFCE00,#FFA500)", borderRadius:99,
-                    padding:"3px 10px", fontSize:10, fontWeight:800, color:"#1A1A1A", letterSpacing:".05em" }}>
+                    padding:"3px 10px", fontSize:12, fontWeight:800, color:"#1A1A1A", letterSpacing:".05em" }}>
                     ★ CEFR A1–C2
                   </div>
                 </div>
@@ -3857,10 +3860,10 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
               borderRadius:3, transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
           </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:5 }}>
-            <div style={{ fontSize:11, color:"rgba(255,255,255,.55)" }}>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.55)" }}>
               {JOURNEY_LEVELS[journeyLevel-1]?.e} {lang==='tr'?`${journeyLevel}. seviye`: lang==='en'?`Level ${journeyLevel}`:lang==='ar'?`المستوى ${journeyLevel}`:lang==='es'?`Nivel ${journeyLevel}`:`ئاست ${journeyLevel}`}
             </div>
-            <div style={{ fontSize:11, color:"rgba(255,255,255,.7)", fontWeight:700 }}>{journeyPct}%</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.7)", fontWeight:700 }}>{journeyPct}%</div>
           </div>
         </div>
       </div>
@@ -3884,7 +3887,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
           {/* Pyramid */}
           <div style={{ flex:"1 1 240px", maxWidth:300 }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
-            <div style={{ fontSize:10.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
               selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} />
           </div>
@@ -3892,7 +3895,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
           {/* Hexagon */}
           <div style={{ flex:"1 1 260px", maxWidth:300, display:"flex", flexDirection:"column", alignItems:"center" }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
-            <div style={{ fontSize:10.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
             <SkillHexagon data={hexData} />
           </div>
         </div>
@@ -3900,7 +3903,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
         {/* Aktuelles Level summary */}
         <div style={{ marginTop:20, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)",
           borderRadius:16, padding:"14px 18px", textAlign:"center" }}>
-          <div style={{ fontSize:11, color:"rgba(255,255,255,.5)", fontWeight:700, marginBottom:4 }}>{ht.current}</div>
+          <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", fontWeight:700, marginBottom:4 }}>{ht.current}</div>
           <div style={{ fontSize:22, fontWeight:900, color:"#fff", marginBottom:6 }}>{currentLevelId}</div>
           <div style={{ fontSize:13, color:"#A78BFA", fontWeight:700, marginBottom:8 }}>
             {levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}% {ht.done}
@@ -3951,7 +3954,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
             style={{ transition:"stroke-dashoffset .6s cubic-bezier(.22,1,.36,1)" }} />
         </svg>
         <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:10, fontWeight:800, color:"rgba(255,255,255,.95)" }}>
+          fontSize:12, fontWeight:800, color:"rgba(255,255,255,.95)" }}>
           {pct}%
         </div>
       </div>
@@ -3994,7 +3997,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
                   <div style={{ fontSize:28, fontWeight:900, color:"#fff", lineHeight:1, letterSpacing:"-.02em" }}>
                     {lv.id}
                   </div>
-                  <div style={{ fontSize:11, color:"rgba(255,255,255,.78)", marginTop:3, fontWeight:600 }}>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.78)", marginTop:3, fontWeight:600 }}>
                     {lv['label' + lang.charAt(0).toUpperCase() + lang.slice(1)] || lv.label}
                   </div>
                 </div>
@@ -4020,10 +4023,10 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
 
               {/* stats pills */}
               <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:12 }}>
-                <span style={{ fontSize:10.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
+                <span style={{ fontSize:12.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
                   {lv.lessonCount} {STAT_LABEL.lesson[lang] || STAT_LABEL.lesson.ku}
                 </span>
-                <span style={{ fontSize:10.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
+                <span style={{ fontSize:12.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
                   {lv.vocabCount} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}
                 </span>
               </div>
@@ -4291,7 +4294,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
           <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
             <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
               {exi + 1}. {ex.title}
-              <span style={{ fontSize:11, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
+              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
             </div>
             <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
               {ex.parts.flatMap((part, pi) => {
@@ -4320,9 +4323,9 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
                         fontWeight: hasW ? 700 : 400, fontSize:13,
                       }}
                     >
-                      {hasW ? word : <span style={{ fontSize:11, opacity:.4 }}>···</span>}
+                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
                       {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:10, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
+                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
                           ✓ {ex.answers[bi]}
                         </span>
                       )}
@@ -4392,7 +4395,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
           </div>
           <div>
             <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang==="tr" ? "Sprachbausteine — Boşluk Doldurma" : lang==="en" ? "Sprachbausteine — Fill the Gap" : lang==="ar" ? "Sprachbausteine — املأ الفراغ" : lang === "es" ? "Sprachbausteine — Rellena el hueco" : lang === "uk" ? "Sprachbausteine — Заповніть пропуск" : lang === "fa" ? "Sprachbausteine — جای خالی را پر کنید" : "Sprachbausteine — بۆشایی پڕکردنەوە"}</div>
-            <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? "5 ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? "5 ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
           </div>
         </div>
         <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -4408,7 +4411,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
           <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
             <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
               {exi + 1}. {ex.title}
-              <span style={{ fontSize:11, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
+              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
             </div>
 
             <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
@@ -4452,9 +4455,9 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
                         fontWeight: hasW ? 700 : 400, fontSize:13,
                       }}
                     >
-                      {hasW ? word : <span style={{ fontSize:11, opacity:.4 }}>···</span>}
+                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
                       {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:10, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
+                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
                           ✓ {ex.answers[bi]}
                         </span>
                       )}
@@ -4987,7 +4990,7 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
                         </div>
                         <div style={{ fontSize: 12.5, fontWeight: 700, color: "#1A1F2E", wordBreak: "break-all" }} dir="ltr">{url}</div>
                       </div>
-                      <div style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.5, paddingInlineStart: 28 }}>{desc}</div>
+                      <div style={{ fontSize: 12.5, color: C.muted, lineHeight: 1.5, paddingInlineStart: 28 }}>{desc}</div>
                     </div>
                   );
                 })}
@@ -5271,7 +5274,7 @@ function SchreibenAItem({ ex, idx, lang = "ku" }) {
       <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13, lineHeight: 1.75 }} dir="ltr">
         {ex.personInfo}
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.personInfoTr||ex.personInfoKu) : lang==="en" ? (ex.personInfoEn||ex.personInfoKu) : lang==="ar" ? (ex.personInfoAr||ex.personInfoKu) : lang === "es" ? (ex.personInfoEs||ex.personInfoKu) : lang==="uk" ? (ex.personInfoUk||ex.personInfoEn||ex.personInfoKu) : lang==="fa" ? (ex.personInfoFa||ex.personInfoEn||ex.personInfoKu) : ex.personInfoKu}</div>
+      <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.personInfoTr||ex.personInfoKu) : lang==="en" ? (ex.personInfoEn||ex.personInfoKu) : lang==="ar" ? (ex.personInfoAr||ex.personInfoKu) : lang === "es" ? (ex.personInfoEs||ex.personInfoKu) : lang==="uk" ? (ex.personInfoUk||ex.personInfoEn||ex.personInfoKu) : lang==="fa" ? (ex.personInfoFa||ex.personInfoEn||ex.personInfoKu) : ex.personInfoKu}</div>
       <div style={{ display: "grid", gap: 5, marginBottom: 12 }}>
         {ex.fields.map((f, i) => (
           <div key={i} onClick={() => toggleField(i)}
@@ -5333,14 +5336,14 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
       <div style={{ background: "#FFF7E6", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75 }} dir="ltr">
         {ex.task}
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{ex["task"+lang.charAt(0).toUpperCase()+lang.slice(1)] || ex.taskKu}</div>
+      <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 12 }}>{ex["task"+lang.charAt(0).toUpperCase()+lang.slice(1)] || ex.taskKu}</div>
       <div style={{ marginBottom: 10 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 5 }}>{lang==="tr" ? "Şu noktalara değinmelisiniz:" : lang==="en" ? "You should cover these points:" : lang==="ar" ? "يجب أن تتناول هذه النقاط:" : lang === "es" ? "Debes cubrir estos puntos:" : lang === "uk" ? "Ви маєте висвітлити ці пункти:" : lang === "fa" ? "باید به این نکات بپردازید:" : "دەبێت لەم خاڵانە بنووسیت:"}</div>
         {ex.bullets.map((b, i) => (
           <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 4 }}>
             <span style={{ color: "#F59E0B", fontWeight: 800, flexShrink: 0 }}>•</span>
             <span style={{ fontSize: 13 }} dir="ltr">{b.de}</span>
-            <span style={{ fontSize: 11.5, color: C.muted }}>({tC(b, lang)})</span>
+            <span style={{ fontSize: 12.5, color: C.muted }}>({tC(b, lang)})</span>
           </div>
         ))}
       </div>
@@ -5360,9 +5363,9 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
       </button>
       {showModel && (
         <div style={{ marginTop: 10, background: "#F0FDF4", borderRadius: 10, padding: "12px 14px", border: "1.5px solid #86EFAC" }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: "#16A34A", marginBottom: 6 }}>✓ Musterlösung</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: "#16A34A", marginBottom: 6 }}>✓ Musterlösung</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.85, whiteSpace: "pre-line" }} dir="ltr">{ex.modelAnswer}</div>
-          <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang === "es" ? (ex.modelAnswerEs||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
+          <div style={{ fontSize: 12.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang === "es" ? (ex.modelAnswerEs||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
         </div>
       )}
     </div>
@@ -5406,9 +5409,9 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
       <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FDF4FF", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12.5, border: "1px solid #E9D5FF" }}>
         <span style={{ fontWeight: 700, color: "#7C3AED" }}>{ex.person}</span>
-        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang === "es" ? (ex.personEs||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
+        <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang === "es" ? (ex.personEs||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? "Her karta tıklayarak örneği gör:" : lang==="en" ? "Tap each card to see the example:" : lang==="ar" ? "انقر كل بطاقة لرؤية المثال:" : lang === "es" ? "Toca cada tarjeta para ver el ejemplo:" : lang === "uk" ? "Торкніться кожної картки, щоб побачити приклад:" : lang === "fa" ? "روی هر کارت بزنید تا مثال را ببینید:" : "هەر کارتێک کلیک بکە نموونەکە ببینیت:"}</div>
+      <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? "Her karta tıklayarak örneği gör:" : lang==="en" ? "Tap each card to see the example:" : lang==="ar" ? "انقر كل بطاقة لرؤية المثال:" : lang === "es" ? "Toca cada tarjeta para ver el ejemplo:" : lang === "uk" ? "Торкніться кожної картки, щоб побачити приклад:" : lang === "fa" ? "روی هر کارت بزنید تا مثال را ببینید:" : "هەر کارتێک کلیک بکە نموونەکە ببینیت:"}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
         {ex.prompts.map((p, i) => (
           <div key={i} onClick={() => toggle(i)}
@@ -5416,11 +5419,11 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
               border: `1.5px solid ${openCards[i] ? "#86EFAC" : "#E4E4E8"}`,
               borderRadius: 10, padding: "10px 12px", cursor: "pointer", transition: "all .15s", userSelect: "none" }}>
             <div style={{ fontSize: 12.5, fontWeight: 700, color: openCards[i] ? "#16A34A" : "#7C3AED" }}>{p.topic}</div>
-            <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }} dir="ltr">{p.question}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }} dir="ltr">{p.question}</div>
             {openCards[i] && (
               <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid #86EFAC" }}>
                 <div style={{ fontSize: 12.5, fontWeight: 600, color: "#16A34A", lineHeight: 1.5 }} dir="ltr">✓ {p.example}</div>
-                <div style={{ fontSize: 11.5, color: C.muted, marginTop: 3 }}>{tC(p, lang)}</div>
+                <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{tC(p, lang)}</div>
               </div>
             )}
           </div>
@@ -5475,21 +5478,21 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
       <div style={{ background: "#FFF0F5", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75, border: "1px solid #FBCFE8" }} dir="ltr">
         {ex.scenario}
       </div>
-      <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.scenarioTr||ex.scenarioKu) : lang==="en" ? (ex.scenarioEn||ex.scenarioKu) : lang==="ar" ? (ex.scenarioAr||ex.scenarioKu) : lang === "es" ? (ex.scenarioEs||ex.scenarioKu) : lang==="uk" ? (ex.scenarioUk||ex.scenarioEn||ex.scenarioKu) : lang==="fa" ? (ex.scenarioFa||ex.scenarioEn||ex.scenarioKu) : ex.scenarioKu}</div>
+      <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.scenarioTr||ex.scenarioKu) : lang==="en" ? (ex.scenarioEn||ex.scenarioKu) : lang==="ar" ? (ex.scenarioAr||ex.scenarioKu) : lang === "es" ? (ex.scenarioEs||ex.scenarioKu) : lang==="uk" ? (ex.scenarioUk||ex.scenarioEn||ex.scenarioKu) : lang==="fa" ? (ex.scenarioFa||ex.scenarioEn||ex.scenarioKu) : ex.scenarioKu}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
         <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px" }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Senin rolün" : lang==="en" ? "Your role" : lang==="ar" ? "دورك" : lang === "es" ? "Tu papel" : lang === "uk" ? "Твоя роль" : lang === "fa" ? "نقش تو" : "ڕۆڵی تۆ"}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Senin rolün" : lang==="en" ? "Your role" : lang==="ar" ? "دورك" : lang === "es" ? "Tu papel" : lang === "uk" ? "Твоя роль" : lang === "fa" ? "نقش تو" : "ڕۆڵی تۆ"}</div>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#5B5BD6" }}>{lang==="tr" ? (ex.yourRoleTr||ex.yourRoleKu) : lang==="en" ? (ex.yourRoleEn||ex.yourRoleKu) : lang==="ar" ? (ex.yourRoleAr||ex.yourRoleKu) : lang === "es" ? (ex.yourRoleEs||ex.yourRoleKu) : lang==="uk" ? (ex.yourRoleUk||ex.yourRoleEn||ex.yourRoleKu) : lang==="fa" ? (ex.yourRoleFa||ex.yourRoleEn||ex.yourRoleKu) : ex.yourRoleKu}</div>
-          <div style={{ fontSize: 11.5, color: C.muted }} dir="ltr">{ex.yourRole}</div>
+          <div style={{ fontSize: 12.5, color: C.muted }} dir="ltr">{ex.yourRole}</div>
         </div>
         <div style={{ background: "#F5F5FA", borderRadius: 10, padding: "10px 12px" }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Diğer kişinin rolü" : lang==="en" ? "The other person's role" : lang==="ar" ? "دور الشخص الآخر" : lang === "es" ? "El papel de la otra persona" : lang === "uk" ? "Роль співрозмовника" : lang === "fa" ? "نقش طرف مقابل" : "ڕۆڵی ئەوی دیکە"}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Diğer kişinin rolü" : lang==="en" ? "The other person's role" : lang==="ar" ? "دور الشخص الآخر" : lang === "es" ? "El papel de la otra persona" : lang === "uk" ? "Роль співрозмовника" : lang === "fa" ? "نقش طرف مقابل" : "ڕۆڵی ئەوی دیکە"}</div>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#374151" }}>{lang==="tr" ? (ex.partnerRoleTr||ex.partnerRoleKu) : lang==="en" ? (ex.partnerRoleEn||ex.partnerRoleKu) : lang==="ar" ? (ex.partnerRoleAr||ex.partnerRoleKu) : lang === "es" ? (ex.partnerRoleEs||ex.partnerRoleKu) : lang==="uk" ? (ex.partnerRoleUk||ex.partnerRoleEn||ex.partnerRoleKu) : lang==="fa" ? (ex.partnerRoleFa||ex.partnerRoleEn||ex.partnerRoleKu) : ex.partnerRoleKu}</div>
-          <div style={{ fontSize: 11.5, color: C.muted }} dir="ltr">{ex.partnerRole}</div>
+          <div style={{ fontSize: 12.5, color: C.muted }} dir="ltr">{ex.partnerRole}</div>
         </div>
       </div>
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, color: C.muted, marginBottom: 6 }}>🗣️ {lang==="tr" ? "Bu ifadeleri kullanabilirsin:" : lang==="en" ? "You can use these phrases:" : lang==="ar" ? "يمكنك استخدام هذه العبارات:" : lang === "es" ? "Puedes usar estas frases:" : lang === "uk" ? "Ви можете використати ці фрази:" : lang === "fa" ? "می‌توانید از این عبارات استفاده کنید:" : "دەتوانیت ئەم ووتانەت بەکار بێنیت:"}</div>
+        <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 6 }}>🗣️ {lang==="tr" ? "Bu ifadeleri kullanabilirsin:" : lang==="en" ? "You can use these phrases:" : lang==="ar" ? "يمكنك استخدام هذه العبارات:" : lang === "es" ? "Puedes usar estas frases:" : lang === "uk" ? "Ви можете використати ці фрази:" : lang === "fa" ? "می‌توانید از این عبارات استفاده کنید:" : "دەتوانیت ئەم ووتانەت بەکار بێنیت:"}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
           {ex.hints.map((h, i) => (
             <span key={i} style={{ background: "#fff", border: "1.5px solid #E4E4E8", borderRadius: 8, padding: "4px 10px", fontSize: 12 }} dir="ltr">{h}</span>
@@ -5513,7 +5516,7 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
                 <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
                   background: isYou ? "#5B5BD6" : "#E4E4E8",
                   color: isYou ? "#fff" : "#374151",
-                  display: "grid", placeItems: "center", fontSize: 9, fontWeight: 800, letterSpacing: "-0.5px" }}>
+                  display: "grid", placeItems: "center", fontSize: 12, fontWeight: 800, letterSpacing: "-0.5px" }}>
                   {isYou ? "SIE" : d.speaker.substring(0, 3).toUpperCase()}
                 </div>
                 <div style={{ flex: 1, maxWidth: "80%" }}>
@@ -5521,7 +5524,7 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
                     border: `1.5px solid ${isYou ? "#818cf8" : "#E4E4E8"}`,
                     borderRadius: 10, padding: "8px 12px" }}>
                     <div style={{ fontSize: 13, lineHeight: 1.6 }} dir="ltr">{d.de}</div>
-                    <div style={{ fontSize: 11.5, color: C.muted, marginTop: 3 }}>{tC(d, lang)}</div>
+                    <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{tC(d, lang)}</div>
                   </div>
                 </div>
               </div>
@@ -5634,7 +5637,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
           ].map(r => (
             <div key={r.label} style={{ textAlign:"center" }}>
               <div style={{ fontWeight:700, fontSize:15, color:r.color }}>{r.val}</div>
-              <div style={{ fontSize:11, color:C.muted, marginTop:2 }}>{r.label}</div>
+              <div style={{ fontSize:12, color:C.muted, marginTop:2 }}>{r.label}</div>
             </div>
           ))}
         </div>
@@ -8382,7 +8385,7 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
       const parts = content.includes("→") ? content.split("→").map(s => s.trim()) : [content];
       return (
         <div key={si} style={{ background:`${color}07`, border:`1.5px solid ${color}20`, borderRadius:16, padding:"13px 16px" }}>
-          <div style={{ fontSize:10, fontWeight:800, color, letterSpacing:".06em", marginBottom:10, opacity:.75 }}>نموونە</div>
+          <div style={{ fontSize:12, fontWeight:800, color, letterSpacing:".06em", marginBottom:10, opacity:.75 }}>نموونە</div>
           <div style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:10 }}>
             {parts.map((p, pi) => (
               <span key={pi} style={{ display:"flex", alignItems:"center", gap:10 }}>
@@ -8430,7 +8433,7 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:7 }}>
               {conjItems.map(({ pronoun, label: pl, form, color: pc }) => (
                 <div key={pronoun} style={{ background:`${pc}10`, border:`1.5px solid ${pc}28`, borderRadius:12, padding:"10px 6px", textAlign:"center" }}>
-                  <div style={{ fontSize:10, fontWeight:800, color:pc, marginBottom:5, letterSpacing:".02em" }}>{pl}</div>
+                  <div style={{ fontSize:12, fontWeight:800, color:pc, marginBottom:5, letterSpacing:".02em" }}>{pl}</div>
                   <div dir="ltr" style={{ fontSize:14, fontWeight:800, color:"#1A1F2E", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{form}</div>
                 </div>
               ))}
@@ -8460,7 +8463,7 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
               {wordItems.map(({ word, meaning }, wi) => (
                 <div key={wi} style={{ background:`${color}09`, border:`1.5px solid ${color}22`, borderRadius:10, padding:"6px 12px", display:"flex", alignItems:"baseline", gap:6 }}>
                   <span dir="ltr" style={{ fontWeight:800, color, fontSize:13.5, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{word}</span>
-                  {meaning && <span style={{ fontSize:11.5, color:"#71717A", fontWeight:600 }}>{meaning}</span>}
+                  {meaning && <span style={{ fontSize:12.5, color:"#71717A", fontWeight:600 }}>{meaning}</span>}
                 </div>
               ))}
             </div>
@@ -9097,7 +9100,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
         <div style={{ display:"grid", gap:8 }}>
           {exList.map((e,i) => (
             <div key={i} className="rise" style={{ animationDelay:`${142+i*18}ms`, background:"#fff", border:"1.5px solid #F0F1F5", borderRadius:13, padding:"11px 13px", display:"flex", gap:10, alignItems:"flex-start", boxShadow:"0 1px 0 rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.05)" }}>
-              <span style={{ width:21,height:21,borderRadius:6,background:`${C.gold}18`,display:"grid",placeItems:"center",fontSize:10,fontWeight:800,color:C.gold,flexShrink:0,marginTop:1 }}>{i+1}</span>
+              <span style={{ width:21,height:21,borderRadius:6,background:`${C.gold}18`,display:"grid",placeItems:"center",fontSize:12,fontWeight:800,color:C.gold,flexShrink:0,marginTop:1 }}>{i+1}</span>
               <div style={{ flex:1 }}>
                 <div style={{ display:"flex",alignItems:"flex-start",gap:4 }}>
                   <div style={{ flex:1 }}><De size={15} color="#1A1F2E">{e.de}</De></div>
@@ -9950,8 +9953,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 11.5, fontWeight: 800, letterSpacing: ".04em" }}>{level}</span>
-                <span style={{ fontSize: 11.5, opacity: .8 }}>{UI_LABEL.grammar[lang] || UI_LABEL.grammar.ku}</span>
+                <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800, letterSpacing: ".04em" }}>{level}</span>
+                <span style={{ fontSize: 12.5, opacity: .8 }}>{UI_LABEL.grammar[lang] || UI_LABEL.grammar.ku}</span>
               </div>
               <h2 style={{ fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: "-.02em" }}>{tC(g, lang)}</h2>
               <div dir="ltr" style={{ fontSize: 13.5, opacity: .85, marginTop: 3, fontFamily: "'Satoshi',system-ui,sans-serif" }}>{g.de}</div>
@@ -10054,7 +10057,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <div style={{ display: "grid", gap: 9 }}>
             {exList.map((e, i) => (
               <div key={i} className="rise" style={{ animationDelay:`${220 + i * 30}ms`, background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 16, padding: "13px 16px", display: "flex", gap: 12, alignItems: "flex-start", boxShadow: "0 1px 0 rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05)" }}>
-                <span style={{ width: 24, height: 24, borderRadius: 7, background: `${C.gold}18`, display: "grid", placeItems: "center", fontSize: 11, fontWeight: 800, color: C.gold, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+                <span style={{ width: 24, height: 24, borderRadius: 7, background: `${C.gold}18`, display: "grid", placeItems: "center", fontSize: 12, fontWeight: 800, color: C.gold, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 4 }}>
                     <div style={{ flex: 1 }}><De size={16} color="#1A1F2E">{e.de}</De></div>
@@ -10100,8 +10103,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{l.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
-                <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 11.5, fontWeight: 800 }}>{l.level}</span>
-                <span style={{ fontSize: 11.5, opacity: .8 }}>{lang === "tr" ? "Kelimeler" : lang === "en" ? "Words" : lang === "ar" ? "الكلمات" : lang === "es" ? "Palabras" : lang === "uk" ? "Слова" : lang === "fa" ? "واژه‌ها" : "وشەکان"}</span>
+                <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800 }}>{l.level}</span>
+                <span style={{ fontSize: 12.5, opacity: .8 }}>{lang === "tr" ? "Kelimeler" : lang === "en" ? "Words" : lang === "ar" ? "الكلمات" : lang === "es" ? "Palabras" : lang === "uk" ? "Слова" : lang === "fa" ? "واژه‌ها" : "وشەکان"}</span>
               </div>
               <h2 style={{ fontWeight: 800, fontSize: 21, margin: 0, letterSpacing: "-.02em" }}>{tF(l, lang, 'title')}</h2>
               <div dir="ltr" style={{ fontSize: 13, opacity: .85, marginTop: 3, fontFamily: "'Satoshi',system-ui,sans-serif" }}>{l.de}</div>
@@ -10137,7 +10140,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               <div style={{ fontSize: 14.5, color: lc, fontWeight: 700, lineHeight: 1.5 }}>{tC(w, lang)}</div>
               {/* number badge */}
               <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
-                <span style={{ fontSize: 10, fontWeight: 800, color: `${lc}AA`, background: `${lc}10`, borderRadius: 99, padding: "2px 7px" }}>{i + 1}</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: `${lc}AA`, background: `${lc}10`, borderRadius: 99, padding: "2px 7px" }}>{i + 1}</span>
               </div>
             </div>
           ))}
@@ -10159,7 +10162,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             style={{ transition:"stroke-dashoffset .5s ease" }} />
         </svg>
         <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:9, fontWeight:800, color: done ? "#16A06F" : color }}>
+          fontSize:12, fontWeight:800, color: done ? "#16A06F" : color }}>
           {done ? "✓" : `${Math.round(pct)}%`}
         </div>
       </div>
@@ -10229,7 +10232,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </div>
           <div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "#1A1F2E", lineHeight: 1 }}>{avgPct}%</div>
-            <div style={{ fontSize: 10, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "es" ? "temas" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
+            <div style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "es" ? "temas" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
           </div>
         </div>
       </div>
@@ -10318,7 +10321,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <div style={{ height:"100%", width:`${avgPct}%`, background:"#fff",
                     borderRadius:3, transition:"width .6s cubic-bezier(.22,1,.36,1)", minWidth:avgPct>0?4:0 }} />
                 </div>
-                <div style={{ fontSize:11, color:"rgba(255,255,255,.8)", fontWeight:700, marginTop:5 }}>
+                <div style={{ fontSize:12, color:"rgba(255,255,255,.8)", fontWeight:700, marginTop:5 }}>
                   {avgPct}% {STAT_LABEL.completed[lang] || STAT_LABEL.completed.ku}
                 </div>
               </div>
@@ -10347,7 +10350,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <Icon size={15} color={lg.from} style={{ flexShrink:0 }} />
                 <div style={{ minWidth:0 }}>
                   <div style={{ fontSize:13, fontWeight:800, color:"#1A1F2E", lineHeight:1.1 }}>{v}</div>
-                  <div style={{ fontSize:10, color:C.muted, fontWeight:600, whiteSpace:"nowrap" }}>{l}</div>
+                  <div style={{ fontSize:12, color:C.muted, fontWeight:600, whiteSpace:"nowrap" }}>{l}</div>
                 </div>
               </div>
             ))}
@@ -10400,7 +10403,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   }}>
                     <tb.Icon size={22} strokeWidth={1.6}
                       color={active ? "#fff" : "#9AA1B0"} />
-                    <div style={{ fontSize:11, fontWeight:700, textAlign:"center", lineHeight:1.2,
+                    <div style={{ fontSize:12, fontWeight:700, textAlign:"center", lineHeight:1.2,
                       color: active ? "#fff" : "#8892A4" }}>
                       {tb.label}
                     </div>
@@ -10431,7 +10434,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           animation:'toastPopIn .25s ease-out both',
         }}>
           <div style={{ fontSize:13.5, fontWeight:800 }}>🔒 {tL("exam_need95_de")}</div>
-          <div style={{ fontSize:11.5, fontWeight:500, color:'rgba(255,255,255,.72)', marginTop:2 }}>{tL("exam_need95")}</div>
+          <div style={{ fontSize:12.5, fontWeight:500, color:'rgba(255,255,255,.72)', marginTop:2 }}>{tL("exam_need95")}</div>
           <div style={{
             position:'absolute', bottom:-6, left:'50%', transform:'translateX(-50%)',
             width:0, height:0, borderLeft:'7px solid transparent', borderRight:'7px solid transparent',
@@ -10512,7 +10515,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         <div style={{ fontWeight: 700, fontSize: 14.5, letterSpacing: "-.01em" }} dir="ltr">{dlg.theme}</div>
                         {dlg.register && (
                           <span style={{
-                            fontSize: 9.5, fontWeight: 700, padding: "1.5px 7px", borderRadius: 20,
+                            fontSize: 12.5, fontWeight: 700, padding: "1.5px 7px", borderRadius: 20,
                             background: isOpen ? "rgba(255,255,255,.22)" : (dlg.register === "formal" ? "#2a78d618" : "#16A06F18"),
                             color: isOpen ? "#fff" : (dlg.register === "formal" ? "#2a78d6" : "#16A06F"),
                           }}>
@@ -10520,7 +10523,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: 11, opacity: .68, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }} dir="ltr">
+                      <div style={{ fontSize: 12, opacity: .68, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }} dir="ltr">
                         <span>{speakers.join(" · ")}</span>
                         <span style={{ opacity: .5 }}>·</span>
                         <span>{dlg.lines.length} Sätze</span>
@@ -10564,7 +10567,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                                 animation: isOpen ? `dlg-bubble .35s cubic-bezier(.22,1,.36,1) both` : "none",
                                 animationDelay: `${i * 50}ms`,
                               }}>
-                              <div style={{ fontSize: 11, color: C.muted, marginBottom: 3, fontWeight: 700, paddingInline: 5 }} dir="ltr">{line.s}</div>
+                              <div style={{ fontSize: 12, color: C.muted, marginBottom: 3, fontWeight: 700, paddingInline: 5 }} dir="ltr">{line.s}</div>
                               <div style={{
                                 background: isLeft ? "#EEF2FF" : "#FFF3E0",
                                 border: `1px solid ${isLeft ? "#C7D2FE" : "#FFCC80"}`,
@@ -10611,7 +10614,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   padding: '12px 14px 14px', boxShadow: '0 8px 32px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.10)', border: '1px solid #ece9ff' }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 16, fontWeight: 800, color: '#18181B', fontFamily: 'Georgia,serif' }}>{dialogDictEntry.word}</span>
-                  <span style={{ fontSize: 9.5, color: '#fff', background: '#C2410C', padding: '2px 7px', borderRadius: 20, fontWeight: 700 }}>
+                  <span style={{ fontSize: 12.5, color: '#fff', background: '#C2410C', padding: '2px 7px', borderRadius: 20, fontWeight: 700 }}>
                     {DLG_POPUP_LABEL.colloquial[lang] || DLG_POPUP_LABEL.colloquial.ku}
                   </span>
                 </div>
@@ -10619,21 +10622,21 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   {lang === "ku" ? (
                     dialogDictEntry.ku && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', background: '#16A06F', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>KU</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: '#16A06F', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>KU</span>
                         <span style={{ fontSize: 13, color: '#18181B', fontWeight: 600, direction: 'rtl' }}>{dialogDictEntry.ku}</span>
                       </div>
                     )
                   ) : (
                     (dialogDictEntry[lang] || dialogDictEntry.tr) && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', background: '#E05A00', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>{lang.toUpperCase()}</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: '#E05A00', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>{lang.toUpperCase()}</span>
                         <span dir={(lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize: 13, color: '#18181B', fontWeight: 600 }}>{dialogDictEntry[lang] || dialogDictEntry.tr}</span>
                       </div>
                     )
                   )}
                 </div>
                 <div style={{ background: '#f8f7ff', borderLeft: '2px solid #5B5BD6', borderRadius: '0 6px 6px 0', padding: '6px 10px' }}>
-                  <div style={{ fontSize: 10, color: '#5B5BD6', fontWeight: 700, marginBottom: 2 }}>
+                  <div style={{ fontSize: 12, color: '#5B5BD6', fontWeight: 700, marginBottom: 2 }}>
                     {DLG_POPUP_LABEL.formalHint[lang] || DLG_POPUP_LABEL.formalHint.ku}
                   </div>
                   <div dir="ltr" style={{ fontSize: 13, color: '#18181B', fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 600 }}>{dialogDictEntry.formal}</div>
@@ -10661,7 +10664,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
                     overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} dir="ltr">{s.label}</div>
-                  <div style={{ fontSize:11, color:s.color, fontWeight:600, marginTop:1 }}>{tF(s, lang, 'sub')}</div>
+                  <div style={{ fontSize:12, color:s.color, fontWeight:600, marginTop:1 }}>{tF(s, lang, 'sub')}</div>
                 </div>
               </div>
             ) : null; })()}>
@@ -10784,7 +10787,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1 }}>
                         <div style={{ fontWeight:800, fontSize:16 }} dir="ltr">{p.name}</div>
                         <div style={{ color:C.muted, fontSize:12.5, marginTop:3, lineHeight:1.65 }}>{p.note}</div>
-                        {sc > 0 && <div style={{ fontSize:11.5, color: sc>=95 ? C.green : C.gold, fontWeight:700, marginTop:4 }}>
+                        {sc > 0 && <div style={{ fontSize:12.5, color: sc>=95 ? C.green : C.gold, fontWeight:700, marginTop:4 }}>
                           {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "fa" ? `✓ قبلاً ${Math.round(sc)}% گرفتید` : lang === "es" ? `✓ Antes obtuviste ${Math.round(sc)}%` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "es" ? `↻ Último resultado: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
                         </div>}
                       </div>
@@ -10829,7 +10832,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                     {tC(selectedGrammar, lang)}
                   </div>
-                  <div style={{ fontSize:11, color:levelColor(level), fontWeight:600, marginTop:1 }}
+                  <div style={{ fontSize:12, color:levelColor(level), fontWeight:600, marginTop:1 }}
                     dir="ltr">{selectedGrammar.de}</div>
                 </div>
               </div>
@@ -10900,7 +10903,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 <div>
                   <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "es" ? "Verbos" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="fiil"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -10920,7 +10923,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
                         overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                         {tF(selectedVerb, lang, 'title')}</div>
-                      <div style={{ fontSize:11, color:"#2D5C8A", fontWeight:600, marginTop:1 }}>
+                      <div style={{ fontSize:12, color:"#2D5C8A", fontWeight:600, marginTop:1 }}>
                         {selectedVerb.words?.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                     </div>
                   </div>
@@ -10971,9 +10974,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVerb.icon}</div>
                       <div>
                         <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedVerb, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:11.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVerb.de}</div>
+                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVerb.de}</div>
                       </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedVerb.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
+                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedVerb.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
@@ -10991,7 +10994,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:11.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11019,7 +11022,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 <div>
                   <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "es" ? "Sustantivos" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</div>
+                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="vocab"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -11039,7 +11042,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
                         overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                         {tF(selectedVocab, lang, 'title')}</div>
-                      <div style={{ fontSize:11, color:"#3E5A7A", fontWeight:600, marginTop:1 }}>
+                      <div style={{ fontSize:12, color:"#3E5A7A", fontWeight:600, marginTop:1 }}>
                         {selectedVocab.words?.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
                     </div>
                   </div>
@@ -11091,9 +11094,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVocab.icon}</div>
                       <div>
                         <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedVocab, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:11.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVocab.de}</div>
+                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVocab.de}</div>
                       </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedVocab.words.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
+                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedVocab.words.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
@@ -11111,7 +11114,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:11.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11139,7 +11142,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 </div>
                 <div>
                   <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Sıfatlar" : lang === "en" ? "Adjectives" : lang === "ar" ? "الصفات" : lang === "es" ? "Adjetivos" : lang === "uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "ئەپیتاف"} — Adjektive</div>
-                  <div style={{ fontSize:11, color:C.muted, marginTop:1 }}>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                 </div>
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
@@ -11158,7 +11161,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
                         overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                         {tF(selectedAdj, lang, 'title')}</div>
-                      <div style={{ fontSize:11, color:"#2D6B52", fontWeight:600, marginTop:1 }}>
+                      <div style={{ fontSize:12, color:"#2D6B52", fontWeight:600, marginTop:1 }}>
                         {selectedAdj.words?.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                     </div>
                   </div>
@@ -11207,9 +11210,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedAdj.icon}</div>
                       <div>
                         <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedAdj, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:11.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedAdj.de}</div>
+                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedAdj.de}</div>
                       </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:11, fontWeight:700 }}>{selectedAdj.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
+                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedAdj.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
@@ -11227,7 +11230,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:11.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11352,11 +11355,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       padding:'12px 14px 14px', boxShadow:'0 8px 32px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.10)', border:'1px solid #ece9ff' }}>
                     <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8, flexWrap:"wrap" }}>
                       {masalDictEntry.article && (
-                        <span style={{ fontSize:11, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>{masalDictEntry.article}</span>
+                        <span style={{ fontSize:12, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>{masalDictEntry.article}</span>
                       )}
                       <span style={{ fontSize:16, fontWeight:800, color:'#18181B', fontFamily:'Georgia,serif' }}>{masalDictEntry.word}</span>
                       {masalDictEntry.type && (
-                        <span style={{ fontSize:10, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>{TYPE_LABEL[masalDictEntry.type] || masalDictEntry.type}</span>
+                        <span style={{ fontSize:12, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>{TYPE_LABEL[masalDictEntry.type] || masalDictEntry.type}</span>
                       )}
                     </div>
                     <div style={{ display:"flex", flexDirection:"column", gap:4, marginBottom: masalDictEntry.ex ? 8 : 0 }}>
@@ -11365,7 +11368,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         const val = masalDictEntry[lang] || masalDictEntry.tr || masalDictEntry.ku;
                         return val ? (
                           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                            <span style={{ fontSize:10, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
+                            <span style={{ fontSize:12, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
                             <span style={{ fontSize:13, color:'#18181B', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
                           </div>
                         ) : null;
@@ -11373,8 +11376,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     </div>
                     {masalDictEntry.ex && (
                       <div style={{ background:'#f8f7ff', borderLeft:'2px solid ' + story.color, borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
-                        <div style={{ fontSize:11, color:story.color, fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>{masalDictEntry.ex}</div>
-                        <div dir={(lang === "ku" || lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize:10, color:'#71717A' }}>{masalDictEntry['ex_' + lang] || masalDictEntry.ex_tr}</div>
+                        <div style={{ fontSize:12, color:story.color, fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>{masalDictEntry.ex}</div>
+                        <div dir={(lang === "ku" || lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize:12, color:'#71717A' }}>{masalDictEntry['ex_' + lang] || masalDictEntry.ex_tr}</div>
                       </div>
                     )}
                     <div style={{ marginTop:10, display:"flex", justifyContent:"flex-end" }}>
@@ -11429,11 +11432,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     <div style={{ padding:"12px 18px", display:"flex",
                       alignItems:"center", justifyContent:"space-between" }}>
                       <div style={{ display:"flex", gap:8 }}>
-                        <span style={{ fontSize:11, fontWeight:700, color:C.muted,
+                        <span style={{ fontSize:12, fontWeight:700, color:C.muted,
                           background:"#F4F4F5", borderRadius:99, padding:"3px 10px" }}>
                           {story.paragraphs.length} {tL("stories_para")}
                         </span>
-                        <span style={{ fontSize:11, fontWeight:700,
+                        <span style={{ fontSize:12, fontWeight:700,
                           color:story.color, background:`${story.color}14`,
                           borderRadius:99, padding:"3px 10px" }}>{level}</span>
                       </div>
@@ -11574,6 +11577,14 @@ function srsGrade(de, correct) {
 // Word objects (from all levels) whose review is due now.
 // Journey words: tapping a dictionary word in a story chapter stores a flashcard-shaped
 // copy in 'fuxi_srs_journey' and seeds an SRS entry (first review due the next day).
+function suriToast(msg) {
+  try {
+    const el = document.createElement("div");
+    el.className = "suri-toast"; el.setAttribute("role", "status"); el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  } catch { /* non-browser */ }
+}
 function journeyDeckLoad() { try { return JSON.parse(localStorage.getItem("fuxi_srs_journey") || "{}"); } catch { return {}; } }
 function journeySrsAdd(word, entry) {
   try {
@@ -11597,6 +11608,8 @@ function journeySrsAdd(word, entry) {
     if (!s[cardKey]) {
       s[cardKey] = { ease: 2.5, interval: 0, reps: 0, due: Date.now() + SRS_DAY, last: Date.now() };
       srsSave(s);
+      const l = (() => { try { return JSON.parse(localStorage.getItem("ob_data") || "{}").lang || "tr"; } catch { return "tr"; } })();
+      suriToast(({ tr: "Tekrar destesine eklendi", en: "Added to your review deck", ar: "أُضيفت إلى مجموعة المراجعة", es: "Añadida a tu mazo de repaso", uk: "Додано до колоди повторення", fa: "به مجموعه مرور افزوده شد", ku: "زیادکرا بۆ کۆمەڵەی پێداچوونەوە" })[l] || "Added to your review deck");
     }
   } catch { /* storage unavailable */ }
 }
@@ -11743,7 +11756,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
               <RefreshCw size={14} />
               {lang === "tr" ? "Tekrar" : lang === "en" ? "Review" : lang === "ar" ? "مراجعة" : lang === "es" ? "Repaso" : lang === "uk" ? "Повторення" : lang === "fa" ? "مرور" : "پێداچوونەوە"}
               {dueCount > 0 && (
-                <span style={{ background: level === "REVIEW" ? "rgba(255,255,255,.25)" : "#7C3AED", color:"#fff", borderRadius:99, padding:"1px 8px", fontSize:11, fontWeight:800 }}>{dueCount}</span>
+                <span style={{ background: level === "REVIEW" ? "rgba(255,255,255,.25)" : "#7C3AED", color:"#fff", borderRadius:99, padding:"1px 8px", fontSize:12, fontWeight:800 }}>{dueCount}</span>
               )}
             </button>
           </div>
@@ -11809,7 +11822,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
             <span style={{ background:lvColor, color:"#fff", padding:"3px 11px", borderRadius:14, fontSize:12, fontWeight:700 }}>{level}</span>
             <span style={{ display:"flex", alignItems:"center", gap:6, background:"#F4F6FA", borderRadius:99, padding:"5px 14px" }}>
               <span style={{ fontSize:14, fontWeight:800, color:C.ink }}>{idx + 1}</span>
-              <span style={{ fontSize:11, color:"#C4CAD8", fontWeight:600 }}>/</span>
+              <span style={{ fontSize:12, color:"#C4CAD8", fontWeight:600 }}>/</span>
               <span style={{ fontSize:12, fontWeight:600, color:C.muted }}>{deck.length}</span>
             </span>
           </div>
@@ -11858,12 +11871,12 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                       boxShadow:"0 8px 32px rgba(0,0,0,.09), inset 0 1px 0 rgba(255,255,255,.9)",
                     }}>
                       {artInfo && (
-                        <div style={{ background:artInfo.color, color:"#fff", fontSize:11, fontWeight:700,
+                        <div style={{ background:artInfo.color, color:"#fff", fontSize:12, fontWeight:700,
                           padding:"2px 12px", borderRadius:99 }}>{artInfo.art}</div>
                       )}
                       <De size={displayWord.length <= 9 ? 34 : displayWord.length <= 13 ? 26 : displayWord.length <= 18 ? 20 : 16} color={C.ink}>{displayWord}</De>
                       <div><Speak text={card.de} size={22} /></div>
-                      <div style={{ fontSize:10, letterSpacing:".07em", color:C.muted, fontWeight:600 }}>Deutsch</div>
+                      <div style={{ fontSize:12, letterSpacing:".07em", color:C.muted, fontWeight:600 }}>Deutsch</div>
                     </div>
 
                     {/* ── BACK: example sentence ── */}
@@ -11885,7 +11898,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                         </div>
                       )}
                       {(lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku) && (
-                        <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
+                        <div style={{ fontSize:12, color:"rgba(255,255,255,.45)", lineHeight:1.5 }}>{lang === "tr" ? (card.extr || card.exku) : lang === "en" ? (card.exen || card.exku) : lang === "ar" ? (card.exar || card.exku) : lang === "fa" ? (card.exfa || card.exku) : lang === "es" ? (card.exes || card.exku) : lang === "uk" ? (card.exuk || card.exku) : card.exku}</div>
                       )}
                       {/* TTS on back */}
                       <div style={{ marginTop:2 }}><Speak text={card.de} size={16} color="rgba(255,255,255,.5)" /></div>
@@ -12078,7 +12091,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                 display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                 gap:1, padding:"10px 6px" }}>
                 <Heart size={14} color="#ef4444" fill="#ef4444" />
-                <div style={{ fontSize:10, fontWeight:700, color:"rgba(239,68,68,.6)", letterSpacing:".06em", marginTop:2 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"rgba(239,68,68,.6)", letterSpacing:".06em", marginTop:2 }}>
                   {String(i+1).padStart(2,"0")}
                 </div>
               </div>
@@ -12087,12 +12100,12 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
               <div style={{ flex:1, padding:"12px 12px 12px 14px", display:"flex", flexDirection:"column", gap:5, minWidth:0 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                   {artInfo && (
-                    <span style={{ background:artInfo.color, color:"#fff", fontSize:10, fontWeight:700,
+                    <span style={{ background:artInfo.color, color:"#fff", fontSize:12, fontWeight:700,
                       padding:"1px 8px", borderRadius:99 }}>{artInfo.art}</span>
                   )}
                   <span style={{ fontWeight:800, fontSize:15, color:"#1A1F2E" }} dir="ltr">{displayWord}</span>
                   {typeLabel && (
-                    <span style={{ background:"#f4f4f5", color:"#71717A", fontSize:10, fontWeight:700,
+                    <span style={{ background:"#f4f4f5", color:"#71717A", fontSize:12, fontWeight:700,
                       padding:"1px 8px", borderRadius:99 }}>{typeLabel}</span>
                   )}
                   <Speak text={w.de} size={14} />
@@ -12102,7 +12115,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   <>
                     <div style={{ fontSize:12, color:"#5A6480", fontStyle:"italic" }} dir="ltr">{w.ex}</div>
                     {(tEx(w, lang)) && (
-                      <div style={{ fontSize:11, color:"#8892A4" }}>{tEx(w, lang)}</div>
+                      <div style={{ fontSize:12, color:"#8892A4" }}>{tEx(w, lang)}</div>
                     )}
                   </>
                 )}
@@ -12115,7 +12128,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   style={{ background:"rgba(239,68,68,.1)", border:"none", borderRadius:12, cursor:"pointer",
                     padding:"8px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
                   <Heart size={18} fill="#ef4444" color="#ef4444" />
-                  <span style={{ fontSize:9, fontWeight:700, color:"#ef4444" }}>{tApp(lang,"fav_remove")}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:"#ef4444" }}>{tApp(lang,"fav_remove")}</span>
                 </button>
               </div>
             </div>
@@ -12178,7 +12191,7 @@ function Talk({ lang = "ku" }) {
         <div style={{ display:"flex", alignItems:"center", gap:20, position:"relative" }}>
           {/* Info */}
           <div style={{ flex:1 }}>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(6,182,212,.15)", border:"1px solid rgba(6,182,212,.3)", borderRadius:99, padding:"3px 12px", fontSize:11, color:"#67e8f9", fontWeight:700, marginBottom:8, letterSpacing:".06em" }}>✦ {lang === "tr" ? "Almanca Öğretmeni" : lang === "en" ? "German Teacher" : lang === "ar" ? "معلم الألمانية" : lang === "es" ? "Profesor de alemán" : lang === "uk" ? "Учитель німецької" : lang === "fa" ? "معلم آلمانی" : "مامۆستای ئەڵمانیت"}</div>
+            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(6,182,212,.15)", border:"1px solid rgba(6,182,212,.3)", borderRadius:99, padding:"3px 12px", fontSize:12, color:"#67e8f9", fontWeight:700, marginBottom:8, letterSpacing:".06em" }}>✦ {lang === "tr" ? "Almanca Öğretmeni" : lang === "en" ? "German Teacher" : lang === "ar" ? "معلم الألمانية" : lang === "es" ? "Profesor de alemán" : lang === "uk" ? "Учитель німецької" : lang === "fa" ? "معلم آلمانی" : "مامۆستای ئەڵمانیت"}</div>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:20, fontWeight:700, color:"#fff", lineHeight:1.3, marginBottom:6 }}>
               {loading
                 ? <span style={{ color:"#fbbf24" }}>{lang === "tr" ? "Notlarıma bakıyorum… " : lang === "en" ? "Checking my notes… " : lang === "ar" ? "أتحقق من ملاحظاتي… " : lang === "es" ? "Revisando mis notas… " : lang === "uk" ? "Переглядаю свої нотатки… " : lang === "fa" ? "در حال مرور یادداشت‌هایم… " : "دەفتەرەکەم دەبینم… "}<span style={{ fontSize:17 }}>📓</span></span>
@@ -12703,7 +12716,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
       {/* Translation hint card */}
       <div style={{background:'#fff',borderRadius:20,padding:'18px 20px',marginBottom:16,border:'1px solid #ebebf0',boxShadow:'0 2px 12px rgba(0,0,0,.06)'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#30A46C',fontSize:11,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
+          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#30A46C',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
           <button onClick={()=>speak(q.de)} style={{width:32,height:32,borderRadius:8,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:14}}>🔊</button>
         </div>
         <div style={{fontSize:13,color:'#666',fontWeight:500,marginBottom:4}}>{spt('hint')}</div>
@@ -12965,7 +12978,7 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
       {/* Word card */}
       <div style={{ background:'#fff',borderRadius:24,padding:'32px 24px',textAlign:'center',border:'1px solid #ebebf0',boxShadow:'0 4px 20px rgba(0,0,0,.08)',marginBottom:28 }}>
         {/* Level badge */}
-        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#E5484D',fontSize:11,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
+        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#E5484D',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
         {/* Word + audio */}
         <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:12 }}>
           <div style={{ fontSize:38,fontWeight:900,color:'#1a1a2e',letterSpacing:'-.5px' }}>{q.w}</div>
@@ -13181,7 +13194,7 @@ function WordMatch({ lang = "ku", onBack }) {
 
       {/* Reference word */}
       <div style={{ background:'linear-gradient(135deg,#5B5BD6,#7c3aed)',borderRadius:20,padding:'22px 20px',marginBottom:14,color:'#fff' }}>
-        <div style={{ fontSize:11,fontWeight:700,opacity:.65,letterSpacing:'.1em',marginBottom:6 }}>{LL[lvl1]}</div>
+        <div style={{ fontSize:12,fontWeight:700,opacity:.65,letterSpacing:'.1em',marginBottom:6 }}>{LL[lvl1]}</div>
         <div style={{ display:'flex',alignItems:'center',gap:10 }}>
           <div style={{ fontSize:34,fontWeight:900,flex:1,lineHeight:1.15 }}>{refWord}</div>
           <button onClick={()=>speak(refWord)} style={{ width:38,height:38,borderRadius:10,border:'none',background:'rgba(255,255,255,.2)',color:'#fff',cursor:'pointer',fontSize:17 }}>🔊</button>
@@ -13205,19 +13218,19 @@ function WordMatch({ lang = "ku", onBack }) {
           transition:'all .25s' }}>
         {!dropResult && <>
           <div style={{ fontSize:13,color:'#5B5BD6',fontWeight:600 }}>{wt('drag_here')}</div>
-          <div style={{ fontSize:11,color:'#bbb' }}>{LL[lvl1]} → {LL[lvl2]} · {wt('tap_hint')}</div>
+          <div style={{ fontSize:12,color:'#bbb' }}>{LL[lvl1]} → {LL[lvl2]} · {wt('tap_hint')}</div>
         </>}
         {dropResult==='correct' && <>
           <div style={{ fontSize:24,color:'#30A46C',fontWeight:800 }}>{correctWord}</div>
           <div style={{ fontSize:13,color:'#30A46C',fontWeight:600 }}>{wt('correct')}</div>
           {exMatch.de && <div style={{ fontSize:12,color:'#555',fontStyle:'italic',marginTop:4 }}>{exMatch.de}</div>}
-          {exMatch.nat && <div style={{ fontSize:11,color:'#888' }}>{exMatch.nat}</div>}
+          {exMatch.nat && <div style={{ fontSize:12,color:'#888' }}>{exMatch.nat}</div>}
           <button onClick={()=>speak(correctWord)} style={{ marginTop:6,padding:'4px 14px',borderRadius:8,border:'1px solid #30A46C44',background:'#30A46C10',color:'#30A46C',cursor:'pointer',fontSize:12 }}>🔊 {wt('listen')}</button>
         </>}
         {dropResult==='wrong' && <>
           <div style={{ fontSize:13,color:'#E5484D',fontWeight:600 }}>{wt('wrong')}</div>
           <div style={{ fontSize:12,color:'#555' }}>✓ <strong>{correctWord}</strong></div>
-          <button onClick={()=>speak(correctWord)} style={{ marginTop:4,padding:'3px 12px',borderRadius:8,border:'1px solid #ddd',background:'#fff',cursor:'pointer',fontSize:11 }}>🔊 {correctWord}</button>
+          <button onClick={()=>speak(correctWord)} style={{ marginTop:4,padding:'3px 12px',borderRadius:8,border:'1px solid #ddd',background:'#fff',cursor:'pointer',fontSize:12 }}>🔊 {correctWord}</button>
         </>}
       </div>
 
@@ -13242,7 +13255,7 @@ function WordMatch({ lang = "ku", onBack }) {
                 display:'flex',flexDirection:'column',alignItems:'center',gap:8 }}>
               <div style={{ fontSize:15,fontWeight:700,color:'#1a1a2e',lineHeight:1.3,wordBreak:'break-word' }}>{word}</div>
               <button onClick={e=>{e.stopPropagation();speak(word);}}
-                style={{ padding:'3px 10px',borderRadius:7,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:11,color:'#666' }}>🔊</button>
+                style={{ padding:'3px 10px',borderRadius:7,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:12,color:'#666' }}>🔊</button>
             </div>
           );
         })}
@@ -19418,7 +19431,7 @@ function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
           </button>
         )}
         <div style={{ fontSize: 13, fontWeight: 800, color: '#8B6030', fontFamily: 'Georgia,serif' }}>{t('title')}</div>
-        {!done && <div style={{ fontSize: 11, color: '#b08050', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
+        {!done && <div style={{ fontSize: 12, color: '#b08050', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
@@ -19737,7 +19750,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
     if (line.t === 'i') {
       return (
         <div key={i} style={{ margin: '4px 0 14px', padding: '10px 14px', background: 'rgba(120,80,30,.08)', borderRadius: 10, borderLeft: '3px solid rgba(180,120,50,.35)' }}>
-          <div style={{ fontSize: 10, color: '#9a7040', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
+          <div style={{ fontSize: 12, color: '#9a7040', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
             💭 {resolveWho(line.who)} ({langLabel})
           </div>
           <div style={{ fontSize: 14, color: '#4a2e10', fontStyle: 'italic', lineHeight: 1.78, fontFamily: 'Georgia,serif', ...rtlStyle }}>{s}</div>
@@ -19747,7 +19760,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
     if (line.t === 'sms') {
       return (
         <div key={i} style={{ margin: '4px 0 14px', padding: '10px 14px', background: 'rgba(50,120,50,.08)', borderRadius: 12, borderLeft: '3px solid rgba(50,150,50,.3)', ...rtlStyle }}>
-          <div style={{ fontSize: 11, color: '#2a7a2a', fontWeight: 700, marginBottom: 3, fontFamily: 'Georgia,serif', direction: 'ltr', textAlign: 'left' }}>📱 {resolveWho(line.who)} (SMS)</div>
+          <div style={{ fontSize: 12, color: '#2a7a2a', fontWeight: 700, marginBottom: 3, fontFamily: 'Georgia,serif', direction: 'ltr', textAlign: 'left' }}>📱 {resolveWho(line.who)} (SMS)</div>
           <div style={{ fontSize: 14, color: '#1a3a1a', lineHeight: 1.7, fontFamily: 'Georgia,serif', ...rtlStyle }}>{s}</div>
         </div>
       );
@@ -19771,7 +19784,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
         <div style={{ padding: '20px 26px 0' }}>
           {/* Scene header */}
           <div style={{ marginBottom: scene.img ? 14 : 22, paddingBottom: scene.img ? 10 : 14, borderBottom: '1.5px solid rgba(180,130,60,.22)' }}>
-            <div style={{ fontSize: 10, color: '#7A5C30', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', marginBottom: 5 }}>
+            <div style={{ fontSize: 12, color: '#7A5C30', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', marginBottom: 5 }}>
               {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : userLang === 'fa' ? 'صحنه' : 'Sahne'} {scene.n} / {total}
             </div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#2c1408', lineHeight: 1.32 }}>{scene.title}</div>
@@ -19843,7 +19856,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
             <div style={{ fontSize: 13, fontWeight: 700, color: '#4a2e10', fontFamily: 'Georgia,serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {scenes[page]?.title}
             </div>
-            <div style={{ fontSize: 11, color: '#b08050', fontFamily: 'Georgia,serif', marginTop: 1 }}>
+            <div style={{ fontSize: 12, color: '#b08050', fontFamily: 'Georgia,serif', marginTop: 1 }}>
               {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : userLang === 'fa' ? 'صحنه' : 'Sahne'} {page + 1} / {total}
             </div>
           </div>
@@ -19915,7 +19928,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               {/* Word row */}
               <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8, flexWrap:'wrap' }}>
                 {dictEntry.article && (
-                  <span style={{ fontSize:11, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>
+                  <span style={{ fontSize:12, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>
                     {dictEntry.article}
                   </span>
                 )}
@@ -19923,12 +19936,12 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
                   {dictEntry.word}
                 </span>
                 {!(dictEntry._ai && dictEntry.status !== 'ok') && (
-                  <span style={{ fontSize:10, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
+                  <span style={{ fontSize:12, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
                     {TYPE_LABEL[dictEntry.type] || dictEntry.type}
                   </span>
                 )}
                 {dictEntry._ai && dictEntry.status === 'ok' && dictEntry.base && dictEntry.base.toLowerCase() !== dictEntry.word.toLowerCase() && (
-                  <span style={{ fontSize:11, color:'#71717A', fontFamily:'Georgia,serif', fontStyle:'italic' }}>→ {dictEntry.base}</span>
+                  <span style={{ fontSize:12, color:'#71717A', fontFamily:'Georgia,serif', fontStyle:'italic' }}>→ {dictEntry.base}</span>
                 )}
               </div>
               {dictEntry._ai && dictEntry.status === 'loading' && (
@@ -19949,7 +19962,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
                   const val = userLang === 'uk' ? dictEntry.uk : (dictEntry[userLang] || dictEntry.tr || dictEntry.ku);
                   return val ? (
                     <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                      <span style={{ fontSize:10, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
+                      <span style={{ fontSize:12, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
                       <span style={{ fontSize:13, color:'#18181B', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
                     </div>
                   ) : null;
@@ -19958,10 +19971,10 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               {/* Example */}
               {dictEntry.ex && (
                 <div style={{ background:'#f8f7ff', borderLeft:'2px solid #5B5BD6', borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
-                  <div style={{ fontSize:11, color:'#3D37A8', fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>
+                  <div style={{ fontSize:12, color:'#3D37A8', fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>
                     {dictEntry.ex}
                   </div>
-                  <div dir={(userLang === 'ku' || userLang === 'ar') ? 'rtl' : 'ltr'} style={{ fontSize:10, color:'#71717A' }}>{dictEntry['ex_' + userLang] || dictEntry.ex_tr}</div>
+                  <div dir={(userLang === 'ku' || userLang === 'ar') ? 'rtl' : 'ltr'} style={{ fontSize:12, color:'#71717A' }}>{dictEntry['ex_' + userLang] || dictEntry.ex_tr}</div>
                 </div>
               )}
               {/* Favori button */}
@@ -20273,7 +20286,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
                     {state==='done' && (
                       <div style={{ position:'absolute', top:4, right:4, width:18, height:18, borderRadius:'50%',
                         background:'#30A46C', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:11, fontWeight:900, boxShadow:'0 2px 6px rgba(0,0,0,.35)' }}>✓</div>
+                        fontSize:12, fontWeight:900, boxShadow:'0 2px 6px rgba(0,0,0,.35)' }}>✓</div>
                     )}
                   </button>
 
@@ -20282,15 +20295,15 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
               {/* Label below node */}
               <div style={{ textAlign:'center', transform:`translateX(${nx - CX}px)`, marginTop:5, marginBottom:6 }}>
-                <div style={{ fontSize:11, fontWeight:700,
+                <div style={{ fontSize:12, fontWeight:700,
                   color:state==='locked'?'#ccc':state==='done'?'#30A46C':'#1a1a2e',
                   lineHeight:1.25 }}>
                   {lv.de}
                 </div>
-                <div style={{ fontSize:9.5, color:state==='locked'?'#ccc':'#999', marginTop:1 }}>
+                <div style={{ fontSize:12.5, color:state==='locked'?'#ccc':'#999', marginTop:1 }}>
                   {getNat(lv)}
                 </div>
-                <div style={{ fontSize:9, color:'#bbb', marginTop:1 }}>
+                <div style={{ fontSize:12, color:'#bbb', marginTop:1 }}>
                   {lv.l} {jt('lessons')} · {lv.w} {jt('words')}
                 </div>
               </div>
@@ -20949,10 +20962,10 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
               <button key={lt} onClick={() => handleKey(lt)} style={{
                 width:26, height:26, border:'1.5px solid #ebebf0', borderRadius:5,
                 background: selNum ? '#fff8ed' : '#f4f4f6',
-                fontWeight:700, fontSize:10, cursor:'pointer', padding:0,
+                fontWeight:700, fontSize:12, cursor:'pointer', padding:0,
               }}>{lt}</button>
             ))}
-            <button onClick={() => { if (selNum) { setFills(f => { const c={...f}; delete c[selNum]; return c; }); setSelNum(null); }}} style={{ width:40, height:26, border:'1.5px solid #ebebf0', borderRadius:5, background:'#fdecea', fontWeight:700, fontSize:10, cursor:'pointer' }}>⌫</button>
+            <button onClick={() => { if (selNum) { setFills(f => { const c={...f}; delete c[selNum]; return c; }); setSelNum(null); }}} style={{ width:40, height:26, border:'1.5px solid #ebebf0', borderRadius:5, background:'#fdecea', fontWeight:700, fontSize:12, cursor:'pointer' }}>⌫</button>
           </div>
           <button onClick={check} style={{ width:'100%', padding:'13px', background:'linear-gradient(135deg,#f59e0b,#ef8c00)', color:'#fff', border:'none', borderRadius:14, fontWeight:800, fontSize:15, cursor:'pointer' }}>
             {zt('check')} ✓
@@ -21031,7 +21044,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
             {!g.ready && (
               <div style={{ position:"absolute", top:12, right:12, zIndex:1,
                 background:"rgba(91,91,214,.10)", color:"#5B5BD6",
-                fontSize:10, fontWeight:700, padding:"3px 8px", borderRadius:20, letterSpacing:".04em" }}>
+                fontSize:12, fontWeight:700, padding:"3px 8px", borderRadius:20, letterSpacing:".04em" }}>
                 {tSpiel(lang,"soon")}
               </div>
             )}
@@ -21270,7 +21283,7 @@ function LiD({ lang = "ku" }) {
         </div>
 
         <div style={card}>
-          {isStQ && <div style={{ fontSize: 11, fontWeight: 700, color: "#5B5BD6", background: "rgba(91,91,214,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
+          {isStQ && <div style={{ fontSize: 12, fontWeight: 700, color: "#5B5BD6", background: "rgba(91,91,214,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
           <p style={{ fontSize: 13, color: C.muted, fontWeight: 600, margin: "0 0 4px" }}>Aufgabe {q.n}</p>
           <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: trOf(q, isStQ) ? "0 0 6px" : "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
           {trOf(q, isStQ) && <p dir="auto" style={{ fontSize: 14.5, color: C.muted, margin: "0 0 22px", lineHeight: 1.6 }}>{trOf(q, isStQ).q}</p>}
@@ -21352,7 +21365,7 @@ function LiD({ lang = "ku" }) {
         </div>
 
         <div style={card}>
-          {isStQ && <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B5E", background: "rgba(255,107,94,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
+          {isStQ && <div style={{ fontSize: 12, fontWeight: 700, color: "#FF6B5E", background: "rgba(255,107,94,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
           <p style={{ fontSize: 13, color: C.muted, fontWeight: 600, margin: "0 0 4px" }}>Aufgabe {q.n}</p>
           <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: trOf(q, isStQ) ? "0 0 6px" : "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
           {trOf(q, isStQ) && <p dir="auto" style={{ fontSize: 14.5, color: C.muted, margin: "0 0 22px", lineHeight: 1.6 }}>{trOf(q, isStQ).q}</p>}

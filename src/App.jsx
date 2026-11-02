@@ -4439,6 +4439,7 @@ function SbQuiz({ exercises, lang = "ku" }) {
   }
 
   const isLast = idx === exercises.length - 1;
+  const solved = complete && !timedOut[idx];
   return (
     <div style={{ background: K.bg, borderRadius: 28, padding: "18px 16px 18px", userSelect: "none", WebkitUserSelect: "none" }}>
       {/* progress + exam toggle */}
@@ -4460,8 +4461,9 @@ function SbQuiz({ exercises, lang = "ku" }) {
       </div>
 
       {/* sentence */}
-      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 8px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: K.ink, background: K.card, borderRadius: 24, padding: "24px 20px", marginBottom: 20, boxShadow: K.raised }}>
-        {ex.parts.flatMap((part, pi) => {
+      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 8px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: K.ink, background: K.card, borderRadius: 24, padding: "24px 20px", marginBottom: 20, transition: "box-shadow .5s ease",
+        boxShadow: solved ? `${K.raised}, 0 0 0 3px ${K.lavGlow}, 0 0 38px ${K.lavGlow}` : K.raised, animation: solved ? "sbGlow 2.4s ease-in-out infinite" : undefined }}>
+        {solved ? <span key="solved" style={{ animation: "sbFade .5s ease both" }}>{sentence(ex, idx, true)}</span> : ex.parts.flatMap((part, pi) => {
           const out = [<span key={"t" + pi}>{part}</span>];
           if (pi < ex.answers.length) {
             const bi = pi, wi = placed[bi], filled = wi !== undefined;
@@ -4518,9 +4520,9 @@ function SbQuiz({ exercises, lang = "ku" }) {
         </>
       ) : (
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", borderRadius: 20, background: timedOut[idx] ? "#F4DCD7" : K.sagePale, boxShadow: K.inset, marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", borderRadius: 20, background: timedOut[idx] ? "#F4DCD7" : "#E4DFF7", boxShadow: K.inset, marginBottom: 16 }}>
             <span style={{ fontSize: 20 }}>{timedOut[idx] ? "⏰" : "✓"}</span>
-            <span style={{ flex: 1, fontWeight: 800, color: timedOut[idx] ? "#7A3B32" : "#3F6454", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
+            <span style={{ flex: 1, fontWeight: 800, color: timedOut[idx] ? "#7A3B32" : "#5A4FA0", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
             <button onClick={() => speakDe(sentence(ex, idx, true))} aria-label="Play sentence"
               style={{ width: 42, height: 42, borderRadius: 14, border: "none", background: K.card, cursor: "pointer", fontSize: 18, boxShadow: K.raisedSm }}>🔊</button>
           </div>
@@ -4534,7 +4536,7 @@ function SbQuiz({ exercises, lang = "ku" }) {
         <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "12px 22px", borderRadius: 99, background: K.sage, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: `0 5px 0 ${K.sageDk}, 0 16px 30px rgba(95,120,110,.4)` }}>
           {ex.words[ghost.wi]}
         </div>, document.body)}
-      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}`}</style>
+      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes sbFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes sbGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(167,150,230,0))}50%{filter:drop-shadow(0 0 10px rgba(167,150,230,.55))}}`}</style>
     </div>
   );
 }

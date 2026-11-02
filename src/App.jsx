@@ -4308,6 +4308,7 @@ function SbQuiz({ exercises, lang = "ku" }) {
   const [flash, setFlash] = useState(null);                                 // { exi, bi, word }
   const [selected, setSelected] = useState(null);                           // word index in current exercise
   const [ghost, setGhost] = useState(null);                                 // { wi, x, y }
+  const [hoverBi, setHoverBi] = useState(null);                             // blank under the dragged word
   const [exam, setExam] = useState(false);
   const [timeLeft, setTimeLeft] = useState(45);
   const [timedOut, setTimedOut] = useState({});                             // exi → true
@@ -4341,10 +4342,16 @@ function SbQuiz({ exercises, lang = "ku" }) {
       const d = drag.current; if (!d) return;
       if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 8) return;
       d.moved = true; setGhost({ wi: d.wi, x: e.clientX, y: e.clientY });
+      let hb = null, bd = 60;
+      document.querySelectorAll("[data-sb-bi]").forEach(n => {
+        const r = n.getBoundingClientRect(); const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+        if (dist < bd) { bd = dist; hb = Number(n.dataset.sbBi); }
+      });
+      setHoverBi(hb);
     };
     const up = (e) => {
       const d = drag.current; if (!d) return;
-      drag.current = null; setGhost(null);
+      drag.current = null; setGhost(null); setHoverBi(null);
       if (!d.moved) { setSelected(s => (s === d.wi ? null : d.wi)); return; }
       const els = document.elementsFromPoint(e.clientX, e.clientY);
       let target = els.map(n => n.closest?.("[data-sb-bi]")).find(Boolean);
@@ -4439,26 +4446,30 @@ function SbQuiz({ exercises, lang = "ku" }) {
       </div>
 
       {/* sentence */}
-      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 6px", lineHeight: 2.6, fontSize: 17, fontWeight: 500, color: "#1A1F2E", background: "#F8F9FC", borderRadius: 16, padding: "14px 16px", marginBottom: 16 }}>
+      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px 7px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: "#1A1F2E", background: "#fff", borderRadius: 20, padding: "22px 20px", marginBottom: 18, border: "1px solid #ECEEF6", boxShadow: "0 8px 28px rgba(91,91,214,.08)" }}>
         {ex.parts.flatMap((part, pi) => {
           const out = [<span key={"t" + pi}>{part}</span>];
           if (pi < ex.answers.length) {
             const bi = pi, wi = placed[bi], filled = wi !== undefined;
             const isFlash = flash && flash.exi === idx && flash.bi === bi;
+            const hot = hoverBi === bi && !filled;
             const missedHere = timedOut[idx] && !filled;
             out.push(
               <span key={"b" + bi} data-sb-bi={bi} role="button" tabIndex={0} aria-label={filled ? ex.answers[bi] : `blank ${bi + 1}`}
                 onClick={() => selected !== null && place(idx, bi, selected)}
                 onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected !== null) { e.preventDefault(); place(idx, bi, selected); } }}
                 style={{
-                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(4, ex.answers[bi].length + 1)}ch`, height: 36, padding: "0 12px", borderRadius: 10,
-                  fontWeight: 700, fontSize: 16, transition: "all .18s", cursor: selected !== null && !filled ? "pointer" : "default",
-                  animation: isFlash ? "sbShake .35s" : undefined,
-                  border: filled ? "2px solid #10b981" : isFlash || missedHere ? "2px solid #ef4444" : selected !== null ? `2px dashed ${accent}` : "2px dashed #C4CAD8",
-                  background: filled ? "rgba(16,185,129,.14)" : isFlash || missedHere ? "rgba(239,68,68,.12)" : selected !== null ? "rgba(91,91,214,.08)" : "#fff",
-                  color: filled ? "#065f46" : isFlash || missedHere ? "#991b1b" : "#B0B4BF",
+                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(5, ex.answers[bi].length + 2)}ch`, height: 40, padding: "0 14px", borderRadius: 12,
+                  fontWeight: 800, fontSize: 18, transition: "all .18s cubic-bezier(.22,1,.36,1)", cursor: selected !== null && !filled ? "pointer" : "default",
+                  animation: isFlash ? "sbShake .35s" : filled ? "sbPop .32s cubic-bezier(.34,1.56,.64,1)" : (selected !== null || hot) ? "sbPulse 1.2s ease-in-out infinite" : undefined,
+                  border: "none",
+                  borderBottom: `3px solid ${filled ? "#059669" : isFlash || missedHere ? "#ef4444" : hot ? accent : selected !== null ? accent : "#C7CBEA"}`,
+                  background: filled ? "linear-gradient(135deg,#10b981,#34d399)" : isFlash || missedHere ? "rgba(239,68,68,.14)" : hot ? "rgba(91,91,214,.22)" : "linear-gradient(180deg,#F4F5FF,#ECEEFF)",
+                  color: filled ? "#fff" : isFlash || missedHere ? "#991b1b" : "#9AA0D6",
+                  transform: hot && !filled ? "scale(1.08)" : "none",
+                  boxShadow: filled ? "0 4px 12px rgba(16,185,129,.3)" : hot ? "0 6px 16px rgba(91,91,214,.3)" : "none",
                 }}>
-                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : "···"}
+                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : <span style={{ fontSize: 13, fontWeight: 700, opacity: .8 }}>{bi + 1}</span>}
               </span>
             );
           }
@@ -4506,7 +4517,7 @@ function SbQuiz({ exercises, lang = "ku" }) {
         <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "10px 18px", borderRadius: 99, background: accent, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: "0 12px 28px rgba(91,91,214,.45)" }}>
           {ex.words[ghost.wi]}
         </div>, document.body)}
-      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}`}</style>
+      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes sbPulse{0%,100%{box-shadow:0 0 0 0 rgba(91,91,214,.35)}50%{box-shadow:0 0 0 6px rgba(91,91,214,0)}}`}</style>
     </div>
   );
 }

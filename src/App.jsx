@@ -4502,11 +4502,10 @@ function SbQuiz({ exercises, lang = "ku" }) {
         </div>
       )}
 
-      {ghost && (
-        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-130%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "10px 18px", borderRadius: 99, background: accent, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: "0 12px 28px rgba(91,91,214,.45)" }}>
+      {ghost && createPortal(
+        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "10px 18px", borderRadius: 99, background: accent, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: "0 12px 28px rgba(91,91,214,.45)" }}>
           {ex.words[ghost.wi]}
-        </div>
-      )}
+        </div>, document.body)}
       <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}`}</style>
     </div>
   );

@@ -485,7 +485,7 @@ function LevelPills({ value, onChange }) {
               alignItems: "center",
               gap: 3,
               boxShadow: active
-                ? `0 3px 0 rgba(0,0,0,.12), 0 8px 20px ${lv.color}44`
+                ? `0 8px 20px ${lv.color}44`
                 : "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)",
               transition: "all .25s cubic-bezier(.34,1.56,.64,1)",
               transform: active ? "translateY(-1px)" : "none",
@@ -2749,12 +2749,12 @@ export default function App() {
           background: linear-gradient(135deg, #5B5BD6, #FF6B5E) !important;
           color: #fff !important;
           font-weight: 800 !important;
-          box-shadow: 0 4px 0 rgba(0,0,0,.12), 0 8px 20px rgba(91,91,214,.32) !important;
+          box-shadow: 0 8px 20px rgba(91,91,214,.32) !important;
           transition: all .22s ease !important;
           letter-spacing: .03em;
         }
         .glow-btn:hover {
-          box-shadow: 0 4px 0 rgba(0,0,0,.12), 0 12px 28px rgba(91,91,214,.44) !important;
+          box-shadow: 0 12px 28px rgba(91,91,214,.44) !important;
           transform: translateY(-2px);
         }
 
@@ -3476,7 +3476,7 @@ function LevelComparison({ lang = "ku" }) {
         <div style={{ fontWeight:800, fontSize:17, color:"#18181B" }}>{title}</div>
       </div>
 
-      <div style={{ background:"#fff", borderRadius:22, padding:"18px 16px 20px", boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+      <div style={{ background:"#fff", borderRadius:22, padding:"18px 16px 20px", boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
 
         {/* ── kategori butonları: Fiiller / İsimler / Sıfatlar + Sıfırla ── */}
         <div style={{ display:"flex", gap:7, marginBottom:10 }}>
@@ -3842,7 +3842,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
       `}</style>
       <div style={{
         borderRadius:24, overflow:"hidden", marginBottom:18,
-        boxShadow:"0 4px 0 rgba(0,0,0,.18), 0 20px 56px rgba(0,0,0,.28)",
+        boxShadow:"0 20px 56px rgba(0,0,0,.28)",
         position:"relative",
       }}>
         {/* ── German flag stripe ── */}
@@ -3922,9 +3922,9 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
         </div>
         <div style={{ position:"relative", zIndex:1 }}>
           {/* Progress bar */}
-          <div style={{ height:6, background:"rgba(255,255,255,.2)", borderRadius:3, overflow:"hidden" }}>
-            <div style={{ height:"100%", width:`${journeyPct}%`, background:"rgba(255,255,255,.85)",
-              borderRadius:3, transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
+          <div style={{ height:8, background:"rgba(255,255,255,.22)", borderRadius:99, overflow:"hidden" }}>
+            <div style={{ height:"100%", width:`${journeyPct}%`, background:"linear-gradient(90deg,#FFB36B,#FF8A3D)",
+              borderRadius:99, boxShadow:"0 0 10px rgba(255,138,61,.7)", transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
           </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:5 }}>
             <div style={{ fontSize:12, color:"rgba(255,255,255,.55)" }}>
@@ -4047,7 +4047,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
           <div key={lv.id} className="step-card"
             onClick={() => { setLessonsLevel(lv.id); setTab("lessons"); }}
             style={{ background:"#fff", borderRadius:22, overflow:"hidden",
-              boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+              boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
 
             {/* ── gradient header ── */}
             <div style={{
@@ -9048,7 +9048,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
   return (
     <div key={g.de} style={{ display:"flex", flexDirection:"column", gap:13, paddingTop:14 }}>
       {/* hero */}
-      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${lc}CC)`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 3px 0 rgba(0,0,0,.11),0 10px 26px ${lc}44`, position:"relative", overflow:"hidden" }}>
+      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${lc}CC)`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 10px 26px ${lc}44`, position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:-25, left:-25, width:100, height:100, borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <div style={{ width:44, height:44, borderRadius:13, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:22, flexShrink:0, boxShadow:"0 2px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
@@ -9114,7 +9114,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       ))}
       {/* merksatz */}
       {g.merksatz && (
-        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 24px ${lc}40` }}>
+        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 8px 24px ${lc}40` }}>
           <div style={{ display:"flex",alignItems:"center",gap:6,marginBottom:10 }}>
             <div style={{ width:26,height:26,borderRadius:7,background:"rgba(255,255,255,.2)",display:"grid",placeItems:"center" }}><Zap size={13} color="#fff" /></div>
             <span style={{ fontSize:12.5,fontWeight:800,color:"#fff",letterSpacing:".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "es" ? "Frase para recordar (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
@@ -9989,10 +9989,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </button>
 
         {/* hero card */}
-        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 4px 0 rgba(0,0,0,.12), 0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, left: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,.08)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
+            <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{g.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800, letterSpacing: ".04em" }}>{level}</span>
@@ -10075,7 +10075,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         {/* merksatz */}
         {g.merksatz && (
-          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}DD 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 3px 0 rgba(0,0,0,.1), 0 10px 28px ${lc}40` }}>
+          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}DD 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 10px 28px ${lc}40` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center" }}>
                 <Zap size={14} color="#fff" />
@@ -10129,7 +10129,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     return (
       <div className="rise">
         <style>{`
-          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.09), 0 12px 28px ${lc}18 !important; }
+          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px ${lc}18 !important; }
           .wword-card { transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
         `}</style>
 
@@ -10139,10 +10139,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </button>
 
         {/* hero */}
-        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 4px 0 rgba(0,0,0,.12), 0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, right: -20, width: 130, height: 130, borderRadius: "50%", background: "rgba(255,255,255,.07)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{l.icon}</div>
+            <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{l.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800 }}>{l.level}</span>
@@ -10253,9 +10253,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       <style>{`
         .lessons-tab:hover:not(.lessons-tab-active) { background: #F5F5F7 !important; }
         .lessons-tab { transition: background .18s, color .18s, box-shadow .18s; }
-        .lcard:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.1), 0 14px 32px rgba(0,0,0,.09) !important; }
+        .lcard:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.09) !important; }
         .lcard { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
-        .vcard:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.1), 0 14px 32px rgba(0,0,0,.09) !important; }
+        .vcard:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.09) !important; }
         .vcard { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
       `}</style>
 
@@ -10322,7 +10322,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             background:`linear-gradient(135deg,${lg.from} 0%,${lg.to} 100%)`,
             borderRadius:22, padding:"20px 20px 22px", marginBottom:18,
             position:"relative", overflow:"hidden",
-            boxShadow:`0 4px 0 rgba(0,0,0,.1),0 12px 32px ${lg.from}44`,
+            boxShadow:`0 12px 32px ${lg.from}44`,
           }}>
             <div style={{ position:"absolute",top:-24,right:-24,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.13)",pointerEvents:"none" }} />
             <div style={{ position:"absolute",bottom:-16,left:-16,width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none" }} />
@@ -10348,7 +10348,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   ))}
                 </div>
               </div>
-              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.35)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 3px 0 rgba(0,0,0,.1)", flexShrink:0 }}>
+              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.35)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(30,30,70,.10)", flexShrink:0 }}>
                 <span style={{ fontSize:18, fontWeight:900, color:"#fff", lineHeight:1 }}>{avgPct}%</span>
                 <span style={{ fontSize:8.5, fontWeight:700, color:"rgba(255,255,255,.75)", marginTop:2, letterSpacing:".02em" }}>
                   {STAT_LABEL.progress[lang] || STAT_LABEL.progress.ku}
@@ -10730,7 +10730,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <div style={{ flex:1, height:"87%",
                     background:`linear-gradient(135deg,${sec.color},${sec.color}AA)`,
                     borderRadius:99, padding:"2.5px",
-                    boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${sec.color}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                    boxShadow: isSel ? `0 8px 20px ${sec.color}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                     <div style={{ height:"100%", background:"#fff", borderRadius:97,
                       display:"flex", alignItems:"center", padding:"0 12px", gap:8 }}>
                       <div style={{ flex:1, minWidth:0 }}>
@@ -10821,7 +10821,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   return (
                     <button key={k} onClick={() => { setExamType(k); setExamLevel(level); }}
                       style={{ textAlign:"right", background:"#fff", border:`1.5px solid ${C.line}`, borderInlineStart:`5px solid ${p.color}`, borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer", boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)", transition:"transform .18s,box-shadow .18s" }}
-                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 4px 0 rgba(0,0,0,.08),0 12px 24px ${p.color}33`;}}
+                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 12px 24px ${p.color}33`;}}
                       onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)";}}>
                       <div style={{ width:50, height:50, borderRadius:14, background:p.color, color:"#fff", display:"grid", placeItems:"center", flexShrink:0, boxShadow:`0 3px 10px ${p.color}55` }}>
                         <p.Icon size={24} />
@@ -10904,7 +10904,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     <div style={{ flex:1, height:"87%",
                       background:`linear-gradient(135deg,${ac},${ac}AA)`,
                       borderRadius:99, padding:"2.5px",
-                      boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                      boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                       <div style={{ height:"100%", background:"#fff", borderRadius:97,
                         display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                         <div style={{ flex:1, minWidth:0 }}>
@@ -10992,7 +10992,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -11011,7 +11011,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected verb category words */}
               {selectedVerb && (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVerb.icon}</div>
                       <div>
@@ -11111,7 +11111,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -11130,8 +11130,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected vocab topic words */}
               {selectedVocab && (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVocab.icon}</div>
                       <div>
@@ -11228,7 +11228,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -11247,7 +11247,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected adjective category words */}
               {selectedAdj && (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedAdj.icon}</div>
                       <div>
@@ -11346,7 +11346,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* hero */}
               <div style={{ background:`linear-gradient(145deg,${story.color},${story.color}BB)`,
                 borderRadius:22, padding:"22px 20px 20px", color:"#fff", marginBottom:20,
-                boxShadow:`0 4px 0 rgba(0,0,0,.12),0 12px 32px ${story.color}44`,
+                boxShadow:`0 12px 32px ${story.color}44`,
                 position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:-30, left:-30, width:120, height:120,
                   borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
@@ -11452,7 +11452,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     onClick={() => { setSelMasalId(story.id); setMasalDictEntry(null); window.scrollTo({top:0,behavior:"instant"}); }}
                     style={{ animationDelay:`${i * 60}ms`, background:"#fff", borderRadius:20,
                       overflow:"hidden", cursor:"pointer",
-                      boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+                      boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
                     {/* gradient header */}
                     <div style={{ background:`linear-gradient(135deg,${story.color},${story.color}BB)`,
                       padding:"18px 18px 16px", position:"relative", overflow:"hidden" }}>

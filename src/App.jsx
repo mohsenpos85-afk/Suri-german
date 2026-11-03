@@ -3725,24 +3725,29 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
   const order = [...levels].reverse(); // C2 first (top) → A1 last (bottom)
   const clipId = "pyrClip";
   const selIdx = order.findIndex(lv => lv.id === selectedLevelId);
-  const selCenterY = selIdx >= 0 ? selIdx*bandH + bandH/2 : bandH/2;
+  // Neon strength grows with the level: A1 soft glow … C2 blazing.
+  const rank = selIdx >= 0 ? 5 - selIdx : 0;          // A1=0 … C2=5
+  const k = 0.35 + 0.65 * (rank / 5);
+  const selLv = selIdx >= 0 ? order[selIdx] : null;
+  const y0 = selIdx * bandH, y1 = y0 + bandH;
+  const bandPoly = selLv ? `${(W - W*y0/H)/2},${y0} ${(W + W*y0/H)/2},${y0} ${(W + W*y1/H)/2},${y1} ${(W - W*y1/H)/2},${y1}` : "";
 
   return (
     <div style={{ display:"flex", alignItems:"center", gap:8, position:"relative" }}>
-      {/* left indicator: line + dot, animates to the selected band */}
-      <div style={{ width:26, height:H, position:"relative", flexShrink:0 }}>
-        <div style={{ position:"absolute", left:0, width:"100%", height:2,
-          background:"rgba(255,255,255,.85)", top:selCenterY, transition:"top .3s cubic-bezier(.4,0,.2,1)" }} />
-        <div style={{ position:"absolute", left:"calc(100% - 5px)", width:9, height:9, borderRadius:"50%",
-          background:"#fff", boxShadow:"0 0 8px rgba(255,255,255,.9)",
-          top:selCenterY - 4.5, transition:"top .3s cubic-bezier(.4,0,.2,1)" }} />
-      </div>
-
       {/* pyramid */}
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0 }}>
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0, overflow:"visible" }}>
+        <style>{`@keyframes neonPulse{0%,100%{opacity:1}50%{opacity:.72}}`}</style>
         <defs>
           <clipPath id={clipId}><path d={roundedTrianglePath(W,H,R)} /></clipPath>
+          <filter id="neonBlurA" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation={4 + 8*k} /></filter>
+          <filter id="neonBlurB" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation={1.5 + 2*k} /></filter>
         </defs>
+        {selLv && (
+          <g style={{ animation:"neonPulse 2.4s ease-in-out infinite", pointerEvents:"none" }}>
+            <polygon points={bandPoly} fill={selLv.color} opacity={0.55 + 0.4*k} filter="url(#neonBlurA)" />
+            <polygon points={bandPoly} fill={selLv.color} opacity={0.35 + 0.5*k} filter="url(#neonBlurB)" />
+          </g>
+        )}
         <g clipPath={`url(#${clipId})`}>
           {order.map((lv, i) => {
             const isSelected = lv.id === selectedLevelId;
@@ -3750,7 +3755,7 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
             return (
               <rect key={lv.id} x={0} y={i*bandH} width={W} height={bandH}
                 fill={lv.color} onClick={() => onSelect(lv.id)}
-                style={{ cursor:"pointer", filter: isSelected ? "brightness(1.3) saturate(1.15)" : "none",
+                style={{ cursor:"pointer", filter: isSelected ? `brightness(${1.25 + 0.5*k}) saturate(${1.2 + 0.5*k})` : "none",
                   transition:"filter .3s ease" }}
                 stroke={isCurrent ? "#fff" : "none"} strokeWidth={isCurrent ? 2.5 : 0} />
             );
@@ -3758,6 +3763,7 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
           {[1,2,3,4,5].map(i => (
             <line key={i} x1={0} y1={i*bandH} x2={W} y2={i*bandH} stroke="rgba(255,255,255,.28)" strokeWidth={1.3} />
           ))}
+          {selLv && <rect x={0} y={y0} width={W} height={bandH} fill="none" stroke="#fff" strokeOpacity={0.55 + 0.4*k} strokeWidth={1.6} style={{ pointerEvents:"none" }} />}
         </g>
         <path d={roundedTrianglePath(W,H,R)} fill="none" stroke="rgba(255,255,255,.18)" strokeWidth={1.5} />
         {order.map((lv, i) => (

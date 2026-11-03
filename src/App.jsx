@@ -9,7 +9,7 @@ import {
   CheckCircle2, XCircle, AlertCircle, RotateCcw, Zap, RefreshCw, Mic, Volume2,
   Plane, Users, Heart, Globe, Clock, Lock, LogOut,
   Headphones, PenLine, FileText, Type, Star, TrendingUp, SlidersHorizontal, ClipboardCheck,
-  ChevronDown, Gamepad2, User, Menu, ScanText
+  ChevronDown, Gamepad2, User, Menu, ScanText, Flame
 } from "lucide-react";
 import DocAssistant from "./DocAssistant.jsx";
 import { SB_EXTRA } from "./data/sprachbausteine.js";
@@ -2409,7 +2409,7 @@ function SessionComplete({ lang = "tr", xpEarned = 0, sessionWords = [], streakC
       )}
       {streakCount > 0 && (
         <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "14px 20px", textAlign: "center", minWidth: 96 }}>
-          <div style={{ fontSize: 24, fontWeight: 900, color: "#fb923c" }}>🔥{streakCount}</div>
+          <div style={{ fontSize: 24, fontWeight: 900, color: "#fb923c", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Flame size={24} strokeWidth={2.4} />{streakCount}</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)", marginTop: 2 }}>{t("streak")}</div>
         </div>
       )}
@@ -2966,7 +2966,7 @@ export default function App() {
           cursor: 'default',
           transition: 'all .3s ease',
         }}>
-          <span style={{ fontSize: 16 }}>🔥</span>
+          <Flame size={18} strokeWidth={2.4} />
           <span style={{
             fontSize: 14, fontWeight: 800,
             color: streak.count >= 7 ? '#fff' : '#E07800',
@@ -3820,7 +3820,7 @@ function SkillHexagon({ data, size = 240 }) {
         return (
           <g key={d.key}>
             <circle cx={x} cy={y} r={3.5} fill="#fff" />
-            <text x={lx} y={ly-4} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="rgba(255,255,255,.85)">{d.icon} {d.label}</text>
+            <text x={lx} y={ly-4} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="rgba(255,255,255,.85)">{d.label}</text>
             <text x={lx} y={ly+10} textAnchor="middle" fontSize={11} fontWeight={800} fill="#A78BFA">{Math.round(d.value)}%</text>
           </g>
         );
@@ -11825,7 +11825,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
             {streak > 1 && (
               <div style={{ display:"flex", alignItems:"center", gap:4, background:"rgba(245,165,36,.15)", border:"1px solid rgba(245,165,36,.3)", borderRadius:99, padding:"4px 12px" }}>
                 <Zap size={14} color={C.gold} />
-                <span style={{ fontSize:13, fontWeight:700, color:C.gold }}>{streak} 🔥</span>
+                <span style={{ fontSize:13, fontWeight:700, color:C.gold }}><span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>{streak}<Flame size={14} strokeWidth={2.4} /></span></span>
               </div>
             )}
           </div>
@@ -11857,7 +11857,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
         <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:10 }}>
           <div style={{ display:"flex", alignItems:"center", gap:4, background:"rgba(245,165,36,.15)", border:"1px solid rgba(245,165,36,.3)", borderRadius:99, padding:"4px 12px" }}>
             <Zap size={14} color={C.gold} />
-            <span style={{ fontSize:13, fontWeight:700, color:C.gold }}>{streak} 🔥</span>
+            <span style={{ fontSize:13, fontWeight:700, color:C.gold }}><span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>{streak}<Flame size={14} strokeWidth={2.4} /></span></span>
           </div>
         </div>
       )}

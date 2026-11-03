@@ -49,3 +49,6 @@ button, [role="button"], .s-press { -webkit-tap-highlight-color: transparent; to
 .s-press:active { transform: scale(.97); }
 button:not(:disabled):active { transform: scale(.98); }
 .s-card:hover.s-press { transform: translateY(-2px); }
+
+/* Direction arrows flip in RTL */
+html[dir="rtl"] .s-flip { transform: scaleX(-1); }

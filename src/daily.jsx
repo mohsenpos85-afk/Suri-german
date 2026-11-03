@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { LESSONS } from "./data/lessons";
 import { GRAMMAR_QUIZ } from "./data/grammarQuiz";
 import { DAILY_READING } from "./data/dailyReading";
+import { Library, Puzzle, BookOpen, Tag, PenLine, Check, Trophy, Sparkles, TrendingUp, ChevronRight } from "lucide-react";
 import { useNavLayer } from "./lib/nav";
 
 const LEVEL_IDS = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -14,22 +15,22 @@ const TXT = {
   tr: { title: "Günlük Bölüm", sub: "Her gün 5 kısa adım", level: "Seviyeni seç", left: n => `${n} XP kaldı`, lv: "Seviye",
     w: "Wortschatz", g: "Grammatik", r: "Leseverstehen", a: "Artikel", s: "Sprachbausteine",
     dw: "8 kelime", dg: "6 soru", dr: "Kısa metin, 3 soru", da: "der, die veya das", ds: "Boşluk doldurma",
-    start: "Başla", again: "Tekrar", next: "Sonraki", finish: "Bitir", done: "Tamam", allDone: "Bugünkü hedef tamam! 🎉",
+    start: "Başla", again: "Tekrar", next: "Sonraki", finish: "Bitir", done: "Tamam", allDone: "Bugünkü hedef tamam!",
     bonus: "Bonus", correct: "Doğru!", wrong: "Yanlış", answer: "Doğru cevap:", progress: "bugün", empty: "Bu seviyede bu adım için içerik yok.", result: "Sonuç" },
   en: { title: "Daily Plan", sub: "5 short steps every day", level: "Choose your level", left: n => `${n} XP to go`, lv: "Level",
     w: "Vocabulary", g: "Grammar", r: "Reading", a: "Articles", s: "Gap-fill",
     dw: "8 words", dg: "6 questions", dr: "Short text, 3 questions", da: "der, die or das", ds: "Fill the gaps",
-    start: "Start", again: "Again", next: "Next", finish: "Finish", done: "Done", allDone: "Today's goal complete! 🎉",
+    start: "Start", again: "Again", next: "Next", finish: "Finish", done: "Done", allDone: "Today's goal complete! ",
     bonus: "Bonus", correct: "Correct!", wrong: "Wrong", answer: "Correct answer:", progress: "today", empty: "No content for this step at this level.", result: "Result" },
   de: { title: "Tagesplan", sub: "Jeden Tag 5 kurze Schritte", level: "Wähle dein Niveau", left: n => `Noch ${n} XP`, lv: "Level",
     w: "Wortschatz", g: "Grammatik", r: "Leseverstehen", a: "Artikel", s: "Sprachbausteine",
     dw: "8 Wörter", dg: "6 Fragen", dr: "Kurztext, 3 Fragen", da: "der, die oder das", ds: "Lücken füllen",
-    start: "Start", again: "Nochmal", next: "Weiter", finish: "Fertig", done: "Okay", allDone: "Tagesziel erreicht! 🎉",
+    start: "Start", again: "Nochmal", next: "Weiter", finish: "Fertig", done: "Okay", allDone: "Tagesziel erreicht! ",
     bonus: "Bonus", correct: "Richtig!", wrong: "Falsch", answer: "Richtig:", progress: "heute", empty: "Für diesen Schritt gibt es hier keinen Inhalt.", result: "Ergebnis" },
   ku: { title: "بەشی ڕۆژانە", sub: "هەموو ڕۆژێک ٥ هەنگاوی کورت", level: "ئاستەکەت هەڵبژێرە", left: n => `${n} XP ماوە`, lv: "ئاست",
     w: "وشە", g: "ڕێزمان", r: "خوێندنەوە", a: "ئارتیکل", s: "پڕکردنەوەی بۆشایی",
     dw: "٨ وشە", dg: "٦ پرسیار", dr: "دەقێکی کورت، ٣ پرسیار", da: "der، die یان das", ds: "بۆشاییەکان پڕبکەرەوە",
-    start: "دەستپێبکە", again: "دووبارە", next: "دواتر", finish: "تەواو", done: "باشە", allDone: "ئامانجی ئەمڕۆ تەواوبوو! 🎉",
+    start: "دەستپێبکە", again: "دووبارە", next: "دواتر", finish: "تەواو", done: "باشە", allDone: "ئامانجی ئەمڕۆ تەواوبوو! ",
     bonus: "بۆنەس", correct: "ڕاستە!", wrong: "هەڵەیە", answer: "وەڵامی ڕاست:", progress: "ئەمڕۆ", empty: "بۆ ئەم هەنگاوە لەم ئاستەدا ناوەڕۆک نییە.", result: "ئەنجام" },
 };
 const tx = (lang) => TXT[lang] || TXT.en;
@@ -154,7 +155,7 @@ export function DailyHomeCard({ lang, onOpen, getXp }) {
           {STEPS.map((s, i) => <span key={s} style={{ flex: 1, height: 7, borderRadius: 99, background: i < st.done ? `linear-gradient(90deg,#FFB36B,${ORANGE})` : "rgba(91,91,214,.12)" }} />)}
         </div>
       </div>
-      <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 99, background: `linear-gradient(135deg,${ORANGE},#F0701A)`, color: "#fff", display: "grid", placeItems: "center", fontSize: 20, fontWeight: 900, boxShadow: "0 6px 16px rgba(255,138,61,.45)", flexShrink: 0 }}>›</span>
+      <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 99, background: `linear-gradient(135deg,${ORANGE},#F0701A)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "0 6px 16px rgba(255,138,61,.45)", flexShrink: 0 }}><ChevronRight size={22} strokeWidth={3} className="s-flip" /></span>
     </button>
   );
 }
@@ -175,7 +176,7 @@ function McqRun({ items, t, onComplete, onClose }) {
   if (end) {
     return (
       <div style={{ textAlign: "center", padding: "30px 0" }}>
-        <div style={{ fontSize: 56 }}>{pct === 100 ? "🏆" : pct >= 60 ? "🎉" : "💪"}</div>
+        <div style={{ width: 84, height: 84, margin: "0 auto 8px", borderRadius: 28, display: "grid", placeItems: "center", background: pct >= 60 ? "linear-gradient(135deg,#FFB36B,#FF8A3D)" : "linear-gradient(135deg,#A99CF7,#5B5BD6)", color: "#fff", boxShadow: "0 10px 26px rgba(91,91,214,.3)" }}>{pct === 100 ? <Trophy size={40} strokeWidth={2} /> : pct >= 60 ? <Sparkles size={40} strokeWidth={2} /> : <TrendingUp size={40} strokeWidth={2} />}</div>
         <div style={{ fontSize: 40, fontWeight: 900, color: INK }}>{pct}%</div>
         <div style={{ color: MUTED, marginBottom: 22 }}>{score} / {total}</div>
         <button type="button" className="s-press" onClick={onClose} style={bigBtn}>{t.done}</button>
@@ -258,7 +259,8 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
   const sbEx = useMemo(() => { const list = sbForLevel(level); return list.length ? [list[dayNumber() % list.length]] : []; }, [level, sbForLevel]);
 
   const desc = { w: t.dw, g: t.dg, r: t.dr, a: t.da, s: t.ds };
-  const icon = { w: "📚", g: "🧩", r: "📖", a: "🏷️", s: "✏️" };
+  const STEP_ICON = { w: Library, g: Puzzle, r: BookOpen, a: Tag, s: PenLine };
+  const STEP_TINT = { w: ["#EEF0FF", "#5B5BD6"], g: ["#FFF1E6", "#F0701A"], r: ["#E9F7F1", "#16A06F"], a: ["#FDEBF3", "#D63384"], s: ["#EAF3FE", "#2E7CF6"] };
   const info = levelInfo(xp);
 
   return (
@@ -287,7 +289,7 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
 
             {allDone && (
               <div style={{ background: `linear-gradient(135deg,${ORANGE},#F0701A)`, color: "#fff", borderRadius: 20, padding: "14px 18px", fontWeight: 800, marginBottom: 14, boxShadow: "0 8px 22px rgba(255,138,61,.4)" }}>
-                {t.allDone} <span style={{ opacity: .85, fontWeight: 700 }}>(+{XP_BONUS} XP {t.bonus})</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Sparkles size={20} />{t.allDone}</span> <span style={{ opacity: .85, fontWeight: 700 }}>(+{XP_BONUS} XP {t.bonus})</span>
               </div>
             )}
 
@@ -298,13 +300,15 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
                   <button key={s} type="button" className="s-press" onClick={() => setStep(s)}
                     style={{ display: "flex", alignItems: "center", gap: 14, textAlign: "start", width: "100%", border: "none", cursor: "pointer", fontFamily: "inherit",
                       background: "#fff", borderRadius: 22, padding: "14px 16px", boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 8px 22px rgba(30,30,70,.08)" }}>
-                    <span style={{ width: 46, height: 46, borderRadius: 16, display: "grid", placeItems: "center", fontSize: 22, flexShrink: 0,
-                      background: d !== undefined ? "#E6F7F0" : "#F1F0FE" }}>{d !== undefined ? "✓" : icon[s]}</span>
+                    <span style={{ width: 46, height: 46, borderRadius: 16, display: "grid", placeItems: "center", flexShrink: 0,
+                      background: d !== undefined ? "#E6F7F0" : STEP_TINT[s][0], color: d !== undefined ? "#16A06F" : STEP_TINT[s][1] }}>
+                      {d !== undefined ? <Check size={24} strokeWidth={3} /> : (() => { const Ic = STEP_ICON[s]; return <Ic size={24} strokeWidth={2.2} />; })()}
+                    </span>
                     <span style={{ flex: 1, minWidth: 0 }}>
                       <span style={{ display: "block", fontWeight: 800, fontSize: 16, color: INK }}>{i + 1}. {t[s]}</span>
                       <span style={{ display: "block", fontSize: 13, color: MUTED, marginTop: 2 }}>{d !== undefined ? `${d}%` : desc[s]}</span>
                     </span>
-                    <span style={{ fontWeight: 800, fontSize: 13, color: d !== undefined ? "#16A06F" : ORANGE }}>{d !== undefined ? t.again : `+${XP_STEP} XP`}</span>
+                    <span style={{ fontWeight: 800, fontSize: 13, color: d !== undefined ? "#16A06F" : ORANGE, display: "flex", alignItems: "center", gap: 2 }}>{d !== undefined ? t.again : `+${XP_STEP} XP`}<ChevronRight size={16} strokeWidth={2.6} className="s-flip" /></span>
                   </button>
                 );
               })}

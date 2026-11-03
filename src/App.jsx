@@ -252,6 +252,7 @@ import { lidTr } from './data/lidTranslations';
 import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
 import { useNavLayer, useNavState, navBack } from './lib/nav';
+import DailyPlan, { DailyHomeCard } from './daily';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -2478,6 +2479,7 @@ export default function App() {
     tabRef.current = prev; setTabRaw(prev);
   }, { depth: 0 }, tab);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDaily, setShowDaily] = useState(false);
   useNavLayer(showMenu, () => setShowMenu(false), { depth: 8, modal: true });
   const [openLesson, setOpenLesson] = useState(null);
   const [lessonsLevel, setLessonsLevel] = useState(null);
@@ -2933,7 +2935,7 @@ export default function App() {
         </div>
       )}
       {!intro && !onboarding && <main className="mob-pb" style={{ maxWidth: 880, margin: "0 auto", padding: "28px 20px 64px" }}>
-        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} />}
+        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} />}
         {tab === "levels" && <Seviyeler setTab={goToTab} setLessonsLevel={setLessonsLevel} progress={progress} lang={appLang} />}
         {tab === "lessons" && <Lessons open={openLesson} setOpen={setOpenLesson} progress={progress} setProgress={setProgress} startLevel={lessonsLevel} setTab={goToTab} favs={favs} toggleFav={toggleFav} lang={appLang} />}
         {tab === "cards" && <Flashcards favs={favs} toggleFav={toggleFav} lang={appLang} />}
@@ -2946,6 +2948,9 @@ export default function App() {
         {tab === "docs" && <DocAssistant lang={appLang} onBack={() => goToTab("home")} callClaude={callClaude} privacyUrl="/legal/datenschutz.html" impressumUrl="/legal/impressum.html" />}
       </main>}
 
+      {showDaily && !intro && !onboarding && (
+        <DailyPlan lang={appLang} onClose={() => setShowDaily(false)} SbQuiz={SbQuiz} sbForLevel={sbForLevel} addXp={addXp} getXp={getXp} Confetti={Confetti} />
+      )}
       {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}
       {!intro && !onboarding && streak.count > 0 && (
@@ -3825,7 +3830,7 @@ function SkillHexagon({ data, size = 240 }) {
 }
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
-function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
+function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily }) {
   const journeyLevel = getJourneyLevel();
   const journeyPct   = Math.round((journeyLevel-1)/60*100);
   const xp = getXp();
@@ -3940,6 +3945,8 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
           </div>
         </div>
       </div>
+
+      {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
 
       {/* ── Featured: Your Journey ── */}
       <div className="journey-featured"
@@ -4374,7 +4381,7 @@ function sbFeedback(ok) {
     o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + (ok ? 0.09 : 0.2));
   } catch { /* audio blocked */ }
 }
-function SbQuiz({ exercises, lang = "ku" }) {
+function SbQuiz({ exercises, lang = "ku", onDone }) {
   const T = SB_T[lang] || (lang === "fr" || lang === "ja" ? SB_T.en : SB_T.en);
   const [idx, setIdx] = useState(0);
   const [fills, setFills] = useState(() => exercises.map(() => ({})));     // exi → { bi: wi } (only correct, locked)
@@ -4464,6 +4471,8 @@ function SbQuiz({ exercises, lang = "ku" }) {
   const missed = Object.keys(wrongBlanks).length;
   const score = Math.max(0, totalBlanks - missed);
   const pct = totalBlanks ? Math.round((score / totalBlanks) * 100) : 0;
+  const doneFired = useRef(false);
+  useEffect(() => { if (finished && !doneFired.current) { doneFired.current = true; onDone?.(pct); } }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
   const reset = () => { setIdx(0); setFills(exercises.map(() => ({}))); setWrongBlanks({}); setTimedOut({}); setFinished(false); setSelected(null); setTimeLeft(45); };
   const sentence = (e, exi, upto) => e.parts.map((p, i) => p + (i < e.answers.length ? (upto || fills[exi][i] !== undefined ? e.answers[i] : "…") : "")).join("");
   const title = (e) => lang === "tr" ? (e.titleTr || e.titleKu) : lang === "en" ? (e.titleEn || e.titleKu) : lang === "ar" ? (e.titleAr || e.titleKu) : lang === "uk" ? (e.titleUk || e.titleEn || e.titleKu) : e.titleKu;

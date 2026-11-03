@@ -2397,12 +2397,12 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
 const BACK_LABEL = { ku:"گەڕانەوە", tr:"Geri", de:"Zurück", en:"Back", fa:"بازگشت", es:"Atrás", uk:"Назад", ar:"رجوع" };
 function GlobalBackButton({ lang }) {
   const { canBack, modal } = useNavState();
-  if (!canBack) return null;
+  if (!canBack || modal) return null; // menü/pencere açıkken kendi kapatma kontrolü var
   const label = BACK_LABEL[lang] || "Back";
   return (
     <button type="button" aria-label={label} onClick={() => navBack()}
       style={{
-        position:"fixed", top:12, insetInlineStart:12, zIndex: modal ? 100001 : 210,
+        position:"fixed", top:12, insetInlineStart:12, zIndex: 210,
         display:"flex", alignItems:"center", gap:4, height:40, padding:"0 14px 0 10px",
         borderRadius:20, border:"1px solid rgba(91,91,214,.18)", background:"rgba(255,255,255,.94)",
         backdropFilter:"blur(8px)", boxShadow:"0 2px 10px rgba(30,30,60,.12)", color:"#5B5BD6",

@@ -2353,7 +2353,35 @@ const SESSION_COMPLETE_T = {
   uk: { title: "Розділ завершено!", words: "слів вивчено", streak: "днів поспіль", card: "Нова картка!", practice: "Практикуй вивчене", cont: "Продовжити" },
   fa: { title: "فصل کامل شد!", words: "واژه یاد گرفتی", streak: "روز پیاپی", card: "کارت جدید!", practice: "آنچه یاد گرفتی تمرین کن", cont: "ادامه" },
 "es":{"title":"¡Capítulo completo!","words":"palabras aprendidas","streak":"racha de día","card":"¡Carta nueva!","practice":"Practica lo que aprendiste","cont":"Continuar"}};
-function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
+function Confetti() {
+  const pieces = useMemo(() => Array.from({ length: 46 }, (_, i) => ({
+    left: Math.random() * 100, delay: Math.random() * 0.9, dur: 2.2 + Math.random() * 1.8,
+    size: 6 + Math.random() * 7, rot: Math.random() * 360, round: i % 3 === 0,
+    color: ["#FF8A3D", "#8B7CF6", "#FFCE00", "#7DFFC4", "#FF6B5E", "#5B5BD6"][i % 6],
+  })), []);
+  return (
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      <style>{"@keyframes suriConfetti{0%{transform:translateY(-12vh) rotate(0);opacity:1}100%{transform:translateY(112vh) rotate(720deg);opacity:.9}}"}</style>
+      {pieces.map((c, i) => (
+        <span key={i} style={{ position: "absolute", top: 0, left: `${c.left}%`, width: c.size, height: c.round ? c.size : c.size * 1.7,
+          background: c.color, borderRadius: c.round ? 99 : 2, transform: `rotate(${c.rot}deg)`,
+          animation: `suriConfetti ${c.dur}s ${c.delay}s ease-in both` }} />
+      ))}
+    </div>
+  );
+}
+function CountUp({ to = 0, ms = 900 }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf, t0;
+    const step = (t) => { t0 = t0 || t; const k = Math.min(1, (t - t0) / ms); setN(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to, ms]);
+  return <>{n}</>;
+}
+
+function SessionComplete({ lang = "tr", xpEarned = 0, sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
   const t = (k) => SESSION_COMPLETE_T[lang]?.[k] ?? SESSION_COMPLETE_T.tr[k];
 
   const topWords = sessionWords.slice(0, 5);
@@ -2364,8 +2392,14 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
       background: "radial-gradient(ellipse at 50% 30%, rgba(124,58,237,.35) 0%, transparent 60%), #0c0f24",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, padding: 24,
     }}>
+      <Confetti />
       <img src="/fuxi-mascot.png" alt="SURI" style={{ width: 96, height: 96, objectFit: "contain", animation: "robotHappy .65s cubic-bezier(.22,1,.36,1) both" }} />
       <div style={{ color: "#fff", fontSize: 22, fontWeight: 900, fontFamily: "'Satoshi',system-ui,sans-serif", textAlign: "center" }}>{t("title")}</div>
+      {xpEarned > 0 && (
+        <div style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", color: "#fff", borderRadius: 99, padding: "8px 22px", fontSize: 22, fontWeight: 900, boxShadow: "0 6px 22px rgba(255,138,61,.45)" }}>
+          +<CountUp to={xpEarned} /> XP
+        </div>
+      )}
       {card && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
           <img src="/card.png" alt="card" style={{ width: 220, height: 138, objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,.35))", animation: "robotHappy .65s cubic-bezier(.22,1,.36,1) both" }} />
@@ -2387,7 +2421,7 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
         </div>
       )}
       <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,#5B5BD6,#7c3aed)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
+        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", boxShadow: "0 6px 20px rgba(255,138,61,.4)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
         <button onClick={onContinue} style={{ background: "rgba(255,255,255,.1)", color: "#fff", border: "1px solid rgba(255,255,255,.2)", borderRadius: 14, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>{t("cont")}</button>
       </div>
     </div>

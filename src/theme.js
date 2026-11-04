@@ -11,3 +11,6 @@ export const COLOR = {
   accent: "#FF8A3D", accentDk: "#F0701A",
   ink: "#18181B", muted: "#71717A", line: "#E4E4E8", bg: "#FBFBFC",
 };
+
+// Shared white card shell used across lessons, exercises and home.
+export const CARD = { background: "#fff", borderRadius: 22, border: "1px solid rgba(91,91,214,.08)", boxShadow: SH.card };

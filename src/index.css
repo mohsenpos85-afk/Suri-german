@@ -52,3 +52,10 @@ button:not(:disabled):active { transform: scale(.98); }
 
 /* Direction arrows flip in RTL */
 html[dir="rtl"] .s-flip { transform: scaleX(-1); }
+
+/* Touch targets: every button gets at least a 44x44 hit area without changing the layout. */
+:where(button:not([style*="position"]), [role="button"]:not([style*="position"])) { position: relative; }
+button::before, [role="button"]::before {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%);
+}

@@ -253,6 +253,7 @@ import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
 import { useNavLayer, useNavState, navBack } from './lib/nav';
 import DailyPlan, { DailyHomeCard } from './daily';
+import { CARD } from './theme';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -599,7 +600,7 @@ function Intro({ onDone }) {
         }} />
         <div style={{ textAlign:"center", marginTop:20, animation:"sp-title-in .55s .28s ease both" }}>
           <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", direction:"ltr", letterSpacing:"-.3px" }}>Willkommen!</div>
-          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"#A1A1AA", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
+          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"#71717A", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
         </div>
       </div>
 
@@ -620,7 +621,7 @@ function Intro({ onDone }) {
           }}>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:i===2?15:22, color:"#5B5BD6", fontVariantNumeric:"tabular-nums", lineHeight:1.3 }}>{s.val}</div>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:600, fontSize:13, color:"#18181B", marginTop:3 }}>{s.label}</div>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#A1A1AA", marginTop:2 }}>{s.sub}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#71717A", marginTop:2 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -1430,7 +1431,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
       <div style={{ padding:"0 16px" }}>
         <button onClick={onLogout} style={{
           width:"100%", padding:"15px", borderRadius:14, border:"none",
-          background:"rgba(229,72,77,0.08)", color:"#E5484D", fontWeight:700, fontSize:15,
+          background:"rgba(229,72,77,0.08)", color:"#C93A3F", fontWeight:700, fontSize:15,
           cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:10,
         }}>
           <LogOut size={18} color="#E5484D" />
@@ -1440,7 +1441,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
         {/* Delete account (store requirement) */}
         <button onClick={() => { setDelErr(""); setShowDelete(true); }} style={{
           width:"100%", marginTop:10, padding:"12px", borderRadius:14, border:"none",
-          background:"transparent", color:"#9ca3af", fontWeight:600, fontSize:13.5,
+          background:"transparent", color:"#6B7280", fontWeight:600, fontSize:13.5,
           cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8,
         }}>
           <XCircle size={15} color="#9ca3af" />
@@ -1449,9 +1450,9 @@ function ProfileScreen({ lang="ku", onLogout }) {
 
         {/* Legal links (store requirement) */}
         <div style={{ display:"flex", justifyContent:"center", gap:18, marginTop:14, fontSize:12.5 }}>
-          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
+          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
           <span style={{ color:"#d1d5db" }}>·</span>
-          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Impressum</a>
+          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Impressum</a>
         </div>
       </div>
 
@@ -1464,7 +1465,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
             </div>
             <h3 style={{ fontSize:18, fontWeight:800, margin:"0 0 10px", color:"#18181B" }}>{t("delTitle")}</h3>
             <p style={{ fontSize:14, lineHeight:1.55, color:"#71717A", margin:"0 0 20px" }}>{t("delWarn")}</p>
-            {delErr && <p style={{ fontSize:12.5, color:"#E5484D", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
+            {delErr && <p style={{ fontSize:12.5, color:"#C93A3F", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
             <button onClick={deleteAccount} disabled={deleting} style={{
               width:"100%", padding:"14px", borderRadius:13, border:"none", background:"#E5484D", color:"#fff",
               fontWeight:700, fontSize:15, cursor: deleting ? "default" : "pointer", opacity: deleting ? .7 : 1, marginBottom:8,
@@ -1869,7 +1870,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         {import.meta.env.DEV && (
           <div style={{ textAlign:"center", marginTop:4, marginBottom:8 }}>
             <button onClick={() => { finish({ auth:"skip" }); }}
-              style={{ border:"none", background:"transparent", color:"#A1A1AA", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
+              style={{ border:"none", background:"transparent", color:"#71717A", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
               Şimdilik atla
             </button>
           </div>
@@ -1914,7 +1915,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               <span style={{ fontWeight:800, fontSize:12, letterSpacing:"1px", color: answers.lang===l.v ? "#fff" : "#71717A" }}>{l.code}</span>
             </div>
             <span style={{ fontWeight:700, fontSize:13, color: answers.lang===l.v ? "#5B5BD6" : "#18181B" }}>{l.label}</span>
-            <span style={{ fontSize:12, color:"#A1A1AA" }}>{l.native}</span>
+            <span style={{ fontSize:12, color:"#71717A" }}>{l.native}</span>
           </button>
         ))}
       </div>
@@ -1926,7 +1927,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               <button key={dv.v} onClick={() => save("kuDialect", dv.v)}
                 style={{ ...card(answers.kuDialect===dv.v), padding:"12px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
                 <span style={{ fontWeight:700, fontSize:13, color: answers.kuDialect===dv.v ? "#5B5BD6" : "#18181B" }}>{dv.label}</span>
-                <span style={{ fontSize:12, color:"#A1A1AA" }}>{dv.native}</span>
+                <span style={{ fontSize:12, color:"#71717A" }}>{dv.native}</span>
               </button>
             ))}
           </div>
@@ -1972,7 +1973,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:700, fontSize:14, color: answers.level===l.v ? "#5B5BD6" : "#18181B" }}>{lbl}</div>
-                <div style={{ fontSize:12, color:"#A1A1AA", marginTop:2 }}>{sub}</div>
+                <div style={{ fontSize:12, color:"#71717A", marginTop:2 }}>{sub}</div>
               </div>
               {answers.level===l.v && <CheckCircle2 size={18} color="#5B5BD6" />}
             </button>
@@ -2050,7 +2051,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
             <div style={{ fontWeight:600, fontSize:12, color: answers.daily===d.v ? "#5B5BD6" : "#71717A" }}>
               {t("unit_min")}
             </div>
-            <div style={{ fontSize:12, color:"#A1A1AA", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
+            <div style={{ fontSize:12, color:"#71717A", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
           </button>
         ))}
       </div>
@@ -2269,7 +2270,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
 
             {/* Skip — test only */}
             <button onClick={() => finish({ auth: "skip" })}
-              style={{ background:"none", border:"none", color:"#A1A1AA", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
+              style={{ background:"none", border:"none", color:"#71717A", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
               {t("auth_skip")}
             </button>
           </div>
@@ -2926,7 +2927,7 @@ export default function App() {
               <button onClick={() => { handleLogout(); setShowMenu(false); }} className="drawer-nav-item"
                 style={{ width:"100%", textAlign:"left", display:"flex", alignItems:"center", gap:14,
                   padding:"13px 16px", borderRadius:12, border:"none", background:"transparent",
-                  color:"#E5484D", fontWeight:600, fontSize:15, cursor:"pointer" }}>
+                  color:"#C93A3F", fontWeight:600, fontSize:15, cursor:"pointer" }}>
                 <LogOut size={18} color="#E5484D" />
                 {tApp(appLang,"logout")}
               </button>
@@ -3515,14 +3516,14 @@ function LevelComparison({ lang = "ku" }) {
         <div style={{ fontWeight:800, fontSize:17, color:"#18181B" }}>{title}</div>
       </div>
 
-      <div style={{ background:"#fff", borderRadius:22, padding:"18px 16px 20px", boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
+      <div style={{ ...CARD, padding:"18px 16px 20px" }}>
 
         {/* ── kategori butonları: Fiiller / İsimler / Sıfatlar + Sıfırla ── */}
         <div style={{ display:"flex", gap:7, marginBottom:10 }}>
           {[
-            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang === "es" ? "Verbos" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#FF7E2E" },
-            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang === "es" ? "Sustantivos" : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#3B82F6" },
-            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang === "es" ? "Adjetivos" : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#10B981" },
+            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang === "es" ? "Verbos" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#C2570F" },
+            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang === "es" ? "Sustantivos" : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#2563EB" },
+            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang === "es" ? "Adjetivos" : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#0B8A63" },
           ].map(cat => {
             const active = categ === cat.key;
             return (
@@ -3593,7 +3594,7 @@ function LevelComparison({ lang = "ku" }) {
             }}>›</button>
 
           <div style={{ textAlign:"center" }}>
-            <div style={{ fontSize:12.5, fontWeight:800, color:"#FF7E2E", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
+            <div style={{ fontSize:12.5, fontWeight:800, color:"#C2570F", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
               {isEmpty ? "A1" : `A1  ·  ${idx + 1} / ${total}`}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
@@ -3609,7 +3610,7 @@ function LevelComparison({ lang = "ku" }) {
               </div>
             )}
             {!isEmpty && row.ex && (lang==="tr" ? row.ex_tr : lang==="en" ? row.ex_en : lang==="ar" ? row.ex_ar : lang === "es" ? row.ex_es : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : lang==="ku" ? row.ex_ku : null) && (
-              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#A1A1AA", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
+              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#71717A", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
                 {lang==="tr" ? row.ex_tr : lang==="en" ? (row.ex_en || row.ex_ku) : lang==="ar" ? (row.ex_ar || row.ex_ku) : lang === "es" ? (row.ex_es || row.ex_ku) : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : row.ex_ku}
               </div>
             )}
@@ -3924,7 +3925,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
                 <div style={{
                   fontSize:36, fontWeight:900, letterSpacing:".22em",
                   color:"#fff",
-                  textShadow:"0 0 32px rgba(255,255,255,.35), 0 2px 0 rgba(0,0,0,.4)",
+                  textShadow:"0 0 32px rgba(255,255,255,.62), 0 2px 0 rgba(0,0,0,.4)",
                   lineHeight:1, fontFamily:"system-ui,sans-serif",
                   display:"inline-flex", alignItems:"center", gap:10,
                 }}>
@@ -4001,7 +4002,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           {/* Pyramid */}
           <div style={{ flex:"1 1 240px", maxWidth:300 }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
               selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} />
           </div>
@@ -4009,7 +4010,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           {/* Hexagon */}
           <div style={{ flex:"1 1 260px", maxWidth:300, display:"flex", flexDirection:"column", alignItems:"center" }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
             <SkillHexagon data={hexData} />
           </div>
         </div>
@@ -4093,8 +4094,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
         {cards.map((lv, i) => (
           <div key={lv.id} className="step-card"
             onClick={() => { setLessonsLevel(lv.id); setTab("lessons"); }}
-            style={{ background:"#fff", borderRadius:22, overflow:"hidden",
-              boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
+            style={{ ...CARD, overflow:"hidden" }}>
 
             {/* ── gradient header ── */}
             <div style={{
@@ -4242,7 +4242,7 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
       {shuffled.map((q, i) => {
         const chosen = answers[i];
         return (
-          <div key={i} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:10, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.05)" }}>
+          <div key={i} style={{ ...CARD, padding:"14px 16px", marginBottom:10 }}>
             <div style={{ fontWeight:700, fontSize:13.5, color:"#1A1F2E", marginBottom:10, lineHeight:1.65 }} dir="ltr">
               {i + 1}. {q.q}
             </div>
@@ -4640,7 +4640,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
   if (headerless) return <SbQuiz exercises={exercises} lang={lang} />;
 
   return (
-    <div ref={secRef} style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
 
       {/* ── Accordion header ── */}
       <div
@@ -4920,7 +4920,7 @@ function LesenASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -4979,7 +4979,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
               <div style={{ fontSize: 13.5, color: "#1A1F2E", lineHeight: 1.6, marginBottom: 8 }} dir="ltr">
                 {st.text}
                 {revealed && isWrong && (
-                  <span style={{ fontSize: 12, color: "#16A34A", fontWeight: 700, marginInlineStart: 8 }}>
+                  <span style={{ fontSize: 12, color: "#15803D", fontWeight: 700, marginInlineStart: 8 }}>
                     → {st.answer ? "Richtig" : "Falsch"}
                   </span>
                 )}
@@ -5034,7 +5034,7 @@ function LesenBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5148,7 +5148,7 @@ function LesenCSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5426,7 +5426,7 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5461,13 +5461,13 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
         <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 5 }}>{lang==="tr" ? "Şu noktalara değinmelisiniz:" : lang==="en" ? "You should cover these points:" : lang==="ar" ? "يجب أن تتناول هذه النقاط:" : lang === "es" ? "Debes cubrir estos puntos:" : lang === "uk" ? "Ви маєте висвітлити ці пункти:" : lang === "fa" ? "باید به این نکات بپردازید:" : "دەبێت لەم خاڵانە بنووسیت:"}</div>
         {ex.bullets.map((b, i) => (
           <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 4 }}>
-            <span style={{ color: "#F59E0B", fontWeight: 800, flexShrink: 0 }}>•</span>
+            <span style={{ color: "#B45309", fontWeight: 800, flexShrink: 0 }}>•</span>
             <span style={{ fontSize: 13 }} dir="ltr">{b.de}</span>
             <span style={{ fontSize: 12.5, color: C.muted }}>({tC(b, lang)})</span>
           </div>
         ))}
       </div>
-      <div style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600, marginBottom: 8 }}>
+      <div style={{ fontSize: 12, color: "#B45309", fontWeight: 600, marginBottom: 8 }}>
         {lang==="tr" ? "✏️ Yaklaşık 30 kelime · ca. 30 Wörter" : lang==="en" ? "✏️ About 30 words · ca. 30 Wörter" : lang==="ar" ? "✏️ حوالي 30 كلمة · ca. 30 Wörter" : lang === "es" ? "✏️ Unas 30 palabras · ca. 30 Wörter" : lang === "uk" ? "✏️ Близько 30 слів · ca. 30 Wörter" : lang === "fa" ? "✏️ حدود ۳۰ واژه · ca. 30 Wörter" : "✏️ نزیکەی ٣٠ وشە · ca. 30 Wörter"}
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, fontStyle: "italic", marginBottom: 12 }} dir="ltr">
@@ -5483,7 +5483,7 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
       </button>
       {showModel && (
         <div style={{ marginTop: 10, background: "#F0FDF4", borderRadius: 10, padding: "12px 14px", border: "1.5px solid #86EFAC" }}>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: "#16A34A", marginBottom: 6 }}>✓ Musterlösung</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: "#15803D", marginBottom: 6 }}>✓ Musterlösung</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.85, whiteSpace: "pre-line" }} dir="ltr">{ex.modelAnswer}</div>
           <div style={{ fontSize: 12.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang === "es" ? (ex.modelAnswerEs||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
         </div>
@@ -5497,7 +5497,7 @@ function SchreibenBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5542,7 +5542,7 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
             <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }} dir="ltr">{p.question}</div>
             {openCards[i] && (
               <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid #86EFAC" }}>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: "#16A34A", lineHeight: 1.5 }} dir="ltr">✓ {p.example}</div>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: "#15803D", lineHeight: 1.5 }} dir="ltr">✓ {p.example}</div>
                 <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{tC(p, lang)}</div>
               </div>
             )}
@@ -5568,7 +5568,7 @@ function MündlichASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5661,7 +5661,7 @@ function MündlichBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5751,8 +5751,8 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
         {/* stats row */}
         <div style={{ display:"flex", justifyContent:"center", gap:20, marginBottom: lastDelta !== null ? 12 : 20 }}>
           {[
-            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#10b981" },
-            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#ef4444" },
+            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#0B8A63" },
+            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#C93A3F" },
             { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "es" ? "Objetivo" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"#5B5BD6" },
           ].map(r => (
             <div key={r.label} style={{ textAlign:"center" }}>
@@ -8966,7 +8966,7 @@ function GrammarMiniQuiz({ level, g, lang, accent }) {
 const UBUNG_SECTIONS = [
   { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків", subFa:"پر کردن جای خالی",   emoji:"🧩", color:"#5B5BD6" },
   { id:"lesenA",    label:"Lesen A",          sub:"سەردێڕ دیاری بکە",    subTr:"Başlık seç",          subUk:"Оберіть заголовок", subFa:"انتخاب عنوان",       emoji:"📰", color:"#059669" },
-  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба", subFa:"درست یا نادرست",          emoji:"📖", color:"#0891B2" },
+  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба", subFa:"درست یا نادرست",          emoji:"📖", color:"#0E7490" },
   { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    subUk:"Текст і питання", subFa:"متن و پرسش",         emoji:"📚", color:"#7C3AED" },
   { id:"schreibA",  label:"Schreiben A",      sub:"نووسینی فۆرم",        subTr:"Form doldurma",       subUk:"Заповнення форми", subFa:"پر کردن فرم",        emoji:"✍️", color:"#B45309" },
   { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       subUk:"Вільне письмо", subFa:"نوشتن آزاد",           emoji:"📝", color:"#BE185D" },
@@ -9212,7 +9212,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
 // ── چیروکەکان / Märchen data ─────────────────────────────────────────
 const MASALS = {
   A1: [
-    { id: "a1_1", emoji: "📱", title: "Das geheimnisvolle Handy", ku: "مۆبایلەکەی ئەسرارامێز", tr: "Gizemli telefon", en: "The mysterious phone", uk: "Таємничий телефон", ar: "الهاتف الغامض", color: "#16A06F", paragraphs: [
+    { id: "a1_1", emoji: "📱", title: "Das geheimnisvolle Handy", ku: "مۆبایلەکەی ئەسرارامێز", tr: "Gizemli telefon", en: "The mysterious phone", uk: "Таємничий телефон", ar: "الهاتف الغامض", color: "#0F7A55", paragraphs: [
       { de: "Noah war 17 Jahre alt und lebte in Berlin. Er ging jeden Tag zur Schule.", ku: "نۆا حەڤدە ساڵی بوو و لە بەرلیندا دەژیا. هەموو ڕۆژێک دەچوو بۆ قوتابخانە.", tr: "Noah 17 yaşındaydı ve Berlin'de yaşıyordu. Her gün okula gidiyordu.", en: "Noah was 17 years old and lived in Berlin. He went to school every day.", ar: "كان نوح يبلغ من العمر 17 عامًا ويعيش في برلين. كان يذهب إلى المدرسة كل يوم." , uk: "Ноа було сімнадцять років, і він жив у Берліні. Щодня він ходив до школи." , fa: "نوح 17 ساله بود و در برلین زندگی می کرد. او هر روز به مدرسه می رفت.","es":"Noé tenía 17 años y vivía en Berlín. Iba a la escuela todos los días."},
       { de: "Eines Morgens fand er ein Handy auf einer Bank im Park. Das Handy war neu und sehr modern, aber es war ausgeschaltet.", ku: "بەیانیانێک مۆبایلێکی دۆزییەوە لەسەر دانیشتنێکی پارکەکەدا. مۆبایلەکە نوێ و زۆر مۆدێرن بوو، بەڵام داخراو بوو.", tr: "Bir sabah parkta bir bankta bir telefon buldu. Telefon yeni ve çok modern görünüyordu, ama kapalıydı.", en: "One morning he found a phone on a bench in the park. The phone was new and very modern, but it was switched off.", ar: "في صباح أحد الأيام، وجد هاتفًا على مقعد في الحديقة. كان الهاتف جديدًا وحديثًا جدًا، لكنه كان مغلقًا." , uk: "Одного ранку він знайшов телефон на лавці в парку. Телефон був новий і дуже сучасний, але вимкнений." , fa: "یک روز صبح او تلفن را روی نیمکتی در پارک پیدا کرد. تلفن جدید و بسیار مدرن بود، اما خاموش بود.","es":"Una mañana encontró un teléfono en un banco en el parque. El teléfono era nuevo y muy moderno, pero estaba apagado."},
       { de: "Noah nahm das Handy mit nach Hause. Er wollte den Besitzer finden.", ku: "نۆا مۆبایلەکەی برد بۆ ماڵ. دەیەوی خاوەنەکەی بدۆزێتەوە.", tr: "Noah telefonu eve götürdü. Sahibini bulmak istiyordu.", en: "Noah took the phone home. He wanted to find the owner.", ar: "أخذ نوح الهاتف إلى المنزل. أراد أن يجد صاحبه." , uk: "Ноа забрав телефон додому. Він хотів знайти власника." , fa: "نوآ تلفن رو برد خونه میخواست صاحبش رو پیدا کنه","es":"Noah se llevó el teléfono a casa y quería encontrar al dueño."},
@@ -9240,7 +9240,7 @@ const MASALS = {
       { de: "Ein Sicherheitsmitarbeiter kam und öffnete die Tür für sie. Er lachte: Das passiert manchmal.", ku: "پاسەوانێک هات و دەرگاکەی کردەوە بۆی. پێکەنی: هەندێکجار ئەمە ڕوو دەدات.", tr: "Bir güvenlik görevlisi geldi ve kapıyı onun için açtı. Güldü: Bu bazen olur.", en: "A security guard came and opened the door for her. He laughed: This happens sometimes.", ar: "جاء حارس أمن وفتح لها الباب. ضحك قائلًا: هذا يحدث أحيانًا." , uk: "Прийшов охоронець і відчинив їй двері. Він засміявся: Таке іноді трапляється." , fa: "یک نگهبان امنیتی آمد و در را برای او باز کرد. او خندید: این اتفاق گاهی اوقات می افتد.","es":"Un guardia de seguridad vino y le abrió la puerta. Se rió: Esto sucede a veces."},
       { de: "Draußen atmete Lisa tief durch. Seit diesem Tag kontrolliert sie immer zweimal ihr Handy.", ku: "لە دەرەوە لیسا نەفەسێکی قووڵی کێشا. لەو ڕۆژەوە هەمیشە دووجار پشکنی ئایا مۆبایلەکەی لەگەڵیەتیا.", tr: "Dışarıda Lisa derin bir nefes aldı. O günden beri telefonunu her zaman iki kez kontrol ediyor.", en: "Outside, Lisa took a deep breath. Since that day, she always checks her phone twice.", ar: "في الخارج، تنفست ليزا بعمق. منذ ذلك اليوم، أصبحت تتحقق من هاتفها مرتين دائمًا." , uk: "Надворі Ліза глибоко вдихнула. Відтоді вона завжди двічі перевіряє свій телефон." , fa: "بیرون، لیزا نفس عمیقی کشید و از آن روز به بعد، همیشه تلفنش را دوبار چک میکند.","es":"Fuera, Lisa respiró profundamente, desde ese día, siempre revisa su teléfono dos veces."},
     ] , fa: "شب در مرکز خرید","es":"La noche en el centro comercial"},
-    { id: "a1_4", emoji: "📸", title: "Der Wettbewerb", ku: "پێشبڕکێکە", tr: "Yarışma", en: "The competition", uk: "Конкурс", ar: "المسابقة", color: "#3B82F6", paragraphs: [
+    { id: "a1_4", emoji: "📸", title: "Der Wettbewerb", ku: "پێشبڕکێکە", tr: "Yarışma", en: "The competition", uk: "Конкурс", ar: "المسابقة", color: "#2563EB", paragraphs: [
       { de: "Jonas liebte Fotografie. Er machte jeden Tag Bilder mit seinem Handy.", ku: "یۆناس فۆتۆگرافی خۆشدەویست. هەموو ڕۆژێک وێنە دەکێشا بە مۆبایلەکەیدا.", tr: "Jonas fotoğrafçılığı seviyordu. Her gün telefonuyla fotoğraf çekiyordu.", en: "Jonas loved photography. He took pictures with his phone every day.", ar: "كان يوناس يحب التصوير الفوتوغرافي. كان يلتقط الصور بهاتفه كل يوم." , uk: "Йонас любив фотографію. Щодня він робив знімки своїм телефоном." , fa: "جوناس عاشق عکاسی بود هر روز با گوشیش عکس میگرفت","es":"Jonas amaba la fotografía, tomaba fotos con su teléfono todos los días."},
       { de: "Er sah im Internet einen Fotowettbewerb. Das Thema war: Meine Stadt. Der Gewinner bekam eine neue Kamera. Jonas wollte teilnehmen.", ku: "لە ئینتەرنێتدا پێشبڕکێیەکی فۆتۆگرافی بینی. بابەتەکە بوو: شارەکەم. یۆناس دەیەوی بەشدار بێت.", tr: "İnternette bir fotoğraf yarışması gördü. Konu şuydu: Benim şehrim. Kazanan yeni bir kamera alacaktı. Jonas katılmak istedi.", en: "He saw a photo competition on the internet. The theme was: My city. The winner got a new camera. Jonas wanted to take part.", ar: "رأى مسابقة تصوير على الإنترنت. كان الموضوع: مدينتي. حصل الفائز على كاميرا جديدة. أراد يوناس المشاركة." , uk: "В інтернеті він побачив фотоконкурс. Темою було: Моє місто. Переможець отримував нову камеру. Йонас захотів узяти участь." , fa: "او یک مسابقه عکس را در اینترنت دید. موضوع این بود: شهر من. برنده یک دوربین جدید گرفت. جوناس می خواست شرکت کند.","es":"Vio un concurso de fotos en internet. El tema era: Mi ciudad. El ganador consiguió una nueva cámara. Jonas quería participar."},
       { de: "Eine Woche lang fotografierte er Straßen, Menschen und Parks. Aber er war mit seinen Bildern nicht zufrieden.", ku: "یەک هەفتە کولان، مرۆڤ و پارکی کێشا. بەڵام لە وێنەکانی رازی نەبوو.", tr: "Bir hafta boyunca sokakları, insanları ve parkları fotoğrafladı. Ama fotoğraflarından memnun değildi.", en: "For a week he photographed streets, people, and parks. But he wasn't satisfied with his pictures.", ar: "على مدى أسبوع، صوّر الشوارع والناس والحدائق. لكنه لم يكن راضيًا عن صوره." , uk: "Цілий тиждень він фотографував вулиці, людей і парки. Але він не був задоволений своїми знімками." , fa: "او برای یک هفته از خیابان ها، مردم و پارک ها عکاسی کرد. اما از عکس هایش راضی نبود.","es":"Durante una semana fotografió calles, gente y parques, pero no estaba satisfecho con sus fotos."},
@@ -9260,7 +9260,7 @@ const MASALS = {
     ] , fa: "خانه قدیمی","es":"La vieja casa"},
   ],
   A2: [
-    { id: "a2_1", emoji: "🐠", title: "Der Fischer und die kluge Meerjungfrau", ku: "سەیدەکەرەکە و مێرمایی زیرەکەکە", tr: "Balıkçı ve Akıllı Deniz Kızı", en: "The Fisherman and the Wise Mermaid", uk: "Рибалка і мудра русалка", ar: "الصياد وحورية البحر الحكيمة", color: "#0EA5E9", paragraphs: [
+    { id: "a2_1", emoji: "🐠", title: "Der Fischer und die kluge Meerjungfrau", ku: "سەیدەکەرەکە و مێرمایی زیرەکەکە", tr: "Balıkçı ve Akıllı Deniz Kızı", en: "The Fisherman and the Wise Mermaid", uk: "Рибалка і мудра русалка", ar: "الصياد وحورية البحر الحكيمة", color: "#0369A1", paragraphs: [
       { de: "Es war einmal ein junger Fischer namens Leo.", ku: "جارێکیان ماسیگرێکی گەنج هەبوو ناوی لیۆ بوو.", tr: "Bir zamanlar Leo adında genç bir balıkçı vardı.", en: "Once upon a time there was a young fisherman named Leo.", ar: "كان يا ما كان، صياد شاب يُدعى ليو." , uk: "Колись жив молодий рибалка на ім'я Лео." , fa: "روزی روزگاری ماهیگیر جوانی به نام لئو بود.","es":"Había una vez un joven pescador llamado Leo."},
       { de: "Er lebte in einem kleinen Dorf am Meer.", ku: "ئەو لە گوندێکی بچووک لەسەر کەناری دەریا دەژیا.", tr: "Deniz kenarındaki küçük bir köyde yaşıyordu.", en: "He lived in a small village by the sea.", ar: "كان يعيش في قرية صغيرة على شاطئ البحر." , uk: "Він жив у маленькому селі біля моря." , fa: "او در یک روستای کوچک کنار دریا زندگی می کرد.","es":"Vivía en un pequeño pueblo junto al mar."},
       { de: "Jeden Morgen ging er mit seinem Boot fischen.", ku: "هەموو بەیانییەک بە بەلەمەکەیەوە دەچووە ماسی گرتن.", tr: "Her sabah tekneye binip balık tutmaya giderdi.", en: "Every morning he went fishing with his boat.", ar: "كل صباح كان يخرج بقاربه لصيد السمك." , uk: "Щоранку він виходив на своєму човні ловити рибу." , fa: "هر روز صبح با قایقش به ماهیگیری میرفت.","es":"Cada mañana iba a pescar con su barco."},
@@ -9287,7 +9287,7 @@ const MASALS = {
       { de: "Die Meerjungfrau kam nicht mehr zurück.", ku: "مێرماییەکە جارێکی دیکە نەگەڕایەوە.", tr: "Deniz kızı bir daha geri dönmedi.", en: "The mermaid never came back.", ar: "لم تعد حورية البحر مرة أخرى." , uk: "Русалка більше ніколи не повернулася." , fa: "پری دریایی دیگه برنگشت","es":"La sirena nunca volvió."},
       { de: "Leo lernte eine wichtige Lektion: Man soll nicht gierig sein.", ku: "لیۆ وانەیەکی گرنگی فێربوو: پێویستە مرۆڤ چاوچنۆک نەبێت.", tr: "Leo önemli bir ders öğrendi: İnsan açgözlü olmamalı.", en: "Leo learned an important lesson: One should not be greedy.", ar: "تعلم ليو درسًا مهمًا: لا ينبغي للمرء أن يكون جشعًا." , uk: "Лео засвоїв важливий урок: не можна бути жадібним." , fa: "لئو درس مهمی یاد گرفت: آدم نباید حریص باشد.","es":"Leo aprendió una lección importante: Uno no debe ser codicioso."},
     ] , fa: "ماهیگیر و پری دریایی خردمند","es":"El Pescador y la Sirena Sabia"},
-    { id: "a2_2", emoji: "🏰", title: "Das verzauberte Schloss", ku: "قەڵای سێهرکراو", tr: "Büyülü Şato", en: "The Enchanted Castle", uk: "Зачарований замок", ar: "القلعة المسحورة", color: "#8B5CF6", paragraphs: [
+    { id: "a2_2", emoji: "🏰", title: "Das verzauberte Schloss", ku: "قەڵای سێهرکراو", tr: "Büyülü Şato", en: "The Enchanted Castle", uk: "Зачарований замок", ar: "القلعة المسحورة", color: "#6D4AD6", paragraphs: [
       { de: "Tief in einem großen Wald stand ein altes Schloss.", ku: "لە قووڵایی دارستانێکی گەورەدا قەڵایەکی کۆن هەبوو.", tr: "Büyük bir ormanın derinliklerinde eski bir şato vardı.", en: "Deep in a large forest stood an old castle.", ar: "في أعماق غابة كبيرة كانت تقف قلعة قديمة." , uk: "Глибоко у великому лісі стояв старий замок." , fa: "در اعماق جنگلی بزرگ، قلعهای قدیمی قرار داشت.","es":"En lo profundo de un bosque grande había un viejo castillo."},
       { de: "Niemand ging hinein, denn es war verzaubert.", ku: "کەس نەدەچووە ژوورەوە، چونکە سێهرلێکرابوو.", tr: "Kimse içeri girmiyordu, çünkü büyülüydü.", en: "No one went inside, because it was enchanted.", ar: "لم يكن أحد يدخلها، لأنها كانت مسحورة." , uk: "Ніхто не заходив усередину, бо він був зачарований." , fa: "هیچکس داخل نشد، چون جادو شده بود.","es":"Nadie entró, porque estaba encantado."},
       { de: "Eine mutige junge Frau namens Klara wollte das Geheimnis lüften.", ku: "ژنێکی گەنجی ئازا ناوی کلارا دەیویست نهێنییەکە بدۆزێتەوە.", tr: "Klara adında cesur genç bir kadın sırrı çözmek istedi.", en: "A brave young woman named Klara wanted to uncover the secret.", ar: "أرادت امرأة شابة شجاعة تُدعى كلارا كشف السر." , uk: "Смілива молода жінка на ім'я Клара захотіла розкрити таємницю." , fa: "یک زن جوان شجاع به نام کلارا می خواست این راز را کشف کند.","es":"Una joven valiente llamada Klara quería descubrir el secreto."},
@@ -9312,7 +9312,7 @@ const MASALS = {
       { de: "Er dankte Klara und gab ihr die Hälfte seines Reiches.", ku: "سوپاسی کلارای کرد و نیوەی شانشینەکەی پێدا.", tr: "Klara'ya teşekkür etti ve krallığının yarısını ona verdi.", en: "He thanked Klara and gave her half of his kingdom.", ar: "شكر كلارا ومنحها نصف مملكته." , uk: "Він подякував Кларі й віддав їй половину свого королівства." , fa: "او از کلارا تشکر کرد و نیمی از پادشاهی خود را به او داد.","es":"Agradeció a Klara y le dio la mitad de su reino."},
       { de: "Und alle lebten glücklich.", ku: "و هەموویان بە خۆشی ژیان.", tr: "Ve herkes mutlu yaşadı.", en: "And everyone lived happily.", ar: "وعاش الجميع سعداء." , uk: "І всі жили щасливо." , fa: "و همه با خوشحالی زندگی کردن","es":"Y todos vivían felices."},
     ] , fa: "قلعه سحرآمیز","es":"El Castillo Encantado"},
-    { id: "a2_3", emoji: "🪶", title: "Der Vogel mit den goldenen Federn", ku: "باڵندەکەی پەڕی زێڕین", tr: "Altın Tüylü Kuş", en: "The Bird with the Golden Feathers", uk: "Птах із золотим пір'ям", ar: "الطائر ذو الريش الذهبي", color: "#F59E0B", paragraphs: [
+    { id: "a2_3", emoji: "🪶", title: "Der Vogel mit den goldenen Federn", ku: "باڵندەکەی پەڕی زێڕین", tr: "Altın Tüylü Kuş", en: "The Bird with the Golden Feathers", uk: "Птах із золотим пір'ям", ar: "الطائر ذو الريش الذهبي", color: "#B45309", paragraphs: [
       { de: "In einem fernen Land lebte ein armer Holzfäller.", ku: "لە وڵاتێکی دوورەوە داردڕێکی هەژار دەژیا.", tr: "Uzak bir ülkede fakir bir oduncu yaşıyordu.", en: "In a faraway land lived a poor woodcutter.", ar: "في بلد بعيد كان يعيش حطاب فقير." , uk: "У далекому краю жив бідний дроворуб." , fa: "در سرزمینی دوردست، یک هیزم شکن فقیر زندگی می کرد.","es":"En una tierra lejana vivía un pobre leñador."},
       { de: "Er hatte drei Kinder und keine Frau.", ku: "سێ منداڵی هەبوو و ژنی نەبوو.", tr: "Üç çocuğu vardı ve eşi yoktu.", en: "He had three children and no wife.", ar: "كان لديه ثلاثة أطفال ولا زوجة له." , uk: "Він мав трьох дітей і не мав дружини." , fa: "او سه فرزند داشت و هیچ همسری نداشت.","es":"Tuvo tres hijos y no tuvo esposa."},
       { de: "Eines Tages fand er im Wald einen verletzten Vogel.", ku: "ڕۆژێکیان لە دارستاندا باڵندەیەکی برینداری دۆزییەوە.", tr: "Bir gün ormanda yaralı bir kuş buldu.", en: "One day he found an injured bird in the forest.", ar: "في أحد الأيام وجد في الغابة طائرًا مصابًا." , uk: "Одного дня він знайшов у лісі пораненого птаха." , fa: "یک روز او یک پرنده زخمی را در جنگل پیدا کرد.","es":"Un día encontró un pájaro herido en el bosque."},
@@ -9354,7 +9354,7 @@ const MASALS = {
       { de: "Sie sagten: Entschuldigung, Regenbogen. Du bist nicht zu klein. Du bist genau richtig.", ku: "گوتیان: ببورە، کەوانەرەنگ. تۆ زۆر بچووک نیت. تۆ بە تەواوی گونجاویت.", tr: "Şöyle dediler: Özür dileriz, Gökkuşağı. Sen küçük değilsin. Tam da olman gerektiği gibisin.", en: "They said: Sorry, Rainbow. You are not too small. You are exactly right.", ar: "قالوا: آسفون يا قوس قزح. أنتِ لستِ صغيرة. أنتِ بالضبط كما يجب أن تكوني." , uk: "Вони сказали: Пробач, Веселко. Ти не надто маленька. Ти саме така, як треба." , fa: "آنها گفتند: ببخشید رنگین کمان. شما خیلی کوچک نیستید. درست می گویید.","es":"Dijeron: «Lo siento, Rainbow, no eres demasiado pequeño, tienes razón»."},
       { de: "Von da an respektierten alle Wolken die kleine Regenbogenwolke.", ku: "لەو کاتەوە هەموو هەورەکان ڕێزیان لە هەورە بچووکەکەی کەوانەرەنگ گرت.", tr: "O günden sonra tüm bulutlar küçük Gökkuşağı bulutuna saygı duydu.", en: "From then on, all the clouds respected the little rainbow cloud.", ar: "منذ ذلك الحين، احترمت جميع الغيوم غيمة قوس قزح الصغيرة." , uk: "Відтоді всі хмари поважали маленьку хмаринку Веселку." , fa: "از آن زمان به بعد، تمام ابرها به ابر رنگین کمانی کوچک احترام میگذاشتند.","es":"Desde entonces, todas las nubes respetaban la pequeña nube del arco iris."},
     ] , fa: "رنگین کمان ابر کوچک","es":"El arco iris de la nube"},
-    { id: "a2_5", emoji: "💎", title: "Der Stein des Glücks", ku: "بەردی خۆشبەختی", tr: "Mutluluk Taşı", en: "The Stone of Happiness", uk: "Камінь щастя", ar: "حجر السعادة", color: "#10B981", paragraphs: [
+    { id: "a2_5", emoji: "💎", title: "Der Stein des Glücks", ku: "بەردی خۆشبەختی", tr: "Mutluluk Taşı", en: "The Stone of Happiness", uk: "Камінь щастя", ar: "حجر السعادة", color: "#0B8A63", paragraphs: [
       { de: "In einem Dorf lebten zwei Brüder: Max und Moritz.", ku: "لە گوندێکدا دوو برا دەژیان: ماکس و مۆریتس.", tr: "Bir köyde iki kardeş yaşıyordu: Max ve Moritz.", en: "In a village lived two brothers: Max and Moritz.", ar: "في قرية ما، كان يعيش أخوان: ماكس وموريتس." , uk: "У селі жили двоє братів: Макс і Моріц." , fa: "در یک روستا دو برادر زندگی میکردند: مکس و موریتز.","es":"En un pueblo vivían dos hermanos: Max y Moritz."},
       { de: "Max war immer unzufrieden.", ku: "ماکس هەمیشە ڕازی نەبوو.", tr: "Max hep memnuniyetsizdi.", en: "Max was always dissatisfied.", ar: "كان ماكس دائمًا غير راضٍ." , uk: "Макс завжди був незадоволений." , fa: "مکس همیشه ناراضی بود.","es":"Max siempre estaba insatisfecho."},
       { de: "Er wollte mehr Geld, ein größeres Haus und schönere Kleider.", ku: "ئەو پارەی زیاتر، ماڵێکی گەورەتر و جلی جوانتری دەویست.", tr: "Daha çok para, daha büyük bir ev ve daha güzel kıyafetler istiyordu.", en: "He wanted more money, a bigger house, and nicer clothes.", ar: "كان يريد المزيد من المال، ومنزلًا أكبر، وملابس أجمل." , uk: "Він хотів більше грошей, більший будинок і кращий одяг." , fa: "او پول بیشتر، خانه بزرگتر و لباس های بهتر می خواست.","es":"Quería más dinero, una casa más grande y ropa más bonita."},
@@ -9427,7 +9427,7 @@ const MASALS = {
       { de: "Sie standen wieder vor ihrem kleinen Haus.", ku: "جارێکی دیکە لەبەردەم ماڵە بچووکەکەیان ڕاوەستان.", tr: "Yine küçük evlerinin önünde duruyorlardı.", en: "They stood once again in front of their small house.", ar: "ووجدا نفسيهما واقفين مجددًا أمام بيتهما الصغير." , uk: "Вони знову стояли перед своїм маленьким будинком." , fa: "دوباره جلوی خانه کوچکشان ایستادند.","es":"Se pararon una vez más frente a su pequeña casa."},
       { de: "Aber sie waren glücklicher als je zuvor, weil sie endlich verstanden hatten, was wirklich zählt.", ku: "بەڵام لە هەموو کاتێک زیاتر دڵخۆش بوون، چونکە لە کۆتاییدا تێگەیشتن کە ڕاستی چی گرنگە.", tr: "Ama her zamankinden daha mutluydular çünkü artık gerçekten önemli olanın ne olduğunu anlamışlardı.", en: "But they were happier than ever before, because they had finally understood what truly matters.", ar: "لكنهما كانا أسعد من أي وقت مضى، لأنهما أدركا أخيرًا ما هو المهم حقًا." , uk: "Але вони були щасливіші, ніж будь-коли раніше, бо нарешті зрозуміли, що справді важливе." , fa: "اما آنها شادتر از همیشه بودند، زیرا آنها در نهایت درک کرده بودند که چه چیزی واقعا مهم است.","es":"Pero eran más felices que nunca, porque finalmente habían entendido lo que realmente importa."},
     ] , fa: "جادوگر و سه آرزو","es":"El mago y los tres deseos"},
-    { id: "b1_2", emoji: "🌙", title: "Die Tochter des Mondes", ku: "کچی مانگ", tr: "Ayın Kızı", en: "The Daughter of the Moon", uk: "Донька місяця", ar: "ابنة القمر", color: "#8B5CF6", paragraphs: [
+    { id: "b1_2", emoji: "🌙", title: "Die Tochter des Mondes", ku: "کچی مانگ", tr: "Ayın Kızı", en: "The Daughter of the Moon", uk: "Донька місяця", ar: "ابنة القمر", color: "#6D4AD6", paragraphs: [
       { de: "In einem kleinen Dorf hinter den großen Bergen lebte ein alter Müller mit seiner Tochter Luna.", ku: "لە گوندێکی بچووکدا لە پشتی چیا گەورەکانەوە، ئاسیاوانێکی پیر لەگەڵ کچەکەی لونا دەژیا.", tr: "Büyük dağların ardındaki küçük bir köyde, yaşlı bir değirmenci kızı Luna ile birlikte yaşıyordu.", en: "In a small village beyond the great mountains lived an old miller with his daughter Luna.", ar: "في قرية صغيرة خلف الجبال الكبيرة، عاش طاحون عجوز مع ابنته لونا." , uk: "У маленькому селі за великими горами жив старий мірошник зі своєю донькою Луною." , fa: "در یک روستای کوچک در آن سوی کوه های بزرگ، یک آسیابان قدیمی با دخترش لونا زندگی می کردند.","es":"En un pequeño pueblo más allá de las grandes montañas vivía un viejo molinero con su hija Luna."},
       { de: "Luna hatte langes, silbernes Haar und Augen, die nachts leuchteten.", ku: "لونا قژێکی درێژی زیوینی هەبوو و چاوانێکی هەبوو کە بە شەو دەدرەوشانەوە.", tr: "Luna'nın uzun, gümüş renkli saçları ve geceleri parlayan gözleri vardı.", en: "Luna had long, silvery hair and eyes that glowed at night.", ar: "كان للونا شعر فضي طويل وعينان تتوهجان في الليل." , uk: "Луна мала довге сріблясте волосся й очі, що світилися вночі." , fa: "لونا موهای بلند و نقره ای داشت و چشمانی که در شب می درخشید.","es":"Luna tenía el pelo largo y plateado y los ojos que brillaban por la noche."},
       { de: "Die Leute im Dorf sagten, dass Luna die Tochter des Mondes sei, weil sie in einer Nacht mit Vollmond geboren wurde.", ku: "خەڵکی گوندەکە دەیانگوت لونا کچی مانگە، چونکە لە شەوێکی مانگی چواردەدا لەدایک بووە.", tr: "Köydeki insanlar, Luna'nın ayın kızı olduğunu söylerdi, çünkü o bir dolunay gecesinde doğmuştu.", en: "The people in the village said that Luna was the daughter of the moon, because she was born on a night with a full moon.", ar: "كان أهل القرية يقولون إن لونا ابنة القمر، لأنها وُلدت في ليلة اكتمال القمر." , uk: "Люди в селі казали, що Луна — донька місяця, бо народилася вночі, коли був повний місяць." , fa: "مردم روستا می گفتند که لونا دختر ماه است، زیرا او در شبی با ماه کامل به دنیا آمده است.","es":"La gente del pueblo dijo que Luna era la hija de la luna, porque nació en una noche con luna llena."},
@@ -9519,7 +9519,7 @@ const MASALS = {
       { de: "Die Frau lächelte und sagte: Genau das war der Zauber. Der Stein hat nichts gemacht. Du hast es selbst geschafft.", ku: "ژنەکە زەردەخەنەیەکی کرد و گوتی: هەر ئەمە بوو سێهرەکە. بەردەکە هیچی نەکرد. تۆ خۆت بەدیهێنایت.", tr: "Kadın gülümseyerek dedi ki: İşte büyü tam olarak buydu. Taş hiçbir şey yapmadı. Bunu sen kendin başardın.", en: "The woman smiled and said: That was exactly the magic. The stone did nothing. You accomplished it yourself.", ar: "ابتسمت المرأة وقالت: هذا بالضبط كان السحر. الحجر لم يفعل شيئًا. أنت من حققت ذلك بنفسك." , uk: "Жінка усміхнулася й сказала: У цьому й полягала магія. Камінь нічого не робив. Ти досяг усього сам." , fa: "زن لبخندی زد و گفت: این دقیقا همان جادو بود. سنگ هیچ کاری نکرد. خودت آن را انجام دادی.","es":"La mujer sonrió y dijo: \"Esa era exactamente la magia. La piedra no hizo nada. Tú misma lo lograste."},
       { de: "Finn dankte ihr und lebte fortan ein geduldiges und friedliches Leben.", ku: "فین سوپاسی کرد و لەمەودوا ژیانێکی پڕ لە سەبر و ئاشتی بەسەربرد.", tr: "Finn ona teşekkür etti ve o günden sonra sabırlı ve huzurlu bir hayat sürdü.", en: "Finn thanked her and from then on lived a patient and peaceful life.", ar: "شكرها فين، وعاش منذ ذلك الحين حياة مليئة بالصبر والسلام." , uk: "Фінн подякував їй і відтоді жив терплячим і спокійним життям." , fa: "فین از او تشکر کرد و از آن زمان به بعد زندگی آرام و صبوری داشت.","es":"Finn le dio las gracias y a partir de entonces vivió una vida paciente y pacífica."},
     ] , fa: "سنگ صبوری","es":"La piedra de la paciencia"},
-    { id: "b1_5", emoji: "🐧", title: "Der Vogel ohne Flügel", ku: "باڵندەی بێ بازنە", tr: "Kanatsız Kuş", en: "The Bird Without Wings", uk: "Птах без крил", ar: "الطائر بلا أجنحة", color: "#0891B2", paragraphs: [
+    { id: "b1_5", emoji: "🐧", title: "Der Vogel ohne Flügel", ku: "باڵندەی بێ بازنە", tr: "Kanatsız Kuş", en: "The Bird Without Wings", uk: "Птах без крил", ar: "الطائر بلا أجنحة", color: "#0E7490", paragraphs: [
       { de: "Vor langer Zeit lebte ein kleiner Vogel namens Piko.", ku: "زۆر ماوەیەک لەمەوبەر باڵندەیەکی بچووک بە ناوی پیکۆ دەژیا.", tr: "Uzun zaman önce Piko adında küçük bir kuş yaşıyordu.", en: "A long time ago there lived a little bird named Piko.", ar: "منذ زمن بعيد، عاش طائر صغير يُدعى بيكو." , uk: "Давним-давно жив маленький птах на ім'я Піко." , fa: "مدتها پیش پرنده کوچکی به نام پیکو زندگی میکرد.","es":"Hace mucho tiempo vivía un pajarito llamado Piko."},
       { de: "Piko wurde ohne Flügel geboren.", ku: "پیکۆ بەبێ باڵ لەدایک بوو.", tr: "Piko kanatsız doğmuştu.", en: "Piko was born without wings.", ar: "وُلد بيكو بلا أجنحة." , uk: "Піко народився без крил." , fa: "پیکو بدون بال متولد شد","es":"Piko nació sin alas."},
       { de: "Alle anderen Vögel konnten fliegen.", ku: "هەموو باڵندەکانی دیکە دەیانتوانی بفڕن.", tr: "Diğer tüm kuşlar uçabiliyordu.", en: "All the other birds could fly.", ar: "كانت جميع الطيور الأخرى تستطيع الطيران." , uk: "Усі інші птахи вміли літати." , fa: "همه پرندگان می توانند پرواز کنند.","es":"Todos los otros pájaros podrían volar."},
@@ -9670,7 +9670,7 @@ const MASALS = {
       { de: "Dies setzt allerdings regelmäßige Selbstreflexion voraus, was im hektischen Alltag oft zu kurz kommt.", ku: "بەڵام ئەمە پێویستی بە بیرکردنەوەی خۆی بەردەوام هەیە، شتێک کە لە ژیانی ڕۆژانەی پڕ لە خێرایی زۆر جار پشتگوێ دەخرێت.", tr: "Ancak bu, telaşlı günlük yaşamda çoğu zaman ihmal edilen düzenli bir öz-yansımayı gerektirir.", en: "This, however, requires regular self-reflection, which often falls by the wayside in our hectic daily lives.", ar: "غير أن هذا يتطلب تأملاً ذاتيًا منتظمًا، وهو أمر كثيرًا ما يُهمل في خضم الحياة اليومية الصاخبة." , uk: "Це, однак, потребує регулярної саморефлексії, яка в нашому метушливому повсякденні часто відходить на другий план." , fa: "با این حال، این امر نیاز به تفکر منظم دارد، که اغلب در زندگی روزمره ما کنار گذاشته می شود.","es":"Sin embargo, esto requiere una reflexión regular, que a menudo cae al borde de nuestro ajetreado día a día."},
       { de: "Vielen Dank für Ihre Aufmerksamkeit.", ku: "زۆر سوپاس بۆ سەرنجتان.", tr: "İlginiz için çok teşekkür ederim.", en: "Thank you very much for your attention.", ar: "شكرًا جزيلاً لحسن إصغائكم." , uk: "Дуже дякую за увагу." , fa: "از توجه شما بسیار سپاسگزارم.","es":"Muchas gracias por su atención."},
     ] , fa: "قدرت عادت","es":"El poder del hábito"},
-    { id: "c1_2", emoji: "🤖", title: "Künstliche Intelligenz – Fluch oder Segen?", ku: "زیرەکی دەستکرد – نەلەت یان بەرەکەت؟", tr: "Yapay Zeka – Lanet mi, Nimet mi?", en: "Artificial Intelligence – Curse or Blessing?", uk: "Штучний інтелект — прокляття чи благословення?", ar: "الذكاء الاصطناعي – لعنة أم نعمة؟", color: "#0EA5E9", paragraphs: [
+    { id: "c1_2", emoji: "🤖", title: "Künstliche Intelligenz – Fluch oder Segen?", ku: "زیرەکی دەستکرد – نەلەت یان بەرەکەت؟", tr: "Yapay Zeka – Lanet mi, Nimet mi?", en: "Artificial Intelligence – Curse or Blessing?", uk: "Штучний інтелект — прокляття чи благословення?", ar: "الذكاء الاصطناعي – لعنة أم نعمة؟", color: "#0369A1", paragraphs: [
       { de: "Meine Damen und Herren, die rasante Entwicklung der künstlichen Intelligenz, insbesondere im Bereich des maschinellen Lernens, wirft grundlegende Fragen zur Zukunft der Arbeitsgesellschaft auf.", ku: "خانم و بەڕێزان، پەرەسەندنی خێرای زیرەکی دەستکرد، بە تایبەتی لە بواری فێربوونی ماشێندا، پرسیاری بنەڕەتی سەبارەت بە داهاتووی کۆمەڵگای کار دەخاتەڕوو.", tr: "Sayın bayanlar ve baylar, yapay zekânın, özellikle makine öğrenimi alanındaki hızlı gelişimi, çalışma toplumunun geleceğine dair temel sorular ortaya çıkarmaktadır.", en: "Ladies and gentlemen, the rapid development of artificial intelligence, particularly in the field of machine learning, raises fundamental questions about the future of our working society.", ar: "سيداتي وسادتي، إن التطور المتسارع للذكاء الاصطناعي، ولا سيما في مجال التعلم الآلي، يثير تساؤلات جوهرية حول مستقبل مجتمع العمل." , uk: "Пані та панове, стрімкий розвиток штучного інтелекту, зокрема у сфері машинного навчання, порушує фундаментальні питання про майбутнє нашого трудового суспільства." , fa: "خانم ها و آقایان، توسعه سریع هوش مصنوعی، به ویژه در زمینه یادگیری ماشین، سوالات اساسی در مورد آینده جامعه کاری ما را مطرح می کند.","es":"Señorías, el rápido desarrollo de la inteligencia artificial, especialmente en el ámbito del aprendizaje automático, plantea cuestiones fundamentales sobre el futuro de nuestra sociedad activa."},
       { de: "Während die einen in der KI eine Jahrhundertchance sehen, warnen andere vor massiven Arbeitsplatzverlusten und sozialen Verwerfungen.", ku: "لە کاتێکدا هەندێک لە زیرەکی دەستکرددا دەرفەتی سەدەیەک دەبینن، هەندێکی تریش ئاگاداری لەدەستدانی بەکۆمەڵ شوێنی کار و ئاڵۆزی کۆمەڵایەتی دەدەنەوە.", tr: "Bazıları yapay zekâda yüzyılın fırsatını görürken, diğerleri kitlesel iş kayıplarına ve toplumsal çalkantılara karşı uyarıda bulunuyor.", en: "While some see AI as the opportunity of the century, others warn of massive job losses and social upheaval.", ar: "فبينما يرى البعض في الذكاء الاصطناعي فرصة القرن، يحذر آخرون من خسائر هائلة في الوظائف واضطرابات اجتماعية." , uk: "Тоді як одні вбачають у ШІ можливість століття, інші застерігають від масової втрати робочих місць і соціальних потрясінь." , fa: "در حالی که برخی هوش مصنوعی را به عنوان فرصت قرن می بینند، برخی دیگر از دست دادن شغل های عظیم و تحولات اجتماعی هشدار می دهند.","es":"Mientras que algunos ven a AI como la oportunidad del siglo, otros advierten de la pérdida masiva de empleos y la agitación social."},
       { de: "Ich möchte im Folgenden beide Perspektiven beleuchten, ohne in vereinfachende Schwarz-Weiß-Malerei zu verfallen.", ku: "لە خوارەوە دەمەوێت هەردوو ڕوانگە ڕوون بکەمەوە، بەبێ ئەوەی بکەوم بەرەو وێنەکێشانێکی سادەکراوی ڕەش و سپی.", tr: "Aşağıda, basite indirgeyen siyah-beyaz bir tabloya düşmeden her iki bakış açısını da ele almak istiyorum.", en: "In what follows, I would like to shed light on both perspectives without falling into simplistic black-and-white thinking.", ar: "وأود فيما يلي أن أسلط الضوء على كلا المنظورين دون الانزلاق إلى تبسيط الأمور بشكل أبيض وأسود." , uk: "Далі я хотів би висвітлити обидві перспективи, не впадаючи у спрощене чорно-біле мислення." , fa: "در ادامه، من می خواهم به روشن کردن هر دو دیدگاه بدون افتادن به ساده تفکر سیاه و سفید.","es":"En lo que sigue, me gustaría arrojar luz sobre ambas perspectivas sin caer en un pensamiento simplista en blanco y negro."},
@@ -9694,7 +9694,7 @@ const MASALS = {
       { de: "Nur dann, so meine Überzeugung, kann das Potenzial der KI zum Wohle aller genutzt werden.", ku: "بەلای منەوە، تەنها لەو کاتەدا دەتوانرێت توانای زیرەکی دەستکرد بۆ چاکەی هەموو کەس بەکاربهێنرێت.", tr: "Kanaatimce yalnızca bu şekilde, yapay zekânın potansiyeli herkesin yararına kullanılabilir.", en: "Only then, in my conviction, can the potential of AI be harnessed for the benefit of all.", ar: "وعندئذ فقط، بحسب قناعتي، يمكن توظيف إمكانات الذكاء الاصطناعي لصالح الجميع." , uk: "Лише тоді, на моє переконання, потенціал ШІ можна буде спрямувати на благо всіх." , fa: "تنها در این صورت است که، به اعتقاد من، می توان پتانسیل AI را به نفع همه مهار کرد.","es":"Sólo entonces, en mi convicción, se podrá aprovechar el potencial de la IA para el beneficio de todos."},
       { de: "Ich danke Ihnen für Ihr Interesse.", ku: "سوپاستان دەکەم بۆ سەرنجتان.", tr: "İlginiz için teşekkür ederim.", en: "Thank you for your interest.", ar: "أشكركم على اهتمامكم." , uk: "Дякую за вашу увагу." , fa: "ممنون از توجهتون","es":"Gracias por su interés."},
     ] , fa: "هوش مصنوعی – نفرین یا برکت؟","es":"Inteligencia artificial: ¿maldiciones o bendiciones?"},
-    { id: "c1_3", emoji: "🌍", title: "Klimapsychologie – Warum handeln wir nicht?", ku: "دەروونناسی ئاووهەوا – بۆچی کار ناکەین؟", tr: "İklim Psikolojisi – Neden Harekete Geçmiyoruz?", en: "Climate Psychology – Why Don't We Act?", uk: "Психологія клімату — чому ми не діємо?", ar: "علم نفس المناخ – لماذا لا نتصرف؟", color: "#16A34A", paragraphs: [
+    { id: "c1_3", emoji: "🌍", title: "Klimapsychologie – Warum handeln wir nicht?", ku: "دەروونناسی ئاووهەوا – بۆچی کار ناکەین؟", tr: "İklim Psikolojisi – Neden Harekete Geçmiyoruz?", en: "Climate Psychology – Why Don't We Act?", uk: "Психологія клімату — чому ми не діємо?", ar: "علم نفس المناخ – لماذا لا نتصرف؟", color: "#15803D", paragraphs: [
       { de: "Guten Tag, verehrtes Publikum, wir stehen vor einer paradoxen Situation: Noch nie war das Wissen über den Klimawandel so umfassend, noch nie waren die Warnungen der Wissenschaft so eindeutig, und dennoch bleibt kollektives Handeln auf dem notwendigen Niveau aus.", ku: "ڕۆژتان باش، ئامادەبووانی بەڕێز، ئێمە لەبەردەم بارودۆخێکی پارادۆکسیدا ڕاوەستاوین: هەرگیز زانیاری سەبارەت بە گۆڕانی کەش و هەوا ئاوا فراوان نەبووە، هەرگیز ئاگاداریی زانست ئاوا ڕوون نەبووە، بەڵام سەرەڕای ئەمە کردەوەی هاوبەش لە ئاستی پێویستدا نایە دی.", tr: "İyi günler değerli dinleyiciler, paradoksal bir durumla karşı karşıyayız: İklim değişikliği hakkındaki bilgi hiç bu kadar kapsamlı olmamıştı, bilimin uyarıları hiç bu kadar net olmamıştı, buna rağmen gerekli düzeyde kolektif eylem hâlâ gerçekleşmiyor.", en: "Good day, esteemed audience, we find ourselves in a paradoxical situation: never has our knowledge of climate change been so comprehensive, never have the warnings of science been so unambiguous, and yet collective action at the necessary level continues to fail to materialize.", ar: "طاب يومكم، أيها الحضور الكرام، نحن أمام وضع متناقض: لم تكن معرفتنا بتغير المناخ يومًا بهذا الاتساع، ولم تكن تحذيرات العلم يومًا بهذا الوضوح، ومع ذلك لا يزال العمل الجماعي بالمستوى المطلوب غائبًا." , uk: "Доброго дня, шановна аудиторіє, ми опинилися в парадоксальній ситуації: ніколи наші знання про зміну клімату не були настільки всеосяжними, ніколи застереження науки не були настільки однозначними, і все ж колективні дії на необхідному рівні досі не з'являються." , fa: "روز خوش، مخاطبان محترم، ما خود را در یک وضعیت متناقض می یابیم: دانش ما از تغییرات آب و هوایی هرگز تا این حد جامع نبوده است، هرگز هشدارهای علم تا این حد مبهم نبوده است، و در عین حال اقدام جمعی در سطح لازم همچنان به تحقق نمی انجامد.","es":"Buenos días, estimado público, nos encontramos en una situación paradójica: nunca ha sido tan amplio nuestro conocimiento del cambio climático, nunca ha sido tan inequívoca la advertencia de la ciencia, y sin embargo, la acción colectiva en el nivel necesario sigue sin materializarse."},
       { de: "Die Klimapsychologie, ein interdisziplinäres Forschungsfeld zwischen Psychologie, Soziologie und Nachhaltigkeitswissenschaft, versucht, dieses Paradox zu erklären.", ku: "دەروونناسی کەش و هەوا، بوارێکی لێکۆڵینەوەی فرەلایەنە لەنێوان دەروونناسی، کۆمەڵناسی و زانستی بەردەوامیدا، هەوڵ دەدات ئەم پارادۆکسە ڕوون بکاتەوە.", tr: "Psikoloji, sosyoloji ve sürdürülebilirlik bilimi arasında disiplinlerarası bir araştırma alanı olan iklim psikolojisi, bu paradoksu açıklamaya çalışmaktadır.", en: "Climate psychology, an interdisciplinary field of research spanning psychology, sociology, and sustainability science, attempts to explain this paradox.", ar: "ويحاول علم نفس المناخ، وهو مجال بحثي متعدد التخصصات يجمع بين علم النفس وعلم الاجتماع وعلوم الاستدامة، تفسير هذا التناقض." , uk: "Психологія клімату — міждисциплінарна галузь досліджень, що охоплює психологію, соціологію й науку про сталий розвиток, — намагається пояснити цей парадокс." , fa: "روانشناسی آب و هوا، یک رشته بین رشته ای از تحقیقات روانشناسی، جامعه شناسی و علوم پایداری، تلاش می کند تا این پارادوکس را توضیح دهد.","es":"La psicología climática, un campo interdisciplinario de investigación que abarca la psicología, la sociología y la ciencia de la sostenibilidad, intenta explicar esta paradoja."},
       { de: "Ein zentrales Erklärungsmodell liefert die sogenannte kognitive Dissonanz.", ku: "مۆدێلێکی ڕوونکردنەوەی سەرەکی لەلایەن ئەوەی پێی دەگوترێت ناکۆکی زانیارییانە (کۆگنیتیڤ دیسۆننس) پێشکەش دەکرێت.", tr: "Merkezi bir açıklama modeli, sözde bilişsel uyumsuzluk kavramıyla sunulmaktadır.", en: "A central explanatory model is provided by what is known as cognitive dissonance.", ar: "ويقدم ما يسمى بالتنافر المعرفي نموذجًا تفسيريًا رئيسيًا لهذه الظاهرة." , uk: "Центральну пояснювальну модель дає так званий когнітивний дисонанс." , fa: "یک مدل توضیحی مرکزی توسط آنچه که به عنوان ناهماهنگی شناختی شناخته می شود ارائه می شود.","es":"Un modelo explicativo central es proporcionado por lo que se conoce como disonancia cognitiva."},
@@ -10397,7 +10397,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   ))}
                 </div>
               </div>
-              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.35)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(30,30,70,.10)", flexShrink:0 }}>
+              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.62)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(30,30,70,.10)", flexShrink:0 }}>
                 <span style={{ fontSize:18, fontWeight:900, color:"#fff", lineHeight:1 }}>{avgPct}%</span>
                 <span style={{ fontSize:8.5, fontWeight:700, color:"rgba(255,255,255,.75)", marginTop:2, letterSpacing:".02em" }}>
                   {STAT_LABEL.progress[lang] || STAT_LABEL.progress.ku}
@@ -10985,7 +10985,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
 
           {/* ── کردار sub-section ── */}
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="fiil" ? null : "fiil")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="fiil" ? "rgba(36,47,73,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -11085,7 +11085,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11104,7 +11104,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </div>
 
           {/* ── ناو sub-section ── */}
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="vocab" ? null : "vocab")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="vocab" ? "rgba(56,67,88,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -11205,7 +11205,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11224,7 +11224,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
           {/* ── Sıfatlar / Adjektive sub-section ── */}
           {adjWordList.length > 0 && (
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="adj" ? null : "adj")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="adj" ? "rgba(45,107,82,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -11321,7 +11321,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11546,9 +11546,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
 // ── helper: ئارتیکڵی وشە دیاری بکە ────────────────────────────────
 function detectArticle(de) {
-  if (de.startsWith("der ")) return { art: "der", color: "#3b82f6" };
+  if (de.startsWith("der ")) return { art: "der", color: "#2563EB" };
   if (de.startsWith("die ")) return { art: "die", color: "#ec4899" };
-  if (de.startsWith("das ")) return { art: "das", color: "#16A06F" };
+  if (de.startsWith("das ")) return { art: "das", color: "#0F7A55" };
   return null;
 }
 
@@ -11891,8 +11891,8 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
           </p>
           <div style={{ display:"flex", gap:12, justifyContent:"center", marginBottom:24 }}>
             {[
-              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#16A06F" },
-              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#ef4444" },
+              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#0F7A55" },
+              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#C93A3F" },
             ].map(s => (
               <div key={s.label} style={{ background:C.panel, border:`1px solid ${C.line}`, borderRadius:16, padding:"16px 28px" }}>
                 <s.Icon size={24} color={s.color} style={{ margin:"0 auto 6px", display:"block" }} />
@@ -12146,7 +12146,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
           <Heart size={32} color="#ef4444" />
         </div>
         <h3 style={{ fontWeight:800, fontSize:22, margin:"0 0 8px" }}>{tApp(lang,"fav_empty_h")}</h3>
-        <p style={{ color:"#8892A4", fontSize:14, margin:0 }}>
+        <p style={{ color:"#6B7280", fontSize:14, margin:0 }}>
           {tApp(lang,"fav_empty_p")}
         </p>
       </div>
@@ -12161,7 +12161,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
         </div>
         <div>
           <h2 style={{ fontWeight:800, fontSize:22, margin:0 }}>{tApp(lang,"fav_title")}</h2>
-          <div style={{ fontSize:13, color:"#8892A4", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
+          <div style={{ fontSize:13, color:"#6B7280", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
         </div>
       </div>
 
@@ -12206,7 +12206,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   <>
                     <div style={{ fontSize:12, color:"#5A6480", fontStyle:"italic" }} dir="ltr">{w.ex}</div>
                     {(tEx(w, lang)) && (
-                      <div style={{ fontSize:12, color:"#8892A4" }}>{tEx(w, lang)}</div>
+                      <div style={{ fontSize:12, color:"#6B7280" }}>{tEx(w, lang)}</div>
                     )}
                   </>
                 )}
@@ -12219,7 +12219,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   style={{ background:"rgba(239,68,68,.1)", border:"none", borderRadius:12, cursor:"pointer",
                     padding:"8px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
                   <Heart size={18} fill="#ef4444" color="#ef4444" />
-                  <span style={{ fontSize:12, fontWeight:700, color:"#ef4444" }}>{tApp(lang,"fav_remove")}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:"#C93A3F" }}>{tApp(lang,"fav_remove")}</span>
                 </button>
               </div>
             </div>
@@ -12590,9 +12590,9 @@ function tSpiel(lang, key) {
 
 const SPIEL_GAMES = [
   { id:"word-match", icon:"🃏", img:"/game-wordmatch.jpg", nameKey:"wm_name", descKey:"wm_desc", color:"#5B5BD6", ready:true  },
-  { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#E5484D", ready:true, pos:"center top" },
-  { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#30A46C", ready:true, pos:"center top" },
-  { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#f59e0b", ready:true  },
+  { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#C93A3F", ready:true, pos:"center top" },
+  { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#1F8A57", ready:true, pos:"center top" },
+  { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#B45309", ready:true  },
   { id:"listen",     icon:"🎧", img:"/game-listen.jpg",    nameKey:"li_name", descKey:"li_desc", color:"#F76B15", ready:false },
 ];
 
@@ -12744,14 +12744,14 @@ function SatzPuzzle({ lang = "ku", onBack }) {
   /* SETUP */
   if(phase==='setup') return (
     <div style={{maxWidth:480,margin:'0 auto',padding:'8px 0'}}>
-      <button onClick={onBack} style={{background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
+      <button onClick={onBack} style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
       <div style={{textAlign:'center',marginBottom:28}}>
         <div style={{fontSize:44}}>🧩</div>
         <div style={{fontWeight:800,fontSize:22,marginTop:8}}>{spt('title')}</div>
-        <div style={{fontSize:14,color:'#888',marginTop:4}}>{spt('sub')}</div>
+        <div style={{fontSize:14,color:'#6B6B73',marginTop:4}}>{spt('sub')}</div>
       </div>
-      <div style={{background:'#fff',borderRadius:16,padding:18,marginBottom:22,border:'1px solid #ebebf0'}}>
-        <div style={{fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
+      <div style={{...CARD, padding:18, marginBottom:22}}>
+        <div style={{fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
@@ -12797,17 +12797,17 @@ function SatzPuzzle({ lang = "ku", onBack }) {
       {/* Progress bar */}
       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
         <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}}
-          style={{background:'none',border:'none',color:'#888',cursor:'pointer',fontSize:18}}>←</button>
+          style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18}}>←</button>
         <div style={{flex:1,height:7,background:'#ebebf0',borderRadius:4}}>
           <div style={{height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#30A46C,#12a15a)',borderRadius:4,transition:'width .4s'}}/>
         </div>
-        <div style={{fontSize:13,color:'#888',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
+        <div style={{fontSize:13,color:'#6B6B73',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Translation hint card */}
-      <div style={{background:'#fff',borderRadius:20,padding:'18px 20px',marginBottom:16,border:'1px solid #ebebf0',boxShadow:'0 2px 12px rgba(0,0,0,.06)'}}>
+      <div style={{...CARD, padding:'18px 20px', marginBottom:16}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#30A46C',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
+          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#1F8A57',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
           <button onClick={()=>speak(q.de)} style={{width:32,height:32,borderRadius:8,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:14}}>🔊</button>
         </div>
         <div style={{fontSize:13,color:'#666',fontWeight:500,marginBottom:4}}>{spt('hint')}</div>
@@ -12819,7 +12819,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
         border:`2px dashed ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#c7c7e8'}`,
         borderRadius:16,padding:'10px 12px',marginBottom:16,display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',minWidth:0,transition:'all .2s'}}>
         {answer.length===0 && !status &&
-          <span style={{color:'#bbb',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
+          <span style={{color:'#71717A',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
         {answer.map(chip=>(
           <button key={chip.id} onClick={()=>removeWord(chip)} disabled={!!status}
             style={{padding:'8px 14px',borderRadius:10,border:`1.5px solid ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#5B5BD6'}`,
@@ -12854,7 +12854,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
             {chip.word}
           </button>
         ))}
-        {bank.length===0 && !status && <span style={{color:'#bbb',fontSize:13}}>—</span>}
+        {bank.length===0 && !status && <span style={{color:'#71717A',fontSize:13}}>—</span>}
       </div>
     </div>
   );
@@ -13000,14 +13000,14 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
   /* SETUP */
   if (phase==='setup') return (
     <div style={{ maxWidth:480, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:28 }}>
         <div style={{ fontSize:44 }}>🎯</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{aqt('title')}</div>
-        <div style={{ fontSize:14, color:'#888', marginTop:4 }}>{aqt('sub')}</div>
+        <div style={{ fontSize:14, color:'#6B6B73', marginTop:4 }}>{aqt('sub')}</div>
       </div>
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:22,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:22 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
@@ -13059,17 +13059,17 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
     <div style={{ maxWidth:480, margin:'0 auto' }}>
       {/* Progress */}
       <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:24 }}>
-        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',fontSize:18 }}>←</button>
+        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18 }}>←</button>
         <div style={{ flex:1,height:7,background:'#ebebf0',borderRadius:4 }}>
           <div style={{ height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#E5484D,#f97316)',borderRadius:4,transition:'width .4s' }} />
         </div>
-        <div style={{ fontSize:13,color:'#888',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
+        <div style={{ fontSize:13,color:'#6B6B73',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Word card */}
       <div style={{ background:'#fff',borderRadius:24,padding:'32px 24px',textAlign:'center',border:'1px solid #ebebf0',boxShadow:'0 4px 20px rgba(0,0,0,.08)',marginBottom:28 }}>
         {/* Level badge */}
-        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#E5484D',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
+        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#C93A3F',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
         {/* Word + audio */}
         <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:12 }}>
           <div style={{ fontSize:38,fontWeight:900,color:'#1a1a2e',letterSpacing:'-.5px' }}>{q.w}</div>
@@ -13084,8 +13084,8 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
             background: isRight?'#30A46C12':'#E5484D10',
             border:`1px solid ${isRight?'#30A46C44':'#E5484D44'}` }}>
             {isRight
-              ? <div style={{ color:'#30A46C',fontWeight:700,fontSize:15 }}>{aqt('correct')} — <span style={{ color:ART_COLOR[correct] }}>{correct}</span> {q.w}</div>
-              : <div style={{ color:'#E5484D',fontWeight:600,fontSize:14 }}>{aqt('wrong')} → <span style={{ color:ART_COLOR[correct],fontWeight:700 }}>{correct}</span> {q.w}</div>
+              ? <div style={{ color:'#1F8A57',fontWeight:700,fontSize:15 }}>{aqt('correct')} — <span style={{ color:ART_COLOR[correct] }}>{correct}</span> {q.w}</div>
+              : <div style={{ color:'#C93A3F',fontWeight:600,fontSize:14 }}>{aqt('wrong')} → <span style={{ color:ART_COLOR[correct],fontWeight:700 }}>{correct}</span> {q.w}</div>
             }
           </div>
         )}
@@ -13198,15 +13198,15 @@ function WordMatch({ lang = "ku", onBack }) {
   /* ── SETUP ── */
   if (phase==='setup') return (
     <div style={{ maxWidth:540, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:24 }}>
         <div style={{ fontSize:40 }}>🃏</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{tSpiel(lang,'wm_name')}</div>
-        <div style={{ fontSize:13, color:'#888', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
+        <div style={{ fontSize:13, color:'#6B6B73', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
       </div>
       {/* Level 1 */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:10,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:10 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl1(i)}
@@ -13217,8 +13217,8 @@ function WordMatch({ lang = "ku", onBack }) {
         </div>
       </div>
       {/* Level 2 */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:10,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:10 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl2(i)}
@@ -13229,8 +13229,8 @@ function WordMatch({ lang = "ku", onBack }) {
         </div>
       </div>
       {/* Category */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:20,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:20 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LCK.map((k,i)=>(
             <button key={k} onClick={()=>setCateg(k)}
@@ -19522,13 +19522,13 @@ function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
           </button>
         )}
         <div style={{ fontSize: 13, fontWeight: 800, color: '#8B6030', fontFamily: 'Georgia,serif' }}>{t('title')}</div>
-        {!done && <div style={{ fontSize: 12, color: '#b08050', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
+        {!done && <div style={{ fontSize: 12, color: '#8F6034', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
         {!done && q && (
           <>
-            <div style={{ fontSize: 12, color: '#9a7040', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10, textAlign: 'center' }}>{qLabel}</div>
+            <div style={{ fontSize: 12, color: '#85602F', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10, textAlign: 'center' }}>{qLabel}</div>
             <div style={{ fontSize: 28, fontWeight: 800, color: '#2c1408', textAlign: 'center', marginBottom: 32, fontFamily: 'Georgia,serif' }}>{q.prompt}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 420, margin: '0 auto', width: '100%' }}>
               {q.options.map((opt, i) => {
@@ -19841,7 +19841,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
     if (line.t === 'i') {
       return (
         <div key={i} style={{ margin: '4px 0 14px', padding: '10px 14px', background: 'rgba(120,80,30,.08)', borderRadius: 10, borderLeft: '3px solid rgba(180,120,50,.35)' }}>
-          <div style={{ fontSize: 12, color: '#9a7040', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
+          <div style={{ fontSize: 12, color: '#85602F', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
             💭 {resolveWho(line.who)} ({langLabel})
           </div>
           <div style={{ fontSize: 14, color: '#4a2e10', fontStyle: 'italic', lineHeight: 1.78, fontFamily: 'Georgia,serif', ...rtlStyle }}>{s}</div>
@@ -19947,7 +19947,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
             <div style={{ fontSize: 13, fontWeight: 700, color: '#4a2e10', fontFamily: 'Georgia,serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {scenes[page]?.title}
             </div>
-            <div style={{ fontSize: 12, color: '#b08050', fontFamily: 'Georgia,serif', marginTop: 1 }}>
+            <div style={{ fontSize: 12, color: '#8F6034', fontFamily: 'Georgia,serif', marginTop: 1 }}>
               {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : userLang === 'fa' ? 'صحنه' : 'Sahne'} {page + 1} / {total}
             </div>
           </div>
@@ -19983,7 +19983,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               ? scenes.map((_, i) => (
                   <div key={i} role="button" tabIndex={0} aria-label={'Scene ' + (i + 1)} aria-current={i === page ? 'step' : undefined} onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !flipping) { e.preventDefault(); setPage(i); } }} onClick={() => { if (!flipping) setPage(i); }} style={{ height: 5, borderRadius: 3, width: i === page ? 18 : 5, background: i === page ? '#c09060' : i < page ? 'rgba(180,130,60,.4)' : 'rgba(180,130,60,.18)', transition: 'all .35s cubic-bezier(.4,0,.2,1)', flexShrink: 0, cursor: 'pointer' }} />
                 ))
-              : <span style={{ fontSize: 13, color: '#b08050', fontFamily: 'Georgia,serif' }}>{page + 1} / {total}</span>
+              : <span style={{ fontSize: 13, color: '#8F6034', fontFamily: 'Georgia,serif' }}>{page + 1} / {total}</span>
             }
           </div>
 
@@ -20276,7 +20276,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
       {/* ── Back button ── */}
       <div style={{ padding:'12px 16px 0' }}>
-        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'#888',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
+        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'#6B6B73',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
       </div>
 
 
@@ -20397,7 +20397,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
                 <div style={{ fontSize:12.5, color:state==='locked'?'#ccc':'#999', marginTop:1 }}>
                   {getNat(lv)}
                 </div>
-                <div style={{ fontSize:12, color:'#bbb', marginTop:1 }}>
+                <div style={{ fontSize:12, color:'#71717A', marginTop:1 }}>
                   {lv.l} {jt('lessons')} · {lv.w} {jt('words')}
                 </div>
               </div>
@@ -20956,7 +20956,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   }
 
   const backBtn = (s) => (
-    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'#888', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
       ← {zt('back')}
     </button>
   );
@@ -20999,12 +20999,12 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   // ── Game screen ───────────────────────────────────────────────────────────
   return (
     <div style={{ maxWidth:440, margin:'0 auto', padding:16 }}>
-      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'#888', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
         ← {zt('back')}
       </button>
 
       <h2 style={{ textAlign:'center', fontWeight:900, fontSize:18, margin:'0 0 4px' }}>Entschlüssle die Wörter</h2>
-      <div style={{ textAlign:'center', fontSize:12, color:'#888', marginBottom:12 }}>
+      <div style={{ textAlign:'center', fontSize:12, color:'#6B6B73', marginBottom:12 }}>
         {selLvl} · {zt('chapter')} {selPuzz}
         {hintNum && (
           <span style={{ marginLeft:12, background:'#fef3c7', border:'1px solid #fbbf24', padding:'2px 10px', borderRadius:20, fontWeight:800, color:'#92400e' }}>
@@ -21037,7 +21037,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
                         cursor: isHint?'default':'pointer', transition:'border-color .12s',
                       }}>
                         <div style={{ fontSize:13, fontWeight:900, color:isOk?'#30A46C':isBad?'#E5484D':'#1a1a2e', lineHeight:1 }}>{displayed||''}</div>
-                        <div style={{ fontSize:8, color:'#aaa', lineHeight:1 }}>{num}</div>
+                        <div style={{ fontSize:8, color:'#71717A', lineHeight:1 }}>{num}</div>
                       </div>
                     );
                   })}
@@ -21104,7 +21104,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {setTab && (
         <button onClick={()=>setTab("home")} style={{
-          background:'none', border:'none', color:'#888', cursor:'pointer',
+          background:'none', border:'none', color:'#6B6B73', cursor:'pointer',
           display:'flex', alignItems:'center', gap:6, fontSize:14, marginTop:20 }}>
           ← {tApp(lang,"home_back")}
         </button>
@@ -21114,7 +21114,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
         <div style={{ fontWeight:800, fontSize:26, color:"#1a1a2e", marginBottom:6 }}>
           {tSpiel(lang,"title")}
         </div>
-        <div style={{ fontSize:15, color:"#888", marginBottom:0 }}>
+        <div style={{ fontSize:15, color:"#6B6B73", marginBottom:0 }}>
           {tSpiel(lang,"sub")}
         </div>
       </div>
@@ -21553,8 +21553,8 @@ function LiD({ lang = "ku" }) {
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: "0 0 6px", fontSize: 14, fontWeight: 700, fontFamily: "'Satoshi',system-ui,sans-serif", color: C.ink, lineHeight: 1.4 }}>{q.q}</p>
                   {trO && <p dir="auto" style={{ margin: "0 0 6px", fontSize: 12.5, color: C.muted, lineHeight: 1.5 }}>{trO.q}</p>}
-                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#E5484D" }}>✗ {q.o[ua]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[ua]}</span>}</p>}
-                  <p style={{ margin: 0, fontSize: 13, color: "#16A06F" }}>✓ {q.o[q.a]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[q.a]}</span>}</p>
+                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#C93A3F" }}>✗ {q.o[ua]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[ua]}</span>}</p>}
+                  <p style={{ margin: 0, fontSize: 13, color: "#0F7A55" }}>✓ {q.o[q.a]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[q.a]}</span>}</p>
                 </div>
               </div>
             </div>

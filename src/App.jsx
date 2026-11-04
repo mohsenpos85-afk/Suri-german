@@ -9,9 +9,11 @@ import {
   CheckCircle2, XCircle, AlertCircle, RotateCcw, Zap, RefreshCw, Mic, Volume2,
   Plane, Users, Heart, Globe, Clock, Lock, LogOut,
   Headphones, PenLine, FileText, Type, Star, TrendingUp, SlidersHorizontal, ClipboardCheck,
-  ChevronDown, Gamepad2, User, Menu, ScanText
+  ChevronDown, Gamepad2, User, Menu, ScanText, Flame
 } from "lucide-react";
 import DocAssistant from "./DocAssistant.jsx";
+import { SB_EXTRA } from "./data/sprachbausteine.js";
+import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -249,6 +251,9 @@ import { BUNDESLAENDER, GENERAL_QUESTIONS, STATE_QUESTIONS } from './data/lidDat
 import { lidTr } from './data/lidTranslations';
 import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
+import { useNavLayer, useNavState, navBack } from './lib/nav';
+import DailyPlan, { DailyHomeCard } from './daily';
+import { CARD } from './theme';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -482,7 +487,7 @@ function LevelPills({ value, onChange }) {
               alignItems: "center",
               gap: 3,
               boxShadow: active
-                ? `0 3px 0 rgba(0,0,0,.12), 0 8px 20px ${lv.color}44`
+                ? `0 8px 20px ${lv.color}44`
                 : "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)",
               transition: "all .25s cubic-bezier(.34,1.56,.64,1)",
               transform: active ? "translateY(-1px)" : "none",
@@ -595,7 +600,7 @@ function Intro({ onDone }) {
         }} />
         <div style={{ textAlign:"center", marginTop:20, animation:"sp-title-in .55s .28s ease both" }}>
           <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", direction:"ltr", letterSpacing:"-.3px" }}>Willkommen!</div>
-          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"#A1A1AA", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
+          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"#71717A", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
         </div>
       </div>
 
@@ -616,7 +621,7 @@ function Intro({ onDone }) {
           }}>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:i===2?15:22, color:"#5B5BD6", fontVariantNumeric:"tabular-nums", lineHeight:1.3 }}>{s.val}</div>
             <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:600, fontSize:13, color:"#18181B", marginTop:3 }}>{s.label}</div>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#A1A1AA", marginTop:2 }}>{s.sub}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#71717A", marginTop:2 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -650,7 +655,7 @@ const OB_LANGS = [
   {v:"tr",    code:"TR", label:"Turkish",   native:"Türkçe"},
   {v:"fr",    code:"FR", label:"French",    native:"Français"},
   {v:"uk",    code:"UK", label:"Ukrainian", native:"Українська"},
-  {v:"ku",    code:"KU", label:"Sorani Kurdish", native:"سۆرانی"},
+  {v:"ku",    code:"KU", label:"Kurdish", native:"Kurdî · کوردی"},
   {v:"fa",    code:"FA", label:"Farsi",         native:"فارسی"},
   {v:"ja",    code:"JA", label:"Japanese",      native:"日本語"},
 ];
@@ -1401,6 +1406,19 @@ function ProfileScreen({ lang="ku", onLogout }) {
         ))}
       </div>
 
+      {/* Kurdish dialect */}
+      {ob.lang === "ku" && (
+        <div style={{ padding:"0 16px 12px", display:"flex", gap:8 }}>
+          {KU_DIALECTS.map(dv => (
+            <button key={dv.v} onClick={() => { try { const o = JSON.parse(localStorage.getItem("ob_data")||"{}"); o.kuDialect = dv.v; localStorage.setItem("ob_data", JSON.stringify(o)); } catch {} window.location.reload(); }}
+              style={{ flex:1, padding:"12px 6px", borderRadius:14, cursor:"pointer", fontWeight:700, fontSize:13,
+                border:`1.5px solid ${kuDialect()===dv.v ? "#5B5BD6" : C.line}`, background: kuDialect()===dv.v ? "#F0F0FF" : "transparent", color: kuDialect()===dv.v ? "#5B5BD6" : C.ink }}>
+              {dv.label}<div style={{ fontSize:12, fontWeight:500, color:C.muted }}>{dv.native}</div>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Theme */}
       <div style={{ padding:"0 16px 12px" }}>
         <button onClick={() => { const d = document.documentElement.dataset.theme !== "dark"; document.documentElement.dataset.theme = d ? "dark" : "light"; try { localStorage.setItem("suri_theme", d ? "dark" : "light"); } catch {} }}
@@ -1413,7 +1431,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
       <div style={{ padding:"0 16px" }}>
         <button onClick={onLogout} style={{
           width:"100%", padding:"15px", borderRadius:14, border:"none",
-          background:"rgba(229,72,77,0.08)", color:"#E5484D", fontWeight:700, fontSize:15,
+          background:"rgba(229,72,77,0.08)", color:"#C93A3F", fontWeight:700, fontSize:15,
           cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:10,
         }}>
           <LogOut size={18} color="#E5484D" />
@@ -1423,7 +1441,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
         {/* Delete account (store requirement) */}
         <button onClick={() => { setDelErr(""); setShowDelete(true); }} style={{
           width:"100%", marginTop:10, padding:"12px", borderRadius:14, border:"none",
-          background:"transparent", color:"#9ca3af", fontWeight:600, fontSize:13.5,
+          background:"transparent", color:"#6B7280", fontWeight:600, fontSize:13.5,
           cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8,
         }}>
           <XCircle size={15} color="#9ca3af" />
@@ -1432,9 +1450,9 @@ function ProfileScreen({ lang="ku", onLogout }) {
 
         {/* Legal links (store requirement) */}
         <div style={{ display:"flex", justifyContent:"center", gap:18, marginTop:14, fontSize:12.5 }}>
-          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
+          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
           <span style={{ color:"#d1d5db" }}>·</span>
-          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#9ca3af", textDecoration:"none", fontWeight:600 }}>Impressum</a>
+          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Impressum</a>
         </div>
       </div>
 
@@ -1447,7 +1465,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
             </div>
             <h3 style={{ fontSize:18, fontWeight:800, margin:"0 0 10px", color:"#18181B" }}>{t("delTitle")}</h3>
             <p style={{ fontSize:14, lineHeight:1.55, color:"#71717A", margin:"0 0 20px" }}>{t("delWarn")}</p>
-            {delErr && <p style={{ fontSize:12.5, color:"#E5484D", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
+            {delErr && <p style={{ fontSize:12.5, color:"#C93A3F", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
             <button onClick={deleteAccount} disabled={deleting} style={{
               width:"100%", padding:"14px", borderRadius:13, border:"none", background:"#E5484D", color:"#fff",
               fontWeight:700, fontSize:15, cursor: deleting ? "default" : "pointer", opacity: deleting ? .7 : 1, marginBottom:8,
@@ -1481,6 +1499,7 @@ function useIsMobile(bp=768){
 
 // Module-level translation helper for sub-components (outside Lessons)
 const tApp = (lang, key) => {
+  if (lang === "ku") { const dv = kuDialect(); if (dv !== "sorani") { const o = KU_DIALECT_UI[dv]?.[key]; if (o) return o; } }
   if (lang === "uk") return APP_TRANS.uk?.[key] || key;
   return APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku?.[key] || key;
 };
@@ -1544,8 +1563,9 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   const [newPw2, setNewPw2]       = useState("");
 
   const lang = answers.lang || "en";
-  const t = (key) => (OB_TRANS[lang]?.[key] ?? OB_TRANS.en[key] ?? key);
-  const dir = LANG_DIR[lang] || "ltr";
+  const _kd = lang === "ku" ? (answers.kuDialect || kuDialect()) : "sorani";
+  const t = (key) => (_kd !== "sorani" && KU_DIALECT_OB[_kd]?.[key]) || (OB_TRANS[lang]?.[key] ?? OB_TRANS.en[key] ?? key);
+  const dir = _kd === "kurmanji" ? "ltr" : (LANG_DIR[lang] || "ltr");
 
   const progressIdx = FLOW.indexOf(screen);
   const progress    = progressIdx <= 0 ? 0 : (progressIdx / (FLOW.length - 1)) * 100;
@@ -1850,7 +1870,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         {import.meta.env.DEV && (
           <div style={{ textAlign:"center", marginTop:4, marginBottom:8 }}>
             <button onClick={() => { finish({ auth:"skip" }); }}
-              style={{ border:"none", background:"transparent", color:"#A1A1AA", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
+              style={{ border:"none", background:"transparent", color:"#71717A", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
               Şimdilik atla
             </button>
           </div>
@@ -1895,10 +1915,24 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               <span style={{ fontWeight:800, fontSize:12, letterSpacing:"1px", color: answers.lang===l.v ? "#fff" : "#71717A" }}>{l.code}</span>
             </div>
             <span style={{ fontWeight:700, fontSize:13, color: answers.lang===l.v ? "#5B5BD6" : "#18181B" }}>{l.label}</span>
-            <span style={{ fontSize:12, color:"#A1A1AA" }}>{l.native}</span>
+            <span style={{ fontSize:12, color:"#71717A" }}>{l.native}</span>
           </button>
         ))}
       </div>
+      {answers.lang === "ku" && (
+        <div style={{ marginTop:16 }}>
+          <div style={{ fontSize:13, fontWeight:700, color:"#18181B", textAlign:"center", marginBottom:8 }}>Kurdî · کوردی — Sorani / Badini / Kurmanji</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+            {KU_DIALECTS.map(dv => (
+              <button key={dv.v} onClick={() => save("kuDialect", dv.v)}
+                style={{ ...card(answers.kuDialect===dv.v), padding:"12px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+                <span style={{ fontWeight:700, fontSize:13, color: answers.kuDialect===dv.v ? "#5B5BD6" : "#18181B" }}>{dv.label}</span>
+                <span style={{ fontSize:12, color:"#71717A" }}>{dv.native}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {answers.lang && (
         <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:18, padding:"12px 16px", borderRadius:12, background:"#F0F0FF", border:"1px solid #E0E0FF" }}>
           <Globe size={18} color="#5B5BD6" strokeWidth={2} />
@@ -1907,13 +1941,13 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       )}
       <button
         className="ob-btn"
-        disabled={!answers.lang}
+        disabled={!answers.lang || (answers.lang === "ku" && !answers.kuDialect)}
         onClick={() => go("level")}
         style={{
           marginTop:20, width:"100%", padding:"16px", fontSize:16,
-          background: answers.lang ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
-          color: answers.lang ? "#fff" : "#A1A1AA",
-          cursor: answers.lang ? "pointer" : "not-allowed",
+          background: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+          color: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "#fff" : "#A1A1AA",
+          cursor: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "pointer" : "not-allowed",
           borderRadius:16, transition:"all .2s",
         }}>
         {answers.lang ? t("btn_continue") : "—"}
@@ -1939,7 +1973,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:700, fontSize:14, color: answers.level===l.v ? "#5B5BD6" : "#18181B" }}>{lbl}</div>
-                <div style={{ fontSize:12, color:"#A1A1AA", marginTop:2 }}>{sub}</div>
+                <div style={{ fontSize:12, color:"#71717A", marginTop:2 }}>{sub}</div>
               </div>
               {answers.level===l.v && <CheckCircle2 size={18} color="#5B5BD6" />}
             </button>
@@ -2017,7 +2051,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
             <div style={{ fontWeight:600, fontSize:12, color: answers.daily===d.v ? "#5B5BD6" : "#71717A" }}>
               {t("unit_min")}
             </div>
-            <div style={{ fontSize:12, color:"#A1A1AA", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
+            <div style={{ fontSize:12, color:"#71717A", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
           </button>
         ))}
       </div>
@@ -2236,7 +2270,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
 
             {/* Skip — test only */}
             <button onClick={() => finish({ auth: "skip" })}
-              style={{ background:"none", border:"none", color:"#A1A1AA", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
+              style={{ background:"none", border:"none", color:"#71717A", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
               {t("auth_skip")}
             </button>
           </div>
@@ -2321,7 +2355,35 @@ const SESSION_COMPLETE_T = {
   uk: { title: "Розділ завершено!", words: "слів вивчено", streak: "днів поспіль", card: "Нова картка!", practice: "Практикуй вивчене", cont: "Продовжити" },
   fa: { title: "فصل کامل شد!", words: "واژه یاد گرفتی", streak: "روز پیاپی", card: "کارت جدید!", practice: "آنچه یاد گرفتی تمرین کن", cont: "ادامه" },
 "es":{"title":"¡Capítulo completo!","words":"palabras aprendidas","streak":"racha de día","card":"¡Carta nueva!","practice":"Practica lo que aprendiste","cont":"Continuar"}};
-function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
+function Confetti() {
+  const pieces = useMemo(() => Array.from({ length: 46 }, (_, i) => ({
+    left: Math.random() * 100, delay: Math.random() * 0.9, dur: 2.2 + Math.random() * 1.8,
+    size: 6 + Math.random() * 7, rot: Math.random() * 360, round: i % 3 === 0,
+    color: ["#FF8A3D", "#8B7CF6", "#FFCE00", "#7DFFC4", "#FF6B5E", "#5B5BD6"][i % 6],
+  })), []);
+  return (
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      <style>{"@keyframes suriConfetti{0%{transform:translateY(-12vh) rotate(0);opacity:1}100%{transform:translateY(112vh) rotate(720deg);opacity:.9}}"}</style>
+      {pieces.map((c, i) => (
+        <span key={i} style={{ position: "absolute", top: 0, left: `${c.left}%`, width: c.size, height: c.round ? c.size : c.size * 1.7,
+          background: c.color, borderRadius: c.round ? 99 : 2, transform: `rotate(${c.rot}deg)`,
+          animation: `suriConfetti ${c.dur}s ${c.delay}s ease-in both` }} />
+      ))}
+    </div>
+  );
+}
+function CountUp({ to = 0, ms = 900 }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf, t0;
+    const step = (t) => { t0 = t0 || t; const k = Math.min(1, (t - t0) / ms); setN(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to, ms]);
+  return <>{n}</>;
+}
+
+function SessionComplete({ lang = "tr", xpEarned = 0, sessionWords = [], streakCount = 0, card = null, onPractice, onContinue }) {
   const t = (k) => SESSION_COMPLETE_T[lang]?.[k] ?? SESSION_COMPLETE_T.tr[k];
 
   const topWords = sessionWords.slice(0, 5);
@@ -2332,8 +2394,14 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
       background: "radial-gradient(ellipse at 50% 30%, rgba(124,58,237,.35) 0%, transparent 60%), #0c0f24",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, padding: 24,
     }}>
+      <Confetti />
       <img src="/fuxi-mascot.png" alt="SURI" style={{ width: 96, height: 96, objectFit: "contain", animation: "robotHappy .65s cubic-bezier(.22,1,.36,1) both" }} />
       <div style={{ color: "#fff", fontSize: 22, fontWeight: 900, fontFamily: "'Satoshi',system-ui,sans-serif", textAlign: "center" }}>{t("title")}</div>
+      {xpEarned > 0 && (
+        <div style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", color: "#fff", borderRadius: 99, padding: "8px 22px", fontSize: 22, fontWeight: 900, boxShadow: "0 6px 22px rgba(255,138,61,.45)" }}>
+          +<CountUp to={xpEarned} /> XP
+        </div>
+      )}
       {card && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
           <img src="/card.png" alt="card" style={{ width: 220, height: 138, objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,.35))", animation: "robotHappy .65s cubic-bezier(.22,1,.36,1) both" }} />
@@ -2342,7 +2410,7 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
       )}
       {streakCount > 0 && (
         <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "14px 20px", textAlign: "center", minWidth: 96 }}>
-          <div style={{ fontSize: 24, fontWeight: 900, color: "#fb923c" }}>🔥{streakCount}</div>
+          <div style={{ fontSize: 24, fontWeight: 900, color: "#fb923c", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Flame size={24} strokeWidth={2.4} />{streakCount}</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)", marginTop: 2 }}>{t("streak")}</div>
         </div>
       )}
@@ -2355,10 +2423,30 @@ function SessionComplete({ lang = "tr", sessionWords = [], streakCount = 0, card
         </div>
       )}
       <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,#5B5BD6,#7c3aed)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
+        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", boxShadow: "0 6px 20px rgba(255,138,61,.4)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
         <button onClick={onContinue} style={{ background: "rgba(255,255,255,.1)", color: "#fff", border: "1px solid rgba(255,255,255,.2)", borderRadius: 14, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>{t("cont")}</button>
       </div>
     </div>
+  );
+}
+
+const BACK_LABEL = { ku:"گەڕانەوە", tr:"Geri", de:"Zurück", en:"Back", fa:"بازگشت", es:"Atrás", uk:"Назад", ar:"رجوع" };
+function GlobalBackButton({ lang }) {
+  const { canBack, modal } = useNavState();
+  if (!canBack || modal) return null; // menü/pencere açıkken kendi kapatma kontrolü var
+  const label = BACK_LABEL[lang] || "Back";
+  return (
+    <button type="button" aria-label={label} onClick={() => navBack()}
+      style={{
+        position:"fixed", top:12, insetInlineStart:12, zIndex: 210,
+        display:"flex", alignItems:"center", gap:4, height:40, padding:"0 14px 0 10px",
+        borderRadius:20, border:"1px solid rgba(91,91,214,.18)", background:"rgba(255,255,255,.94)",
+        backdropFilter:"blur(8px)", boxShadow:"0 2px 10px rgba(30,30,60,.12)", color:"#5B5BD6",
+        fontWeight:700, fontSize:14, cursor:"pointer", WebkitTapHighlightColor:"transparent",
+      }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: (typeof document!=="undefined" && document.dir==="rtl") ? "scaleX(-1)" : "none" }}><path d="M15 18l-6-6 6-6"/></svg>
+      {label}
+    </button>
   );
 }
 
@@ -2367,7 +2455,7 @@ export default function App() {
   useEffect(() => {
     try {
       document.documentElement.lang = appLang;
-      document.documentElement.dir = LANG_DIR[appLang] === "rtl" ? "rtl" : "ltr";
+      document.documentElement.dir = (LANG_DIR[appLang] === "rtl" && !(appLang === "ku" && kuDialect() === "kurmanji")) ? "rtl" : "ltr";
     } catch { /* non-browser */ }
   }, [appLang]);
   const [intro, setIntro]           = useState(false);
@@ -2377,8 +2465,23 @@ export default function App() {
   const [firstJourneyStage, setFirstJourneyStage] = useState(null); // null | "intro" | "reading" | "summary" — auto-start Chapter 1 for brand-new users
   const [firstJourneySummary, setFirstJourneySummary] = useState(null); // { xpEarned, sessionWords }
   const [spielInitialGame, setSpielInitialGame] = useState(null); // deep-link Das Spiel into a specific game (e.g. from the practice CTA)
-  const [tab, setTab] = useState("home");
+  const [tab, setTabRaw] = useState("home");
+  const tabRef = useRef("home"); tabRef.current = tab;
+  const tabHist = useRef([]);
+  const setTab = useCallback((n) => {
+    const p = tabRef.current;
+    if (n === p) return;
+    if (n === "home") tabHist.current = []; else tabHist.current.push(p);
+    if (tabHist.current.length > 40) tabHist.current.shift();
+    tabRef.current = n; setTabRaw(n);
+  }, []);
+  useNavLayer(tab !== "home", () => {
+    const prev = tabHist.current.pop() || "home";
+    tabRef.current = prev; setTabRaw(prev);
+  }, { depth: 0 }, tab);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDaily, setShowDaily] = useState(false);
+  useNavLayer(showMenu, () => setShowMenu(false), { depth: 8, modal: true });
   const [openLesson, setOpenLesson] = useState(null);
   const [lessonsLevel, setLessonsLevel] = useState(null);
   const [progress, setProgress] = useState(() => {
@@ -2440,7 +2543,7 @@ export default function App() {
     if (newTab === tab) return; // aynı sayfadaysa hareket etme
     scrollSave.current[tab] = window.scrollY;
     setTab(newTab);
-  }, [tab]);
+  }, [tab, setTab]);
   useEffect(() => {
     const saved = scrollSave.current[tab];
     requestAnimationFrame(() =>
@@ -2683,12 +2786,12 @@ export default function App() {
           background: linear-gradient(135deg, #5B5BD6, #FF6B5E) !important;
           color: #fff !important;
           font-weight: 800 !important;
-          box-shadow: 0 4px 0 rgba(0,0,0,.12), 0 8px 20px rgba(91,91,214,.32) !important;
+          box-shadow: 0 8px 20px rgba(91,91,214,.32) !important;
           transition: all .22s ease !important;
           letter-spacing: .03em;
         }
         .glow-btn:hover {
-          box-shadow: 0 4px 0 rgba(0,0,0,.12), 0 12px 28px rgba(91,91,214,.44) !important;
+          box-shadow: 0 12px 28px rgba(91,91,214,.44) !important;
           transform: translateY(-2px);
         }
 
@@ -2824,7 +2927,7 @@ export default function App() {
               <button onClick={() => { handleLogout(); setShowMenu(false); }} className="drawer-nav-item"
                 style={{ width:"100%", textAlign:"left", display:"flex", alignItems:"center", gap:14,
                   padding:"13px 16px", borderRadius:12, border:"none", background:"transparent",
-                  color:"#E5484D", fontWeight:600, fontSize:15, cursor:"pointer" }}>
+                  color:"#C93A3F", fontWeight:600, fontSize:15, cursor:"pointer" }}>
                 <LogOut size={18} color="#E5484D" />
                 {tApp(appLang,"logout")}
               </button>
@@ -2833,7 +2936,7 @@ export default function App() {
         </div>
       )}
       {!intro && !onboarding && <main className="mob-pb" style={{ maxWidth: 880, margin: "0 auto", padding: "28px 20px 64px" }}>
-        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} />}
+        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} />}
         {tab === "levels" && <Seviyeler setTab={goToTab} setLessonsLevel={setLessonsLevel} progress={progress} lang={appLang} />}
         {tab === "lessons" && <Lessons open={openLesson} setOpen={setOpenLesson} progress={progress} setProgress={setProgress} startLevel={lessonsLevel} setTab={goToTab} favs={favs} toggleFav={toggleFav} lang={appLang} />}
         {tab === "cards" && <Flashcards favs={favs} toggleFav={toggleFav} lang={appLang} />}
@@ -2846,6 +2949,10 @@ export default function App() {
         {tab === "docs" && <DocAssistant lang={appLang} onBack={() => goToTab("home")} callClaude={callClaude} privacyUrl="/legal/datenschutz.html" impressumUrl="/legal/impressum.html" />}
       </main>}
 
+      {showDaily && !intro && !onboarding && (
+        <DailyPlan lang={appLang} onClose={() => setShowDaily(false)} SbQuiz={SbQuiz} sbForLevel={sbForLevel} addXp={addXp} getXp={getXp} Confetti={Confetti} />
+      )}
+      {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}
       {!intro && !onboarding && streak.count > 0 && (
         <div style={{
@@ -2860,7 +2967,7 @@ export default function App() {
           cursor: 'default',
           transition: 'all .3s ease',
         }}>
-          <span style={{ fontSize: 16 }}>🔥</span>
+          <Flame size={18} strokeWidth={2.4} />
           <span style={{
             fontSize: 14, fontWeight: 800,
             color: streak.count >= 7 ? '#fff' : '#E07800',
@@ -3409,14 +3516,14 @@ function LevelComparison({ lang = "ku" }) {
         <div style={{ fontWeight:800, fontSize:17, color:"#18181B" }}>{title}</div>
       </div>
 
-      <div style={{ background:"#fff", borderRadius:22, padding:"18px 16px 20px", boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+      <div style={{ ...CARD, padding:"18px 16px 20px" }}>
 
         {/* ── kategori butonları: Fiiller / İsimler / Sıfatlar + Sıfırla ── */}
         <div style={{ display:"flex", gap:7, marginBottom:10 }}>
           {[
-            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang === "es" ? "Verbos" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#FF7E2E" },
-            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang === "es" ? "Sustantivos" : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#3B82F6" },
-            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang === "es" ? "Adjetivos" : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#10B981" },
+            { key:"fiil",  label: lang==="tr" ? "Fiiller" : lang==="en" ? "Verbs" : lang==="ar" ? "الأفعال" : lang==="ku" ? "کرداریەکان" : lang === "es" ? "Verbos" : lang==="uk" ? "Дієслова" : lang === "fa" ? "افعال" : "Verben",    color:"#C2570F" },
+            { key:"isim",  label: lang==="tr" ? "İsimler" : lang==="en" ? "Nouns" : lang==="ar" ? "الأسماء" : lang==="ku" ? "ناوەکان"    : lang === "es" ? "Sustantivos" : lang==="uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "Nomen",     color:"#2563EB" },
+            { key:"sifat", label: lang==="tr" ? "Sıfatlar" : lang==="en" ? "Adjectives" : lang==="ar" ? "الصفات" : lang==="ku" ? "ستانەکان"   : lang === "es" ? "Adjetivos" : lang==="uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "Adjektive", color:"#0B8A63" },
           ].map(cat => {
             const active = categ === cat.key;
             return (
@@ -3487,7 +3594,7 @@ function LevelComparison({ lang = "ku" }) {
             }}>›</button>
 
           <div style={{ textAlign:"center" }}>
-            <div style={{ fontSize:12.5, fontWeight:800, color:"#FF7E2E", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
+            <div style={{ fontSize:12.5, fontWeight:800, color:"#C2570F", letterSpacing:".1em", marginBottom:8, textTransform:"uppercase" }}>
               {isEmpty ? "A1" : `A1  ·  ${idx + 1} / ${total}`}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
@@ -3503,7 +3610,7 @@ function LevelComparison({ lang = "ku" }) {
               </div>
             )}
             {!isEmpty && row.ex && (lang==="tr" ? row.ex_tr : lang==="en" ? row.ex_en : lang==="ar" ? row.ex_ar : lang === "es" ? row.ex_es : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : lang==="ku" ? row.ex_ku : null) && (
-              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#A1A1AA", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
+              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#71717A", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
                 {lang==="tr" ? row.ex_tr : lang==="en" ? (row.ex_en || row.ex_ku) : lang==="ar" ? (row.ex_ar || row.ex_ku) : lang === "es" ? (row.ex_es || row.ex_ku) : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : row.ex_ku}
               </div>
             )}
@@ -3619,24 +3726,29 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
   const order = [...levels].reverse(); // C2 first (top) → A1 last (bottom)
   const clipId = "pyrClip";
   const selIdx = order.findIndex(lv => lv.id === selectedLevelId);
-  const selCenterY = selIdx >= 0 ? selIdx*bandH + bandH/2 : bandH/2;
+  // Neon strength grows with the level: A1 soft glow … C2 blazing.
+  const rank = selIdx >= 0 ? 5 - selIdx : 0;          // A1=0 … C2=5
+  const k = 0.35 + 0.65 * (rank / 5);
+  const selLv = selIdx >= 0 ? order[selIdx] : null;
+  const y0 = selIdx * bandH, y1 = y0 + bandH;
+  const bandPoly = selLv ? `${(W - W*y0/H)/2},${y0} ${(W + W*y0/H)/2},${y0} ${(W + W*y1/H)/2},${y1} ${(W - W*y1/H)/2},${y1}` : "";
 
   return (
     <div style={{ display:"flex", alignItems:"center", gap:8, position:"relative" }}>
-      {/* left indicator: line + dot, animates to the selected band */}
-      <div style={{ width:26, height:H, position:"relative", flexShrink:0 }}>
-        <div style={{ position:"absolute", left:0, width:"100%", height:2,
-          background:"rgba(255,255,255,.85)", top:selCenterY, transition:"top .3s cubic-bezier(.4,0,.2,1)" }} />
-        <div style={{ position:"absolute", left:"calc(100% - 5px)", width:9, height:9, borderRadius:"50%",
-          background:"#fff", boxShadow:"0 0 8px rgba(255,255,255,.9)",
-          top:selCenterY - 4.5, transition:"top .3s cubic-bezier(.4,0,.2,1)" }} />
-      </div>
-
       {/* pyramid */}
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0 }}>
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0, overflow:"visible" }}>
+        <style>{`@keyframes neonPulse{0%,100%{opacity:1}50%{opacity:.72}}`}</style>
         <defs>
           <clipPath id={clipId}><path d={roundedTrianglePath(W,H,R)} /></clipPath>
+          <filter id="neonBlurA" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation={4 + 8*k} /></filter>
+          <filter id="neonBlurB" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation={1.5 + 2*k} /></filter>
         </defs>
+        {selLv && (
+          <g style={{ animation:"neonPulse 2.4s ease-in-out infinite", pointerEvents:"none" }}>
+            <polygon points={bandPoly} fill={selLv.color} opacity={0.55 + 0.4*k} filter="url(#neonBlurA)" />
+            <polygon points={bandPoly} fill={selLv.color} opacity={0.35 + 0.5*k} filter="url(#neonBlurB)" />
+          </g>
+        )}
         <g clipPath={`url(#${clipId})`}>
           {order.map((lv, i) => {
             const isSelected = lv.id === selectedLevelId;
@@ -3644,7 +3756,7 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
             return (
               <rect key={lv.id} x={0} y={i*bandH} width={W} height={bandH}
                 fill={lv.color} onClick={() => onSelect(lv.id)}
-                style={{ cursor:"pointer", filter: isSelected ? "brightness(1.3) saturate(1.15)" : "none",
+                style={{ cursor:"pointer", filter: isSelected ? `brightness(${1.25 + 0.5*k}) saturate(${1.2 + 0.5*k})` : "none",
                   transition:"filter .3s ease" }}
                 stroke={isCurrent ? "#fff" : "none"} strokeWidth={isCurrent ? 2.5 : 0} />
             );
@@ -3652,6 +3764,7 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
           {[1,2,3,4,5].map(i => (
             <line key={i} x1={0} y1={i*bandH} x2={W} y2={i*bandH} stroke="rgba(255,255,255,.28)" strokeWidth={1.3} />
           ))}
+          {selLv && <rect x={0} y={y0} width={W} height={bandH} fill="none" stroke="#fff" strokeOpacity={0.55 + 0.4*k} strokeWidth={1.6} style={{ pointerEvents:"none" }} />}
         </g>
         <path d={roundedTrianglePath(W,H,R)} fill="none" stroke="rgba(255,255,255,.18)" strokeWidth={1.5} />
         {order.map((lv, i) => (
@@ -3714,7 +3827,7 @@ function SkillHexagon({ data, size = 240 }) {
         return (
           <g key={d.key}>
             <circle cx={x} cy={y} r={3.5} fill="#fff" />
-            <text x={lx} y={ly-4} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="rgba(255,255,255,.85)">{d.icon} {d.label}</text>
+            <text x={lx} y={ly-4} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="rgba(255,255,255,.85)">{d.label}</text>
             <text x={lx} y={ly+10} textAnchor="middle" fontSize={11} fontWeight={800} fill="#A78BFA">{Math.round(d.value)}%</text>
           </g>
         );
@@ -3724,7 +3837,7 @@ function SkillHexagon({ data, size = 240 }) {
 }
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
-function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
+function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily }) {
   const journeyLevel = getJourneyLevel();
   const journeyPct   = Math.round((journeyLevel-1)/60*100);
   const xp = getXp();
@@ -3775,7 +3888,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
       `}</style>
       <div style={{
         borderRadius:24, overflow:"hidden", marginBottom:18,
-        boxShadow:"0 4px 0 rgba(0,0,0,.18), 0 20px 56px rgba(0,0,0,.28)",
+        boxShadow:"0 20px 56px rgba(0,0,0,.28)",
         position:"relative",
       }}>
         {/* ── German flag stripe ── */}
@@ -3812,7 +3925,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
                 <div style={{
                   fontSize:36, fontWeight:900, letterSpacing:".22em",
                   color:"#fff",
-                  textShadow:"0 0 32px rgba(255,255,255,.35), 0 2px 0 rgba(0,0,0,.4)",
+                  textShadow:"0 0 32px rgba(255,255,255,.62), 0 2px 0 rgba(0,0,0,.4)",
                   lineHeight:1, fontFamily:"system-ui,sans-serif",
                   display:"inline-flex", alignItems:"center", gap:10,
                 }}>
@@ -3840,6 +3953,8 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
         </div>
       </div>
 
+      {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
+
       {/* ── Featured: Your Journey ── */}
       <div className="journey-featured"
         onClick={()=>{ if(setSpielInitialGame) setSpielInitialGame('journey'); if(setTab) setTab('spiel'); }}
@@ -3855,9 +3970,9 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
         </div>
         <div style={{ position:"relative", zIndex:1 }}>
           {/* Progress bar */}
-          <div style={{ height:6, background:"rgba(255,255,255,.2)", borderRadius:3, overflow:"hidden" }}>
-            <div style={{ height:"100%", width:`${journeyPct}%`, background:"rgba(255,255,255,.85)",
-              borderRadius:3, transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
+          <div style={{ height:8, background:"rgba(255,255,255,.22)", borderRadius:99, overflow:"hidden" }}>
+            <div style={{ height:"100%", width:`${journeyPct}%`, background:"linear-gradient(90deg,#FFB36B,#FF8A3D)",
+              borderRadius:99, boxShadow:"0 0 10px rgba(255,138,61,.7)", transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
           </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:5 }}>
             <div style={{ fontSize:12, color:"rgba(255,255,255,.55)" }}>
@@ -3887,7 +4002,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
           {/* Pyramid */}
           <div style={{ flex:"1 1 240px", maxWidth:300 }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
               selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} />
           </div>
@@ -3895,7 +4010,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {} }) {
           {/* Hexagon */}
           <div style={{ flex:"1 1 260px", maxWidth:300, display:"flex", flexDirection:"column", alignItems:"center" }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.35)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
+            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
             <SkillHexagon data={hexData} />
           </div>
         </div>
@@ -3979,8 +4094,7 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
         {cards.map((lv, i) => (
           <div key={lv.id} className="step-card"
             onClick={() => { setLessonsLevel(lv.id); setTab("lessons"); }}
-            style={{ background:"#fff", borderRadius:22, overflow:"hidden",
-              boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+            style={{ ...CARD, overflow:"hidden" }}>
 
             {/* ── gradient header ── */}
             <div style={{
@@ -4128,7 +4242,7 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
       {shuffled.map((q, i) => {
         const chosen = answers[i];
         return (
-          <div key={i} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:10, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.05)" }}>
+          <div key={i} style={{ ...CARD, padding:"14px 16px", marginBottom:10 }}>
             <div style={{ fontWeight:700, fontSize:13.5, color:"#1A1F2E", marginBottom:10, lineHeight:1.65 }} dir="ltr">
               {i + 1}. {q.q}
             </div>
@@ -4179,210 +4293,354 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
   );
 }
 
+// ── GapFill — inline gap chips + big option pills (exam Sprachbausteine) ──
+const GAP_T = {
+  tr:{ pick:"Boşluk için seç", done:"cevaplandı" }, en:{ pick:"Choose for gap", done:"answered" },
+  ar:{ pick:"اختر للفراغ", done:"تمت الإجابة" }, es:{ pick:"Elige para el hueco", done:"respondidas" },
+  uk:{ pick:"Обери для пропуску", done:"відповіді" }, fa:{ pick:"برای جای خالی انتخاب کن", done:"پاسخ داده" },
+  ku:{ pick:"بۆ بۆشایی هەڵبژێرە", done:"وەڵام دراوە" },
+};
+function GapFill({ text, gaps, bank, get, onPick, lang = "ku" }) {
+  const T = GAP_T[lang] || GAP_T.en;
+  const K = { bg:"#ECECE6", card:"#F3F3EE", ink:"#2F3B36", sage:"#8FAE9A", sageDk:"#6F9482", slate:"#7C93A0", slateDk:"#5F7886", lavGlow:"rgba(167,150,230,.55)",
+    raisedSm:"3px 3px 8px rgba(160,160,146,.4), -3px -3px 8px rgba(255,255,255,.9)", raised:"6px 6px 14px rgba(160,160,146,.42), -6px -6px 14px rgba(255,255,255,.9)",
+    inset:"inset 3px 3px 7px rgba(160,160,146,.45), inset -3px -3px 7px rgba(255,255,255,.85)" };
+  const [active, setActive] = useState(0);
+  const segs = useMemo(() => {
+    const out = []; let last = 0; let m; const re = /_{2,}\s*(\d+)\s*_{2,}/g; const src = String(text || "");
+    while ((m = re.exec(src))) {
+      let gi = gaps.findIndex(g => String(g.n) === m[1]); if (gi < 0) gi = out.filter(s => s.gap !== undefined).length;
+      out.push({ t: src.slice(last, m.index) }); out.push({ gap: gi }); last = m.index + m[0].length;
+    }
+    out.push({ t: src.slice(last) });
+    return out;
+  }, [text, gaps]);
+  const inline = segs.some(s => s.gap !== undefined);
+  const answered = gaps.filter((_, i) => get(i) !== undefined).length;
+  const cur = Math.min(active, gaps.length - 1);
+  const opts = bank || gaps[cur]?.options || [];
+  const pick = (oi) => {
+    onPick(cur, oi);
+    const next = gaps.findIndex((_, i) => i !== cur && (i > cur) && get(i) === undefined);
+    const any = next >= 0 ? next : gaps.findIndex((_, i) => i !== cur && get(i) === undefined);
+    if (any >= 0) setActive(any);
+  };
+  const chip = (gi) => {
+    const v = get(gi), on = gi === cur;
+    return (
+      <button key={"g" + gi} onClick={() => setActive(gi)} aria-label={`Gap ${gaps[gi].n}`}
+        style={{ margin: "0 3px", minWidth: 58, height: 38, padding: "0 16px", borderRadius: 99, fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .18s",
+          border: `2px solid ${on && v === undefined ? "#B9AEE6" : "transparent"}`,
+          background: v !== undefined ? K.sage : K.bg, color: v !== undefined ? "#fff" : "#7D877F",
+          boxShadow: v !== undefined ? `0 4px 0 ${K.sageDk}` : on ? `${K.inset}, 0 0 0 4px ${K.lavGlow}` : K.inset }}>
+        {v !== undefined ? (bank ? bank[v] : gaps[gi].options[v]) : gaps[gi].n}
+      </button>
+    );
+  };
+  return (
+    <div style={{ display: "grid", gap: 12 }}>
+      <div dir="ltr" style={{ background: K.card, borderRadius: 24, padding: "22px 20px", lineHeight: 2.6, fontSize: 16.5, color: K.ink, boxShadow: K.raised, fontFamily: "'Satoshi',system-ui,sans-serif" }}>
+        {inline ? segs.map((s, i) => s.gap !== undefined ? chip(s.gap) : <span key={i}>{s.t}</span>) : <De size={15}>{text}</De>}
+      </div>
+      {!inline && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{gaps.map((g, gi) => chip(gi))}</div>
+      )}
+      <div style={{ background: K.bg, borderRadius: 24, padding: 16, boxShadow: K.inset }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <span style={{ fontWeight: 800, fontSize: 13, color: K.slateDk }}>{T.pick} {gaps[cur]?.n}</span>
+          <span dir="ltr" style={{ fontSize: 12, color: C.muted }}>{answered}/{gaps.length} {T.done}</span>
+        </div>
+        <div dir="ltr" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {opts.map((o, oi) => {
+            const on = get(cur) === oi;
+            const usedElsewhere = !!bank && gaps.some((_, gi) => gi !== cur && get(gi) === oi);
+            return (
+              <button key={oi} onClick={() => pick(oi)} aria-pressed={on}
+                style={{ padding: "11px 20px", borderRadius: 99, fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Satoshi',system-ui,sans-serif", transition: "all .12s",
+                  border: "none", background: on ? K.slate : K.card, color: on ? "#fff" : K.ink, opacity: usedElsewhere ? 0.45 : 1,
+                  boxShadow: on ? `0 4px 0 ${K.slateDk}` : K.raisedSm }}>{o}</button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Sprachbausteine — modern one-at-a-time quiz (touch drag, instant feedback) ──
+const SB_T = {
+  tr:{ exam:"Sınav modu", check:"Devam", finish:"Bitir", retry:"Yeniden başla", perfect:"Mükemmel!", good:"İyi iş!", keep:"Biraz daha çalış", mistakes:"Hata yaptığın kelimeler", hint:"Kelimeyi boşluğa sürükle ya da dokunarak seç", ok:"Doğru", of:"Alıştırma", timeout:"Süre doldu", correct:"doğru" },
+  en:{ exam:"Exam mode", check:"Continue", finish:"Finish", retry:"Start over", perfect:"Perfect!", good:"Nice work!", keep:"Keep practising", mistakes:"Words you missed", hint:"Drag a word into the gap, or tap it to select", ok:"Correct", of:"Exercise", timeout:"Time's up", correct:"correct" },
+  ar:{ exam:"وضع الاختبار", check:"متابعة", finish:"إنهاء", retry:"ابدأ من جديد", perfect:"ممتاز!", good:"عمل جيد!", keep:"واصل التدرب", mistakes:"كلمات أخطأت فيها", hint:"اسحب الكلمة إلى الفراغ أو المسها لاختيارها", ok:"صحيح", of:"تمرين", timeout:"انتهى الوقت", correct:"صحيح" },
+  es:{ exam:"Modo examen", check:"Continuar", finish:"Terminar", retry:"Empezar de nuevo", perfect:"¡Perfecto!", good:"¡Buen trabajo!", keep:"Sigue practicando", mistakes:"Palabras que fallaste", hint:"Arrastra la palabra al hueco o tócala para elegirla", ok:"Correcto", of:"Ejercicio", timeout:"Se acabó el tiempo", correct:"correctas" },
+  uk:{ exam:"Режим іспиту", check:"Далі", finish:"Завершити", retry:"Почати знову", perfect:"Чудово!", good:"Гарна робота!", keep:"Практикуйся далі", mistakes:"Слова з помилками", hint:"Перетягни слово в пропуск або торкнись, щоб вибрати", ok:"Правильно", of:"Вправа", timeout:"Час вичерпано", correct:"правильно" },
+  fa:{ exam:"حالت آزمون", check:"ادامه", finish:"پایان", retry:"شروع دوباره", perfect:"عالی!", good:"کار خوب!", keep:"بیشتر تمرین کن", mistakes:"واژه‌هایی که اشتباه کردی", hint:"واژه را به جای خالی بکش یا برای انتخاب لمس کن", ok:"درست", of:"تمرین", timeout:"زمان تمام شد", correct:"درست" },
+  ku:{ exam:"دۆخی تاقیکردنەوە", check:"بەردەوامبە", finish:"تەواو", retry:"دووبارە دەستپێبکە", perfect:"نایاب!", good:"کارێکی باش!", keep:"زیاتر ڕاهێنان بکە", mistakes:"ئەو وشانەی هەڵەت تێدا کرد", hint:"وشەکە ڕابکێشە بۆ بۆشاییەکە یان دەستی پێوە بنێ", ok:"ڕاستە", of:"ڕاهێنان", timeout:"کات تەواو بوو", correct:"ڕاست" },
+};
+function sbFeedback(ok) {
+  try { navigator.vibrate?.(ok ? 12 : [30, 40, 30]); } catch { /* unsupported */ }
+  try {
+    const A = window.AudioContext || window.webkitAudioContext; if (!A) return;
+    const c = sbFeedback.ctx || (sbFeedback.ctx = new A());
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.value = ok ? 880 : 200; g.gain.value = 0.04;
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + (ok ? 0.09 : 0.2));
+  } catch { /* audio blocked */ }
+}
+function SbQuiz({ exercises, lang = "ku", onDone }) {
+  const T = SB_T[lang] || (lang === "fr" || lang === "ja" ? SB_T.en : SB_T.en);
+  const [idx, setIdx] = useState(0);
+  const [fills, setFills] = useState(() => exercises.map(() => ({})));     // exi → { bi: wi } (only correct, locked)
+  const [wrongBlanks, setWrongBlanks] = useState({});                       // "exi-bi" → [wrong words]
+  const [flash, setFlash] = useState(null);                                 // { exi, bi, word }
+  const [selected, setSelected] = useState(null);                           // word index in current exercise
+  const [ghost, setGhost] = useState(null);                                 // { wi, x, y }
+  const [hoverBi, setHoverBi] = useState(null);                             // blank under the dragged word
+  const [exam, setExam] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [timedOut, setTimedOut] = useState({});                             // exi → true
+  const [finished, setFinished] = useState(false);
+  const drag = useRef(null);
+  const placeRef = useRef(null);
+  const ex = exercises[idx];
+  const placed = fills[idx] || {};
+  const blanks = ex ? ex.answers.length : 0;
+  const complete = ex ? (Object.keys(placed).length === blanks || !!timedOut[idx]) : false;
+
+  const place = (exi, bi, wi) => {
+    const e = exercises[exi];
+    if (!e || fills[exi][bi] !== undefined || Object.values(fills[exi]).includes(wi)) return;
+    if (e.words[wi] === e.answers[bi]) {
+      sbFeedback(true);
+      setFills(f => f.map((p, i) => i === exi ? { ...p, [bi]: wi } : p));
+    } else {
+      sbFeedback(false);
+      setWrongBlanks(w => ({ ...w, [`${exi}-${bi}`]: [...(w[`${exi}-${bi}`] || []), e.words[wi]] }));
+      setFlash({ exi, bi, word: e.words[wi] });
+      setTimeout(() => setFlash(f => (f && f.exi === exi && f.bi === bi ? null : f)), 650);
+    }
+    setSelected(null);
+  };
+  placeRef.current = place;
+
+  // Pointer-based drag (works with touch and mouse)
+  useEffect(() => {
+    const move = (e) => {
+      const d = drag.current; if (!d) return;
+      if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 8) return;
+      d.moved = true; setGhost({ wi: d.wi, x: e.clientX, y: e.clientY });
+      let hb = null, bd = 60;
+      document.querySelectorAll("[data-sb-bi]").forEach(n => {
+        const r = n.getBoundingClientRect(); const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+        if (dist < bd) { bd = dist; hb = Number(n.dataset.sbBi); }
+      });
+      setHoverBi(hb);
+    };
+    const up = (e) => {
+      const d = drag.current; if (!d) return;
+      drag.current = null; setGhost(null); setHoverBi(null);
+      if (!d.moved) { setSelected(s => (s === d.wi ? null : d.wi)); return; }
+      const els = document.elementsFromPoint(e.clientX, e.clientY);
+      let target = els.map(n => n.closest?.("[data-sb-bi]")).find(Boolean);
+      if (!target) {
+        let best = null, bd = 60;
+        document.querySelectorAll("[data-sb-bi]").forEach(n => {
+          const r = n.getBoundingClientRect(); const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+          if (dist < bd) { bd = dist; best = n; }
+        });
+        target = best;
+      }
+      if (target) placeRef.current(d.exi, Number(target.dataset.sbBi), d.wi);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
+  }, []);
+
+  // Exam mode countdown (45 s per exercise)
+  useEffect(() => { setTimeLeft(45); setSelected(null); }, [idx, exam]);
+  useEffect(() => {
+    if (!exam || finished || complete) return;
+    const t = setInterval(() => setTimeLeft(s => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [exam, finished, complete, idx]);
+  useEffect(() => {
+    if (exam && !finished && !complete && timeLeft <= 0) {
+      sbFeedback(false);
+      setTimedOut(t => ({ ...t, [idx]: true }));
+      setWrongBlanks(w => { const c = { ...w }; ex.answers.forEach((_, bi) => { if (fills[idx][bi] === undefined && !c[`${idx}-${bi}`]) c[`${idx}-${bi}`] = ["·"]; }); return c; });
+    }
+  }, [timeLeft]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const totalBlanks = exercises.reduce((n, e) => n + e.answers.length, 0);
+  const missed = Object.keys(wrongBlanks).length;
+  const score = Math.max(0, totalBlanks - missed);
+  const pct = totalBlanks ? Math.round((score / totalBlanks) * 100) : 0;
+  const doneFired = useRef(false);
+  useEffect(() => { if (finished && !doneFired.current) { doneFired.current = true; onDone?.(pct); } }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
+  const reset = () => { setIdx(0); setFills(exercises.map(() => ({}))); setWrongBlanks({}); setTimedOut({}); setFinished(false); setSelected(null); setTimeLeft(45); };
+  const sentence = (e, exi, upto) => e.parts.map((p, i) => p + (i < e.answers.length ? (upto || fills[exi][i] !== undefined ? e.answers[i] : "…") : "")).join("");
+  const title = (e) => lang === "tr" ? (e.titleTr || e.titleKu) : lang === "en" ? (e.titleEn || e.titleKu) : lang === "ar" ? (e.titleAr || e.titleKu) : lang === "uk" ? (e.titleUk || e.titleEn || e.titleKu) : e.titleKu;
+  // Soft clay / neumorphic palette: cream surface, sage, slate-blue, lavender glow
+  const K = {
+    bg: "#ECECE6", card: "#F3F3EE", ink: "#2F3B36", muted: "#7D877F",
+    sage: "#8FAE9A", sageDk: "#6F9482", sagePale: "#D3E0D6", slate: "#7C93A0", slateDk: "#5F7886",
+    lav: "#B9AEE6", lavGlow: "rgba(167,150,230,.55)", blush: "#E7B9B0", blushDk: "#C98B80",
+    raised: "6px 6px 14px rgba(160,160,146,.42), -6px -6px 14px rgba(255,255,255,.9)",
+    raisedSm: "3px 3px 8px rgba(160,160,146,.4), -3px -3px 8px rgba(255,255,255,.9)",
+    inset: "inset 3px 3px 7px rgba(160,160,146,.45), inset -3px -3px 7px rgba(255,255,255,.85)",
+  };
+  const btn3d = (c, dk) => ({ border: "none", cursor: "pointer", background: c, color: "#fff", fontWeight: 800, fontSize: 15, borderRadius: 18, padding: "15px", width: "100%", boxShadow: `0 5px 0 ${dk}, 0 10px 18px rgba(95,120,110,.25)`, transition: "transform .1s, box-shadow .1s" });
+
+  if (finished) {
+    const R = 46, Cc = 2 * Math.PI * R;
+    const words = [...new Set(Object.keys(wrongBlanks).map(k => { const [a, b] = k.split("-").map(Number); return exercises[a].answers[b]; }))];
+    return (
+      <div style={{ background: K.bg, borderRadius: 28, padding: "24px 18px 18px", textAlign: "center" }}>
+        <div style={{ width: 150, height: 150, margin: "0 auto", borderRadius: "50%", background: K.card, boxShadow: K.raised, display: "grid", placeItems: "center" }}>
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r={R} fill="none" stroke="#DDDED6" strokeWidth="10" />
+            <circle cx="60" cy="60" r={R} fill="none" stroke={pct === 100 ? K.sageDk : pct >= 60 ? K.lav : K.blushDk} strokeWidth="10" strokeLinecap="round"
+              strokeDasharray={Cc} strokeDashoffset={Cc * (1 - pct / 100)} transform="rotate(-90 60 60)" style={{ transition: "stroke-dashoffset .8s ease" }} />
+            <text x="60" y="68" textAnchor="middle" fontSize="24" fontWeight="800" fill={K.ink}>{pct}%</text>
+          </svg>
+        </div>
+        <div style={{ fontSize: 21, fontWeight: 800, color: K.ink, marginTop: 14 }}>{pct === 100 ? T.perfect : pct >= 60 ? T.good : T.keep}</div>
+        <div style={{ fontSize: 13, color: K.muted, marginTop: 2 }}>{score} / {totalBlanks} {T.correct}</div>
+        {words.length > 0 && (
+          <div style={{ marginTop: 18, textAlign: "start" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: K.ink, marginBottom: 10 }}>{T.mistakes}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {words.map(w => (
+                <button key={w} onClick={() => speakDe(w)} aria-label={`${w} 🔊`}
+                  style={{ padding: "9px 16px", borderRadius: 99, border: "none", background: K.card, color: K.blushDk, fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: K.raisedSm }}>{w} 🔊</button>
+              ))}
+            </div>
+          </div>
+        )}
+        <button onClick={reset} style={{ ...btn3d(K.sage, K.sageDk), marginTop: 22 }}>↺ {T.retry}</button>
+      </div>
+    );
+  }
+
+  const isLast = idx === exercises.length - 1;
+  const solved = complete && !timedOut[idx];
+  return (
+    <div style={{ background: K.bg, borderRadius: 28, padding: "18px 16px 18px", userSelect: "none", WebkitUserSelect: "none" }}>
+      {/* progress + exam toggle */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <div style={{ flex: 1, display: "flex", gap: 6, padding: 5, borderRadius: 99, background: K.bg, boxShadow: K.inset }} role="progressbar" aria-valuemin={0} aria-valuemax={exercises.length} aria-valuenow={idx + 1}>
+          {exercises.map((_, i) => (
+            <div key={i} style={{ flex: 1, height: 8, borderRadius: 99, background: i < idx || (i === idx && complete) ? K.sage : i === idx ? K.lav : "transparent", transition: "background .25s" }} />
+          ))}
+        </div>
+        <button onClick={() => setExam(v => !v)} aria-pressed={exam}
+          style={{ padding: "8px 14px", borderRadius: 99, fontSize: 12, fontWeight: 800, cursor: "pointer", border: "none", background: K.card, color: exam ? K.blushDk : K.slateDk, boxShadow: exam ? K.inset : K.raisedSm }}>
+          ⏱ {exam ? `${Math.max(0, timeLeft)}s` : T.exam}
+        </button>
+      </div>
+
+      <div style={{ fontSize: 12, color: K.muted, fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase" }}>{T.of} {idx + 1}/{exercises.length}</div>
+      <div style={{ fontWeight: 800, fontSize: 18, color: K.ink, margin: "3px 0 14px" }}>
+        {ex.title} <span style={{ fontSize: 13, fontWeight: 600, color: K.muted }}>· {title(ex)}</span>
+      </div>
+
+      {/* sentence */}
+      <div style={{ direction: "ltr", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 8px", lineHeight: 1.5, fontSize: 19, fontWeight: 500, color: K.ink, background: K.card, borderRadius: 24, padding: "24px 20px", marginBottom: 20, transition: "box-shadow .5s ease",
+        boxShadow: solved ? `${K.raised}, 0 0 0 3px ${K.lavGlow}, 0 0 38px ${K.lavGlow}` : K.raised, animation: solved ? "sbGlow 2.4s ease-in-out infinite" : undefined }}>
+        {solved ? <span key="solved" style={{ animation: "sbFade .5s ease both" }}>{sentence(ex, idx, true)}</span> : ex.parts.flatMap((part, pi) => {
+          const out = [<span key={"t" + pi}>{part}</span>];
+          if (pi < ex.answers.length) {
+            const bi = pi, wi = placed[bi], filled = wi !== undefined;
+            const isFlash = flash && flash.exi === idx && flash.bi === bi;
+            const hot = hoverBi === bi && !filled;
+            const missedHere = timedOut[idx] && !filled;
+            const waiting = selected !== null && !filled;
+            out.push(
+              <span key={"b" + bi} data-sb-bi={bi} role="button" tabIndex={0} aria-label={filled ? ex.answers[bi] : `blank ${bi + 1}`}
+                onClick={() => selected !== null && place(idx, bi, selected)}
+                onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && selected !== null) { e.preventDefault(); place(idx, bi, selected); } }}
+                style={{
+                  display: "inline-flex", alignItems: "center", justifyContent: "center", minWidth: `${Math.max(5, ex.answers[bi].length + 2)}ch`, height: 42, padding: "0 16px", borderRadius: 99,
+                  fontWeight: 800, fontSize: 17, transition: "all .2s cubic-bezier(.22,1,.36,1)", cursor: waiting ? "pointer" : "default",
+                  animation: isFlash ? "sbShake .35s" : filled ? "sbPop .32s cubic-bezier(.34,1.56,.64,1)" : undefined,
+                  border: filled || isFlash || missedHere ? "none" : `2px solid ${hot || waiting ? K.lav : "transparent"}`,
+                  background: filled ? K.sage : isFlash || missedHere ? K.blush : K.bg,
+                  color: filled ? "#fff" : isFlash || missedHere ? "#7A3B32" : K.muted,
+                  boxShadow: filled ? `0 4px 0 ${K.sageDk}, 0 8px 14px rgba(111,148,130,.3)`
+                    : isFlash || missedHere ? `0 4px 0 ${K.blushDk}`
+                    : hot ? `${K.inset}, 0 0 0 4px ${K.lavGlow}, 0 0 18px ${K.lavGlow}`
+                    : waiting ? `${K.inset}, 0 0 0 3px ${K.lavGlow}` : K.inset,
+                  transform: hot && !filled ? "scale(1.07)" : "none",
+                }}>
+                {filled ? ex.answers[bi] : isFlash ? flash.word : missedHere ? ex.answers[bi] : <span style={{ fontSize: 13, fontWeight: 800, opacity: .6 }}>{bi + 1}</span>}
+              </span>
+            );
+          }
+          return out;
+        })}
+      </div>
+
+      {/* word bank / done state */}
+      {!complete ? (
+        <>
+          <div style={{ fontSize: 12, color: K.muted, marginBottom: 10, fontWeight: 600 }}>{T.hint}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            {ex.words.map((w, wi) => {
+              const used = Object.values(placed).includes(wi); const sel = selected === wi;
+              return (
+                <button key={wi} disabled={used}
+                  onPointerDown={(e) => { if (used) return; drag.current = { wi, exi: idx, x0: e.clientX, y0: e.clientY, moved: false }; }}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(s => (s === wi ? null : wi)); } }}
+                  aria-pressed={sel}
+                  style={{
+                    touchAction: "none", padding: "12px 22px", borderRadius: 99, fontWeight: 800, fontSize: 16, cursor: used ? "default" : "grab", transition: "all .15s",
+                    border: sel ? `2px solid ${K.lav}` : "2px solid transparent", background: K.card, color: used ? "#B5BBB4" : sel ? K.slateDk : K.ink,
+                    boxShadow: used ? K.inset : sel ? `${K.raised}, 0 0 0 4px ${K.lavGlow}, 0 0 18px ${K.lavGlow}` : K.raisedSm,
+                    transform: sel ? "translateY(-3px) scale(1.05)" : "none",
+                  }}>{w}</button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", borderRadius: 20, background: timedOut[idx] ? "#F4DCD7" : "#E4DFF7", boxShadow: K.inset, marginBottom: 16 }}>
+            <span style={{ fontSize: 20 }}>{timedOut[idx] ? "⏰" : "✓"}</span>
+            <span style={{ flex: 1, fontWeight: 800, color: timedOut[idx] ? "#7A3B32" : "#5A4FA0", fontSize: 14 }}>{timedOut[idx] ? T.timeout : T.ok}</span>
+            <button onClick={() => speakDe(sentence(ex, idx, true))} aria-label="Play sentence"
+              style={{ width: 42, height: 42, borderRadius: 14, border: "none", background: K.card, cursor: "pointer", fontSize: 18, boxShadow: K.raisedSm }}>🔊</button>
+          </div>
+          <button onClick={() => (isLast ? setFinished(true) : setIdx(idx + 1))} style={btn3d(K.slate, K.slateDk)}>
+            {isLast ? T.finish : T.check} →
+          </button>
+        </div>
+      )}
+
+      {ghost && createPortal(
+        <div style={{ position: "fixed", left: ghost.x, top: ghost.y, transform: "translate(-50%,-60%) scale(1.1)", pointerEvents: "none", zIndex: 99999, padding: "12px 22px", borderRadius: 99, background: K.sage, color: "#fff", fontWeight: 800, fontSize: 16, boxShadow: `0 5px 0 ${K.sageDk}, 0 16px 30px rgba(95,120,110,.4)` }}>
+          {ex.words[ghost.wi]}
+        </div>, document.body)}
+      <style>{`@keyframes sbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes sbPop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes sbFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes sbGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(167,150,230,0))}50%{filter:drop-shadow(0 0 10px rgba(167,150,230,.55))}}`}</style>
+    </div>
+  );
+}
+// 10 Sprachbausteine exercises per level (A1 = 5 built-in + 5 extra).
+function sbForLevel(level) {
+  const lv = SB_EXTRA[level] ? level : "A1";
+  const list = lv === "A1" ? [...A1_DRAG_EXERCISES, ...SB_EXTRA.A1] : SB_EXTRA[lv];
+  return list.map(e => ({ ...e, words: [...e.words].sort((a, b) => a.localeCompare(b, "de")) }));
+}
 // ── DragDropExercise — Sprachbausteine drag-and-drop ─────────────────
 function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = false, onToggle, headerless = false }) {
   const secRef = useRef(null);
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
-  const [placements, setPlacements] = useState(() => exercises.map(() => ({})));
-  const [selected,   setSelected]   = useState(null);
-  const [dragSrc,    setDragSrc]    = useState(null);
-  const [revealed,   setRevealed]   = useState(false);
-  const wasDropped = useRef(false);          // flag: onDrop already handled this drag
-  const dragSrcRef = useRef(null);           // sync ref so onDragEnd reads latest value
-
-  const totalBlanks = exercises.reduce((n, ex) => n + ex.answers.length, 0);
-  const filledCount = placements.reduce((n, p) => n + Object.keys(p).length, 0);
-  const allFilled   = filledCount === totalBlanks;
-
-  function handleWordClick(exi, wi) {
-    if (revealed) return;
-    setSelected(prev => prev?.exIdx === exi && prev?.wordIdx === wi ? null : { exIdx: exi, wordIdx: wi });
-  }
-
-  function handleBlankClick(exi, bi) {
-    if (revealed) return;
-    const wi = placements[exi][bi];
-    if (wi !== undefined) {
-      setPlacements(prev => { const c = prev.map(p => ({...p})); delete c[exi][bi]; return c; });
-    } else if (selected?.exIdx === exi) {
-      setPlacements(prev => { const c = prev.map(p => ({...p})); c[exi][bi] = selected.wordIdx; return c; });
-      setSelected(null);
-    }
-  }
-
-  function onDragOver(e) { e.preventDefault(); }
-
-  function handleWordDragStart(exi, wi, fromBlank) {
-    const src = { exIdx: exi, wordIdx: wi, fromBlank: fromBlank ?? null };
-    dragSrcRef.current = src;
-    wasDropped.current = false;
-    setDragSrc(src);
-    setSelected(null);
-  }
-
-  // Proximity snap: fires when drag ends anywhere; finds nearest blank within 90px
-  function handleWordDragEnd(e) {
-    if (wasDropped.current) { wasDropped.current = false; return; }
-    const src = dragSrcRef.current;
-    if (!src) return;
-    const x = e.clientX, y = e.clientY;
-    if (!x && !y) { setDragSrc(null); dragSrcRef.current = null; return; } // cancelled (Esc)
-    const exi = src.exIdx;
-    const blankEls = document.querySelectorAll(`[data-blank-exi="${exi}"]`);
-    let nearestBi = null, nearestDist = Infinity;
-    blankEls.forEach(el => {
-      const r = el.getBoundingClientRect();
-      const dist = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
-      if (dist < nearestDist) { nearestDist = dist; nearestBi = Number(el.dataset.blankBi); }
-    });
-    if (nearestBi !== null && nearestDist < 90) {
-      setPlacements(prev => {
-        const c = prev.map(p => ({...p}));
-        if (src.fromBlank !== null) delete c[exi][src.fromBlank];
-        c[exi][nearestBi] = src.wordIdx;
-        return c;
-      });
-    }
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function handleBlankDrop(exi, bi, e) {
-    e.preventDefault();
-    const src = dragSrcRef.current;
-    if (!src || src.exIdx !== exi) return;
-    wasDropped.current = true;
-    setPlacements(prev => {
-      const c = prev.map(p => ({...p}));
-      if (src.fromBlank !== null) delete c[exi][src.fromBlank];
-      c[exi][bi] = src.wordIdx;
-      return c;
-    });
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function handlePoolDrop(exi, e) {
-    e.preventDefault();
-    const src = dragSrcRef.current;
-    if (!src || src.exIdx !== exi || src.fromBlank === null) return;
-    wasDropped.current = true;
-    setPlacements(prev => { const c = prev.map(p => ({...p})); delete c[exi][src.fromBlank]; return c; });
-    setDragSrc(null);
-    dragSrcRef.current = null;
-  }
-
-  function reset() {
-    setPlacements(exercises.map(() => ({})));
-    setSelected(null);
-    setRevealed(false);
-  }
-
-  const score = !revealed ? 0 : exercises.reduce((tot, ex, exi) =>
-    tot + ex.answers.reduce((n, ans, bi) => {
-      const wi = placements[exi][bi];
-      return n + (wi !== undefined && ex.words[wi] === ans ? 1 : 0);
-    }, 0), 0);
-
-  if (headerless) return (
-    <div style={{ padding:"4px 0 4px" }}>
-      {exercises.map((ex, exi) => {
-        const placed   = placements[exi];
-        const isTarget = selected?.exIdx === exi;
-        return (
-          <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
-            <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
-              {exi + 1}. {ex.title}
-              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
-            </div>
-            <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
-              {ex.parts.flatMap((part, pi) => {
-                const els = [<span key={"t"+pi} style={{ fontSize:14, fontWeight:500, color:"#1A1F2E" }}>{part}</span>];
-                if (pi < ex.parts.length - 1) {
-                  const bi = pi, wi = placed[bi], hasW = wi !== undefined;
-                  const word = hasW ? ex.words[wi] : null;
-                  const right = revealed && hasW ? ex.words[wi] === ex.answers[bi] : null;
-                  els.push(
-                    <span key={"b"+bi} data-blank-exi={exi} data-blank-bi={bi}
-                      draggable={hasW && !revealed}
-                      onDragStart={hasW && !revealed ? () => handleWordDragStart(exi, wi, bi) : undefined}
-                      onDragEnd={hasW && !revealed ? handleWordDragEnd : undefined}
-                      onDragOver={onDragOver} onDrop={e => handleBlankDrop(exi, bi, e)}
-                      onClick={() => handleBlankClick(exi, bi)}
-                      style={{
-                        display:"inline-flex", alignItems:"center", justifyContent:"center",
-                        minWidth: hasW ? undefined : 70, height:30, padding:"0 10px",
-                        borderRadius:8, cursor:"pointer", position:"relative",
-                        userSelect:"none", transition:"all .15s",
-                        border: revealed ? (right ? "2px solid #10b981" : "2px solid #ef4444")
-                          : hasW ? "1.5px solid #5B5BD6" : isTarget ? "2px dashed #5B5BD6" : "2px dashed #C4CAD8",
-                        background: revealed ? (right ? "rgba(16,185,129,.13)" : "rgba(239,68,68,.1)")
-                          : hasW ? "rgba(91,91,214,.1)" : isTarget ? "rgba(91,91,214,.05)" : "#F8F9FC",
-                        color: revealed ? (right ? "#065f46" : "#991b1b") : hasW ? "#3730a3" : "#B0B4BF",
-                        fontWeight: hasW ? 700 : 400, fontSize:13,
-                      }}
-                    >
-                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
-                      {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
-                          ✓ {ex.answers[bi]}
-                        </span>
-                      )}
-                    </span>
-                  );
-                }
-                return els;
-              })}
-            </div>
-            {!revealed && (
-              <div onDragOver={onDragOver} onDrop={e => handlePoolDrop(exi, e)}
-                style={{ display:"flex", flexWrap:"wrap", gap:8, minHeight:36, padding:"4px 2px" }}>
-                {ex.words.map((w, wi) => {
-                  const isPlaced = Object.values(placed).includes(wi);
-                  const isSel    = selected?.exIdx === exi && selected?.wordIdx === wi;
-                  return (
-                    <span key={wi} draggable={!isPlaced}
-                      onDragStart={!isPlaced ? () => handleWordDragStart(exi, wi, null) : undefined}
-                      onDragEnd={!isPlaced ? handleWordDragEnd : undefined}
-                      onClick={!isPlaced ? () => handleWordClick(exi, wi) : undefined}
-                      style={{
-                        padding:"5px 14px", borderRadius:20, fontWeight:700, fontSize:13,
-                        userSelect:"none", transition:"all .12s",
-                        cursor: isPlaced ? "default" : "grab", opacity: isPlaced ? .42 : 1,
-                        pointerEvents: isPlaced ? "none" : "auto",
-                        border: isSel ? "2px solid #5B5BD6" : isPlaced ? "1.5px solid #E8EBF2" : "1.5px solid #C4CAD8",
-                        background: isSel ? "rgba(91,91,214,.12)" : isPlaced ? "#F5F6FA" : "#fff",
-                        color: isSel ? "#3730a3" : isPlaced ? "#C0C4CE" : "#1A1F2E",
-                      }}
-                    >{w}</span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-      {!revealed ? (
-        <button onClick={() => setRevealed(true)} disabled={!allFilled}
-          style={{ width:"100%", padding:"10px", borderRadius:12, border:"none", marginTop:8, cursor: allFilled ? "pointer":"not-allowed",
-            background: allFilled ? "linear-gradient(135deg,#5B5BD6,#818cf8)" : "#E4E4E8",
-            color: allFilled ? "#fff":"#A1A1AA", fontWeight:700, fontSize:14 }}>
-          {allFilled ? `✓ ${DONE_WORD[lang]||"تەواو"}` : `${filledCount} / ${totalBlanks} ${tApp(lang,"ubung_blanks")} ${tApp(lang,"ubung_filled")}`}
-        </button>
-      ) : (
-        <div style={{ textAlign:"center", marginTop:10 }}>
-          <div style={{ fontSize:18, fontWeight:800, color: score===totalBlanks?"#16A34A":score>=totalBlanks*0.6?"#F59E0B":"#EF4444" }}>
-            {score} / {totalBlanks} ✓
-          </div>
-          <button onClick={reset} style={{ marginTop:8, padding:"8px 24px", borderRadius:10, border:"none", cursor:"pointer", background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff", fontWeight:700 }}>{tApp(lang,"ubung_reset")}</button>
-        </div>
-      )}
-    </div>
-  );
+  if (headerless) return <SbQuiz exercises={exercises} lang={lang} />;
 
   return (
-    <div ref={secRef} style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
 
       {/* ── Accordion header ── */}
       <div
@@ -4395,153 +4653,15 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
           </div>
           <div>
             <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang==="tr" ? "Sprachbausteine — Boşluk Doldurma" : lang==="en" ? "Sprachbausteine — Fill the Gap" : lang==="ar" ? "Sprachbausteine — املأ الفراغ" : lang === "es" ? "Sprachbausteine — Rellena el hueco" : lang === "uk" ? "Sprachbausteine — Заповніть пропуск" : lang === "fa" ? "Sprachbausteine — جای خالی را پر کنید" : "Sprachbausteine — بۆشایی پڕکردنەوە"}</div>
-            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang==="tr" ? "5 alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? "5 exercises · Drag words into the gaps" : lang==="ar" ? "5 تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? "5 ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? "5 вправ · Перетягніть слова в пропуски" : lang === "fa" ? "۵ تمرین · واژه‌ها را به جای خالی بکشید" : "5 وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lang==="tr" ? exercises.length + " alıştırma · Kelimeleri boşluklara sürükle" : lang==="en" ? exercises.length + " exercises · Drag words into the gaps" : lang==="ar" ? exercises.length + " تمارين · اسحب الكلمات إلى الفراغات" : lang === "es" ? exercises.length + " ejercicios · Arrastra las palabras a los huecos" : lang === "uk" ? exercises.length + " вправ · Перетягніть слова в пропуски" : lang === "fa" ? exercises.length + " تمرین · واژه‌ها را به جای خالی بکشید" : exercises.length + " وەزیفە · واژەکان بکێشە ناو بۆشایەکان"}</div>
           </div>
         </div>
         <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition:"transform .2s" }}>›</span>
       </div>
 
       {/* ── Collapsible content ── */}
-      <div style={{ padding:"4px 18px 18px", borderTop:"1px solid #E4E4E8", display: open ? "" : "none" }}>
-
-      {exercises.map((ex, exi) => {
-        const placed   = placements[exi];
-        const isTarget = selected?.exIdx === exi;
-        return (
-          <div key={ex.id} style={{ background:"#fff", borderRadius:14, padding:"14px 16px", marginBottom:12, border:"1.5px solid #E8ECF5", boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
-            <div style={{ fontWeight:800, fontSize:13, color:"#1A1F2E", marginBottom:10 }}>
-              {exi + 1}. {ex.title}
-              <span style={{ fontSize:12, color:C.muted, fontWeight:500, marginInlineStart:7 }}>{lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}</span>
-            </div>
-
-            <div style={{ direction:"ltr", display:"flex", flexWrap:"wrap", alignItems:"center", gap:"3px 5px", lineHeight:2.8, marginBottom:14 }}>
-              {ex.parts.flatMap((part, pi) => {
-                const els = [
-                  <span key={"t"+pi} style={{ fontSize:14, fontWeight:500, color:"#1A1F2E" }}>{part}</span>
-                ];
-                if (pi < ex.parts.length - 1) {
-                  const bi   = pi;
-                  const wi   = placed[bi];
-                  const hasW = wi !== undefined;
-                  const word = hasW ? ex.words[wi] : null;
-                  const right = revealed && hasW ? ex.words[wi] === ex.answers[bi] : null;
-                  els.push(
-                    <span
-                      key={"b"+bi}
-                      data-blank-exi={exi}
-                      data-blank-bi={bi}
-                      draggable={hasW && !revealed}
-                      onDragStart={hasW && !revealed ? () => handleWordDragStart(exi, wi, bi) : undefined}
-                      onDragEnd={hasW && !revealed ? handleWordDragEnd : undefined}
-                      onDragOver={onDragOver}
-                      onDrop={e => handleBlankDrop(exi, bi, e)}
-                      onClick={() => handleBlankClick(exi, bi)}
-                      style={{
-                        display:"inline-flex", alignItems:"center", justifyContent:"center",
-                        minWidth: hasW ? undefined : 70, height:30, padding:"0 10px",
-                        borderRadius:8, cursor:"pointer", position:"relative",
-                        userSelect:"none", transition:"all .15s",
-                        border: revealed
-                          ? (right ? "2px solid #10b981" : "2px solid #ef4444")
-                          : hasW ? "1.5px solid #5B5BD6"
-                          : isTarget ? "2px dashed #5B5BD6" : "2px dashed #C4CAD8",
-                        background: revealed
-                          ? (right ? "rgba(16,185,129,.13)" : "rgba(239,68,68,.1)")
-                          : hasW ? "rgba(91,91,214,.1)"
-                          : isTarget ? "rgba(91,91,214,.05)" : "#F8F9FC",
-                        color: revealed
-                          ? (right ? "#065f46" : "#991b1b")
-                          : hasW ? "#3730a3" : "#B0B4BF",
-                        fontWeight: hasW ? 700 : 400, fontSize:13,
-                      }}
-                    >
-                      {hasW ? word : <span style={{ fontSize:12, opacity:.4 }}>···</span>}
-                      {revealed && right === false && (
-                        <span style={{ position:"absolute", bottom:"calc(100% + 3px)", left:"50%", transform:"translateX(-50%)", fontSize:12, fontWeight:700, color:"#10b981", whiteSpace:"nowrap", background:"#fff", padding:"2px 5px", borderRadius:4, border:"1px solid #10b981" }}>
-                          ✓ {ex.answers[bi]}
-                        </span>
-                      )}
-                    </span>
-                  );
-                }
-                return els;
-              })}
-            </div>
-
-            {!revealed && (
-              <div
-                onDragOver={onDragOver}
-                onDrop={e => handlePoolDrop(exi, e)}
-                style={{ display:"flex", flexWrap:"wrap", gap:8, minHeight:36, padding:"4px 2px" }}
-              >
-                {ex.words.map((w, wi) => {
-                  const isPlaced = Object.values(placed).includes(wi);
-                  const isSel    = selected?.exIdx === exi && selected?.wordIdx === wi;
-                  return (
-                    <span
-                      key={wi}
-                      draggable={!isPlaced}
-                      onDragStart={!isPlaced ? () => handleWordDragStart(exi, wi, null) : undefined}
-                      onDragEnd={!isPlaced ? handleWordDragEnd : undefined}
-                      onClick={!isPlaced ? () => handleWordClick(exi, wi) : undefined}
-                      style={{
-                        padding:"5px 14px", borderRadius:20, fontWeight:700, fontSize:13,
-                        userSelect:"none", transition:"all .12s",
-                        cursor:    isPlaced ? "default" : "grab",
-                        opacity:   isPlaced ? .42 : 1,
-                        pointerEvents: isPlaced ? "none" : "auto",
-                        border:    isSel    ? "2px solid #5B5BD6"
-                                 : isPlaced ? "1.5px solid #E8EBF2" : "1.5px solid #C4CAD8",
-                        background: isSel  ? "rgba(91,91,214,.12)"
-                                 : isPlaced ? "#F5F6FA" : "#fff",
-                        color:     isSel   ? "#3730a3"
-                                 : isPlaced ? "#C0C4CE" : "#1A1F2E",
-                      }}
-                    >
-                      {w}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      {!revealed ? (
-        <button
-          onClick={() => setRevealed(true)}
-          disabled={!allFilled}
-          style={{
-            width:"100%", padding:"13px", borderRadius:14, border:"none",
-            fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15,
-            cursor: allFilled ? "pointer" : "default",
-            background: allFilled ? "linear-gradient(135deg,#5B5BD6,#818cf8)" : "#E4E4E8",
-            color:      allFilled ? "#fff" : "#A1A1AA",
-            boxShadow:  allFilled ? "0 4px 14px rgba(91,91,214,.3)" : "none",
-            transition:"all .2s",
-          }}
-        >
-          {allFilled ? `✓ ${DONE_WORD[lang] || "تەواو"}` : `${filledCount} / ${totalBlanks} ${tApp(lang,"ubung_blanks")} ${tApp(lang,"ubung_filled")}`}
-        </button>
-      ) : (
-        <div>
-          <div style={{ textAlign:"center", padding:"16px", borderRadius:12, marginBottom:10,
-            background: score/totalBlanks >= .6 ? "rgba(16,185,129,.1)" : "rgba(239,68,68,.08)",
-            color:      score/totalBlanks >= .6 ? "#065f46" : "#991b1b" }}>
-            <div style={{ fontWeight:800, fontSize:20 }}>
-              {score >= totalBlanks*.8 ? "🎉" : score >= totalBlanks*.6 ? "👍" : "📚"}{" "}
-              {score} / {totalBlanks} {tApp(lang,"quiz_right")}
-            </div>
-            <div style={{ fontSize:13, marginTop:4, opacity:.8 }}>
-              {score >= totalBlanks*.8 ? tApp(lang,"result_great") : score >= totalBlanks*.6 ? tApp(lang,"result_good") : tApp(lang,"result_keep")}
-            </div>
-          </div>
-          <button onClick={reset} style={{ width:"100%", padding:"12px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:14, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff" }}>
-            {tApp(lang,"quiz_retry")} 🔄
-          </button>
-        </div>
-      )}
+      <div style={{ padding:"14px 18px 18px", borderTop:"1px solid #E4E4E8", display: open ? "" : "none" }}>
+        <SbQuiz exercises={exercises} lang={lang} />
       </div>
     </div>
   );
@@ -4800,7 +4920,7 @@ function LesenASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -4859,7 +4979,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
               <div style={{ fontSize: 13.5, color: "#1A1F2E", lineHeight: 1.6, marginBottom: 8 }} dir="ltr">
                 {st.text}
                 {revealed && isWrong && (
-                  <span style={{ fontSize: 12, color: "#16A34A", fontWeight: 700, marginInlineStart: 8 }}>
+                  <span style={{ fontSize: 12, color: "#15803D", fontWeight: 700, marginInlineStart: 8 }}>
                     → {st.answer ? "Richtig" : "Falsch"}
                   </span>
                 )}
@@ -4914,7 +5034,7 @@ function LesenBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5028,7 +5148,7 @@ function LesenCSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5306,7 +5426,7 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5341,13 +5461,13 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
         <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 5 }}>{lang==="tr" ? "Şu noktalara değinmelisiniz:" : lang==="en" ? "You should cover these points:" : lang==="ar" ? "يجب أن تتناول هذه النقاط:" : lang === "es" ? "Debes cubrir estos puntos:" : lang === "uk" ? "Ви маєте висвітлити ці пункти:" : lang === "fa" ? "باید به این نکات بپردازید:" : "دەبێت لەم خاڵانە بنووسیت:"}</div>
         {ex.bullets.map((b, i) => (
           <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 4 }}>
-            <span style={{ color: "#F59E0B", fontWeight: 800, flexShrink: 0 }}>•</span>
+            <span style={{ color: "#B45309", fontWeight: 800, flexShrink: 0 }}>•</span>
             <span style={{ fontSize: 13 }} dir="ltr">{b.de}</span>
             <span style={{ fontSize: 12.5, color: C.muted }}>({tC(b, lang)})</span>
           </div>
         ))}
       </div>
-      <div style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600, marginBottom: 8 }}>
+      <div style={{ fontSize: 12, color: "#B45309", fontWeight: 600, marginBottom: 8 }}>
         {lang==="tr" ? "✏️ Yaklaşık 30 kelime · ca. 30 Wörter" : lang==="en" ? "✏️ About 30 words · ca. 30 Wörter" : lang==="ar" ? "✏️ حوالي 30 كلمة · ca. 30 Wörter" : lang === "es" ? "✏️ Unas 30 palabras · ca. 30 Wörter" : lang === "uk" ? "✏️ Близько 30 слів · ca. 30 Wörter" : lang === "fa" ? "✏️ حدود ۳۰ واژه · ca. 30 Wörter" : "✏️ نزیکەی ٣٠ وشە · ca. 30 Wörter"}
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, fontStyle: "italic", marginBottom: 12 }} dir="ltr">
@@ -5363,7 +5483,7 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
       </button>
       {showModel && (
         <div style={{ marginTop: 10, background: "#F0FDF4", borderRadius: 10, padding: "12px 14px", border: "1.5px solid #86EFAC" }}>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: "#16A34A", marginBottom: 6 }}>✓ Musterlösung</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: "#15803D", marginBottom: 6 }}>✓ Musterlösung</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.85, whiteSpace: "pre-line" }} dir="ltr">{ex.modelAnswer}</div>
           <div style={{ fontSize: 12.5, color: C.muted, marginTop: 8 }}>{lang==="tr" ? (ex.modelAnswerTr||ex.modelAnswerKu) : lang==="en" ? (ex.modelAnswerEn||ex.modelAnswerKu) : lang==="ar" ? (ex.modelAnswerAr||ex.modelAnswerKu) : lang === "es" ? (ex.modelAnswerEs||ex.modelAnswerKu) : lang==="uk" ? (ex.modelAnswerUk||ex.modelAnswerEn||ex.modelAnswerKu) : lang==="fa" ? (ex.modelAnswerFa||ex.modelAnswerEn||ex.modelAnswerKu) : ex.modelAnswerKu}</div>
         </div>
@@ -5377,7 +5497,7 @@ function SchreibenBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5422,7 +5542,7 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
             <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }} dir="ltr">{p.question}</div>
             {openCards[i] && (
               <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid #86EFAC" }}>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: "#16A34A", lineHeight: 1.5 }} dir="ltr">✓ {p.example}</div>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: "#15803D", lineHeight: 1.5 }} dir="ltr">✓ {p.example}</div>
                 <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{tC(p, lang)}</div>
               </div>
             )}
@@ -5448,7 +5568,7 @@ function MündlichASection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5541,7 +5661,7 @@ function MündlichBSection({ lang = "ku", open = false, onToggle }) {
   const _openDidMount = useRef(false);
   useEffect(() => { if (!_openDidMount.current) { _openDidMount.current = true; return; } if (open && secRef.current) { const rect = secRef.current.getBoundingClientRect(); if (rect.height === 0) return; const y = rect.top + window.scrollY - 70; window.scrollTo({ top: y, behavior: "smooth" }); } }, [open]);
   return (
-    <div ref={secRef} style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #E4E4E8", overflow: "hidden" }}>
+    <div ref={secRef} style={{ ...CARD, overflow:"hidden" }}>
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -5631,8 +5751,8 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
         {/* stats row */}
         <div style={{ display:"flex", justifyContent:"center", gap:20, marginBottom: lastDelta !== null ? 12 : 20 }}>
           {[
-            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#10b981" },
-            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#ef4444" },
+            { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#0B8A63" },
+            { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#C93A3F" },
             { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "es" ? "Objetivo" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"#5B5BD6" },
           ].map(r => (
             <div key={r.label} style={{ textAlign:"center" }}>
@@ -8103,7 +8223,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
   const a = ans[sec.type] || {};
   const setA = (v) => setAns((p) => ({ ...p, [sec.type]: v }));
   const Opt = ({ on, active, children }) => (
-    <button onClick={on} style={{ textAlign: "right", background: active ? "#e3f0ef" : "#fff", border: `1.5px solid ${active ? C.red : C.line}`, color: C.ink, padding: "9px 13px", borderRadius: 9, fontSize: 14.5, fontWeight: active ? 700 : 400 }}>{children}</button>
+    <button onClick={on} style={{ textAlign: "right", background: active ? "#fdecec" : "#fff", border: `1.5px solid ${active ? C.red : C.line}`, color: C.ink, padding: "12px 16px", borderRadius: 12, cursor: "pointer", transition: "all .12s", fontSize: 14.5, fontWeight: active ? 700 : 400 }}>{children}</button>
   );
 
   return (
@@ -8125,34 +8245,9 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
               <div key={pi} style={{ display: "grid", gap: 12 }}>
                 {p.instruction && <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }} dir="auto">{p.instruction}</div>}
 
-                {(p.kind === "gap") && (<>
-                  <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{p.text}</De></div>
-                  {p.gaps.map((g, i) => (
-                    <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                      {g.options.map((o, oi) => {
-                        const on = a[pi + "_" + i] === oi;
-                        return <button key={oi} onClick={() => setPA(i, oi)} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 8, padding: "5px 11px", fontSize: 14, fontWeight: on ? 700 : 400 }}><span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif" }}>{o}</span></button>;
-                      })}
-                    </div>
-                  ))}
-                </>)}
+                {(p.kind === "gap") && <GapFill lang={lang} text={p.text} gaps={p.gaps} get={(i) => a[pi + "_" + i]} onPick={(i, oi) => setPA(i, oi)} />}
 
-                {(p.kind === "wordbank") && (<>
-                  <div style={{ background: C.bg, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12 }}>
-                    {p.options.map((o, oi) => <span key={oi} dir="ltr" style={{ display: "inline-block", margin: 3, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 8, padding: "4px 9px", fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 13.5 }}>{String.fromCharCode(97 + oi)}) {o}</span>)}
-                  </div>
-                  <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{p.text}</De></div>
-                  {p.gaps.map((g, i) => (
-                    <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                      {p.options.map((o, oi) => {
-                        const on = a[pi + "_" + i] === oi;
-                        return <button key={oi} onClick={() => setPA(i, oi)} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 7, padding: "5px 10px", fontSize: 13.5, fontWeight: 700 }}><span dir="ltr">{String.fromCharCode(97 + oi)}</span></button>;
-                      })}
-                    </div>
-                  ))}
-                </>)}
+                {(p.kind === "wordbank") && <GapFill lang={lang} text={p.text} gaps={p.gaps} bank={p.options} get={(i) => a[pi + "_" + i]} onPick={(i, oi) => setPA(i, oi)} />}
 
                 {(p.kind === "rf") && (<>
                   {p.text && <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 1.9 }} dir="ltr"><De size={14.5}>{p.text}</De></div>}
@@ -8205,18 +8300,7 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
             );
           })}
 
-          {!content.parts && sec.type === "sprachbausteine" && (<>
-            <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, lineHeight: 2 }} dir="ltr"><De size={15}>{content.text}</De></div>
-            {content.gaps.map((g, i) => (
-              <div key={i} style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontWeight: 700, color: C.red, minWidth: 22 }} dir="ltr">{g.n}.</span>
-                {g.options.map((o, oi) => {
-                  const on = a[i] === oi;
-                  return <button key={oi} onClick={() => setA({ ...a, [i]: oi })} style={{ background: on ? C.red : "#fff", color: on ? "#fff" : C.ink, border: `1.5px solid ${on ? C.red : C.line}`, borderRadius: 8, padding: "5px 11px", fontSize: 14, fontWeight: on ? 700 : 400 }}><span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif" }}>{o}</span></button>;
-                })}
-              </div>
-            ))}
-          </>)}
+          {!content.parts && sec.type === "sprachbausteine" && <GapFill lang={lang} text={content.text} gaps={content.gaps} get={(i) => a[i]} onPick={(i, oi) => setA({ ...a, [i]: oi })} />}
 
           {!content.parts && sec.type === "hoeren" && (<>
             <div style={{ fontWeight: 700, color: C.muted, fontSize: 13 }}>Teil A — RICHTIG (+) / FALSCH (–)</div>
@@ -8882,7 +8966,7 @@ function GrammarMiniQuiz({ level, g, lang, accent }) {
 const UBUNG_SECTIONS = [
   { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків", subFa:"پر کردن جای خالی",   emoji:"🧩", color:"#5B5BD6" },
   { id:"lesenA",    label:"Lesen A",          sub:"سەردێڕ دیاری بکە",    subTr:"Başlık seç",          subUk:"Оберіть заголовок", subFa:"انتخاب عنوان",       emoji:"📰", color:"#059669" },
-  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба", subFa:"درست یا نادرست",          emoji:"📖", color:"#0891B2" },
+  { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба", subFa:"درست یا نادرست",          emoji:"📖", color:"#0E7490" },
   { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    subUk:"Текст і питання", subFa:"متن و پرسش",         emoji:"📚", color:"#7C3AED" },
   { id:"schreibA",  label:"Schreiben A",      sub:"نووسینی فۆرم",        subTr:"Form doldurma",       subUk:"Заповнення форми", subFa:"پر کردن فرم",        emoji:"✍️", color:"#B45309" },
   { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       subUk:"Вільне письмо", subFa:"نوشتن آزاد",           emoji:"📝", color:"#BE185D" },
@@ -9013,7 +9097,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
   return (
     <div key={g.de} style={{ display:"flex", flexDirection:"column", gap:13, paddingTop:14 }}>
       {/* hero */}
-      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${lc}CC)`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 3px 0 rgba(0,0,0,.11),0 10px 26px ${lc}44`, position:"relative", overflow:"hidden" }}>
+      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${lc}CC)`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 10px 26px ${lc}44`, position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:-25, left:-25, width:100, height:100, borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <div style={{ width:44, height:44, borderRadius:13, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:22, flexShrink:0, boxShadow:"0 2px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
@@ -9079,7 +9163,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       ))}
       {/* merksatz */}
       {g.merksatz && (
-        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 24px ${lc}40` }}>
+        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 8px 24px ${lc}40` }}>
           <div style={{ display:"flex",alignItems:"center",gap:6,marginBottom:10 }}>
             <div style={{ width:26,height:26,borderRadius:7,background:"rgba(255,255,255,.2)",display:"grid",placeItems:"center" }}><Zap size={13} color="#fff" /></div>
             <span style={{ fontSize:12.5,fontWeight:800,color:"#fff",letterSpacing:".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "es" ? "Frase para recordar (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
@@ -9128,7 +9212,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
 // ── چیروکەکان / Märchen data ─────────────────────────────────────────
 const MASALS = {
   A1: [
-    { id: "a1_1", emoji: "📱", title: "Das geheimnisvolle Handy", ku: "مۆبایلەکەی ئەسرارامێز", tr: "Gizemli telefon", en: "The mysterious phone", uk: "Таємничий телефон", ar: "الهاتف الغامض", color: "#16A06F", paragraphs: [
+    { id: "a1_1", emoji: "📱", title: "Das geheimnisvolle Handy", ku: "مۆبایلەکەی ئەسرارامێز", tr: "Gizemli telefon", en: "The mysterious phone", uk: "Таємничий телефон", ar: "الهاتف الغامض", color: "#0F7A55", paragraphs: [
       { de: "Noah war 17 Jahre alt und lebte in Berlin. Er ging jeden Tag zur Schule.", ku: "نۆا حەڤدە ساڵی بوو و لە بەرلیندا دەژیا. هەموو ڕۆژێک دەچوو بۆ قوتابخانە.", tr: "Noah 17 yaşındaydı ve Berlin'de yaşıyordu. Her gün okula gidiyordu.", en: "Noah was 17 years old and lived in Berlin. He went to school every day.", ar: "كان نوح يبلغ من العمر 17 عامًا ويعيش في برلين. كان يذهب إلى المدرسة كل يوم." , uk: "Ноа було сімнадцять років, і він жив у Берліні. Щодня він ходив до школи." , fa: "نوح 17 ساله بود و در برلین زندگی می کرد. او هر روز به مدرسه می رفت.","es":"Noé tenía 17 años y vivía en Berlín. Iba a la escuela todos los días."},
       { de: "Eines Morgens fand er ein Handy auf einer Bank im Park. Das Handy war neu und sehr modern, aber es war ausgeschaltet.", ku: "بەیانیانێک مۆبایلێکی دۆزییەوە لەسەر دانیشتنێکی پارکەکەدا. مۆبایلەکە نوێ و زۆر مۆدێرن بوو، بەڵام داخراو بوو.", tr: "Bir sabah parkta bir bankta bir telefon buldu. Telefon yeni ve çok modern görünüyordu, ama kapalıydı.", en: "One morning he found a phone on a bench in the park. The phone was new and very modern, but it was switched off.", ar: "في صباح أحد الأيام، وجد هاتفًا على مقعد في الحديقة. كان الهاتف جديدًا وحديثًا جدًا، لكنه كان مغلقًا." , uk: "Одного ранку він знайшов телефон на лавці в парку. Телефон був новий і дуже сучасний, але вимкнений." , fa: "یک روز صبح او تلفن را روی نیمکتی در پارک پیدا کرد. تلفن جدید و بسیار مدرن بود، اما خاموش بود.","es":"Una mañana encontró un teléfono en un banco en el parque. El teléfono era nuevo y muy moderno, pero estaba apagado."},
       { de: "Noah nahm das Handy mit nach Hause. Er wollte den Besitzer finden.", ku: "نۆا مۆبایلەکەی برد بۆ ماڵ. دەیەوی خاوەنەکەی بدۆزێتەوە.", tr: "Noah telefonu eve götürdü. Sahibini bulmak istiyordu.", en: "Noah took the phone home. He wanted to find the owner.", ar: "أخذ نوح الهاتف إلى المنزل. أراد أن يجد صاحبه." , uk: "Ноа забрав телефон додому. Він хотів знайти власника." , fa: "نوآ تلفن رو برد خونه میخواست صاحبش رو پیدا کنه","es":"Noah se llevó el teléfono a casa y quería encontrar al dueño."},
@@ -9156,7 +9240,7 @@ const MASALS = {
       { de: "Ein Sicherheitsmitarbeiter kam und öffnete die Tür für sie. Er lachte: Das passiert manchmal.", ku: "پاسەوانێک هات و دەرگاکەی کردەوە بۆی. پێکەنی: هەندێکجار ئەمە ڕوو دەدات.", tr: "Bir güvenlik görevlisi geldi ve kapıyı onun için açtı. Güldü: Bu bazen olur.", en: "A security guard came and opened the door for her. He laughed: This happens sometimes.", ar: "جاء حارس أمن وفتح لها الباب. ضحك قائلًا: هذا يحدث أحيانًا." , uk: "Прийшов охоронець і відчинив їй двері. Він засміявся: Таке іноді трапляється." , fa: "یک نگهبان امنیتی آمد و در را برای او باز کرد. او خندید: این اتفاق گاهی اوقات می افتد.","es":"Un guardia de seguridad vino y le abrió la puerta. Se rió: Esto sucede a veces."},
       { de: "Draußen atmete Lisa tief durch. Seit diesem Tag kontrolliert sie immer zweimal ihr Handy.", ku: "لە دەرەوە لیسا نەفەسێکی قووڵی کێشا. لەو ڕۆژەوە هەمیشە دووجار پشکنی ئایا مۆبایلەکەی لەگەڵیەتیا.", tr: "Dışarıda Lisa derin bir nefes aldı. O günden beri telefonunu her zaman iki kez kontrol ediyor.", en: "Outside, Lisa took a deep breath. Since that day, she always checks her phone twice.", ar: "في الخارج، تنفست ليزا بعمق. منذ ذلك اليوم، أصبحت تتحقق من هاتفها مرتين دائمًا." , uk: "Надворі Ліза глибоко вдихнула. Відтоді вона завжди двічі перевіряє свій телефон." , fa: "بیرون، لیزا نفس عمیقی کشید و از آن روز به بعد، همیشه تلفنش را دوبار چک میکند.","es":"Fuera, Lisa respiró profundamente, desde ese día, siempre revisa su teléfono dos veces."},
     ] , fa: "شب در مرکز خرید","es":"La noche en el centro comercial"},
-    { id: "a1_4", emoji: "📸", title: "Der Wettbewerb", ku: "پێشبڕکێکە", tr: "Yarışma", en: "The competition", uk: "Конкурс", ar: "المسابقة", color: "#3B82F6", paragraphs: [
+    { id: "a1_4", emoji: "📸", title: "Der Wettbewerb", ku: "پێشبڕکێکە", tr: "Yarışma", en: "The competition", uk: "Конкурс", ar: "المسابقة", color: "#2563EB", paragraphs: [
       { de: "Jonas liebte Fotografie. Er machte jeden Tag Bilder mit seinem Handy.", ku: "یۆناس فۆتۆگرافی خۆشدەویست. هەموو ڕۆژێک وێنە دەکێشا بە مۆبایلەکەیدا.", tr: "Jonas fotoğrafçılığı seviyordu. Her gün telefonuyla fotoğraf çekiyordu.", en: "Jonas loved photography. He took pictures with his phone every day.", ar: "كان يوناس يحب التصوير الفوتوغرافي. كان يلتقط الصور بهاتفه كل يوم." , uk: "Йонас любив фотографію. Щодня він робив знімки своїм телефоном." , fa: "جوناس عاشق عکاسی بود هر روز با گوشیش عکس میگرفت","es":"Jonas amaba la fotografía, tomaba fotos con su teléfono todos los días."},
       { de: "Er sah im Internet einen Fotowettbewerb. Das Thema war: Meine Stadt. Der Gewinner bekam eine neue Kamera. Jonas wollte teilnehmen.", ku: "لە ئینتەرنێتدا پێشبڕکێیەکی فۆتۆگرافی بینی. بابەتەکە بوو: شارەکەم. یۆناس دەیەوی بەشدار بێت.", tr: "İnternette bir fotoğraf yarışması gördü. Konu şuydu: Benim şehrim. Kazanan yeni bir kamera alacaktı. Jonas katılmak istedi.", en: "He saw a photo competition on the internet. The theme was: My city. The winner got a new camera. Jonas wanted to take part.", ar: "رأى مسابقة تصوير على الإنترنت. كان الموضوع: مدينتي. حصل الفائز على كاميرا جديدة. أراد يوناس المشاركة." , uk: "В інтернеті він побачив фотоконкурс. Темою було: Моє місто. Переможець отримував нову камеру. Йонас захотів узяти участь." , fa: "او یک مسابقه عکس را در اینترنت دید. موضوع این بود: شهر من. برنده یک دوربین جدید گرفت. جوناس می خواست شرکت کند.","es":"Vio un concurso de fotos en internet. El tema era: Mi ciudad. El ganador consiguió una nueva cámara. Jonas quería participar."},
       { de: "Eine Woche lang fotografierte er Straßen, Menschen und Parks. Aber er war mit seinen Bildern nicht zufrieden.", ku: "یەک هەفتە کولان، مرۆڤ و پارکی کێشا. بەڵام لە وێنەکانی رازی نەبوو.", tr: "Bir hafta boyunca sokakları, insanları ve parkları fotoğrafladı. Ama fotoğraflarından memnun değildi.", en: "For a week he photographed streets, people, and parks. But he wasn't satisfied with his pictures.", ar: "على مدى أسبوع، صوّر الشوارع والناس والحدائق. لكنه لم يكن راضيًا عن صوره." , uk: "Цілий тиждень він фотографував вулиці, людей і парки. Але він не був задоволений своїми знімками." , fa: "او برای یک هفته از خیابان ها، مردم و پارک ها عکاسی کرد. اما از عکس هایش راضی نبود.","es":"Durante una semana fotografió calles, gente y parques, pero no estaba satisfecho con sus fotos."},
@@ -9176,7 +9260,7 @@ const MASALS = {
     ] , fa: "خانه قدیمی","es":"La vieja casa"},
   ],
   A2: [
-    { id: "a2_1", emoji: "🐠", title: "Der Fischer und die kluge Meerjungfrau", ku: "سەیدەکەرەکە و مێرمایی زیرەکەکە", tr: "Balıkçı ve Akıllı Deniz Kızı", en: "The Fisherman and the Wise Mermaid", uk: "Рибалка і мудра русалка", ar: "الصياد وحورية البحر الحكيمة", color: "#0EA5E9", paragraphs: [
+    { id: "a2_1", emoji: "🐠", title: "Der Fischer und die kluge Meerjungfrau", ku: "سەیدەکەرەکە و مێرمایی زیرەکەکە", tr: "Balıkçı ve Akıllı Deniz Kızı", en: "The Fisherman and the Wise Mermaid", uk: "Рибалка і мудра русалка", ar: "الصياد وحورية البحر الحكيمة", color: "#0369A1", paragraphs: [
       { de: "Es war einmal ein junger Fischer namens Leo.", ku: "جارێکیان ماسیگرێکی گەنج هەبوو ناوی لیۆ بوو.", tr: "Bir zamanlar Leo adında genç bir balıkçı vardı.", en: "Once upon a time there was a young fisherman named Leo.", ar: "كان يا ما كان، صياد شاب يُدعى ليو." , uk: "Колись жив молодий рибалка на ім'я Лео." , fa: "روزی روزگاری ماهیگیر جوانی به نام لئو بود.","es":"Había una vez un joven pescador llamado Leo."},
       { de: "Er lebte in einem kleinen Dorf am Meer.", ku: "ئەو لە گوندێکی بچووک لەسەر کەناری دەریا دەژیا.", tr: "Deniz kenarındaki küçük bir köyde yaşıyordu.", en: "He lived in a small village by the sea.", ar: "كان يعيش في قرية صغيرة على شاطئ البحر." , uk: "Він жив у маленькому селі біля моря." , fa: "او در یک روستای کوچک کنار دریا زندگی می کرد.","es":"Vivía en un pequeño pueblo junto al mar."},
       { de: "Jeden Morgen ging er mit seinem Boot fischen.", ku: "هەموو بەیانییەک بە بەلەمەکەیەوە دەچووە ماسی گرتن.", tr: "Her sabah tekneye binip balık tutmaya giderdi.", en: "Every morning he went fishing with his boat.", ar: "كل صباح كان يخرج بقاربه لصيد السمك." , uk: "Щоранку він виходив на своєму човні ловити рибу." , fa: "هر روز صبح با قایقش به ماهیگیری میرفت.","es":"Cada mañana iba a pescar con su barco."},
@@ -9203,7 +9287,7 @@ const MASALS = {
       { de: "Die Meerjungfrau kam nicht mehr zurück.", ku: "مێرماییەکە جارێکی دیکە نەگەڕایەوە.", tr: "Deniz kızı bir daha geri dönmedi.", en: "The mermaid never came back.", ar: "لم تعد حورية البحر مرة أخرى." , uk: "Русалка більше ніколи не повернулася." , fa: "پری دریایی دیگه برنگشت","es":"La sirena nunca volvió."},
       { de: "Leo lernte eine wichtige Lektion: Man soll nicht gierig sein.", ku: "لیۆ وانەیەکی گرنگی فێربوو: پێویستە مرۆڤ چاوچنۆک نەبێت.", tr: "Leo önemli bir ders öğrendi: İnsan açgözlü olmamalı.", en: "Leo learned an important lesson: One should not be greedy.", ar: "تعلم ليو درسًا مهمًا: لا ينبغي للمرء أن يكون جشعًا." , uk: "Лео засвоїв важливий урок: не можна бути жадібним." , fa: "لئو درس مهمی یاد گرفت: آدم نباید حریص باشد.","es":"Leo aprendió una lección importante: Uno no debe ser codicioso."},
     ] , fa: "ماهیگیر و پری دریایی خردمند","es":"El Pescador y la Sirena Sabia"},
-    { id: "a2_2", emoji: "🏰", title: "Das verzauberte Schloss", ku: "قەڵای سێهرکراو", tr: "Büyülü Şato", en: "The Enchanted Castle", uk: "Зачарований замок", ar: "القلعة المسحورة", color: "#8B5CF6", paragraphs: [
+    { id: "a2_2", emoji: "🏰", title: "Das verzauberte Schloss", ku: "قەڵای سێهرکراو", tr: "Büyülü Şato", en: "The Enchanted Castle", uk: "Зачарований замок", ar: "القلعة المسحورة", color: "#6D4AD6", paragraphs: [
       { de: "Tief in einem großen Wald stand ein altes Schloss.", ku: "لە قووڵایی دارستانێکی گەورەدا قەڵایەکی کۆن هەبوو.", tr: "Büyük bir ormanın derinliklerinde eski bir şato vardı.", en: "Deep in a large forest stood an old castle.", ar: "في أعماق غابة كبيرة كانت تقف قلعة قديمة." , uk: "Глибоко у великому лісі стояв старий замок." , fa: "در اعماق جنگلی بزرگ، قلعهای قدیمی قرار داشت.","es":"En lo profundo de un bosque grande había un viejo castillo."},
       { de: "Niemand ging hinein, denn es war verzaubert.", ku: "کەس نەدەچووە ژوورەوە، چونکە سێهرلێکرابوو.", tr: "Kimse içeri girmiyordu, çünkü büyülüydü.", en: "No one went inside, because it was enchanted.", ar: "لم يكن أحد يدخلها، لأنها كانت مسحورة." , uk: "Ніхто не заходив усередину, бо він був зачарований." , fa: "هیچکس داخل نشد، چون جادو شده بود.","es":"Nadie entró, porque estaba encantado."},
       { de: "Eine mutige junge Frau namens Klara wollte das Geheimnis lüften.", ku: "ژنێکی گەنجی ئازا ناوی کلارا دەیویست نهێنییەکە بدۆزێتەوە.", tr: "Klara adında cesur genç bir kadın sırrı çözmek istedi.", en: "A brave young woman named Klara wanted to uncover the secret.", ar: "أرادت امرأة شابة شجاعة تُدعى كلارا كشف السر." , uk: "Смілива молода жінка на ім'я Клара захотіла розкрити таємницю." , fa: "یک زن جوان شجاع به نام کلارا می خواست این راز را کشف کند.","es":"Una joven valiente llamada Klara quería descubrir el secreto."},
@@ -9228,7 +9312,7 @@ const MASALS = {
       { de: "Er dankte Klara und gab ihr die Hälfte seines Reiches.", ku: "سوپاسی کلارای کرد و نیوەی شانشینەکەی پێدا.", tr: "Klara'ya teşekkür etti ve krallığının yarısını ona verdi.", en: "He thanked Klara and gave her half of his kingdom.", ar: "شكر كلارا ومنحها نصف مملكته." , uk: "Він подякував Кларі й віддав їй половину свого королівства." , fa: "او از کلارا تشکر کرد و نیمی از پادشاهی خود را به او داد.","es":"Agradeció a Klara y le dio la mitad de su reino."},
       { de: "Und alle lebten glücklich.", ku: "و هەموویان بە خۆشی ژیان.", tr: "Ve herkes mutlu yaşadı.", en: "And everyone lived happily.", ar: "وعاش الجميع سعداء." , uk: "І всі жили щасливо." , fa: "و همه با خوشحالی زندگی کردن","es":"Y todos vivían felices."},
     ] , fa: "قلعه سحرآمیز","es":"El Castillo Encantado"},
-    { id: "a2_3", emoji: "🪶", title: "Der Vogel mit den goldenen Federn", ku: "باڵندەکەی پەڕی زێڕین", tr: "Altın Tüylü Kuş", en: "The Bird with the Golden Feathers", uk: "Птах із золотим пір'ям", ar: "الطائر ذو الريش الذهبي", color: "#F59E0B", paragraphs: [
+    { id: "a2_3", emoji: "🪶", title: "Der Vogel mit den goldenen Federn", ku: "باڵندەکەی پەڕی زێڕین", tr: "Altın Tüylü Kuş", en: "The Bird with the Golden Feathers", uk: "Птах із золотим пір'ям", ar: "الطائر ذو الريش الذهبي", color: "#B45309", paragraphs: [
       { de: "In einem fernen Land lebte ein armer Holzfäller.", ku: "لە وڵاتێکی دوورەوە داردڕێکی هەژار دەژیا.", tr: "Uzak bir ülkede fakir bir oduncu yaşıyordu.", en: "In a faraway land lived a poor woodcutter.", ar: "في بلد بعيد كان يعيش حطاب فقير." , uk: "У далекому краю жив бідний дроворуб." , fa: "در سرزمینی دوردست، یک هیزم شکن فقیر زندگی می کرد.","es":"En una tierra lejana vivía un pobre leñador."},
       { de: "Er hatte drei Kinder und keine Frau.", ku: "سێ منداڵی هەبوو و ژنی نەبوو.", tr: "Üç çocuğu vardı ve eşi yoktu.", en: "He had three children and no wife.", ar: "كان لديه ثلاثة أطفال ولا زوجة له." , uk: "Він мав трьох дітей і не мав дружини." , fa: "او سه فرزند داشت و هیچ همسری نداشت.","es":"Tuvo tres hijos y no tuvo esposa."},
       { de: "Eines Tages fand er im Wald einen verletzten Vogel.", ku: "ڕۆژێکیان لە دارستاندا باڵندەیەکی برینداری دۆزییەوە.", tr: "Bir gün ormanda yaralı bir kuş buldu.", en: "One day he found an injured bird in the forest.", ar: "في أحد الأيام وجد في الغابة طائرًا مصابًا." , uk: "Одного дня він знайшов у лісі пораненого птаха." , fa: "یک روز او یک پرنده زخمی را در جنگل پیدا کرد.","es":"Un día encontró un pájaro herido en el bosque."},
@@ -9270,7 +9354,7 @@ const MASALS = {
       { de: "Sie sagten: Entschuldigung, Regenbogen. Du bist nicht zu klein. Du bist genau richtig.", ku: "گوتیان: ببورە، کەوانەرەنگ. تۆ زۆر بچووک نیت. تۆ بە تەواوی گونجاویت.", tr: "Şöyle dediler: Özür dileriz, Gökkuşağı. Sen küçük değilsin. Tam da olman gerektiği gibisin.", en: "They said: Sorry, Rainbow. You are not too small. You are exactly right.", ar: "قالوا: آسفون يا قوس قزح. أنتِ لستِ صغيرة. أنتِ بالضبط كما يجب أن تكوني." , uk: "Вони сказали: Пробач, Веселко. Ти не надто маленька. Ти саме така, як треба." , fa: "آنها گفتند: ببخشید رنگین کمان. شما خیلی کوچک نیستید. درست می گویید.","es":"Dijeron: «Lo siento, Rainbow, no eres demasiado pequeño, tienes razón»."},
       { de: "Von da an respektierten alle Wolken die kleine Regenbogenwolke.", ku: "لەو کاتەوە هەموو هەورەکان ڕێزیان لە هەورە بچووکەکەی کەوانەرەنگ گرت.", tr: "O günden sonra tüm bulutlar küçük Gökkuşağı bulutuna saygı duydu.", en: "From then on, all the clouds respected the little rainbow cloud.", ar: "منذ ذلك الحين، احترمت جميع الغيوم غيمة قوس قزح الصغيرة." , uk: "Відтоді всі хмари поважали маленьку хмаринку Веселку." , fa: "از آن زمان به بعد، تمام ابرها به ابر رنگین کمانی کوچک احترام میگذاشتند.","es":"Desde entonces, todas las nubes respetaban la pequeña nube del arco iris."},
     ] , fa: "رنگین کمان ابر کوچک","es":"El arco iris de la nube"},
-    { id: "a2_5", emoji: "💎", title: "Der Stein des Glücks", ku: "بەردی خۆشبەختی", tr: "Mutluluk Taşı", en: "The Stone of Happiness", uk: "Камінь щастя", ar: "حجر السعادة", color: "#10B981", paragraphs: [
+    { id: "a2_5", emoji: "💎", title: "Der Stein des Glücks", ku: "بەردی خۆشبەختی", tr: "Mutluluk Taşı", en: "The Stone of Happiness", uk: "Камінь щастя", ar: "حجر السعادة", color: "#0B8A63", paragraphs: [
       { de: "In einem Dorf lebten zwei Brüder: Max und Moritz.", ku: "لە گوندێکدا دوو برا دەژیان: ماکس و مۆریتس.", tr: "Bir köyde iki kardeş yaşıyordu: Max ve Moritz.", en: "In a village lived two brothers: Max and Moritz.", ar: "في قرية ما، كان يعيش أخوان: ماكس وموريتس." , uk: "У селі жили двоє братів: Макс і Моріц." , fa: "در یک روستا دو برادر زندگی میکردند: مکس و موریتز.","es":"En un pueblo vivían dos hermanos: Max y Moritz."},
       { de: "Max war immer unzufrieden.", ku: "ماکس هەمیشە ڕازی نەبوو.", tr: "Max hep memnuniyetsizdi.", en: "Max was always dissatisfied.", ar: "كان ماكس دائمًا غير راضٍ." , uk: "Макс завжди був незадоволений." , fa: "مکس همیشه ناراضی بود.","es":"Max siempre estaba insatisfecho."},
       { de: "Er wollte mehr Geld, ein größeres Haus und schönere Kleider.", ku: "ئەو پارەی زیاتر، ماڵێکی گەورەتر و جلی جوانتری دەویست.", tr: "Daha çok para, daha büyük bir ev ve daha güzel kıyafetler istiyordu.", en: "He wanted more money, a bigger house, and nicer clothes.", ar: "كان يريد المزيد من المال، ومنزلًا أكبر، وملابس أجمل." , uk: "Він хотів більше грошей, більший будинок і кращий одяг." , fa: "او پول بیشتر، خانه بزرگتر و لباس های بهتر می خواست.","es":"Quería más dinero, una casa más grande y ropa más bonita."},
@@ -9343,7 +9427,7 @@ const MASALS = {
       { de: "Sie standen wieder vor ihrem kleinen Haus.", ku: "جارێکی دیکە لەبەردەم ماڵە بچووکەکەیان ڕاوەستان.", tr: "Yine küçük evlerinin önünde duruyorlardı.", en: "They stood once again in front of their small house.", ar: "ووجدا نفسيهما واقفين مجددًا أمام بيتهما الصغير." , uk: "Вони знову стояли перед своїм маленьким будинком." , fa: "دوباره جلوی خانه کوچکشان ایستادند.","es":"Se pararon una vez más frente a su pequeña casa."},
       { de: "Aber sie waren glücklicher als je zuvor, weil sie endlich verstanden hatten, was wirklich zählt.", ku: "بەڵام لە هەموو کاتێک زیاتر دڵخۆش بوون، چونکە لە کۆتاییدا تێگەیشتن کە ڕاستی چی گرنگە.", tr: "Ama her zamankinden daha mutluydular çünkü artık gerçekten önemli olanın ne olduğunu anlamışlardı.", en: "But they were happier than ever before, because they had finally understood what truly matters.", ar: "لكنهما كانا أسعد من أي وقت مضى، لأنهما أدركا أخيرًا ما هو المهم حقًا." , uk: "Але вони були щасливіші, ніж будь-коли раніше, бо нарешті зрозуміли, що справді важливе." , fa: "اما آنها شادتر از همیشه بودند، زیرا آنها در نهایت درک کرده بودند که چه چیزی واقعا مهم است.","es":"Pero eran más felices que nunca, porque finalmente habían entendido lo que realmente importa."},
     ] , fa: "جادوگر و سه آرزو","es":"El mago y los tres deseos"},
-    { id: "b1_2", emoji: "🌙", title: "Die Tochter des Mondes", ku: "کچی مانگ", tr: "Ayın Kızı", en: "The Daughter of the Moon", uk: "Донька місяця", ar: "ابنة القمر", color: "#8B5CF6", paragraphs: [
+    { id: "b1_2", emoji: "🌙", title: "Die Tochter des Mondes", ku: "کچی مانگ", tr: "Ayın Kızı", en: "The Daughter of the Moon", uk: "Донька місяця", ar: "ابنة القمر", color: "#6D4AD6", paragraphs: [
       { de: "In einem kleinen Dorf hinter den großen Bergen lebte ein alter Müller mit seiner Tochter Luna.", ku: "لە گوندێکی بچووکدا لە پشتی چیا گەورەکانەوە، ئاسیاوانێکی پیر لەگەڵ کچەکەی لونا دەژیا.", tr: "Büyük dağların ardındaki küçük bir köyde, yaşlı bir değirmenci kızı Luna ile birlikte yaşıyordu.", en: "In a small village beyond the great mountains lived an old miller with his daughter Luna.", ar: "في قرية صغيرة خلف الجبال الكبيرة، عاش طاحون عجوز مع ابنته لونا." , uk: "У маленькому селі за великими горами жив старий мірошник зі своєю донькою Луною." , fa: "در یک روستای کوچک در آن سوی کوه های بزرگ، یک آسیابان قدیمی با دخترش لونا زندگی می کردند.","es":"En un pequeño pueblo más allá de las grandes montañas vivía un viejo molinero con su hija Luna."},
       { de: "Luna hatte langes, silbernes Haar und Augen, die nachts leuchteten.", ku: "لونا قژێکی درێژی زیوینی هەبوو و چاوانێکی هەبوو کە بە شەو دەدرەوشانەوە.", tr: "Luna'nın uzun, gümüş renkli saçları ve geceleri parlayan gözleri vardı.", en: "Luna had long, silvery hair and eyes that glowed at night.", ar: "كان للونا شعر فضي طويل وعينان تتوهجان في الليل." , uk: "Луна мала довге сріблясте волосся й очі, що світилися вночі." , fa: "لونا موهای بلند و نقره ای داشت و چشمانی که در شب می درخشید.","es":"Luna tenía el pelo largo y plateado y los ojos que brillaban por la noche."},
       { de: "Die Leute im Dorf sagten, dass Luna die Tochter des Mondes sei, weil sie in einer Nacht mit Vollmond geboren wurde.", ku: "خەڵکی گوندەکە دەیانگوت لونا کچی مانگە، چونکە لە شەوێکی مانگی چواردەدا لەدایک بووە.", tr: "Köydeki insanlar, Luna'nın ayın kızı olduğunu söylerdi, çünkü o bir dolunay gecesinde doğmuştu.", en: "The people in the village said that Luna was the daughter of the moon, because she was born on a night with a full moon.", ar: "كان أهل القرية يقولون إن لونا ابنة القمر، لأنها وُلدت في ليلة اكتمال القمر." , uk: "Люди в селі казали, що Луна — донька місяця, бо народилася вночі, коли був повний місяць." , fa: "مردم روستا می گفتند که لونا دختر ماه است، زیرا او در شبی با ماه کامل به دنیا آمده است.","es":"La gente del pueblo dijo que Luna era la hija de la luna, porque nació en una noche con luna llena."},
@@ -9435,7 +9519,7 @@ const MASALS = {
       { de: "Die Frau lächelte und sagte: Genau das war der Zauber. Der Stein hat nichts gemacht. Du hast es selbst geschafft.", ku: "ژنەکە زەردەخەنەیەکی کرد و گوتی: هەر ئەمە بوو سێهرەکە. بەردەکە هیچی نەکرد. تۆ خۆت بەدیهێنایت.", tr: "Kadın gülümseyerek dedi ki: İşte büyü tam olarak buydu. Taş hiçbir şey yapmadı. Bunu sen kendin başardın.", en: "The woman smiled and said: That was exactly the magic. The stone did nothing. You accomplished it yourself.", ar: "ابتسمت المرأة وقالت: هذا بالضبط كان السحر. الحجر لم يفعل شيئًا. أنت من حققت ذلك بنفسك." , uk: "Жінка усміхнулася й сказала: У цьому й полягала магія. Камінь нічого не робив. Ти досяг усього сам." , fa: "زن لبخندی زد و گفت: این دقیقا همان جادو بود. سنگ هیچ کاری نکرد. خودت آن را انجام دادی.","es":"La mujer sonrió y dijo: \"Esa era exactamente la magia. La piedra no hizo nada. Tú misma lo lograste."},
       { de: "Finn dankte ihr und lebte fortan ein geduldiges und friedliches Leben.", ku: "فین سوپاسی کرد و لەمەودوا ژیانێکی پڕ لە سەبر و ئاشتی بەسەربرد.", tr: "Finn ona teşekkür etti ve o günden sonra sabırlı ve huzurlu bir hayat sürdü.", en: "Finn thanked her and from then on lived a patient and peaceful life.", ar: "شكرها فين، وعاش منذ ذلك الحين حياة مليئة بالصبر والسلام." , uk: "Фінн подякував їй і відтоді жив терплячим і спокійним життям." , fa: "فین از او تشکر کرد و از آن زمان به بعد زندگی آرام و صبوری داشت.","es":"Finn le dio las gracias y a partir de entonces vivió una vida paciente y pacífica."},
     ] , fa: "سنگ صبوری","es":"La piedra de la paciencia"},
-    { id: "b1_5", emoji: "🐧", title: "Der Vogel ohne Flügel", ku: "باڵندەی بێ بازنە", tr: "Kanatsız Kuş", en: "The Bird Without Wings", uk: "Птах без крил", ar: "الطائر بلا أجنحة", color: "#0891B2", paragraphs: [
+    { id: "b1_5", emoji: "🐧", title: "Der Vogel ohne Flügel", ku: "باڵندەی بێ بازنە", tr: "Kanatsız Kuş", en: "The Bird Without Wings", uk: "Птах без крил", ar: "الطائر بلا أجنحة", color: "#0E7490", paragraphs: [
       { de: "Vor langer Zeit lebte ein kleiner Vogel namens Piko.", ku: "زۆر ماوەیەک لەمەوبەر باڵندەیەکی بچووک بە ناوی پیکۆ دەژیا.", tr: "Uzun zaman önce Piko adında küçük bir kuş yaşıyordu.", en: "A long time ago there lived a little bird named Piko.", ar: "منذ زمن بعيد، عاش طائر صغير يُدعى بيكو." , uk: "Давним-давно жив маленький птах на ім'я Піко." , fa: "مدتها پیش پرنده کوچکی به نام پیکو زندگی میکرد.","es":"Hace mucho tiempo vivía un pajarito llamado Piko."},
       { de: "Piko wurde ohne Flügel geboren.", ku: "پیکۆ بەبێ باڵ لەدایک بوو.", tr: "Piko kanatsız doğmuştu.", en: "Piko was born without wings.", ar: "وُلد بيكو بلا أجنحة." , uk: "Піко народився без крил." , fa: "پیکو بدون بال متولد شد","es":"Piko nació sin alas."},
       { de: "Alle anderen Vögel konnten fliegen.", ku: "هەموو باڵندەکانی دیکە دەیانتوانی بفڕن.", tr: "Diğer tüm kuşlar uçabiliyordu.", en: "All the other birds could fly.", ar: "كانت جميع الطيور الأخرى تستطيع الطيران." , uk: "Усі інші птахи вміли літати." , fa: "همه پرندگان می توانند پرواز کنند.","es":"Todos los otros pájaros podrían volar."},
@@ -9586,7 +9670,7 @@ const MASALS = {
       { de: "Dies setzt allerdings regelmäßige Selbstreflexion voraus, was im hektischen Alltag oft zu kurz kommt.", ku: "بەڵام ئەمە پێویستی بە بیرکردنەوەی خۆی بەردەوام هەیە، شتێک کە لە ژیانی ڕۆژانەی پڕ لە خێرایی زۆر جار پشتگوێ دەخرێت.", tr: "Ancak bu, telaşlı günlük yaşamda çoğu zaman ihmal edilen düzenli bir öz-yansımayı gerektirir.", en: "This, however, requires regular self-reflection, which often falls by the wayside in our hectic daily lives.", ar: "غير أن هذا يتطلب تأملاً ذاتيًا منتظمًا، وهو أمر كثيرًا ما يُهمل في خضم الحياة اليومية الصاخبة." , uk: "Це, однак, потребує регулярної саморефлексії, яка в нашому метушливому повсякденні часто відходить на другий план." , fa: "با این حال، این امر نیاز به تفکر منظم دارد، که اغلب در زندگی روزمره ما کنار گذاشته می شود.","es":"Sin embargo, esto requiere una reflexión regular, que a menudo cae al borde de nuestro ajetreado día a día."},
       { de: "Vielen Dank für Ihre Aufmerksamkeit.", ku: "زۆر سوپاس بۆ سەرنجتان.", tr: "İlginiz için çok teşekkür ederim.", en: "Thank you very much for your attention.", ar: "شكرًا جزيلاً لحسن إصغائكم." , uk: "Дуже дякую за увагу." , fa: "از توجه شما بسیار سپاسگزارم.","es":"Muchas gracias por su atención."},
     ] , fa: "قدرت عادت","es":"El poder del hábito"},
-    { id: "c1_2", emoji: "🤖", title: "Künstliche Intelligenz – Fluch oder Segen?", ku: "زیرەکی دەستکرد – نەلەت یان بەرەکەت؟", tr: "Yapay Zeka – Lanet mi, Nimet mi?", en: "Artificial Intelligence – Curse or Blessing?", uk: "Штучний інтелект — прокляття чи благословення?", ar: "الذكاء الاصطناعي – لعنة أم نعمة؟", color: "#0EA5E9", paragraphs: [
+    { id: "c1_2", emoji: "🤖", title: "Künstliche Intelligenz – Fluch oder Segen?", ku: "زیرەکی دەستکرد – نەلەت یان بەرەکەت؟", tr: "Yapay Zeka – Lanet mi, Nimet mi?", en: "Artificial Intelligence – Curse or Blessing?", uk: "Штучний інтелект — прокляття чи благословення?", ar: "الذكاء الاصطناعي – لعنة أم نعمة؟", color: "#0369A1", paragraphs: [
       { de: "Meine Damen und Herren, die rasante Entwicklung der künstlichen Intelligenz, insbesondere im Bereich des maschinellen Lernens, wirft grundlegende Fragen zur Zukunft der Arbeitsgesellschaft auf.", ku: "خانم و بەڕێزان، پەرەسەندنی خێرای زیرەکی دەستکرد، بە تایبەتی لە بواری فێربوونی ماشێندا، پرسیاری بنەڕەتی سەبارەت بە داهاتووی کۆمەڵگای کار دەخاتەڕوو.", tr: "Sayın bayanlar ve baylar, yapay zekânın, özellikle makine öğrenimi alanındaki hızlı gelişimi, çalışma toplumunun geleceğine dair temel sorular ortaya çıkarmaktadır.", en: "Ladies and gentlemen, the rapid development of artificial intelligence, particularly in the field of machine learning, raises fundamental questions about the future of our working society.", ar: "سيداتي وسادتي، إن التطور المتسارع للذكاء الاصطناعي، ولا سيما في مجال التعلم الآلي، يثير تساؤلات جوهرية حول مستقبل مجتمع العمل." , uk: "Пані та панове, стрімкий розвиток штучного інтелекту, зокрема у сфері машинного навчання, порушує фундаментальні питання про майбутнє нашого трудового суспільства." , fa: "خانم ها و آقایان، توسعه سریع هوش مصنوعی، به ویژه در زمینه یادگیری ماشین، سوالات اساسی در مورد آینده جامعه کاری ما را مطرح می کند.","es":"Señorías, el rápido desarrollo de la inteligencia artificial, especialmente en el ámbito del aprendizaje automático, plantea cuestiones fundamentales sobre el futuro de nuestra sociedad activa."},
       { de: "Während die einen in der KI eine Jahrhundertchance sehen, warnen andere vor massiven Arbeitsplatzverlusten und sozialen Verwerfungen.", ku: "لە کاتێکدا هەندێک لە زیرەکی دەستکرددا دەرفەتی سەدەیەک دەبینن، هەندێکی تریش ئاگاداری لەدەستدانی بەکۆمەڵ شوێنی کار و ئاڵۆزی کۆمەڵایەتی دەدەنەوە.", tr: "Bazıları yapay zekâda yüzyılın fırsatını görürken, diğerleri kitlesel iş kayıplarına ve toplumsal çalkantılara karşı uyarıda bulunuyor.", en: "While some see AI as the opportunity of the century, others warn of massive job losses and social upheaval.", ar: "فبينما يرى البعض في الذكاء الاصطناعي فرصة القرن، يحذر آخرون من خسائر هائلة في الوظائف واضطرابات اجتماعية." , uk: "Тоді як одні вбачають у ШІ можливість століття, інші застерігають від масової втрати робочих місць і соціальних потрясінь." , fa: "در حالی که برخی هوش مصنوعی را به عنوان فرصت قرن می بینند، برخی دیگر از دست دادن شغل های عظیم و تحولات اجتماعی هشدار می دهند.","es":"Mientras que algunos ven a AI como la oportunidad del siglo, otros advierten de la pérdida masiva de empleos y la agitación social."},
       { de: "Ich möchte im Folgenden beide Perspektiven beleuchten, ohne in vereinfachende Schwarz-Weiß-Malerei zu verfallen.", ku: "لە خوارەوە دەمەوێت هەردوو ڕوانگە ڕوون بکەمەوە، بەبێ ئەوەی بکەوم بەرەو وێنەکێشانێکی سادەکراوی ڕەش و سپی.", tr: "Aşağıda, basite indirgeyen siyah-beyaz bir tabloya düşmeden her iki bakış açısını da ele almak istiyorum.", en: "In what follows, I would like to shed light on both perspectives without falling into simplistic black-and-white thinking.", ar: "وأود فيما يلي أن أسلط الضوء على كلا المنظورين دون الانزلاق إلى تبسيط الأمور بشكل أبيض وأسود." , uk: "Далі я хотів би висвітлити обидві перспективи, не впадаючи у спрощене чорно-біле мислення." , fa: "در ادامه، من می خواهم به روشن کردن هر دو دیدگاه بدون افتادن به ساده تفکر سیاه و سفید.","es":"En lo que sigue, me gustaría arrojar luz sobre ambas perspectivas sin caer en un pensamiento simplista en blanco y negro."},
@@ -9610,7 +9694,7 @@ const MASALS = {
       { de: "Nur dann, so meine Überzeugung, kann das Potenzial der KI zum Wohle aller genutzt werden.", ku: "بەلای منەوە، تەنها لەو کاتەدا دەتوانرێت توانای زیرەکی دەستکرد بۆ چاکەی هەموو کەس بەکاربهێنرێت.", tr: "Kanaatimce yalnızca bu şekilde, yapay zekânın potansiyeli herkesin yararına kullanılabilir.", en: "Only then, in my conviction, can the potential of AI be harnessed for the benefit of all.", ar: "وعندئذ فقط، بحسب قناعتي، يمكن توظيف إمكانات الذكاء الاصطناعي لصالح الجميع." , uk: "Лише тоді, на моє переконання, потенціал ШІ можна буде спрямувати на благо всіх." , fa: "تنها در این صورت است که، به اعتقاد من، می توان پتانسیل AI را به نفع همه مهار کرد.","es":"Sólo entonces, en mi convicción, se podrá aprovechar el potencial de la IA para el beneficio de todos."},
       { de: "Ich danke Ihnen für Ihr Interesse.", ku: "سوپاستان دەکەم بۆ سەرنجتان.", tr: "İlginiz için teşekkür ederim.", en: "Thank you for your interest.", ar: "أشكركم على اهتمامكم." , uk: "Дякую за вашу увагу." , fa: "ممنون از توجهتون","es":"Gracias por su interés."},
     ] , fa: "هوش مصنوعی – نفرین یا برکت؟","es":"Inteligencia artificial: ¿maldiciones o bendiciones?"},
-    { id: "c1_3", emoji: "🌍", title: "Klimapsychologie – Warum handeln wir nicht?", ku: "دەروونناسی ئاووهەوا – بۆچی کار ناکەین؟", tr: "İklim Psikolojisi – Neden Harekete Geçmiyoruz?", en: "Climate Psychology – Why Don't We Act?", uk: "Психологія клімату — чому ми не діємо?", ar: "علم نفس المناخ – لماذا لا نتصرف؟", color: "#16A34A", paragraphs: [
+    { id: "c1_3", emoji: "🌍", title: "Klimapsychologie – Warum handeln wir nicht?", ku: "دەروونناسی ئاووهەوا – بۆچی کار ناکەین؟", tr: "İklim Psikolojisi – Neden Harekete Geçmiyoruz?", en: "Climate Psychology – Why Don't We Act?", uk: "Психологія клімату — чому ми не діємо?", ar: "علم نفس المناخ – لماذا لا نتصرف؟", color: "#15803D", paragraphs: [
       { de: "Guten Tag, verehrtes Publikum, wir stehen vor einer paradoxen Situation: Noch nie war das Wissen über den Klimawandel so umfassend, noch nie waren die Warnungen der Wissenschaft so eindeutig, und dennoch bleibt kollektives Handeln auf dem notwendigen Niveau aus.", ku: "ڕۆژتان باش، ئامادەبووانی بەڕێز، ئێمە لەبەردەم بارودۆخێکی پارادۆکسیدا ڕاوەستاوین: هەرگیز زانیاری سەبارەت بە گۆڕانی کەش و هەوا ئاوا فراوان نەبووە، هەرگیز ئاگاداریی زانست ئاوا ڕوون نەبووە، بەڵام سەرەڕای ئەمە کردەوەی هاوبەش لە ئاستی پێویستدا نایە دی.", tr: "İyi günler değerli dinleyiciler, paradoksal bir durumla karşı karşıyayız: İklim değişikliği hakkındaki bilgi hiç bu kadar kapsamlı olmamıştı, bilimin uyarıları hiç bu kadar net olmamıştı, buna rağmen gerekli düzeyde kolektif eylem hâlâ gerçekleşmiyor.", en: "Good day, esteemed audience, we find ourselves in a paradoxical situation: never has our knowledge of climate change been so comprehensive, never have the warnings of science been so unambiguous, and yet collective action at the necessary level continues to fail to materialize.", ar: "طاب يومكم، أيها الحضور الكرام، نحن أمام وضع متناقض: لم تكن معرفتنا بتغير المناخ يومًا بهذا الاتساع، ولم تكن تحذيرات العلم يومًا بهذا الوضوح، ومع ذلك لا يزال العمل الجماعي بالمستوى المطلوب غائبًا." , uk: "Доброго дня, шановна аудиторіє, ми опинилися в парадоксальній ситуації: ніколи наші знання про зміну клімату не були настільки всеосяжними, ніколи застереження науки не були настільки однозначними, і все ж колективні дії на необхідному рівні досі не з'являються." , fa: "روز خوش، مخاطبان محترم، ما خود را در یک وضعیت متناقض می یابیم: دانش ما از تغییرات آب و هوایی هرگز تا این حد جامع نبوده است، هرگز هشدارهای علم تا این حد مبهم نبوده است، و در عین حال اقدام جمعی در سطح لازم همچنان به تحقق نمی انجامد.","es":"Buenos días, estimado público, nos encontramos en una situación paradójica: nunca ha sido tan amplio nuestro conocimiento del cambio climático, nunca ha sido tan inequívoca la advertencia de la ciencia, y sin embargo, la acción colectiva en el nivel necesario sigue sin materializarse."},
       { de: "Die Klimapsychologie, ein interdisziplinäres Forschungsfeld zwischen Psychologie, Soziologie und Nachhaltigkeitswissenschaft, versucht, dieses Paradox zu erklären.", ku: "دەروونناسی کەش و هەوا، بوارێکی لێکۆڵینەوەی فرەلایەنە لەنێوان دەروونناسی، کۆمەڵناسی و زانستی بەردەوامیدا، هەوڵ دەدات ئەم پارادۆکسە ڕوون بکاتەوە.", tr: "Psikoloji, sosyoloji ve sürdürülebilirlik bilimi arasında disiplinlerarası bir araştırma alanı olan iklim psikolojisi, bu paradoksu açıklamaya çalışmaktadır.", en: "Climate psychology, an interdisciplinary field of research spanning psychology, sociology, and sustainability science, attempts to explain this paradox.", ar: "ويحاول علم نفس المناخ، وهو مجال بحثي متعدد التخصصات يجمع بين علم النفس وعلم الاجتماع وعلوم الاستدامة، تفسير هذا التناقض." , uk: "Психологія клімату — міждисциплінарна галузь досліджень, що охоплює психологію, соціологію й науку про сталий розвиток, — намагається пояснити цей парадокс." , fa: "روانشناسی آب و هوا، یک رشته بین رشته ای از تحقیقات روانشناسی، جامعه شناسی و علوم پایداری، تلاش می کند تا این پارادوکس را توضیح دهد.","es":"La psicología climática, un campo interdisciplinario de investigación que abarca la psicología, la sociología y la ciencia de la sostenibilidad, intenta explicar esta paradoja."},
       { de: "Ein zentrales Erklärungsmodell liefert die sogenannte kognitive Dissonanz.", ku: "مۆدێلێکی ڕوونکردنەوەی سەرەکی لەلایەن ئەوەی پێی دەگوترێت ناکۆکی زانیارییانە (کۆگنیتیڤ دیسۆننس) پێشکەش دەکرێت.", tr: "Merkezi bir açıklama modeli, sözde bilişsel uyumsuzluk kavramıyla sunulmaktadır.", en: "A central explanatory model is provided by what is known as cognitive dissonance.", ar: "ويقدم ما يسمى بالتنافر المعرفي نموذجًا تفسيريًا رئيسيًا لهذه الظاهرة." , uk: "Центральну пояснювальну модель дає так званий когнітивний дисонанс." , fa: "یک مدل توضیحی مرکزی توسط آنچه که به عنوان ناهماهنگی شناختی شناخته می شود ارائه می شود.","es":"Un modelo explicativo central es proporcionado por lo que se conoce como disonancia cognitiva."},
@@ -9870,6 +9954,13 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [masalDictEntry, setMasalDictEntry] = useState(null); // masal reader: tapped-word dictionary popup
   const [dialogDictEntry, setDialogDictEntry] = useState(null); // dialog reader: tapped umgangssprachlich word popup
   useEffect(() => { setDialogDictEntry(null); }, [mode, level, openDialogId]);
+  useNavLayer(!!level, () => setLevel(null), { depth: 1 });
+  useNavLayer(!!mode, () => setMode(null), { depth: 2 });
+  useNavLayer(!!examType, () => setExamType(null), { depth: 3 });
+  useNavLayer(!!examLevel, () => setExamLevel(null), { depth: 4 });
+  useNavLayer(!!openDialogId, () => setOpenDialogId(null), { depth: 3 });
+  useNavLayer(!!openWordsSub, () => setOpenWordsSub(null), { depth: 3 });
+  useNavLayer(!!selMasalId, () => setSelMasalId(null), { depth: 3 });
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
   useEffect(() => { setSelGrammarIdx(0); setSelVerbIdx(0); setSelVocabIdx(0); setSelUbungIdx(0); setSelMasalId(null); window.scrollTo(0, 0); }, [mode, level]);
@@ -9947,10 +10038,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </button>
 
         {/* hero card */}
-        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 4px 0 rgba(0,0,0,.12), 0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, left: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,.08)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
+            <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{g.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800, letterSpacing: ".04em" }}>{level}</span>
@@ -10033,7 +10124,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         {/* merksatz */}
         {g.merksatz && (
-          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}DD 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 3px 0 rgba(0,0,0,.1), 0 10px 28px ${lc}40` }}>
+          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}DD 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 10px 28px ${lc}40` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center" }}>
                 <Zap size={14} color="#fff" />
@@ -10087,7 +10178,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     return (
       <div className="rise">
         <style>{`
-          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.09), 0 12px 28px ${lc}18 !important; }
+          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px ${lc}18 !important; }
           .wword-card { transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
         `}</style>
 
@@ -10097,10 +10188,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </button>
 
         {/* hero */}
-        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 4px 0 rgba(0,0,0,.12), 0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, right: -20, width: 130, height: 130, borderRadius: "50%", background: "rgba(255,255,255,.07)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 3px 0 rgba(0,0,0,.1)" }}>{l.icon}</div>
+            <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{l.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800 }}>{l.level}</span>
@@ -10211,9 +10302,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       <style>{`
         .lessons-tab:hover:not(.lessons-tab-active) { background: #F5F5F7 !important; }
         .lessons-tab { transition: background .18s, color .18s, box-shadow .18s; }
-        .lcard:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.1), 0 14px 32px rgba(0,0,0,.09) !important; }
+        .lcard:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.09) !important; }
         .lcard { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
-        .vcard:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.1), 0 14px 32px rgba(0,0,0,.09) !important; }
+        .vcard:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.09) !important; }
         .vcard { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
       `}</style>
 
@@ -10280,7 +10371,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             background:`linear-gradient(135deg,${lg.from} 0%,${lg.to} 100%)`,
             borderRadius:22, padding:"20px 20px 22px", marginBottom:18,
             position:"relative", overflow:"hidden",
-            boxShadow:`0 4px 0 rgba(0,0,0,.1),0 12px 32px ${lg.from}44`,
+            boxShadow:`0 12px 32px ${lg.from}44`,
           }}>
             <div style={{ position:"absolute",top:-24,right:-24,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.13)",pointerEvents:"none" }} />
             <div style={{ position:"absolute",bottom:-16,left:-16,width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none" }} />
@@ -10306,7 +10397,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   ))}
                 </div>
               </div>
-              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.35)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 3px 0 rgba(0,0,0,.1)", flexShrink:0 }}>
+              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.62)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(30,30,70,.10)", flexShrink:0 }}>
                 <span style={{ fontSize:18, fontWeight:900, color:"#fff", lineHeight:1 }}>{avgPct}%</span>
                 <span style={{ fontSize:8.5, fontWeight:700, color:"rgba(255,255,255,.75)", marginTop:2, letterSpacing:".02em" }}>
                   {STAT_LABEL.progress[lang] || STAT_LABEL.progress.ku}
@@ -10688,7 +10779,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <div style={{ flex:1, height:"87%",
                     background:`linear-gradient(135deg,${sec.color},${sec.color}AA)`,
                     borderRadius:99, padding:"2.5px",
-                    boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${sec.color}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                    boxShadow: isSel ? `0 8px 20px ${sec.color}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                     <div style={{ height:"100%", background:"#fff", borderRadius:97,
                       display:"flex", alignItems:"center", padding:"0 12px", gap:8 }}>
                       <div style={{ flex:1, minWidth:0 }}>
@@ -10706,7 +10797,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
           {/* Section bodies — only selected is visible; all stay mounted to preserve state */}
           <div style={{ display: selUbungIdx===0 ? "" : "none" }}>
-            <DragDropExercise  lang={lang} open={true} onToggle={()=>{}} />
+            <DragDropExercise key={level || "A1"} exercises={sbForLevel(level || "A1")} lang={lang} open={true} onToggle={()=>{}} />
           </div>
           <div style={{ display: selUbungIdx===1 ? "" : "none" }}>
             <LesenASection     lang={lang} open={true} onToggle={()=>{}} />
@@ -10779,7 +10870,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   return (
                     <button key={k} onClick={() => { setExamType(k); setExamLevel(level); }}
                       style={{ textAlign:"right", background:"#fff", border:`1.5px solid ${C.line}`, borderInlineStart:`5px solid ${p.color}`, borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer", boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)", transition:"transform .18s,box-shadow .18s" }}
-                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 4px 0 rgba(0,0,0,.08),0 12px 24px ${p.color}33`;}}
+                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 12px 24px ${p.color}33`;}}
                       onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)";}}>
                       <div style={{ width:50, height:50, borderRadius:14, background:p.color, color:"#fff", display:"grid", placeItems:"center", flexShrink:0, boxShadow:`0 3px 10px ${p.color}55` }}>
                         <p.Icon size={24} />
@@ -10862,7 +10953,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     <div style={{ flex:1, height:"87%",
                       background:`linear-gradient(135deg,${ac},${ac}AA)`,
                       borderRadius:99, padding:"2.5px",
-                      boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                      boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                       <div style={{ height:"100%", background:"#fff", borderRadius:97,
                         display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                         <div style={{ flex:1, minWidth:0 }}>
@@ -10894,7 +10985,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
 
           {/* ── کردار sub-section ── */}
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="fiil" ? null : "fiil")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="fiil" ? "rgba(36,47,73,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -10950,7 +11041,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -10969,7 +11060,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected verb category words */}
               {selectedVerb && (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVerb.icon}</div>
                       <div>
@@ -10994,7 +11085,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11013,7 +11104,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </div>
 
           {/* ── ناو sub-section ── */}
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="vocab" ? null : "vocab")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="vocab" ? "rgba(56,67,88,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -11069,7 +11160,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -11088,8 +11179,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected vocab topic words */}
               {selectedVocab && (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVocab.icon}</div>
                       <div>
@@ -11114,7 +11205,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11133,7 +11224,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
           {/* ── Sıfatlar / Adjektive sub-section ── */}
           {adjWordList.length > 0 && (
-          <div style={{ background:"#fff", borderRadius:18, border:`1.5px solid ${C.line}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,.06)" }}>
+          <div style={{ ...CARD, overflow:"hidden" }}>
             <div onClick={() => setOpenWordsSub(s => s==="adj" ? null : "adj")}
               style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="adj" ? "rgba(45,107,82,.04)" : "#fff", transition:"background .15s" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -11186,7 +11277,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ flex:1, height:"87%",
                         background:`linear-gradient(135deg,${ac},${ac}AA)`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 3px 0 rgba(0,0,0,.08),0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
                         <div style={{ height:"100%", background:"#fff", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
@@ -11205,7 +11296,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected adjective category words */}
               {selectedAdj && (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 3px 0 rgba(0,0,0,.1),0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedAdj.icon}</div>
                       <div>
@@ -11230,7 +11321,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#9AA3B4", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11304,7 +11395,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* hero */}
               <div style={{ background:`linear-gradient(145deg,${story.color},${story.color}BB)`,
                 borderRadius:22, padding:"22px 20px 20px", color:"#fff", marginBottom:20,
-                boxShadow:`0 4px 0 rgba(0,0,0,.12),0 12px 32px ${story.color}44`,
+                boxShadow:`0 12px 32px ${story.color}44`,
                 position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:-30, left:-30, width:120, height:120,
                   borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
@@ -11410,7 +11501,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     onClick={() => { setSelMasalId(story.id); setMasalDictEntry(null); window.scrollTo({top:0,behavior:"instant"}); }}
                     style={{ animationDelay:`${i * 60}ms`, background:"#fff", borderRadius:20,
                       overflow:"hidden", cursor:"pointer",
-                      boxShadow:"0 3px 0 rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.08)" }}>
+                      boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
                     {/* gradient header */}
                     <div style={{ background:`linear-gradient(135deg,${story.color},${story.color}BB)`,
                       padding:"18px 18px 16px", position:"relative", overflow:"hidden" }}>
@@ -11455,9 +11546,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
 // ── helper: ئارتیکڵی وشە دیاری بکە ────────────────────────────────
 function detectArticle(de) {
-  if (de.startsWith("der ")) return { art: "der", color: "#3b82f6" };
+  if (de.startsWith("der ")) return { art: "der", color: "#2563EB" };
   if (de.startsWith("die ")) return { art: "die", color: "#ec4899" };
-  if (de.startsWith("das ")) return { art: "das", color: "#16A06F" };
+  if (de.startsWith("das ")) return { art: "das", color: "#0F7A55" };
   return null;
 }
 
@@ -11740,7 +11831,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
             {streak > 1 && (
               <div style={{ display:"flex", alignItems:"center", gap:4, background:"rgba(245,165,36,.15)", border:"1px solid rgba(245,165,36,.3)", borderRadius:99, padding:"4px 12px" }}>
                 <Zap size={14} color={C.gold} />
-                <span style={{ fontSize:13, fontWeight:700, color:C.gold }}>{streak} 🔥</span>
+                <span style={{ fontSize:13, fontWeight:700, color:C.gold }}><span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>{streak}<Flame size={14} strokeWidth={2.4} /></span></span>
               </div>
             )}
           </div>
@@ -11772,7 +11863,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
         <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:10 }}>
           <div style={{ display:"flex", alignItems:"center", gap:4, background:"rgba(245,165,36,.15)", border:"1px solid rgba(245,165,36,.3)", borderRadius:99, padding:"4px 12px" }}>
             <Zap size={14} color={C.gold} />
-            <span style={{ fontSize:13, fontWeight:700, color:C.gold }}>{streak} 🔥</span>
+            <span style={{ fontSize:13, fontWeight:700, color:C.gold }}><span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>{streak}<Flame size={14} strokeWidth={2.4} /></span></span>
           </div>
         </div>
       )}
@@ -11800,8 +11891,8 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
           </p>
           <div style={{ display:"flex", gap:12, justifyContent:"center", marginBottom:24 }}>
             {[
-              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#16A06F" },
-              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#ef4444" },
+              { Icon:CheckCircle2, count:scores.correct, label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "دروست", color:"#0F7A55" },
+              { Icon:XCircle,      count:scores.wrong,   label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "هەڵە",  color:"#C93A3F" },
             ].map(s => (
               <div key={s.label} style={{ background:C.panel, border:`1px solid ${C.line}`, borderRadius:16, padding:"16px 28px" }}>
                 <s.Icon size={24} color={s.color} style={{ margin:"0 auto 6px", display:"block" }} />
@@ -12055,7 +12146,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
           <Heart size={32} color="#ef4444" />
         </div>
         <h3 style={{ fontWeight:800, fontSize:22, margin:"0 0 8px" }}>{tApp(lang,"fav_empty_h")}</h3>
-        <p style={{ color:"#8892A4", fontSize:14, margin:0 }}>
+        <p style={{ color:"#6B7280", fontSize:14, margin:0 }}>
           {tApp(lang,"fav_empty_p")}
         </p>
       </div>
@@ -12070,7 +12161,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
         </div>
         <div>
           <h2 style={{ fontWeight:800, fontSize:22, margin:0 }}>{tApp(lang,"fav_title")}</h2>
-          <div style={{ fontSize:13, color:"#8892A4", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
+          <div style={{ fontSize:13, color:"#6B7280", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
         </div>
       </div>
 
@@ -12115,7 +12206,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   <>
                     <div style={{ fontSize:12, color:"#5A6480", fontStyle:"italic" }} dir="ltr">{w.ex}</div>
                     {(tEx(w, lang)) && (
-                      <div style={{ fontSize:12, color:"#8892A4" }}>{tEx(w, lang)}</div>
+                      <div style={{ fontSize:12, color:"#6B7280" }}>{tEx(w, lang)}</div>
                     )}
                   </>
                 )}
@@ -12128,7 +12219,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                   style={{ background:"rgba(239,68,68,.1)", border:"none", borderRadius:12, cursor:"pointer",
                     padding:"8px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
                   <Heart size={18} fill="#ef4444" color="#ef4444" />
-                  <span style={{ fontSize:12, fontWeight:700, color:"#ef4444" }}>{tApp(lang,"fav_remove")}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:"#C93A3F" }}>{tApp(lang,"fav_remove")}</span>
                 </button>
               </div>
             </div>
@@ -12499,9 +12590,9 @@ function tSpiel(lang, key) {
 
 const SPIEL_GAMES = [
   { id:"word-match", icon:"🃏", img:"/game-wordmatch.jpg", nameKey:"wm_name", descKey:"wm_desc", color:"#5B5BD6", ready:true  },
-  { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#E5484D", ready:true, pos:"center top" },
-  { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#30A46C", ready:true, pos:"center top" },
-  { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#f59e0b", ready:true  },
+  { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#C93A3F", ready:true, pos:"center top" },
+  { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#1F8A57", ready:true, pos:"center top" },
+  { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#B45309", ready:true  },
   { id:"listen",     icon:"🎧", img:"/game-listen.jpg",    nameKey:"li_name", descKey:"li_desc", color:"#F76B15", ready:false },
 ];
 
@@ -12653,14 +12744,14 @@ function SatzPuzzle({ lang = "ku", onBack }) {
   /* SETUP */
   if(phase==='setup') return (
     <div style={{maxWidth:480,margin:'0 auto',padding:'8px 0'}}>
-      <button onClick={onBack} style={{background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
+      <button onClick={onBack} style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
       <div style={{textAlign:'center',marginBottom:28}}>
         <div style={{fontSize:44}}>🧩</div>
         <div style={{fontWeight:800,fontSize:22,marginTop:8}}>{spt('title')}</div>
-        <div style={{fontSize:14,color:'#888',marginTop:4}}>{spt('sub')}</div>
+        <div style={{fontSize:14,color:'#6B6B73',marginTop:4}}>{spt('sub')}</div>
       </div>
-      <div style={{background:'#fff',borderRadius:16,padding:18,marginBottom:22,border:'1px solid #ebebf0'}}>
-        <div style={{fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
+      <div style={{...CARD, padding:18, marginBottom:22}}>
+        <div style={{fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
@@ -12706,17 +12797,17 @@ function SatzPuzzle({ lang = "ku", onBack }) {
       {/* Progress bar */}
       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
         <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}}
-          style={{background:'none',border:'none',color:'#888',cursor:'pointer',fontSize:18}}>←</button>
+          style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18}}>←</button>
         <div style={{flex:1,height:7,background:'#ebebf0',borderRadius:4}}>
           <div style={{height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#30A46C,#12a15a)',borderRadius:4,transition:'width .4s'}}/>
         </div>
-        <div style={{fontSize:13,color:'#888',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
+        <div style={{fontSize:13,color:'#6B6B73',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Translation hint card */}
-      <div style={{background:'#fff',borderRadius:20,padding:'18px 20px',marginBottom:16,border:'1px solid #ebebf0',boxShadow:'0 2px 12px rgba(0,0,0,.06)'}}>
+      <div style={{...CARD, padding:'18px 20px', marginBottom:16}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#30A46C',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
+          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#1F8A57',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
           <button onClick={()=>speak(q.de)} style={{width:32,height:32,borderRadius:8,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:14}}>🔊</button>
         </div>
         <div style={{fontSize:13,color:'#666',fontWeight:500,marginBottom:4}}>{spt('hint')}</div>
@@ -12728,7 +12819,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
         border:`2px dashed ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#c7c7e8'}`,
         borderRadius:16,padding:'10px 12px',marginBottom:16,display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',minWidth:0,transition:'all .2s'}}>
         {answer.length===0 && !status &&
-          <span style={{color:'#bbb',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
+          <span style={{color:'#71717A',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
         {answer.map(chip=>(
           <button key={chip.id} onClick={()=>removeWord(chip)} disabled={!!status}
             style={{padding:'8px 14px',borderRadius:10,border:`1.5px solid ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#5B5BD6'}`,
@@ -12763,7 +12854,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
             {chip.word}
           </button>
         ))}
-        {bank.length===0 && !status && <span style={{color:'#bbb',fontSize:13}}>—</span>}
+        {bank.length===0 && !status && <span style={{color:'#71717A',fontSize:13}}>—</span>}
       </div>
     </div>
   );
@@ -12909,14 +13000,14 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
   /* SETUP */
   if (phase==='setup') return (
     <div style={{ maxWidth:480, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:28 }}>
         <div style={{ fontSize:44 }}>🎯</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{aqt('title')}</div>
-        <div style={{ fontSize:14, color:'#888', marginTop:4 }}>{aqt('sub')}</div>
+        <div style={{ fontSize:14, color:'#6B6B73', marginTop:4 }}>{aqt('sub')}</div>
       </div>
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:22,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:22 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
@@ -12968,17 +13059,17 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
     <div style={{ maxWidth:480, margin:'0 auto' }}>
       {/* Progress */}
       <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:24 }}>
-        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',fontSize:18 }}>←</button>
+        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18 }}>←</button>
         <div style={{ flex:1,height:7,background:'#ebebf0',borderRadius:4 }}>
           <div style={{ height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#E5484D,#f97316)',borderRadius:4,transition:'width .4s' }} />
         </div>
-        <div style={{ fontSize:13,color:'#888',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
+        <div style={{ fontSize:13,color:'#6B6B73',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Word card */}
       <div style={{ background:'#fff',borderRadius:24,padding:'32px 24px',textAlign:'center',border:'1px solid #ebebf0',boxShadow:'0 4px 20px rgba(0,0,0,.08)',marginBottom:28 }}>
         {/* Level badge */}
-        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#E5484D',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
+        <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#C93A3F',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
         {/* Word + audio */}
         <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:12 }}>
           <div style={{ fontSize:38,fontWeight:900,color:'#1a1a2e',letterSpacing:'-.5px' }}>{q.w}</div>
@@ -12993,8 +13084,8 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
             background: isRight?'#30A46C12':'#E5484D10',
             border:`1px solid ${isRight?'#30A46C44':'#E5484D44'}` }}>
             {isRight
-              ? <div style={{ color:'#30A46C',fontWeight:700,fontSize:15 }}>{aqt('correct')} — <span style={{ color:ART_COLOR[correct] }}>{correct}</span> {q.w}</div>
-              : <div style={{ color:'#E5484D',fontWeight:600,fontSize:14 }}>{aqt('wrong')} → <span style={{ color:ART_COLOR[correct],fontWeight:700 }}>{correct}</span> {q.w}</div>
+              ? <div style={{ color:'#1F8A57',fontWeight:700,fontSize:15 }}>{aqt('correct')} — <span style={{ color:ART_COLOR[correct] }}>{correct}</span> {q.w}</div>
+              : <div style={{ color:'#C93A3F',fontWeight:600,fontSize:14 }}>{aqt('wrong')} → <span style={{ color:ART_COLOR[correct],fontWeight:700 }}>{correct}</span> {q.w}</div>
             }
           </div>
         )}
@@ -13107,15 +13198,15 @@ function WordMatch({ lang = "ku", onBack }) {
   /* ── SETUP ── */
   if (phase==='setup') return (
     <div style={{ maxWidth:540, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:24 }}>
         <div style={{ fontSize:40 }}>🃏</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{tSpiel(lang,'wm_name')}</div>
-        <div style={{ fontSize:13, color:'#888', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
+        <div style={{ fontSize:13, color:'#6B6B73', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
       </div>
       {/* Level 1 */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:10,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:10 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl1(i)}
@@ -13126,8 +13217,8 @@ function WordMatch({ lang = "ku", onBack }) {
         </div>
       </div>
       {/* Level 2 */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:10,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:10 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl2(i)}
@@ -13138,8 +13229,8 @@ function WordMatch({ lang = "ku", onBack }) {
         </div>
       </div>
       {/* Category */}
-      <div style={{ background:'#fff',borderRadius:16,padding:18,marginBottom:20,border:'1px solid #ebebf0' }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#888',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
+      <div style={{ ...CARD, padding:18, marginBottom:20 }}>
+        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LCK.map((k,i)=>(
             <button key={k} onClick={()=>setCateg(k)}
@@ -19431,13 +19522,13 @@ function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
           </button>
         )}
         <div style={{ fontSize: 13, fontWeight: 800, color: '#8B6030', fontFamily: 'Georgia,serif' }}>{t('title')}</div>
-        {!done && <div style={{ fontSize: 12, color: '#b08050', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
+        {!done && <div style={{ fontSize: 12, color: '#8F6034', marginTop: 2 }}>{t('question')} {qIdx + 1} / {total}</div>}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
         {!done && q && (
           <>
-            <div style={{ fontSize: 12, color: '#9a7040', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10, textAlign: 'center' }}>{qLabel}</div>
+            <div style={{ fontSize: 12, color: '#85602F', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10, textAlign: 'center' }}>{qLabel}</div>
             <div style={{ fontSize: 28, fontWeight: 800, color: '#2c1408', textAlign: 'center', marginBottom: 32, fontFamily: 'Georgia,serif' }}>{q.prompt}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 420, margin: '0 auto', width: '100%' }}>
               {q.options.map((opt, i) => {
@@ -19750,7 +19841,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
     if (line.t === 'i') {
       return (
         <div key={i} style={{ margin: '4px 0 14px', padding: '10px 14px', background: 'rgba(120,80,30,.08)', borderRadius: 10, borderLeft: '3px solid rgba(180,120,50,.35)' }}>
-          <div style={{ fontSize: 12, color: '#9a7040', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
+          <div style={{ fontSize: 12, color: '#85602F', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'Georgia,serif', direction: 'ltr' }}>
             💭 {resolveWho(line.who)} ({langLabel})
           </div>
           <div style={{ fontSize: 14, color: '#4a2e10', fontStyle: 'italic', lineHeight: 1.78, fontFamily: 'Georgia,serif', ...rtlStyle }}>{s}</div>
@@ -19856,7 +19947,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
             <div style={{ fontSize: 13, fontWeight: 700, color: '#4a2e10', fontFamily: 'Georgia,serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {scenes[page]?.title}
             </div>
-            <div style={{ fontSize: 12, color: '#b08050', fontFamily: 'Georgia,serif', marginTop: 1 }}>
+            <div style={{ fontSize: 12, color: '#8F6034', fontFamily: 'Georgia,serif', marginTop: 1 }}>
               {userLang === 'ku' ? 'سەحنە' : userLang === 'en' ? 'Scene' : userLang === 'ar' ? 'المشهد' : userLang === 'uk' ? 'Сцена' : userLang === 'fa' ? 'صحنه' : 'Sahne'} {page + 1} / {total}
             </div>
           </div>
@@ -19892,7 +19983,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               ? scenes.map((_, i) => (
                   <div key={i} role="button" tabIndex={0} aria-label={'Scene ' + (i + 1)} aria-current={i === page ? 'step' : undefined} onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !flipping) { e.preventDefault(); setPage(i); } }} onClick={() => { if (!flipping) setPage(i); }} style={{ height: 5, borderRadius: 3, width: i === page ? 18 : 5, background: i === page ? '#c09060' : i < page ? 'rgba(180,130,60,.4)' : 'rgba(180,130,60,.18)', transition: 'all .35s cubic-bezier(.4,0,.2,1)', flexShrink: 0, cursor: 'pointer' }} />
                 ))
-              : <span style={{ fontSize: 13, color: '#b08050', fontFamily: 'Georgia,serif' }}>{page + 1} / {total}</span>
+              : <span style={{ fontSize: 13, color: '#8F6034', fontFamily: 'Georgia,serif' }}>{page + 1} / {total}</span>
             }
           </div>
 
@@ -20060,6 +20151,9 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
   const [justUnlocked, setJustUnlocked] = useState(null);
   const [quizGate, setQuizGate] = useState(null); // { levelId, scenes, sessionWords } — chapter finished, quiz must be passed to unlock
   const [sessionSummary, setSessionSummary] = useState(null); // { xpEarned, sessionWords, card } — shown after passing the quiz
+  useNavLayer(!!bookReader, () => setBookReader(null), { depth: 5, modal: true });
+  useNavLayer(!!quizGate, () => setQuizGate(null), { depth: 6, modal: true });
+  useNavLayer(!!sessionSummary, () => setSessionSummary(null), { depth: 7, modal: true });
   const [pendingKey, setPendingKey] = useState(() => {
     try { return JSON.parse(localStorage.getItem('fuxi_pending_key') || 'null'); } catch { return null; }
   }); // { fromLevelId, toLevelId } — a key has been earned and is waiting to be dragged onto its lock
@@ -20182,7 +20276,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
       {/* ── Back button ── */}
       <div style={{ padding:'12px 16px 0' }}>
-        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'#888',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
+        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'#6B6B73',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
       </div>
 
 
@@ -20303,7 +20397,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
                 <div style={{ fontSize:12.5, color:state==='locked'?'#ccc':'#999', marginTop:1 }}>
                   {getNat(lv)}
                 </div>
-                <div style={{ fontSize:12, color:'#bbb', marginTop:1 }}>
+                <div style={{ fontSize:12, color:'#71717A', marginTop:1 }}>
                   {lv.l} {jt('lessons')} · {lv.w} {jt('words')}
                 </div>
               </div>
@@ -20862,7 +20956,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   }
 
   const backBtn = (s) => (
-    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'#888', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
       ← {zt('back')}
     </button>
   );
@@ -20905,12 +20999,12 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   // ── Game screen ───────────────────────────────────────────────────────────
   return (
     <div style={{ maxWidth:440, margin:'0 auto', padding:16 }}>
-      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'#888', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
         ← {zt('back')}
       </button>
 
       <h2 style={{ textAlign:'center', fontWeight:900, fontSize:18, margin:'0 0 4px' }}>Entschlüssle die Wörter</h2>
-      <div style={{ textAlign:'center', fontSize:12, color:'#888', marginBottom:12 }}>
+      <div style={{ textAlign:'center', fontSize:12, color:'#6B6B73', marginBottom:12 }}>
         {selLvl} · {zt('chapter')} {selPuzz}
         {hintNum && (
           <span style={{ marginLeft:12, background:'#fef3c7', border:'1px solid #fbbf24', padding:'2px 10px', borderRadius:20, fontWeight:800, color:'#92400e' }}>
@@ -20943,7 +21037,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
                         cursor: isHint?'default':'pointer', transition:'border-color .12s',
                       }}>
                         <div style={{ fontSize:13, fontWeight:900, color:isOk?'#30A46C':isBad?'#E5484D':'#1a1a2e', lineHeight:1 }}>{displayed||''}</div>
-                        <div style={{ fontSize:8, color:'#aaa', lineHeight:1 }}>{num}</div>
+                        <div style={{ fontSize:8, color:'#71717A', lineHeight:1 }}>{num}</div>
                       </div>
                     );
                   })}
@@ -20997,6 +21091,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
 
 function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTab }) {
   const [activeGame, setActiveGame] = useState(initialGame);
+  useNavLayer(!!activeGame, () => setActiveGame(null), { depth: 1 });
   useEffect(() => { if (initialGame && onConsumeInitialGame) onConsumeInitialGame(); }, []);
 
   if (activeGame === 'word-match') return <WordMatch lang={lang} onBack={()=>setActiveGame(null)} />;
@@ -21009,7 +21104,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {setTab && (
         <button onClick={()=>setTab("home")} style={{
-          background:'none', border:'none', color:'#888', cursor:'pointer',
+          background:'none', border:'none', color:'#6B6B73', cursor:'pointer',
           display:'flex', alignItems:'center', gap:6, fontSize:14, marginTop:20 }}>
           ← {tApp(lang,"home_back")}
         </button>
@@ -21019,7 +21114,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
         <div style={{ fontWeight:800, fontSize:26, color:"#1a1a2e", marginBottom:6 }}>
           {tSpiel(lang,"title")}
         </div>
-        <div style={{ fontSize:15, color:"#888", marginBottom:0 }}>
+        <div style={{ fontSize:15, color:"#6B6B73", marginBottom:0 }}>
           {tSpiel(lang,"sub")}
         </div>
       </div>
@@ -21085,6 +21180,7 @@ function LiD({ lang = "ku" }) {
   ) : null;
 
   const [view, setView]              = useState("menu");
+  useNavLayer(view !== "menu", () => setView("menu"), { depth: 1 });
   const [bundesland, setBundesland]  = useState("");
   const [stateWarn, setStateWarn]    = useState(false);
 
@@ -21457,8 +21553,8 @@ function LiD({ lang = "ku" }) {
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: "0 0 6px", fontSize: 14, fontWeight: 700, fontFamily: "'Satoshi',system-ui,sans-serif", color: C.ink, lineHeight: 1.4 }}>{q.q}</p>
                   {trO && <p dir="auto" style={{ margin: "0 0 6px", fontSize: 12.5, color: C.muted, lineHeight: 1.5 }}>{trO.q}</p>}
-                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#E5484D" }}>✗ {q.o[ua]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[ua]}</span>}</p>}
-                  <p style={{ margin: 0, fontSize: 13, color: "#16A06F" }}>✓ {q.o[q.a]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[q.a]}</span>}</p>
+                  {!ok && ua >= 0 && <p style={{ margin: "0 0 2px", fontSize: 13, color: "#C93A3F" }}>✗ {q.o[ua]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[ua]}</span>}</p>}
+                  <p style={{ margin: 0, fontSize: 13, color: "#0F7A55" }}>✓ {q.o[q.a]}{trO && <span dir="auto" style={{ display: "block", opacity: .75, fontSize: 12 }}>{trO.o[q.a]}</span>}</p>
                 </div>
               </div>
             </div>

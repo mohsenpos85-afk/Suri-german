@@ -1,0 +1,21 @@
+// Emoji → Lucide icon name. Anything not listed keeps its emoji.
+export const EMOJI_ICON = {
+  "🎉": "PartyPopper", "🗣": "MessageCircle", "🧠": "Brain", "📚": "Library", "💡": "Lightbulb", "🔊": "Volume2", "🔈": "Volume2",
+  "🌐": "Globe", "🌍": "Globe", "⏳": "Hourglass", "✏": "Pencil", "📋": "ClipboardList", "✍": "PenLine", "🔑": "KeyRound",
+  "😊": "Smile", "😎": "Smile", "😔": "Frown", "🤔": "Lightbulb", "🏆": "Trophy", "💬": "MessageSquare", "💭": "MessageCircle",
+  "🎓": "GraduationCap", "💼": "Briefcase", "⚖": "Scale", "🎯": "Target", "⚔": "Swords", "⏰": "Clock", "⏱": "Timer", "💪": "Dumbbell",
+  "🏥": "Stethoscope", "🩺": "Stethoscope", "📖": "BookOpen", "📘": "BookOpen", "📓": "BookMarked", "📜": "ScrollText", "🧩": "Puzzle",
+  "📱": "Smartphone", "❌": "X", "📌": "Pin", "📍": "MapPin", "🤝": "Handshake", "📈": "TrendingUp", "📊": "TrendingUp", "📉": "TrendingDown",
+  "🔍": "Search", "👍": "ThumbsUp", "🏠": "Home", "🏡": "Home", "🏚": "Home", "🏢": "Building2", "🏙": "Building2", "🏬": "Store", "🏫": "School",
+  "🏦": "Landmark", "🏛": "Landmark", "🏰": "Castle", "👨": "User", "👩": "User", "👧": "User", "👦": "User", "🧑": "User", "🧍": "User", "👤": "User",
+  "👥": "Users", "📡": "Radio", "🃏": "Layers", "🧱": "Layers", "📰": "Newspaper", "📝": "FileText", "✅": "CheckCircle2", "🔢": "Hash",
+  "⚠": "AlertTriangle", "🍽": "Utensils", "🍳": "Utensils", "🎭": "Drama", "🚗": "Car", "🚆": "Train", "🚂": "Train", "🚌": "Bus", "🚲": "Bike",
+  "🔬": "Microscope", "🧪": "FlaskConical", "⚡": "Zap", "🗺": "Map", "🎧": "Headphones", "🎤": "Mic", "🎙": "Mic", "💳": "CreditCard",
+  "🔒": "Lock", "🌟": "Star", "⭐": "Star", "🔄": "RefreshCw", "👕": "Shirt", "👔": "Shirt", "🛍": "ShoppingBag", "🛒": "ShoppingCart",
+  "❤": "Heart", "🌱": "Sprout", "🌸": "Sprout", "🌳": "Sprout", "📢": "Megaphone", "🌓": "Moon", "🌙": "Moon", "☝": "Hand", "👋": "Hand",
+  "🙋": "Hand", "✋": "Hand", "👑": "Crown", "📨": "Mail", "📧": "Mail", "🔤": "Type", "📸": "Camera", "🐠": "Fish", "🪶": "Feather",
+  "🌈": "Rainbow", "💎": "Gem", "🐦": "Bird", "🐧": "Bird", "🦊": "Cat", "🧙": "Sparkles", "🪨": "Mountain", "⛈": "CloudRain", "🌧": "CloudRain",
+  "🤖": "Bot", "⚛": "Atom", "🕯": "Flame", "🔥": "Flame", "❄": "Snowflake", "☀": "Sun", "🛬": "Plane", "✈": "Plane", "☕": "Coffee",
+  "🎂": "Cake", "🎬": "Clapperboard", "📅": "Calendar", "🥂": "Wine", "📺": "Tv", "⚙": "Settings", "🎸": "Music", "🎨": "Palette",
+  "🚶": "Footprints", "🪥": "Sparkles", "🚦": "TrafficCone", "🛠": "Wrench", "🗂": "FolderOpen", "🧭": "Compass", "🚀": "Rocket",
+};

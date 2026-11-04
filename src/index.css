@@ -42,3 +42,20 @@ html[data-theme="dark"] canvas { filter: invert(1) hue-rotate(180deg); }
   animation: suriToastIn .2s ease-out;
 }
 @keyframes suriToastIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ── Clay feel: soft press feedback, no tap flash ───── */
+button, [role="button"], .s-press { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.s-press { transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease; }
+.s-press:active { transform: scale(.97); }
+button:not(:disabled):active { transform: scale(.98); }
+.s-card:hover.s-press { transform: translateY(-2px); }
+
+/* Direction arrows flip in RTL */
+html[dir="rtl"] .s-flip { transform: scaleX(-1); }
+
+/* Touch targets: every button gets at least a 44x44 hit area without changing the layout. */
+:where(button:not([style*="position"]), [role="button"]:not([style*="position"])) { position: relative; }
+button::before, [role="button"]::before {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%);
+}

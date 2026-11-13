@@ -1,9 +1,26 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
+
+// Route the app's JSX runtime through a wrapper that renders emoji as line icons.
+// Files inside src/emoji/ import the real runtime.
+const emojiRuntime = () => {
+  const shim = (n) => fileURLToPath(new URL(`./src/emoji/${n}.js`, import.meta.url))
+  const inShim = (id) => !!id && id.replace(/\\/g, '/').includes('/src/emoji/')
+  return {
+    name: 'suri-emoji-runtime',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      if (source !== 'react/jsx-runtime' && source !== 'react/jsx-dev-runtime') return null
+      if (inShim(importer)) return null
+      return shim(source === 'react/jsx-runtime' ? 'jsx-runtime' : 'jsx-dev-runtime')
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [emojiRuntime(), react()],
   build: {
     chunkSizeWarningLimit: 2000,
     rollupOptions: {

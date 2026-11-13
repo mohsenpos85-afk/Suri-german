@@ -228,19 +228,19 @@ const TR_UI = {
 // ڕووکار: سۆرانی (RTL) · فێرکردن: ئەڵمانی · ئاست: A1–B2
 
 const C = {
-  // ── Lumo Design Tokens ──────────────────────────────────────────────
-  bg: "#FBFBFC",             // ink-50 base
-  panel: "#FFFFFF",          // surface
-  ink: "#18181B",            // ink-900
-  muted: "#71717A",          // ink-500
-  red: "#5B5BD6",            // iris-500  (primary)
-  redDk: "#4B45C4",          // iris-600  (primary dark)
-  gold: "#F5A524",           // amber     (XP / warning)
-  green: "#16A06F",          // jade      (success / correct)
-  plum: "#FF6B5E",           // coral     (accent / secondary)
-  rose: "#E5484D",           // rose      (error / wrong)
-  goldPrem: "#E8C16B",       // gold      (premium)
-  line: "#E4E4E8",           // ink-200
+  // ── Soft-3D design tokens (values come from src/theme.css) ───────────
+  bg: "var(--page)",
+  panel: "var(--surface)",
+  ink: "var(--ink)",
+  muted: "var(--muted)",
+  red: "var(--acc-btn)",     // primary accent of the current level
+  redDk: "var(--acc-dk)",
+  gold: "#F5A524",           // XP / warning
+  green: "#16A06F",          // correct
+  plum: "var(--acc)",        // secondary accent
+  rose: "#E5484D",           // wrong
+  goldPrem: "#E8C16B",       // premium
+  line: "var(--line)",
 };
 import { LEVELS, levelColor } from './data/levels';
 import { LESSONS } from './data/lessons';
@@ -252,8 +252,8 @@ import { lidTr } from './data/lidTranslations';
 import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
 import { useNavLayer, useNavState, navBack } from './lib/nav';
-import DailyPlan, { DailyHomeCard } from './daily';
-import { CARD } from './theme';
+import DailyPlan, { DailyHomeCard, dailyLevel } from './daily';
+import { CARD, A, LEVEL_PALETTE, setThemeLevel } from './theme';
 
 function De({ children, size, color }) {
   return <span dir="ltr" style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: size, color, display: "inline-block" }}>{children}</span>;
@@ -474,7 +474,7 @@ function LevelPills({ value, onChange }) {
         return (
           <button key={lv.id} onClick={() => onChange(lv.id)}
             style={{
-              border: active ? "none" : `1.5px solid ${lv.color}33`,
+              border: active ? "none" : `1.5px solid ${A(lv.color,"33")}`,
               background: active ? lv.color : "#fff",
               color: active ? "#fff" : lv.color,
               padding: "11px 6px 10px",
@@ -487,7 +487,7 @@ function LevelPills({ value, onChange }) {
               alignItems: "center",
               gap: 3,
               boxShadow: active
-                ? `0 8px 20px ${lv.color}44`
+                ? `0 8px 20px ${A(lv.color,"44")}`
                 : "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)",
               transition: "all .25s cubic-bezier(.34,1.56,.64,1)",
               transform: active ? "translateY(-1px)" : "none",
@@ -544,14 +544,14 @@ function Intro({ onDone }) {
   return (
     <div style={{
       position:"fixed", inset:0, zIndex:9999,
-      background:"#fff", overflow:"hidden",
+      background:"var(--surface)", overflow:"hidden",
       opacity: out ? 0 : 1,
       transition: out ? "opacity .5s cubic-bezier(.4,0,.2,1)" : "none",
     }}>
       {/* Soft ambient gradient */}
       <div style={{
         position:"absolute", inset:0, pointerEvents:"none",
-        background:"radial-gradient(ellipse 55% 45% at 50% 48%, rgba(91,91,214,.05) 0%, transparent 68%)",
+        background:"radial-gradient(ellipse 55% 45% at 50% 48%, color-mix(in srgb, var(--acc) 5%, transparent) 0%, transparent 68%)",
         animation:"sp-ambient 4s ease-in-out infinite",
       }} />
 
@@ -575,7 +575,7 @@ function Intro({ onDone }) {
               display:"block",
               fontFamily:"'Satoshi',system-ui,sans-serif",
               fontWeight:600, fontSize:size,
-              color:"#5B5BD6", opacity,
+              color:"var(--acc-tx)", opacity,
               whiteSpace:"nowrap", letterSpacing:"-.2px",
               animation:`iw-bob ${bobDur}s ${bobDel}s ease-in-out infinite`,
             }}>{w.text}</span>
@@ -590,7 +590,7 @@ function Intro({ onDone }) {
       }}>
         <div style={{
           position:"absolute", width:230, height:230, borderRadius:"50%",
-          background:"radial-gradient(circle, rgba(91,91,214,.11) 0%, transparent 65%)",
+          background:"radial-gradient(circle, color-mix(in srgb, var(--acc) 11%, transparent) 0%, transparent 65%)",
           animation:"sp-halo 3.2s ease-in-out infinite",
         }} />
         <img src="/fuxi-mascot.png" alt="SURI" style={{
@@ -599,8 +599,8 @@ function Intro({ onDone }) {
           animation:"sp-logo-fl 3.8s ease-in-out infinite",
         }} />
         <div style={{ textAlign:"center", marginTop:20, animation:"sp-title-in .55s .28s ease both" }}>
-          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", direction:"ltr", letterSpacing:"-.3px" }}>Willkommen!</div>
-          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"#71717A", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
+          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", direction:"ltr", letterSpacing:"-.3px" }}>Willkommen!</div>
+          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:13, color:"var(--muted)", marginTop:6, letterSpacing:"1px", fontStyle:"italic", direction:"ltr" }}>Every language is a new life.</div>
         </div>
       </div>
 
@@ -617,11 +617,11 @@ function Intro({ onDone }) {
         ].map((s, i) => (
           <div key={s.label} style={{
             textAlign:"center", padding:"0 24px",
-            borderRight: i < 2 ? "1px solid rgba(91,91,214,.12)" : "none",
+            borderRight: i < 2 ? "1px solid color-mix(in srgb, var(--acc) 12%, transparent)" : "none",
           }}>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:i===2?15:22, color:"#5B5BD6", fontVariantNumeric:"tabular-nums", lineHeight:1.3 }}>{s.val}</div>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:600, fontSize:13, color:"#18181B", marginTop:3 }}>{s.label}</div>
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"#71717A", marginTop:2 }}>{s.sub}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:i===2?15:22, color:"var(--acc-tx)", fontVariantNumeric:"tabular-nums", lineHeight:1.3 }}>{s.val}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:600, fontSize:13, color:"var(--ink)", marginTop:3 }}>{s.label}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:400, fontSize:12, color:"var(--muted)", marginTop:2 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -1382,9 +1382,9 @@ function ProfileScreen({ lang="ku", onLogout }) {
     <div style={{ maxWidth:480, margin:"0 auto", paddingBottom:20 }}>
       {/* Avatar + name */}
       <div style={{ textAlign:"center", padding:"32px 20px 24px" }}>
-        <div style={{ width:82, height:82, borderRadius:"50%", background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)",
+        <div style={{ width:82, height:82, borderRadius:"50%", background:"linear-gradient(135deg,var(--acc-btn),#FF6B5E)",
           display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 14px",
-          boxShadow:"0 8px 24px rgba(91,91,214,.35)", fontSize:28, fontWeight:900, color:"#fff" }}>
+          boxShadow:"0 8px 24px color-mix(in srgb, var(--acc) 35%, transparent)", fontSize:28, fontWeight:900, color:"#fff" }}>
           {initials}
         </div>
         {name && <div style={{ fontSize:20, fontWeight:800, color:"#18181B" }}>{t("greeting")}, {name.split(" ")[0]}!</div>}
@@ -1398,10 +1398,10 @@ function ProfileScreen({ lang="ku", onLogout }) {
           { label:t("journey"), val:`${jLevel}/60` },
           { label:t("xp"), val:`${getXp()}` },
         ].map((s,i)=>(
-          <div key={i} style={{ background:"#fff", borderRadius:16, padding:"14px 10px", textAlign:"center",
+          <div key={i} style={{ background:"var(--surface)", borderRadius:16, padding:"14px 10px", textAlign:"center",
             border:"1px solid rgba(0,0,0,0.06)", boxShadow:"0 2px 8px rgba(0,0,0,0.04)" }}>
-            <div style={{ fontSize:18, fontWeight:900, color:"#5B5BD6" }}>{s.val}</div>
-            <div style={{ fontSize:12, color:"#71717A", marginTop:3 }}>{s.label}</div>
+            <div style={{ fontSize:18, fontWeight:900, color:"var(--acc-tx)" }}>{s.val}</div>
+            <div style={{ fontSize:12, color:"var(--muted)", marginTop:3 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -1412,7 +1412,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
           {KU_DIALECTS.map(dv => (
             <button key={dv.v} onClick={() => { try { const o = JSON.parse(localStorage.getItem("ob_data")||"{}"); o.kuDialect = dv.v; localStorage.setItem("ob_data", JSON.stringify(o)); } catch {} window.location.reload(); }}
               style={{ flex:1, padding:"12px 6px", borderRadius:14, cursor:"pointer", fontWeight:700, fontSize:13,
-                border:`1.5px solid ${kuDialect()===dv.v ? "#5B5BD6" : C.line}`, background: kuDialect()===dv.v ? "#F0F0FF" : "transparent", color: kuDialect()===dv.v ? "#5B5BD6" : C.ink }}>
+                border:`1.5px solid ${kuDialect()===dv.v ? "var(--acc)" : C.line}`, background: kuDialect()===dv.v ? "#F0F0FF" : "transparent", color: kuDialect()===dv.v ? "var(--acc)" : C.ink }}>
               {dv.label}<div style={{ fontSize:12, fontWeight:500, color:C.muted }}>{dv.native}</div>
             </button>
           ))}
@@ -1441,30 +1441,30 @@ function ProfileScreen({ lang="ku", onLogout }) {
         {/* Delete account (store requirement) */}
         <button onClick={() => { setDelErr(""); setShowDelete(true); }} style={{
           width:"100%", marginTop:10, padding:"12px", borderRadius:14, border:"none",
-          background:"transparent", color:"#6B7280", fontWeight:600, fontSize:13.5,
+          background:"transparent", color:"var(--muted)", fontWeight:600, fontSize:13.5,
           cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8,
         }}>
-          <XCircle size={15} color="#9ca3af" />
+          <XCircle size={15} color="var(--muted)" />
           {t("delAccount")}
         </button>
 
         {/* Legal links (store requirement) */}
         <div style={{ display:"flex", justifyContent:"center", gap:18, marginTop:14, fontSize:12.5 }}>
-          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
+          <a href="/legal/datenschutz.html" target="_blank" rel="noopener noreferrer" style={{ color:"var(--muted)", textDecoration:"none", fontWeight:600 }}>Datenschutz</a>
           <span style={{ color:"#d1d5db" }}>·</span>
-          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"#6B7280", textDecoration:"none", fontWeight:600 }}>Impressum</a>
+          <a href="/legal/impressum.html" target="_blank" rel="noopener noreferrer" style={{ color:"var(--muted)", textDecoration:"none", fontWeight:600 }}>Impressum</a>
         </div>
       </div>
 
       {showDelete && (
         <div dir={dir} onClick={() => !deleting && setShowDelete(false)}
           style={{ position:"fixed", inset:0, zIndex:400, background:"rgba(24,24,27,.45)", backdropFilter:"blur(3px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background:"#fff", width:"100%", maxWidth:380, borderRadius:20, padding:"26px 22px", boxShadow:"0 20px 60px rgba(0,0,0,.3)", textAlign:"center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background:"var(--surface)", width:"100%", maxWidth:380, borderRadius:20, padding:"26px 22px", boxShadow:"0 20px 60px rgba(0,0,0,.3)", textAlign:"center" }}>
             <div style={{ width:60, height:60, borderRadius:18, background:"#FDECEC", display:"grid", placeItems:"center", margin:"0 auto 16px" }}>
               <AlertTriangle size={28} color="#E5484D" />
             </div>
-            <h3 style={{ fontSize:18, fontWeight:800, margin:"0 0 10px", color:"#18181B" }}>{t("delTitle")}</h3>
-            <p style={{ fontSize:14, lineHeight:1.55, color:"#71717A", margin:"0 0 20px" }}>{t("delWarn")}</p>
+            <h3 style={{ fontSize:18, fontWeight:800, margin:"0 0 10px", color:"var(--ink)" }}>{t("delTitle")}</h3>
+            <p style={{ fontSize:14, lineHeight:1.55, color:"var(--muted)", margin:"0 0 20px" }}>{t("delWarn")}</p>
             {delErr && <p style={{ fontSize:12.5, color:"#C93A3F", margin:"0 0 14px", wordBreak:"break-word" }}>{t("delFail")} {delErr}</p>}
             <button onClick={deleteAccount} disabled={deleting} style={{
               width:"100%", padding:"14px", borderRadius:13, border:"none", background:"#E5484D", color:"#fff",
@@ -1475,7 +1475,7 @@ function ProfileScreen({ lang="ku", onLogout }) {
             </button>
             <button onClick={() => setShowDelete(false)} disabled={deleting} style={{
               width:"100%", padding:"12px", borderRadius:13, border:"none", background:"transparent",
-              color:"#71717A", fontWeight:600, fontSize:14, cursor:"pointer" }}>
+              color:"var(--muted)", fontWeight:600, fontSize:14, cursor:"pointer" }}>
               {t("delCancel")}
             </button>
           </div>
@@ -1533,7 +1533,7 @@ const DICT_LANG_META = {
   ku: { badge: "KU", bg: "#16A06F", rtl: true },
   tr: { badge: "TR", bg: "#E05A00", rtl: false },
   en: { badge: "EN", bg: "#2563EB", rtl: false },
-  ar: { badge: "AR", bg: "#7C3AED", rtl: true },
+  ar: { badge: "AR", bg: "var(--acc-dk)", rtl: true },
   uk: { badge: "UK", bg: "#2F80ED", rtl: false },
   fa: { badge: "FA", bg: "#C026D3", rtl: true },
 "es":{"badge":"ES","bg":"#2563EB","rtl":false}};
@@ -1668,25 +1668,25 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
 
   // ── Shared card style ────────────────────────────────
   const card = (active) => ({
-    border: active ? "2px solid #5B5BD6" : "1.5px solid #E4E4E8",
-    background: active ? "rgba(91,91,214,.07)" : "#fff",
+    border: active ? "2px solid var(--acc)" : "1.5px solid var(--line)",
+    background: active ? "color-mix(in srgb, var(--acc) 7%, transparent)" : "#fff",
     borderRadius:16, cursor:"pointer", transition:"all .15s",
-    boxShadow: active ? "0 0 0 4px rgba(91,91,214,.10)" : "none",
+    boxShadow: active ? "0 0 0 4px color-mix(in srgb, var(--acc) 10%, transparent)" : "none",
   });
 
   // ── Wrapper — memoized so toggleMulti doesn't remount it ─────────
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const W = useCallback(({children, showBack=false, backTo}) => (
-    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"#fff", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
+    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"var(--surface)", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
       {/* Progress */}
       {screen !== "welcome" && screen !== "auth" && screen !== "login" && progressIdx >= 1 && authMode === "main" && (
         <div style={{ flexShrink:0 }}>
           <div style={{ height:3, background:"#F0F0F0" }}>
-            <div style={{ height:"100%", width:`${progress}%`, background:"linear-gradient(90deg,#5B5BD6,#FF6B5E)", transition:"width .4s ease" }} />
+            <div style={{ height:"100%", width:`${progress}%`, background:"linear-gradient(90deg,var(--acc-btn),#FF6B5E)", transition:"width .4s ease" }} />
           </div>
-          <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 20px 0", fontSize:13, color:"#71717A" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 20px 0", fontSize:13, color:"var(--muted)" }}>
             <span style={{ fontWeight:600 }}>{progressIdx}/{FLOW.length-1}</span>
-            {showBack && <button onClick={() => go(backTo)} style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontWeight:600, fontSize:13 }}>Back</button>}
+            {showBack && <button onClick={() => go(backTo)} style={{ border:"none", background:"transparent", cursor:"pointer", color:"var(--muted)", fontWeight:600, fontSize:13 }}>Back</button>}
           </div>
         </div>
       )}
@@ -1709,7 +1709,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   if (authMode === "forgot_email") return (
     <W>
       <div style={{ textAlign:"center", marginBottom:36 }}>
-        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(91,91,214,.28)" }}>
+        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,var(--acc-btn),#FF6B5E)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px color-mix(in srgb, var(--acc) 28%, transparent)" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </div>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("forgot_title")}</div>
@@ -1719,16 +1719,16 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>{t("login_email")}</label>
         <input type="email" placeholder="your@email.com" value={email} onChange={e => { setEmail(e.target.value); setFormErr(""); }}
           onKeyDown={e => e.key==="Enter" && submitForgotEmail()}
-          style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+          style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
       </div>
       {formErr && <div style={{ color:"#E5484D", fontSize:13, marginBottom:14, padding:"10px 14px", background:"rgba(229,72,77,.08)", borderRadius:10 }}>{formErr}</div>}
       <div style={{ display:"flex", gap:10 }}>
         <button className="ob-btn" onClick={() => { setAuthMode("main"); setFormErr(""); setEmail(""); }}
-          style={{ background:"#F4F4F5", color:"#18181B", padding:"15px", fontSize:15, flex:"0 0 auto", paddingLeft:24, paddingRight:24 }}>
+          style={{ background:"var(--surface-hi)", color:"#18181B", padding:"15px", fontSize:15, flex:"0 0 auto", paddingLeft:24, paddingRight:24 }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn" onClick={submitForgotEmail} disabled={authLoading}
-          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff", padding:"15px", fontSize:15, flex:1, cursor: authLoading ? "default" : "pointer" }}>
+          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color:"#fff", padding:"15px", fontSize:15, flex:1, cursor: authLoading ? "default" : "pointer" }}>
           {authLoading ? "…" : t("forgot_send")}
         </button>
       </div>
@@ -1741,7 +1741,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       <button onClick={() => { setAuthMode("forgot_email"); setFormErr(""); }}
         style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontSize:13, fontWeight:600, marginBottom:24, padding:0 }}>{t("btn_back")}</button>
       <div style={{ textAlign:"center", marginBottom:36 }}>
-        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(91,91,214,.28)" }}>
+        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,var(--acc-btn),#FF6B5E)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px color-mix(in srgb, var(--acc) 28%, transparent)" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
         </div>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("forgot_otp_title")}</div>
@@ -1754,15 +1754,15 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         <input type="text" inputMode="numeric" maxLength={6} placeholder="000000" value={otpCode}
           onChange={e => { setOtpCode(e.target.value.replace(/\D/g,"")); setFormErr(""); }}
           onKeyDown={e => e.key==="Enter" && submitForgotOtp()}
-          style={{ width:"100%", padding:"18px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:28, fontWeight:800, outline:"none", fontFamily:"'Satoshi',system-ui,sans-serif", letterSpacing:"0.3em", textAlign:"center", boxSizing:"border-box" }} />
+          style={{ width:"100%", padding:"18px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:28, fontWeight:800, outline:"none", fontFamily:"'Satoshi',system-ui,sans-serif", letterSpacing:"0.3em", textAlign:"center", boxSizing:"border-box" }} />
       </div>
       {formErr && <div style={{ color:"#E5484D", fontSize:13, marginBottom:14, padding:"10px 14px", background:"rgba(229,72,77,.08)", borderRadius:10 }}>{formErr}</div>}
       <button className="ob-btn" onClick={submitForgotOtp} disabled={authLoading || otpCode.length < 6}
-        style={{ background: (authLoading || otpCode.length<6) ? "#E4E4E8" : "linear-gradient(135deg,#5B5BD6,#4B45C4)", color: (authLoading || otpCode.length<6) ? "#A1A1AA" : "#fff", padding:"15px", fontSize:15, width:"100%", cursor: (authLoading || otpCode.length<6) ? "default" : "pointer" }}>
+        style={{ background: (authLoading || otpCode.length<6) ? "var(--line)" : "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color: (authLoading || otpCode.length<6) ? "#A1A1AA" : "#fff", padding:"15px", fontSize:15, width:"100%", cursor: (authLoading || otpCode.length<6) ? "default" : "pointer" }}>
         {authLoading ? "…" : t("forgot_verify")}
       </button>
       <button onClick={submitForgotEmail} disabled={authLoading}
-        style={{ border:"none", background:"transparent", color:"#5B5BD6", fontSize:13, fontWeight:600, cursor:"pointer", display:"block", margin:"16px auto 0", textDecoration:"underline" }}>
+        style={{ border:"none", background:"transparent", color:"var(--acc-tx)", fontSize:13, fontWeight:600, cursor:"pointer", display:"block", margin:"16px auto 0", textDecoration:"underline" }}>
         Resend code
       </button>
     </W>
@@ -1772,7 +1772,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   if (authMode === "forgot_newpw") return (
     <W>
       <div style={{ textAlign:"center", marginBottom:36 }}>
-        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#16A06F,#5B5BD6)", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(22,160,111,.28)" }}>
+        <div style={{ width:64, height:64, borderRadius:20, background:"linear-gradient(135deg,#16A06F,var(--acc-btn))", display:"grid", placeItems:"center", margin:"0 auto 20px", boxShadow:"0 12px 32px rgba(22,160,111,.28)" }}>
           <Lock size={30} color="#fff" strokeWidth={1.8} />
         </div>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("forgot_newpw_title")}</div>
@@ -1782,13 +1782,13 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         <div key={lbl} style={{ marginBottom:14 }}>
           <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>{lbl}</label>
           <input type="password" placeholder="••••••••" value={val} onChange={e => { setter(e.target.value); setFormErr(""); }}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
       ))}
       <div style={{ fontSize:12, color:"#A1A1AA", marginBottom:20, lineHeight:1.8 }}>Minimum 8 characters</div>
       {formErr && <div style={{ color:"#E5484D", fontSize:13, marginBottom:14, padding:"10px 14px", background:"rgba(229,72,77,.08)", borderRadius:10 }}>{formErr}</div>}
       <button className="ob-btn" onClick={submitNewPw} disabled={authLoading}
-        style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#16A06F,#5B5BD6)", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
+        style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#16A06F,var(--acc-btn))", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
         {authLoading ? "…" : t("forgot_save")}
       </button>
     </W>
@@ -1798,19 +1798,19 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   if (authMode === "check_email") return (
     <W>
       <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"80vh", textAlign:"center" }}>
-        <div style={{ width:80, height:80, borderRadius:24, background:"linear-gradient(135deg,#5B5BD6,#FF6B5E)", display:"grid", placeItems:"center", boxShadow:"0 16px 40px rgba(91,91,214,.3)", marginBottom:28 }}>
+        <div style={{ width:80, height:80, borderRadius:24, background:"linear-gradient(135deg,var(--acc-btn),#FF6B5E)", display:"grid", placeItems:"center", boxShadow:"0 16px 40px color-mix(in srgb, var(--acc) 30%, transparent)", marginBottom:28 }}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </div>
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:26, color:"#18181B", marginBottom:12 }}>Check Your Email</div>
         <div style={{ fontSize:15, color:"#71717A", lineHeight:1.7, maxWidth:300, marginBottom:8 }}>
           We sent a confirmation link to
         </div>
-        <div style={{ fontSize:16, fontWeight:700, color:"#5B5BD6", marginBottom:32 }}>{email}</div>
+        <div style={{ fontSize:16, fontWeight:700, color:"var(--acc-tx)", marginBottom:32 }}>{email}</div>
         <div style={{ fontSize:13, color:"#A1A1AA", lineHeight:1.7, maxWidth:300 }}>
           Click the link in the email to activate your account. After confirming, you can sign in.
         </div>
         <button onClick={() => { setAuthMode("main"); go("login"); setEmail(""); setPw(""); }}
-          style={{ marginTop:40, border:"1.5px solid #E4E4E8", background:"transparent", color:"#5B5BD6", fontWeight:700, fontSize:14, padding:"12px 32px", borderRadius:14, cursor:"pointer" }}>
+          style={{ marginTop:40, border:"1.5px solid var(--line)", background:"transparent", color:"var(--acc-tx)", fontWeight:700, fontSize:14, padding:"12px 32px", borderRadius:14, cursor:"pointer" }}>
           Go to Sign In
         </button>
       </div>
@@ -1826,24 +1826,24 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
             style={{ width:110, height:110, objectFit:"contain",
               filter:"drop-shadow(0 12px 28px rgba(255,140,0,.4))",
               margin:"0 auto 8px", display:"block" }} />
-          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:26, color:"#18181B", marginBottom:8 }}>{t("login_title")}</div>
-          <div style={{ fontSize:14, color:"#71717A" }}>{t("login_sub")}</div>
+          <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:26, color:"var(--ink)", marginBottom:8 }}>{t("login_title")}</div>
+          <div style={{ fontSize:14, color:"var(--muted)" }}>{t("login_sub")}</div>
         </div>
 
         <div style={{ marginBottom:14 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>{t("login_email")}</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>{t("login_email")}</label>
           <input type="email" placeholder="your@email.com" value={email} onChange={e => { setEmail(e.target.value); setFormErr(""); }}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
         <div style={{ marginBottom:4 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>{t("login_pass")}</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>{t("login_pass")}</label>
           <input type="password" placeholder="••••••••" value={pw} onChange={e => { setPw(e.target.value); setFormErr(""); }}
             onKeyDown={e => e.key === "Enter" && submitLogin()}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
         <div style={{ textAlign:"right", marginBottom:8 }}>
           <button onClick={() => { setFormErr(""); setAuthMode("forgot_email"); }}
-            style={{ border:"none", background:"transparent", color:"#5B5BD6", fontWeight:600, cursor:"pointer", fontSize:13, padding:"4px 0" }}>
+            style={{ border:"none", background:"transparent", color:"var(--acc-tx)", fontWeight:600, cursor:"pointer", fontSize:13, padding:"4px 0" }}>
             {t("forgot_link")}
           </button>
         </div>
@@ -1855,14 +1855,14 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         )}
 
         <button className="ob-btn" onClick={submitLogin} disabled={authLoading}
-          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff", padding:"15px", fontSize:15, width:"100%", marginTop:12, marginBottom:20, cursor: authLoading ? "default" : "pointer" }}>
+          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color:"#fff", padding:"15px", fontSize:15, width:"100%", marginTop:12, marginBottom:20, cursor: authLoading ? "default" : "pointer" }}>
           {authLoading ? "…" : t("login_btn")}
         </button>
 
         <div style={{ textAlign:"center", padding:"18px 0", borderTop:"1px solid #F0F0F5" }}>
           <span style={{ fontSize:14, color:"#71717A" }}>{t("login_no_acc")} </span>
           <button onClick={() => { setFormErr(""); setEmail(""); setPw(""); go("lang"); }}
-            style={{ border:"none", background:"transparent", color:"#5B5BD6", fontWeight:700, cursor:"pointer", fontSize:14, padding:0 }}>
+            style={{ border:"none", background:"transparent", color:"var(--acc-tx)", fontWeight:700, cursor:"pointer", fontSize:14, padding:0 }}>
             {t("login_reg")}
           </button>
         </div>
@@ -1870,7 +1870,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         {import.meta.env.DEV && (
           <div style={{ textAlign:"center", marginTop:4, marginBottom:8 }}>
             <button onClick={() => { finish({ auth:"skip" }); }}
-              style={{ border:"none", background:"transparent", color:"#71717A", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
+              style={{ border:"none", background:"transparent", color:"var(--muted)", fontSize:12, cursor:"pointer", textDecoration:"underline", padding:0 }}>
               Şimdilik atla
             </button>
           </div>
@@ -1890,11 +1890,11 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:32, lineHeight:1.2, color:"#18181B", marginBottom:14 }}>Learn German<br/>Faster</div>
         <div style={{ fontSize:15, color:"#71717A", lineHeight:1.7, maxWidth:300, marginBottom:40 }}>Personalize your learning experience in less than one minute.</div>
         <button className="ob-btn" onClick={() => go("lang")}
-          style={{ background:"linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff", padding:"16px", fontSize:16, width:"100%", maxWidth:340, borderRadius:16, marginBottom:12 }}>
+          style={{ background:"linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color:"#fff", padding:"16px", fontSize:16, width:"100%", maxWidth:340, borderRadius:16, marginBottom:12 }}>
           I'm new here
         </button>
         <button className="ob-btn" onClick={() => go("login")}
-          style={{ background:"transparent", border:"2px solid #5B5BD6", color:"#5B5BD6", padding:"14px", fontSize:16, width:"100%", maxWidth:340, borderRadius:16 }}>
+          style={{ background:"transparent", border:"2px solid var(--acc)", color:"var(--acc-tx)", padding:"14px", fontSize:16, width:"100%", maxWidth:340, borderRadius:16 }}>
           I already have an account
         </button>
       </div>
@@ -1904,30 +1904,30 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // Language
   if (screen === "lang") return (
     <W>
-      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("lang_title")}</div>
-      <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("lang_sub")}</div>
+      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("lang_title")}</div>
+      <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("lang_sub")}</div>
       <img src="/ob-p2.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
         {OB_LANGS.map(l => (
           <button key={l.v} onClick={() => save("lang", l.v)}
             style={{ ...card(answers.lang===l.v), padding:"14px 12px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:6 }}>
-            <div style={{ width:46, height:30, borderRadius:9, background: answers.lang===l.v ? "#5B5BD6" : "#F0F0F5", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .15s" }}>
-              <span style={{ fontWeight:800, fontSize:12, letterSpacing:"1px", color: answers.lang===l.v ? "#fff" : "#71717A" }}>{l.code}</span>
+            <div style={{ width:46, height:30, borderRadius:9, background: answers.lang===l.v ? "var(--acc)" : "#F0F0F5", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .15s" }}>
+              <span style={{ fontWeight:800, fontSize:12, letterSpacing:"1px", color: answers.lang===l.v ? "#fff" : "var(--muted)" }}>{l.code}</span>
             </div>
-            <span style={{ fontWeight:700, fontSize:13, color: answers.lang===l.v ? "#5B5BD6" : "#18181B" }}>{l.label}</span>
-            <span style={{ fontSize:12, color:"#71717A" }}>{l.native}</span>
+            <span style={{ fontWeight:700, fontSize:13, color: answers.lang===l.v ? "var(--acc)" : "var(--ink)" }}>{l.label}</span>
+            <span style={{ fontSize:12, color:"var(--muted)" }}>{l.native}</span>
           </button>
         ))}
       </div>
       {answers.lang === "ku" && (
         <div style={{ marginTop:16 }}>
-          <div style={{ fontSize:13, fontWeight:700, color:"#18181B", textAlign:"center", marginBottom:8 }}>Kurdî · کوردی — Sorani / Badini / Kurmanji</div>
+          <div style={{ fontSize:13, fontWeight:700, color:"var(--ink)", textAlign:"center", marginBottom:8 }}>Kurdî · کوردی — Sorani / Badini / Kurmanji</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
             {KU_DIALECTS.map(dv => (
               <button key={dv.v} onClick={() => save("kuDialect", dv.v)}
                 style={{ ...card(answers.kuDialect===dv.v), padding:"12px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
-                <span style={{ fontWeight:700, fontSize:13, color: answers.kuDialect===dv.v ? "#5B5BD6" : "#18181B" }}>{dv.label}</span>
-                <span style={{ fontSize:12, color:"#71717A" }}>{dv.native}</span>
+                <span style={{ fontWeight:700, fontSize:13, color: answers.kuDialect===dv.v ? "var(--acc)" : "var(--ink)" }}>{dv.label}</span>
+                <span style={{ fontSize:12, color:"var(--muted)" }}>{dv.native}</span>
               </button>
             ))}
           </div>
@@ -1935,8 +1935,8 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       )}
       {answers.lang && (
         <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:18, padding:"12px 16px", borderRadius:12, background:"#F0F0FF", border:"1px solid #E0E0FF" }}>
-          <Globe size={18} color="#5B5BD6" strokeWidth={2} />
-          <span style={{ fontSize:13, color:"#5B5BD6", fontWeight:600 }}>{t("lang_msg")}</span>
+          <Globe size={18} color="var(--acc-tx)" strokeWidth={2} />
+          <span style={{ fontSize:13, color:"var(--acc-tx)", fontWeight:600 }}>{t("lang_msg")}</span>
         </div>
       )}
       <button
@@ -1945,7 +1945,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
         onClick={() => go("level")}
         style={{
           marginTop:20, width:"100%", padding:"16px", fontSize:16,
-          background: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+          background: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
           color: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "#fff" : "#A1A1AA",
           cursor: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "pointer" : "not-allowed",
           borderRadius:16, transition:"all .2s",
@@ -1958,8 +1958,8 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // Level
   if (screen === "level") return (
     <W>
-      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("level_title")}</div>
-      <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("level_sub")}</div>
+      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("level_title")}</div>
+      <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("level_sub")}</div>
       <img src="/ob-p3.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
         {OB_LEVELS.map(l => {
@@ -1968,28 +1968,28 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           return (
             <button key={l.v} onClick={() => save("level", l.v)}
               style={{ ...card(answers.level===l.v), padding:"14px 16px", display:"flex", alignItems:"center", gap:14, textAlign:dir==="rtl"?"right":"left" }}>
-              <div style={{ width:40, height:40, borderRadius:12, background: answers.level===l.v ? "#5B5BD6" : "#F4F4F5", display:"grid", placeItems:"center", flexShrink:0 }}>
-                <span style={{ fontWeight:800, fontSize:13, color: answers.level===l.v ? "#fff" : "#71717A" }}>{l.badge}</span>
+              <div style={{ width:40, height:40, borderRadius:12, background: answers.level===l.v ? "var(--acc)" : "#F4F4F5", display:"grid", placeItems:"center", flexShrink:0 }}>
+                <span style={{ fontWeight:800, fontSize:13, color: answers.level===l.v ? "#fff" : "var(--muted)" }}>{l.badge}</span>
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontWeight:700, fontSize:14, color: answers.level===l.v ? "#5B5BD6" : "#18181B" }}>{lbl}</div>
-                <div style={{ fontSize:12, color:"#71717A", marginTop:2 }}>{sub}</div>
+                <div style={{ fontWeight:700, fontSize:14, color: answers.level===l.v ? "var(--acc)" : "var(--ink)" }}>{lbl}</div>
+                <div style={{ fontSize:12, color:"var(--muted)", marginTop:2 }}>{sub}</div>
               </div>
-              {answers.level===l.v && <CheckCircle2 size={18} color="#5B5BD6" />}
+              {answers.level===l.v && <CheckCircle2 size={18} color="var(--acc-tx)" />}
             </button>
           );
         })}
       </div>
       <div style={{ display:"flex", gap:10, marginTop:24 }}>
         <button className="ob-btn" onClick={() => go("lang")}
-          style={{ flex:1, padding:"15px 0", fontSize:15, background:"#F4F4F5", color:"#3F3F46" }}>
+          style={{ flex:1, padding:"15px 0", fontSize:15, background:"var(--surface-hi)", color:"#3F3F46" }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn"
           disabled={!answers.level}
           onClick={() => answers.level && go("goals")}
           style={{ flex:2, padding:"15px 0", fontSize:15,
-            background: answers.level ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+            background: answers.level ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
             color: answers.level ? "#fff" : "#A1A1AA",
             cursor: answers.level ? "pointer" : "not-allowed" }}>
           {t("btn_continue")}
@@ -2001,8 +2001,8 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // Goals (multi-select)
   if (screen === "goals") return (
     <W>
-      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("goals_title")}</div>
-      <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("goals_sub")}</div>
+      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("goals_title")}</div>
+      <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("goals_sub")}</div>
       <img src="/ob-p4.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
         {OB_GOALS.map(g => {
@@ -2010,22 +2010,22 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           return (
             <button key={g.v} onClick={() => toggleMulti("goals", g.v)}
               style={{ ...card(sel), padding:"16px 12px", display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
-              <g.Icon size={26} color={sel ? "#5B5BD6" : "#71717A"} strokeWidth={1.8} />
-              <span style={{ fontWeight:700, fontSize:12, color: sel ? "#5B5BD6" : "#18181B", textAlign:"center", lineHeight:1.4 }}>{t("g_"+g.v)}</span>
+              <g.Icon size={26} color={sel ? "var(--acc)" : "var(--muted)"} strokeWidth={1.8} />
+              <span style={{ fontWeight:700, fontSize:12, color: sel ? "var(--acc)" : "var(--ink)", textAlign:"center", lineHeight:1.4 }}>{t("g_"+g.v)}</span>
             </button>
           );
         })}
       </div>
       <div style={{ display:"flex", gap:10 }}>
         <button className="ob-btn" onClick={() => go("level")}
-          style={{ flex:1, padding:"15px 0", fontSize:15, background:"#F4F4F5", color:"#3F3F46" }}>
+          style={{ flex:1, padding:"15px 0", fontSize:15, background:"var(--surface-hi)", color:"#3F3F46" }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn"
           disabled={answers.goals.length === 0}
           onClick={() => answers.goals.length > 0 && go("daily")}
           style={{ flex:2, padding:"15px 0", fontSize:15,
-            background: answers.goals.length > 0 ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+            background: answers.goals.length > 0 ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
             color: answers.goals.length > 0 ? "#fff" : "#A1A1AA",
             cursor: answers.goals.length > 0 ? "pointer" : "not-allowed" }}>
           {t("btn_continue")} {answers.goals.length > 0 ? `(${answers.goals.length})` : ""}
@@ -2037,34 +2037,34 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // Daily
   if (screen === "daily") return (
     <W>
-      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("daily_title")}</div>
-      <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("daily_sub")}</div>
+      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("daily_title")}</div>
+      <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("daily_sub")}</div>
       <img src="/ob-p5.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
         {OB_DAILY.map((d, idx) => (
           <button key={d.v} onClick={() => save("daily", d.v)}
             style={{ ...card(answers.daily===d.v), padding:"16px 12px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:4,
               ...(idx === OB_DAILY.length - 1 && OB_DAILY.length % 2 === 1 ? { gridColumn:"1 / -1" } : {}) }}>
-            <div style={{ fontWeight:800, fontSize:22, color: answers.daily===d.v ? "#5B5BD6" : "#18181B" }}>
+            <div style={{ fontWeight:800, fontSize:22, color: answers.daily===d.v ? "var(--acc)" : "var(--ink)" }}>
               {d.v === "30" ? "30+" : d.v}
             </div>
-            <div style={{ fontWeight:600, fontSize:12, color: answers.daily===d.v ? "#5B5BD6" : "#71717A" }}>
+            <div style={{ fontWeight:600, fontSize:12, color: answers.daily===d.v ? "var(--acc)" : "var(--muted)" }}>
               {t("unit_min")}
             </div>
-            <div style={{ fontSize:12, color:"#71717A", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
+            <div style={{ fontSize:12, color:"var(--muted)", marginTop:2, textAlign:"center" }}>{t("d_"+d.v)}</div>
           </button>
         ))}
       </div>
       <div style={{ display:"flex", gap:10, marginTop:24 }}>
         <button className="ob-btn" onClick={() => go("goals")}
-          style={{ flex:1, padding:"15px 0", fontSize:15, background:"#F4F4F5", color:"#3F3F46" }}>
+          style={{ flex:1, padding:"15px 0", fontSize:15, background:"var(--surface-hi)", color:"#3F3F46" }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn"
           disabled={!answers.daily}
           onClick={() => answers.daily && go("focus")}
           style={{ flex:2, padding:"15px 0", fontSize:15,
-            background: answers.daily ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+            background: answers.daily ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
             color: answers.daily ? "#fff" : "#A1A1AA",
             cursor: answers.daily ? "pointer" : "not-allowed" }}>
           {t("btn_continue")}
@@ -2076,8 +2076,8 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // Focus (multi-select)
   if (screen === "focus") return (
     <W>
-      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6, textAlign:"center", direction:dir }}>{t("focus_title")}</div>
-      <div style={{ fontSize:14, color:"#71717A", marginBottom:16, textAlign:"center", direction:dir }}>{t("focus_sub")}</div>
+      <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("focus_title")}</div>
+      <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("focus_sub")}</div>
       <img src="/ob-p6.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10, marginBottom:24 }}>
         {OB_FOCUS.map(f => {
@@ -2085,22 +2085,22 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           return (
             <button key={f.v} onClick={() => toggleMulti("focus",f.v)}
               style={{ ...card(sel), padding:"14px 8px", display:"flex", flexDirection:"column", alignItems:"center", gap:6 }}>
-              <f.Icon size={22} color={sel ? "#5B5BD6" : "#71717A"} strokeWidth={1.8} />
-              <span style={{ fontWeight:700, fontSize:12, color: sel ? "#5B5BD6" : "#18181B", textAlign:"center" }}>{t("f_"+f.v)}</span>
+              <f.Icon size={22} color={sel ? "var(--acc)" : "var(--muted)"} strokeWidth={1.8} />
+              <span style={{ fontWeight:700, fontSize:12, color: sel ? "var(--acc)" : "var(--ink)", textAlign:"center" }}>{t("f_"+f.v)}</span>
             </button>
           );
         })}
       </div>
       <div style={{ display:"flex", gap:10 }}>
         <button className="ob-btn" onClick={() => go("daily")}
-          style={{ flex:1, padding:"15px 0", fontSize:15, background:"#F4F4F5", color:"#3F3F46" }}>
+          style={{ flex:1, padding:"15px 0", fontSize:15, background:"var(--surface-hi)", color:"#3F3F46" }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn"
           disabled={answers.focus.length === 0}
           onClick={() => answers.focus.length > 0 && go("summary")}
           style={{ flex:2, padding:"15px 0", fontSize:15,
-            background: answers.focus.length > 0 ? "linear-gradient(135deg,#5B5BD6,#4B45C4)" : "#E4E4E7",
+            background: answers.focus.length > 0 ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
             color: answers.focus.length > 0 ? "#fff" : "#A1A1AA",
             cursor: answers.focus.length > 0 ? "pointer" : "not-allowed" }}>
           {t("btn_continue")} {answers.focus.length > 0 ? `(${answers.focus.length})` : ""}
@@ -2113,8 +2113,8 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   if (screen === "summary") return (
     <W>
       <div style={{ textAlign:"center", marginBottom:32, direction:dir }}>
-        <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("summary_title")}</div>
-        <div style={{ fontSize:14, color:"#71717A", marginBottom:16 }}>{t("summary_sub")}</div>
+        <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"var(--ink)", marginBottom:8 }}>{t("summary_title")}</div>
+        <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16 }}>{t("summary_sub")}</div>
         <div style={{ position:"relative", width:130, height:130, margin:"0 auto 4px" }}>
           <div style={{ position:"absolute", inset:"-24px", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(255,140,0,.35) 0%, transparent 68%)", zIndex:0 }} />
           <img src="/ob-p7.png" alt="" style={{ position:"relative", zIndex:1, width:130, height:130, objectFit:"contain", display:"block" }} />
@@ -2129,23 +2129,23 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           {label:t("sum_focus"), val: answers.focus.map(f=>t("f_"+f)).join(", ") || "—", Icon: SlidersHorizontal},
         ].map(row => (
           <div key={row.label} style={{ background:"#F8F8FC", borderRadius:14, padding:"14px 16px", display:"flex", alignItems:"flex-start", gap:12 }}>
-            <div style={{ width:32, height:32, borderRadius:10, background:"rgba(91,91,214,.1)", display:"grid", placeItems:"center", flexShrink:0 }}>
-              <row.Icon size={16} color="#5B5BD6" strokeWidth={2} />
+            <div style={{ width:32, height:32, borderRadius:10, background:"color-mix(in srgb, var(--acc) 10%, transparent)", display:"grid", placeItems:"center", flexShrink:0 }}>
+              <row.Icon size={16} color="var(--acc-tx)" strokeWidth={2} />
             </div>
             <div>
-              <div style={{ fontSize:12, color:"#71717A", fontWeight:600, marginBottom:2 }}>{row.label}</div>
-              <div style={{ fontSize:14, color:"#18181B", fontWeight:700 }}>{row.val}</div>
+              <div style={{ fontSize:12, color:"var(--muted)", fontWeight:600, marginBottom:2 }}>{row.label}</div>
+              <div style={{ fontSize:14, color:"var(--ink)", fontWeight:700 }}>{row.val}</div>
             </div>
           </div>
         ))}
       </div>
       <div style={{ display:"flex", gap:10 }}>
         <button className="ob-btn" onClick={() => go("focus")}
-          style={{ flex:1, padding:"15px 0", fontSize:15, background:"#F4F4F5", color:"#3F3F46" }}>
+          style={{ flex:1, padding:"15px 0", fontSize:15, background:"var(--surface-hi)", color:"#3F3F46" }}>
           {t("btn_back")}
         </button>
         <button className="ob-btn" onClick={() => go("auth")}
-          style={{ flex:2, padding:"15px 0", fontSize:15, background:"linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff" }}>
+          style={{ flex:2, padding:"15px 0", fontSize:15, background:"linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color:"#fff" }}>
           {t("btn_continue")} →
         </button>
       </div>
@@ -2158,33 +2158,33 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
     // Email form
     if (authMode === "email") return (
       <W>
-        <button onClick={() => { setAuthMode("main"); setFormErr(""); }} style={{ border:"none", background:"transparent", cursor:"pointer", color:"#71717A", fontSize:13, fontWeight:600, marginBottom:24, padding:0 }}>Back</button>
-        <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"#18181B", marginBottom:6 }}>Create your account</div>
-        <div style={{ fontSize:14, color:"#71717A", marginBottom:24 }}>Your progress will be saved and synced</div>
+        <button onClick={() => { setAuthMode("main"); setFormErr(""); }} style={{ border:"none", background:"transparent", cursor:"pointer", color:"var(--muted)", fontSize:13, fontWeight:600, marginBottom:24, padding:0 }}>Back</button>
+        <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6 }}>Create your account</div>
+        <div style={{ fontSize:14, color:"var(--muted)", marginBottom:24 }}>Your progress will be saved and synced</div>
 
         {/* Full Name */}
         <div style={{ marginBottom:14 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>FULL NAME</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>FULL NAME</label>
           <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
 
         {/* Age + Gender row */}
         <div style={{ display:"flex", gap:10, marginBottom:14 }}>
           <div style={{ flex:"0 0 90px" }}>
-            <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>AGE</label>
+            <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>AGE</label>
             <input type="number" min="10" max="80" placeholder="25" value={regAge} onChange={e => setRegAge(e.target.value)}
-              style={{ width:"100%", padding:"14px 12px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+              style={{ width:"100%", padding:"14px 12px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
           </div>
           <div style={{ flex:1 }}>
-            <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>GENDER</label>
+            <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>GENDER</label>
             <div style={{ display:"flex", gap:6, height:50, alignItems:"center" }}>
               {[{v:"male",label:"♂ Male"},{v:"female",label:"♀ Female"}].map(g => (
                 <button key={g.v} onClick={() => setRegGender(g.v)}
                   style={{ flex:1, height:"100%", borderRadius:12,
-                    border: regGender===g.v ? "2px solid #5B5BD6" : "1.5px solid #E4E4E8",
-                    background: regGender===g.v ? "rgba(91,91,214,.1)" : "#fff",
-                    color: regGender===g.v ? "#5B5BD6" : "#71717A",
+                    border: regGender===g.v ? "2px solid var(--acc)" : "1.5px solid var(--line)",
+                    background: regGender===g.v ? "color-mix(in srgb, var(--acc) 10%, transparent)" : "#fff",
+                    color: regGender===g.v ? "var(--acc)" : "var(--muted)",
                     fontWeight:700, fontSize:12, cursor:"pointer", transition:"all .15s" }}>
                   {g.label}
                 </button>
@@ -2195,23 +2195,23 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
 
         {/* Email */}
         <div style={{ marginBottom:14 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>EMAIL ADDRESS</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>EMAIL ADDRESS</label>
           <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
 
         {/* Password */}
         <div style={{ marginBottom:14 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>PASSWORD</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>PASSWORD</label>
           <input type="password" placeholder="Password" value={pw} onChange={e => setPw(e.target.value)}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
 
         {/* Confirm Password */}
         <div style={{ marginBottom:14 }}>
-          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"#71717A", marginBottom:6 }}>CONFIRM PASSWORD</label>
+          <label style={{ display:"block", fontSize:12, fontWeight:700, color:"var(--muted)", marginBottom:6 }}>CONFIRM PASSWORD</label>
           <input type="password" placeholder="Confirm Password" value={pw2} onChange={e => setPw2(e.target.value)}
-            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid #E4E4E8", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
+            style={{ width:"100%", padding:"14px 16px", border:"1.5px solid var(--line)", borderRadius:14, fontSize:15, outline:"none", fontFamily:"'Vazirmatn',sans-serif", boxSizing:"border-box" }} />
         </div>
 
         {formErr && <div style={{ color:"#E5484D", fontSize:13, marginBottom:14, padding:"10px 14px", background:"rgba(229,72,77,.08)", borderRadius:10 }}>{formErr}</div>}
@@ -2219,7 +2219,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
           Password requirements: min. 8 characters · 1 uppercase · 1 number
         </div>
         <button className="ob-btn" onClick={submitEmail} disabled={authLoading}
-          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,#5B5BD6,#4B45C4)", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
+          style={{ background: authLoading ? "#A1A1AA" : "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))", color:"#fff", padding:"15px", fontSize:15, width:"100%", cursor: authLoading ? "default" : "pointer" }}>
           {authLoading ? "Creating account…" : "Create Account"}
         </button>
       </W>
@@ -2236,14 +2236,14 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
               style={{ width:110, height:110, objectFit:"contain",
                 filter:"drop-shadow(0 12px 28px rgba(255,140,0,.4))",
                 margin:"0 auto 8px", display:"block" }} />
-            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"#18181B", marginBottom:8 }}>{t("auth_title")}</div>
-            <div style={{ fontSize:14, color:"#71717A", lineHeight:1.7, maxWidth:280, margin:"0 auto" }}>{t("auth_sub")}</div>
+            <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:24, color:"var(--ink)", marginBottom:8 }}>{t("auth_title")}</div>
+            <div style={{ fontSize:14, color:"var(--muted)", lineHeight:1.7, maxWidth:280, margin:"0 auto" }}>{t("auth_sub")}</div>
           </div>
 
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             {/* Google */}
             <button className="ob-btn" onClick={signInWithGoogle} disabled={authLoading}
-              style={{ background:"#fff", border:"1.5px solid #E4E4E8", color:"#18181B", padding:"15px", fontSize:15, display:"flex", alignItems:"center", justifyContent:"center", gap:10, cursor: authLoading ? "default" : "pointer" }}>
+              style={{ background:"var(--surface)", border:"1.5px solid var(--line)", color:"#18181B", padding:"15px", fontSize:15, display:"flex", alignItems:"center", justifyContent:"center", gap:10, cursor: authLoading ? "default" : "pointer" }}>
               <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
               {authLoading ? "…" : t("auth_google")}
             </button>
@@ -2256,21 +2256,21 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
             </button>
 
             <div style={{ display:"flex", alignItems:"center", gap:12, margin:"4px 0" }}>
-              <div style={{ flex:1, height:1, background:"#E4E4E8" }} />
+              <div style={{ flex:1, height:1, background:"var(--line)" }} />
               <span style={{ fontSize:12, color:"#A1A1AA", fontWeight:600 }}>OR</span>
-              <div style={{ flex:1, height:1, background:"#E4E4E8" }} />
+              <div style={{ flex:1, height:1, background:"var(--line)" }} />
             </div>
 
             {/* Email */}
             <button className="ob-btn" onClick={() => setAuthMode("email")}
-              style={{ background:"#F4F4F5", color:"#18181B", padding:"15px", fontSize:15, display:"flex", alignItems:"center", justifyContent:"center", gap:10 }}>
+              style={{ background:"var(--surface-hi)", color:"var(--ink)", padding:"15px", fontSize:15, display:"flex", alignItems:"center", justifyContent:"center", gap:10 }}>
               <svg width="18" height="14" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m2 4 10 7.5L22 4"/></svg>
               {t("auth_email")}
             </button>
 
             {/* Skip — test only */}
             <button onClick={() => finish({ auth: "skip" })}
-              style={{ background:"none", border:"none", color:"#71717A", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
+              style={{ background:"none", border:"none", color:"var(--muted)", fontSize:13, cursor:"pointer", padding:"10px 0", textDecoration:"underline" }}>
               {t("auth_skip")}
             </button>
           </div>
@@ -2300,7 +2300,7 @@ function JourneyIntroTransition({ lang = "tr", onDone }) {
   return (
     <div onClick={onDone} style={{
       position: "fixed", inset: 0, zIndex: 99998, cursor: "pointer",
-      background: "radial-gradient(ellipse at 50% 40%, rgba(91,91,214,.25) 0%, transparent 60%), #0c0f24",
+      background: "radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--acc) 25%, transparent) 0%, transparent 60%), #0c0f24",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 22,
     }}>
       <img src="/fuxi-mascot.png" alt="SURI" style={{ width: 130, height: 130, objectFit: "contain", animation: "robotFloat 3.2s ease-in-out infinite" }} />
@@ -2359,7 +2359,7 @@ function Confetti() {
   const pieces = useMemo(() => Array.from({ length: 46 }, (_, i) => ({
     left: Math.random() * 100, delay: Math.random() * 0.9, dur: 2.2 + Math.random() * 1.8,
     size: 6 + Math.random() * 7, rot: Math.random() * 360, round: i % 3 === 0,
-    color: ["#FF8A3D", "#8B7CF6", "#FFCE00", "#7DFFC4", "#FF6B5E", "#5B5BD6"][i % 6],
+    color: ["var(--acc)", "#8B7CF6", "#FFCE00", "#7DFFC4", "#FF6B5E", "var(--acc)"][i % 6],
   })), []);
   return (
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
@@ -2398,7 +2398,7 @@ function SessionComplete({ lang = "tr", xpEarned = 0, sessionWords = [], streakC
       <img src="/fuxi-mascot.png" alt="SURI" style={{ width: 96, height: 96, objectFit: "contain", animation: "robotHappy .65s cubic-bezier(.22,1,.36,1) both" }} />
       <div style={{ color: "#fff", fontSize: 22, fontWeight: 900, fontFamily: "'Satoshi',system-ui,sans-serif", textAlign: "center" }}>{t("title")}</div>
       {xpEarned > 0 && (
-        <div style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", color: "#fff", borderRadius: 99, padding: "8px 22px", fontSize: 22, fontWeight: 900, boxShadow: "0 6px 22px rgba(255,138,61,.45)" }}>
+        <div style={{ background: "linear-gradient(135deg,var(--acc),var(--acc-dk))", color: "#fff", borderRadius: 99, padding: "8px 22px", fontSize: 22, fontWeight: 900, boxShadow: "0 6px 22px rgba(22,40,58,.35)" }}>
           +<CountUp to={xpEarned} /> XP
         </div>
       )}
@@ -2423,7 +2423,7 @@ function SessionComplete({ lang = "tr", xpEarned = 0, sessionWords = [], streakC
         </div>
       )}
       <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,#FF8A3D,#F0701A)", boxShadow: "0 6px 20px rgba(255,138,61,.4)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
+        <button onClick={onPractice} style={{ background: "linear-gradient(135deg,var(--acc),var(--acc-dk))", boxShadow: "0 6px 20px rgba(22,40,58,.35)", color: "#fff", border: "none", borderRadius: 14, padding: "12px 22px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>{t("practice")}</button>
         <button onClick={onContinue} style={{ background: "rgba(255,255,255,.1)", color: "#fff", border: "1px solid rgba(255,255,255,.2)", borderRadius: 14, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>{t("cont")}</button>
       </div>
     </div>
@@ -2440,8 +2440,8 @@ function GlobalBackButton({ lang }) {
       style={{
         position:"fixed", top:12, insetInlineStart:12, zIndex: 210,
         display:"flex", alignItems:"center", gap:4, height:40, padding:"0 14px 0 10px",
-        borderRadius:20, border:"1px solid rgba(91,91,214,.18)", background:"rgba(255,255,255,.94)",
-        backdropFilter:"blur(8px)", boxShadow:"0 2px 10px rgba(30,30,60,.12)", color:"#5B5BD6",
+        borderRadius:20, border:"1px solid color-mix(in srgb, var(--acc) 18%, transparent)", background:"rgba(255,255,255,.94)",
+        backdropFilter:"blur(8px)", boxShadow:"0 2px 10px rgba(30,30,60,.12)", color:"var(--acc-tx)",
         fontWeight:700, fontSize:14, cursor:"pointer", WebkitTapHighlightColor:"transparent",
       }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: (typeof document!=="undefined" && document.dir==="rtl") ? "scaleX(-1)" : "none" }}><path d="M15 18l-6-6 6-6"/></svg>
@@ -2465,6 +2465,7 @@ export default function App() {
   const [firstJourneyStage, setFirstJourneyStage] = useState(null); // null | "intro" | "reading" | "summary" — auto-start Chapter 1 for brand-new users
   const [firstJourneySummary, setFirstJourneySummary] = useState(null); // { xpEarned, sessionWords }
   const [spielInitialGame, setSpielInitialGame] = useState(null); // deep-link Das Spiel into a specific game (e.g. from the practice CTA)
+  useEffect(() => { setThemeLevel(dailyLevel()); }, []);
   const [tab, setTabRaw] = useState("home");
   const tabRef = useRef("home"); tabRef.current = tab;
   const tabHist = useRef([]);
@@ -2628,7 +2629,7 @@ export default function App() {
   }
 
   return (
-    <div dir={LANG_DIR[appLang]==="rtl"?"rtl":"ltr"} style={{ minHeight: "100vh", background: "radial-gradient(ellipse at 15% 10%, rgba(91,91,214,.10) 0%, transparent 50%), radial-gradient(ellipse at 88% 8%, rgba(255,107,94,.08) 0%, transparent 48%), #FBFBFC", backgroundAttachment: "fixed", color: C.ink, fontFamily: "'Vazirmatn', sans-serif" }}>
+    <div className="s-app" dir={LANG_DIR[appLang]==="rtl"?"rtl":"ltr"} style={{ minHeight: "100vh", color: C.ink, fontFamily: "'Vazirmatn', sans-serif" }}>
       {/* Offline / back-online indicator — shown on every screen */}
       {!isOnline && (
         <div style={{ position:"fixed", top:0, left:0, right:0, zIndex:100000,
@@ -2649,7 +2650,7 @@ export default function App() {
       )}
       {/* Loading overlay while session check completes */}
       {!appLoaded && (
-        <div style={{ position:"fixed", inset:0, background:"#fff", zIndex:99999, display:"grid", placeItems:"center" }}>
+        <div style={{ position:"fixed", inset:0, background:"var(--surface)", zIndex:99999, display:"grid", placeItems:"center" }}>
           <img src="/fuxi-mascot.png" alt="SURI" style={{ width:120, height:120, objectFit:"contain" }} />
         </div>
       )}
@@ -2711,12 +2712,12 @@ export default function App() {
         @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=general-sans@400,500,600&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
         :root {
-          --iris-500: #5B5BD6; --iris-dk: #4B45C4;
+          --iris-500: var(--acc); --iris-dk: var(--acc-dk);
           --gold: #F5A524; --green: #16A06F;
           --plum: #FF6B5E; --rose: #E5484D;
-          --bg: #FBFBFC; --panel: #FFFFFF;
-          --ink: #18181B; --muted: #71717A;
-          --line: #E4E4E8;
+          --bg: var(--page); --panel: #FFFFFF;
+          --ink: var(--ink); --muted: var(--muted);
+          --line: var(--line);
           --display:'Satoshi',system-ui,sans-serif;
           --ease-spring: cubic-bezier(.34,1.56,.64,1);
         }
@@ -2733,7 +2734,7 @@ export default function App() {
         @keyframes robotThink { 0%,100%{ transform:translateY(0px) rotate(0deg) }        25%{ transform:translateY(-6px) rotate(-14deg) } 50%{ transform:translateY(-10px) rotate(-18deg) } 75%{ transform:translateY(-6px) rotate(-14deg) } }
         @keyframes robotHappy { 0%{ transform:scale(1) rotate(0deg) }                    20%{ transform:scale(1.12) rotate(-8deg) } 60%{ transform:scale(1.1) rotate(6deg) } 100%{ transform:scale(1) rotate(0deg) } }
         @keyframes thinkDot   { 0%,80%,100%{ transform:scale(0); opacity:0 }             40%{ transform:scale(1); opacity:1 } }
-        @keyframes pulse      { 0%,100%{ box-shadow:0 0 0 0 rgba(91,91,214,.35) }        50%{ box-shadow:0 0 0 6px rgba(91,91,214,0) } }
+        @keyframes pulse      { 0%,100%{ box-shadow:0 0 0 0 color-mix(in srgb, var(--acc) 35%, transparent) }        50%{ box-shadow:0 0 0 6px color-mix(in srgb, var(--acc) 0%, transparent) } }
         @keyframes dlg-bubble { from { opacity:0; transform:translateY(6px) scale(.97) } to { opacity:1; transform:none } }
 
         .robot-idle     { animation: robotFloat 3.2s ease-in-out infinite; }
@@ -2746,7 +2747,7 @@ export default function App() {
 
         /* ── Typography ── */
         .gtext {
-          background: linear-gradient(135deg, #5B5BD6, #FF6B5E);
+          background: linear-gradient(135deg, var(--acc-btn), #FF6B5E);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
@@ -2757,20 +2758,20 @@ export default function App() {
         .wcard { transition: all .28s cubic-bezier(.22,1,.36,1); }
         .wcard:hover {
           transform: translateY(-3px);
-          border-color: rgba(91,91,214,.35) !important;
-          box-shadow: 0 8px 24px rgba(91,91,214,.12), 0 2px 0 rgba(0,0,0,.06) !important;
+          border-color: color-mix(in srgb, var(--acc) 35%, transparent) !important;
+          box-shadow: 0 8px 24px color-mix(in srgb, var(--acc) 12%, transparent), 0 2px 0 rgba(0,0,0,.06) !important;
           background: #fff !important;
         }
 
         /* ── Navigation ── */
         .navbtn { transition: all .22s cubic-bezier(.22,1,.36,1); position: relative; }
-        .navbtn:hover { transform: translateY(-2px); color: #5B5BD6 !important; }
+        .navbtn:hover { transform: translateY(-2px); color: var(--acc) !important; }
         .navbtn.active-tab { animation: pulse 2.4s ease infinite; }
 
         /* ── Progress Bars ── */
         .bar-track {
           height: 6px;
-          background: rgba(91,91,214,.08);
+          background: color-mix(in srgb, var(--acc) 8%, transparent);
           border-radius: 99px;
           overflow: hidden;
         }
@@ -2783,32 +2784,32 @@ export default function App() {
 
         /* ── Glow buttons ── */
         .glow-btn {
-          background: linear-gradient(135deg, #5B5BD6, #FF6B5E) !important;
+          background: linear-gradient(135deg, var(--acc-btn), #FF6B5E) !important;
           color: #fff !important;
           font-weight: 800 !important;
-          box-shadow: 0 8px 20px rgba(91,91,214,.32) !important;
+          box-shadow: 0 8px 20px color-mix(in srgb, var(--acc) 32%, transparent) !important;
           transition: all .22s ease !important;
           letter-spacing: .03em;
         }
         .glow-btn:hover {
-          box-shadow: 0 12px 28px rgba(91,91,214,.44) !important;
+          box-shadow: 0 12px 28px color-mix(in srgb, var(--acc) 44%, transparent) !important;
           transform: translateY(-2px);
         }
 
         /* ── Lessons tab & home hovers ── */
-        .lessons-tab:hover:not(.lessons-tab-active) { background: rgba(91,91,214,.06) !important; color: #5B5BD6 !important; }
-        .home-tile:hover  { transform: translateY(-4px) !important; box-shadow: 0 12px 32px rgba(91,91,214,.12), 0 2px 0 rgba(0,0,0,.06) !important; border-color: rgba(91,91,214,.25) !important; }
+        .lessons-tab:hover:not(.lessons-tab-active) { background: color-mix(in srgb, var(--acc) 6%, transparent) !important; color: var(--acc) !important; }
+        .home-tile:hover  { transform: translateY(-4px) !important; box-shadow: 0 12px 32px color-mix(in srgb, var(--acc) 12%, transparent), 0 2px 0 rgba(0,0,0,.06) !important; border-color: color-mix(in srgb, var(--acc) 25%, transparent) !important; }
         .home-stat:hover  { transform: translateY(-3px) scale(1.03); }
-        .home-lvl:hover   { background: rgba(91,91,214,.04) !important; border-color: rgba(91,91,214,.2) !important; }
-        .lcard:hover      { transform: translateY(-3px) !important; border-color: rgba(91,91,214,.3) !important; box-shadow: 0 8px 24px rgba(91,91,214,.1), 0 2px 0 rgba(0,0,0,.06) !important; }
+        .home-lvl:hover   { background: color-mix(in srgb, var(--acc) 4%, transparent) !important; border-color: color-mix(in srgb, var(--acc) 20%, transparent) !important; }
+        .lcard:hover      { transform: translateY(-3px) !important; border-color: color-mix(in srgb, var(--acc) 30%, transparent) !important; box-shadow: 0 8px 24px color-mix(in srgb, var(--acc) 10%, transparent), 0 2px 0 rgba(0,0,0,.06) !important; }
         .vcard:hover      { border-color: rgba(45,122,122,.35) !important; box-shadow: 0 8px 20px rgba(45,122,122,.1) !important; }
-        .wword-card:hover { transform: translateY(-3px) !important; border-color: rgba(91,91,214,.3) !important; box-shadow: 0 8px 20px rgba(91,91,214,.1) !important; }
+        .wword-card:hover { transform: translateY(-3px) !important; border-color: color-mix(in srgb, var(--acc) 30%, transparent) !important; box-shadow: 0 8px 20px color-mix(in srgb, var(--acc) 10%, transparent) !important; }
         .dlg-card-btn:hover { filter: brightness(1.04); }
-        .start-btn:hover  { box-shadow: 0 8px 24px rgba(91,91,214,.38) !important; transform: translateY(-2px); }
+        .start-btn:hover  { box-shadow: 0 8px 24px color-mix(in srgb, var(--acc) 38%, transparent) !important; transform: translateY(-2px); }
 
         /* ── Scrollbar ── */
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#5B5BD6,#FF6B5E); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,var(--acc-btn),#FF6B5E); border-radius: 99px; }
         ::-webkit-scrollbar-track { background: #F0F1F5; }
 
         /* ── Burger drawer ── */
@@ -2816,7 +2817,7 @@ export default function App() {
         @keyframes fadeInBg     { from { opacity: 0; }                 to { opacity: 1; } }
         .drawer-panel { animation: slideInLeft .35s cubic-bezier(0.22, 1, 0.36, 1) both; }
         .drawer-overlay { animation: fadeInBg .3s ease both; }
-        .drawer-nav-item:hover { background: rgba(91,91,214,.07) !important; }
+        .drawer-nav-item:hover { background: color-mix(in srgb, var(--acc) 7%, transparent) !important; }
 
         /* ── Journey map ── */
         @keyframes journeyPulse { 0%,100%{box-shadow:0 0 0 0 rgba(102,126,234,.6),0 4px 20px rgba(102,126,234,.4)} 60%{box-shadow:0 0 0 12px rgba(102,126,234,0),0 4px 24px rgba(102,126,234,.6)} }
@@ -2826,16 +2827,16 @@ export default function App() {
         @keyframes journeyDone { 0%{transform:scale(1)} 30%{transform:scale(1.15)} 100%{transform:scale(1)} }
         .journey-active { animation: journeyPulse 2s ease-in-out infinite; }
         .journey-node:hover { transform: scale(1.06) !important; }
-        .journey-featured:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(102,126,234,.45) !important; }
+        .journey-featured:hover { transform: translateY(-2px); box-shadow: var(--sh-lift) !important; }
 
         /* ── Micro label style ── */
         .micro-label {
           font-size: 10px; font-weight: 700; letter-spacing: .12em;
-          text-transform: uppercase; color: #5B5BD6; opacity: .7;
+          text-transform: uppercase; color: var(--acc); opacity: .7;
         }
 
         /* ── Table zebra ── */
-        tr:nth-child(even) { background: rgba(91,91,214,.03) !important; }
+        tr:nth-child(even) { background: color-mix(in srgb, var(--acc) 3%, transparent) !important; }
 
         /* ── Mobile Bottom Nav ── */
         .mob-bottom-nav { display: none; }
@@ -2856,17 +2857,48 @@ export default function App() {
           position: "sticky", top: 0, zIndex: 20,
           boxShadow: "0 1px 0 rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.06)" }}>
         {/* accent line */}
-        <div style={{ height: 2, background: "linear-gradient(90deg, transparent, #5B5BD6, #FF6B5E, transparent)" }} />
+        <div style={{ height: 2, background: "linear-gradient(90deg, transparent, var(--acc-btn), #FF6B5E, transparent)" }} />
         <div style={{ maxWidth: 880, margin: "0 auto", padding: "10px 20px", display: "flex", alignItems: "center", gap: 12 }}>
           {/* Hamburger — desktop only */}
           <button onClick={() => setShowMenu(true)}
-            style={{ width:34, height:34, borderRadius:10, border:`1px solid ${C.line}`, background:"#fff", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:5, padding:0, flexShrink:0 }}>
+            style={{ width:34, height:34, borderRadius:10, border:`1px solid ${C.line}`, background:"var(--surface)", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:5, padding:0, flexShrink:0 }}>
             <span style={{ display:"block", width:18, height:2, borderRadius:2, background:C.ink }} />
             <span style={{ display:"block", width:14, height:2, borderRadius:2, background:C.ink }} />
             <span style={{ display:"block", width:18, height:2, borderRadius:2, background:C.ink }} />
           </button>
         </div>
       </header>}
+
+      {/* ── Desktop navigation (≥1024px): dark embossed panel on the left ── */}
+      {!intro && !onboarding && (
+        <aside className="s-side" aria-label="Navigation">
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", padding:"6px 0 20px" }}>
+            <div style={{ width:84, height:84, borderRadius:"50%", display:"grid", placeItems:"center", background:"linear-gradient(150deg,#E8F0F4,#B9CCD6)",
+              boxShadow:"inset 1px 1px 0 #fff, inset -2px -2px 4px rgba(22,40,58,.25), 0 8px 18px -2px rgba(0,0,0,.45)" }}>
+              <img src="/fuxi-mascot.png" alt="SURI" style={{ width:60, height:60, objectFit:"contain" }} />
+            </div>
+            <div style={{ marginTop:12, fontWeight:900, fontSize:20, letterSpacing:".04em" }}>SURI</div>
+          </div>
+          <nav style={{ flex:1, overflowY:"auto" }}>
+            {[["home","nav_home",HomeIcon],["levels","nav_levels",Library],["favs","nav_favs",Heart],["compare","nav_compare",SlidersHorizontal],["lid","nav_lid",Globe],["spiel","nav_spiel",Gamepad2],["talk","nav_talk",MessageCircle],["profile","nav_profile",User]].map(([k, labelKey, NavIcon]) => (
+              <button key={k} type="button" className="s-side-item" aria-current={tab===k ? "page" : undefined}
+                onClick={() => { goToTab(k); setOpenLesson(null); }}>
+                <NavIcon size={20} strokeWidth={1.9} />
+                <span>{tApp(appLang, labelKey)}</span>
+              </button>
+            ))}
+            <button type="button" className="s-side-item" aria-current={tab==="docs" ? "page" : undefined}
+              onClick={() => { goToTab("docs"); setOpenLesson(null); }}>
+              <ScanText size={20} strokeWidth={1.9} />
+              <span>{({ en:"Document Assistant", tr:"Belge Asistanı", de:"Dokumenten-Assistent" })[appLang] || "Document Assistant"}</span>
+            </button>
+          </nav>
+          <button type="button" className="s-side-item" onClick={handleLogout} style={{ marginBottom:0 }}>
+            <LogOut size={20} strokeWidth={1.9} />
+            <span>{tApp(appLang,"logout")}</span>
+          </button>
+        </aside>
+      )}
 
       {/* ── Burger drawer ──────────────────────────────────────────── */}
       {!intro && !onboarding && showMenu && (
@@ -2876,7 +2908,7 @@ export default function App() {
             style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.38)", backdropFilter:"blur(2px)" }} />
           {/* panel */}
           <div className="drawer-panel"
-            style={{ position:"absolute", top:0, left:0, bottom:0, width:280, background:"#fff",
+            style={{ position:"absolute", top:0, left:0, bottom:0, width:280, background:"var(--surface)",
               boxShadow:"8px 0 40px rgba(0,0,0,.15)", display:"flex", flexDirection:"column", overflowY:"auto" }}>
             {/* panel header */}
             <div style={{ padding:"20px 20px 16px", borderBottom:`1px solid ${C.line}`, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
@@ -2896,9 +2928,9 @@ export default function App() {
                     onClick={() => { goToTab("docs"); setOpenLesson(null); setShowMenu(false); }}
                     style={{ width:"100%", textAlign:"left", display:"flex", alignItems:"center", gap:13,
                       padding:"12px 14px", borderRadius:14, border:"none", marginBottom:10,
-                      background: tab==="docs" ? "rgba(91,91,214,.10)" : "linear-gradient(135deg, rgba(91,91,214,.08), rgba(124,107,240,.05))",
+                      background: tab==="docs" ? "color-mix(in srgb, var(--acc) 10%, transparent)" : "linear-gradient(135deg, color-mix(in srgb, var(--acc) 8%, transparent), rgba(124,107,240,.05))",
                       cursor:"pointer" }}>
-                    <span style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#5B5BD6,#7C6BF0)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 4px 12px rgba(91,91,214,.35)" }}>
+                    <span style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,var(--acc-btn),var(--acc))", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 4px 12px color-mix(in srgb, var(--acc) 35%, transparent)" }}>
                       <ScanText size={19} color="#fff" strokeWidth={1.8} />
                     </span>
                     <span style={{ minWidth:0 }}>
@@ -2913,12 +2945,12 @@ export default function App() {
                   onClick={() => { goToTab(k); setOpenLesson(null); setShowMenu(false); }}
                   style={{ width:"100%", textAlign:"left", display:"flex", alignItems:"center", gap:14,
                     padding:"13px 16px", borderRadius:12, border:"none",
-                    background: tab===k ? "rgba(91,91,214,.09)" : "transparent",
-                    color: tab===k ? "#5B5BD6" : C.ink,
+                    background: tab===k ? "color-mix(in srgb, var(--acc) 9%, transparent)" : "transparent",
+                    color: tab===k ? "var(--acc)" : C.ink,
                     fontWeight: tab===k ? 700 : 500, fontSize:15, cursor:"pointer", marginBottom:4 }}>
-                  <NavIcon size={18} color={tab===k ? "#5B5BD6" : C.muted} />
+                  <NavIcon size={18} color={tab===k ? "var(--acc)" : C.muted} />
                   {tApp(appLang, labelKey)}
-                  {tab===k && <span style={{ marginLeft:"auto", width:6, height:6, borderRadius:3, background:"#5B5BD6" }} />}
+                  {tab===k && <span style={{ marginLeft:"auto", width:6, height:6, borderRadius:3, background:"var(--acc-btn)" }} />}
                 </button>
               ))}
             </nav>
@@ -2957,20 +2989,20 @@ export default function App() {
       {!intro && !onboarding && streak.count > 0 && (
         <div style={{
           position: 'fixed', top: 14, right: 16, zIndex: 200,
-          background: streak.count >= 7 ? 'linear-gradient(135deg,#FF8C00,#FF5500)' : 'rgba(255,255,255,0.92)',
+          background: streak.count >= 7 ? 'linear-gradient(135deg,var(--acc),var(--acc-dk))' : 'var(--surface)',
           backdropFilter: 'blur(12px)',
-          border: streak.count >= 7 ? 'none' : '1px solid rgba(245,165,36,.35)',
+          border: 'none',
           borderRadius: 20,
           padding: '5px 12px',
           display: 'flex', alignItems: 'center', gap: 5,
-          boxShadow: streak.count >= 7 ? '0 4px 16px rgba(255,100,0,.35)' : '0 2px 8px rgba(0,0,0,.08)',
+          boxShadow: 'var(--sh-card)',
           cursor: 'default',
           transition: 'all .3s ease',
         }}>
           <Flame size={18} strokeWidth={2.4} />
           <span style={{
             fontSize: 14, fontWeight: 800,
-            color: streak.count >= 7 ? '#fff' : '#E07800',
+            color: streak.count >= 7 ? '#fff' : 'var(--acc-tx)',
             fontVariantNumeric: 'tabular-nums',
           }}>{streak.count}</span>
           {streak.count >= 7 && (
@@ -2986,12 +3018,10 @@ export default function App() {
           bottom:'max(14px, calc(env(safe-area-inset-bottom) + 8px))',
           left:14, right:14,
           zIndex:120,
-          background:'rgba(255,255,255,0.62)',
-          backdropFilter:'blur(28px) saturate(200%)',
-          WebkitBackdropFilter:'blur(28px) saturate(200%)',
-          border:'1px solid rgba(255,255,255,0.55)',
-          borderRadius:26,
-          boxShadow:'0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.85)',
+          background:'linear-gradient(170deg,#2C4A60 0%,#21394D 55%,#1B3042 100%)',
+          border:'none',
+          borderRadius:30,
+          boxShadow:'var(--sh-dark)',
           height:60,
           alignItems:'center', justifyContent:'space-around',
           padding:'0 4px',
@@ -3010,11 +3040,12 @@ export default function App() {
                 style={{
                   flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
                   gap:3, border:'none', cursor:'pointer', padding:'6px 0', borderRadius:18,
-                  background: active ? 'rgba(91,91,214,0.1)' : 'transparent',
-                  color: active ? '#5B5BD6' : '#71717A', position:'relative',
+                  background: active ? 'linear-gradient(150deg,#F1F6F8,#CFDDE4)' : 'transparent',
+                  boxShadow: active ? 'inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(22,40,58,.12), 0 6px 12px -2px rgba(0,0,0,.4)' : 'none',
+                  color: active ? '#21394D' : 'rgba(232,240,244,.78)', position:'relative',
                   transition:'background .2s ease',
                 }}>
-                <Icon size={21} strokeWidth={active?2.2:1.7} color={active?'#5B5BD6':'#9ca3af'} fill={active&&key==='favs'?'#5B5BD6':'none'} />
+                <Icon size={21} strokeWidth={active?2.2:1.7} color={active?'#21394D':'rgba(232,240,244,.78)'} fill={active&&key==='favs'?'#21394D':'none'} />
                 <span style={{ fontSize:12.5, fontWeight:active?700:400, letterSpacing:'.01em', marginTop:1 }}>
                   {tApp(appLang, labelKey)}
                 </span>
@@ -3451,7 +3482,7 @@ function speak(text) {
   window.speechSynthesis.speak(u);
 }
 
-function SpeakBtn({ text, color = "#71717A", small = false }) {
+function SpeakBtn({ text, color = "var(--muted)", small = false }) {
   const [playing, setPlaying] = useState(false);
   function handleClick(e) {
     e.stopPropagation();
@@ -3481,8 +3512,8 @@ function SpeakBtn({ text, color = "#71717A", small = false }) {
 
 // ── Seviyeler Karşılaştırması — component ─────────────────────────
 const LV_CMP_CFG = [
-  { key:"b1", label:"B1", from:"#8B5CF6", to:"#6D28D9" },
-  { key:"b2", label:"B2", from:"#6D28D9", to:"#3B52F5" },
+  { key:"b1", label:"B1", from:"var(--acc)", to:"var(--acc-dk)" },
+  { key:"b2", label:"B2", from:"var(--acc-dk)", to:"#3B52F5" },
   { key:"c1", label:"C1", from:"#3B82F6", to:"#1E9EF1" },
   { key:"c2", label:"C2", from:"#1E9EF1", to:"#31D4CF" },
 ];
@@ -3532,11 +3563,11 @@ function LevelComparison({ lang = "ku" }) {
                 style={{
                   flex:1, padding:"8px 4px", borderRadius:10, cursor:"pointer",
                   fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:12,
-                  border: active ? "none" : `1.5px solid ${cat.color}55`,
-                  background: active ? cat.color : `${cat.color}0D`,
+                  border: active ? "none" : `1.5px solid ${A(cat.color,"55")}`,
+                  background: active ? cat.color : `${A(cat.color,"0D")}`,
                   color: active ? "#fff" : cat.color,
                   transition:"all .18s ease",
-                  boxShadow: active ? `0 3px 10px ${cat.color}44` : "none",
+                  boxShadow: active ? `0 3px 10px ${A(cat.color,"44")}` : "none",
                 }}>
                 {cat.label}
               </button>
@@ -3553,9 +3584,9 @@ function LevelComparison({ lang = "ku" }) {
                 style={{
                   flex:1, padding:"9px 4px", borderRadius:11, border:"none", cursor:"pointer",
                   fontFamily:"'Vazirmatn',sans-serif", fontWeight:800, fontSize:13, letterSpacing:".03em",
-                  background: active ? `linear-gradient(135deg,${lc.from},${lc.to})` : `${lc.from}18`,
+                  background: active ? `linear-gradient(135deg,${lc.from},${lc.to})` : `${A(lc.from,"18")}`,
                   color: active ? "#fff" : lc.from,
-                  boxShadow: active ? `0 4px 14px ${lc.from}55` : "none",
+                  boxShadow: active ? `0 4px 14px ${A(lc.from,"55")}` : "none",
                   transition:"all .18s ease",
                 }}>
                 {lc.label}
@@ -3588,7 +3619,7 @@ function LevelComparison({ lang = "ku" }) {
             style={{
               position:"absolute", left:8, top:"50%", transform:"translateY(-50%)",
               width:34, height:34, borderRadius:9, border:"1.5px solid #FF7E2E44",
-              background:"#fff", cursor: isEmpty ? "default" : "pointer", display:"flex", alignItems:"center",
+              background:"var(--surface)", cursor: isEmpty ? "default" : "pointer", display:"flex", alignItems:"center",
               justifyContent:"center", fontSize:18, color: isEmpty ? "#D4D4D8" : "#FF7E2E",
               boxShadow:"0 2px 8px rgba(0,0,0,.07)", lineHeight:1,
             }}>›</button>
@@ -3598,19 +3629,19 @@ function LevelComparison({ lang = "ku" }) {
               {isEmpty ? "A1" : `A1  ·  ${idx + 1} / ${total}`}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
-              <span style={{ fontSize:16, fontWeight:700, color: isEmpty ? "#A1A1AA" : "#18181B", lineHeight:1.5, fontStyle: isEmpty ? "italic" : "normal" }}>
+              <span style={{ fontSize:16, fontWeight:700, color: isEmpty ? "#A1A1AA" : "var(--ink)", lineHeight:1.5, fontStyle: isEmpty ? "italic" : "normal" }}>
                 {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang === "es" ? "Próximamente…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row.a1}
               </span>
               {!isEmpty && <SpeakBtn text={row.a1} color="#FF7E2E" />}
             </div>
             {!isEmpty && row.ex && (
               <div dir="ltr" style={{ display:"flex", alignItems:"flex-start", justifyContent:"center", gap:5, marginTop:5 }}>
-                <span style={{ fontSize:15, color:"#71717A", fontStyle:"italic", lineHeight:1.4 }}>{row.ex}</span>
-                <SpeakBtn text={row.ex} color="#A1A1AA" small />
+                <span style={{ fontSize:15, color:"var(--muted)", fontStyle:"italic", lineHeight:1.4 }}>{row.ex}</span>
+                <SpeakBtn text={row.ex} color="var(--muted)" small />
               </div>
             )}
             {!isEmpty && row.ex && (lang==="tr" ? row.ex_tr : lang==="en" ? row.ex_en : lang==="ar" ? row.ex_ar : lang === "es" ? row.ex_es : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : lang==="ku" ? row.ex_ku : null) && (
-              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"#71717A", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
+              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color:"var(--muted)", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
                 {lang==="tr" ? row.ex_tr : lang==="en" ? (row.ex_en || row.ex_ku) : lang==="ar" ? (row.ex_ar || row.ex_ku) : lang === "es" ? (row.ex_es || row.ex_ku) : lang==="uk" ? row.ex_uk : lang==="fa" ? row.ex_fa : row.ex_ku}
               </div>
             )}
@@ -3623,7 +3654,7 @@ function LevelComparison({ lang = "ku" }) {
             style={{
               position:"absolute", right:8, top:"50%", transform:"translateY(-50%)",
               width:34, height:34, borderRadius:9, border:"1.5px solid #FF7E2E44",
-              background:"#fff", cursor: isEmpty ? "default" : "pointer", display:"flex", alignItems:"center",
+              background:"var(--surface)", cursor: isEmpty ? "default" : "pointer", display:"flex", alignItems:"center",
               justifyContent:"center", fontSize:18, color: isEmpty ? "#D4D4D8" : "#FF7E2E",
               boxShadow:"0 2px 8px rgba(0,0,0,.07)", lineHeight:1,
             }}>‹</button>
@@ -3632,7 +3663,7 @@ function LevelComparison({ lang = "ku" }) {
         {/* ── comparison box for selected level ── */}
         {noLevel ? (
           <div style={{
-            background:"#F4F4F5", borderRadius:16, padding:"16px 20px",
+            background:"var(--surface-hi)", borderRadius:16, padding:"16px 20px",
             border:"1.5px solid #E4E4E7",
             minHeight:60, display:"flex", alignItems:"center", justifyContent:"center",
           }}>
@@ -3642,28 +3673,28 @@ function LevelComparison({ lang = "ku" }) {
           </div>
         ) : (
           <div style={{
-            background:`linear-gradient(135deg,${lv.from}14,${lv.to}14)`,
+            background:`linear-gradient(135deg,${A(lv.from,"14")},${A(lv.to,"14")})`,
             borderRadius:16, padding:"16px 20px",
-            border:`1.5px solid ${lv.from}30`,
+            border:`1.5px solid ${A(lv.from,"30")}`,
             minHeight:60, display:"flex", flexDirection:"column", justifyContent:"center",
           }}>
             <div style={{ fontSize:12.5, fontWeight:800, color:lv.from, letterSpacing:".1em", marginBottom:7, textTransform:"uppercase" }}>
               {lv.label}
             </div>
             <div dir="ltr" style={{ display:"flex", alignItems:"center", gap:6 }}>
-              <span style={{ fontSize:15, fontWeight:700, color: isEmpty ? "#A1A1AA" : "#18181B", lineHeight:1.6, fontStyle: isEmpty ? "italic" : "normal" }}>
+              <span style={{ fontSize:15, fontWeight:700, color: isEmpty ? "#A1A1AA" : "var(--ink)", lineHeight:1.6, fontStyle: isEmpty ? "italic" : "normal" }}>
                 {isEmpty ? (lang==="tr" ? "Yakında eklenecek…" : lang==="en" ? "Coming soon…" : lang==="ar" ? "قريبًا…" : lang==="ku" ? "بەزووی دێت…" : lang === "es" ? "Próximamente…" : lang==="uk" ? "Незабаром…" : lang === "fa" ? "به‌زودی…" : "Demnächst…") : row[selLv]}
               </span>
               {!isEmpty && <SpeakBtn text={row[selLv]} color={lv.from} />}
             </div>
             {!isEmpty && row['ex_' + selLv] && (
               <div dir="ltr" style={{ display:"flex", alignItems:"flex-start", gap:5, marginTop:6 }}>
-                <span style={{ fontSize:15, color: lv.from + "BB", fontStyle:"italic", lineHeight:1.4 }}>{row['ex_' + selLv]}</span>
+                <span style={{ fontSize:15, color: A(lv.from,"BB"), fontStyle:"italic", lineHeight:1.4 }}>{row['ex_' + selLv]}</span>
                 <SpeakBtn text={row['ex_' + selLv]} color={lv.from} small />
               </div>
             )}
             {!isEmpty && row['ex_' + selLv] && (lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? row['ex_' + selLv + '_en'] : lang==="ar" ? row['ex_' + selLv + '_ar'] : lang === "es" ? row['ex_' + selLv + '_es'] : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : lang==="ku" ? row['ex_' + selLv + '_ku'] : null) && (
-              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color: lv.from + "88", marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
+              <div dir={(lang==="ku"||lang==="fa") ? "rtl" : "ltr"} style={{ fontSize:14, color: A(lv.from,"88"), marginTop:3, fontStyle:"italic", lineHeight:1.4 }}>
                 {lang==="tr" ? row['ex_' + selLv + '_tr'] : lang==="en" ? (row['ex_' + selLv + '_en'] || row['ex_' + selLv + '_ku']) : lang==="ar" ? (row['ex_' + selLv + '_ar'] || row['ex_' + selLv + '_ku']) : lang === "es" ? (row['ex_' + selLv + '_es'] || row['ex_' + selLv + '_ku']) : lang==="uk" ? row['ex_' + selLv + '_uk'] : lang==="fa" ? row['ex_' + selLv + '_fa'] : row['ex_' + selLv + '_ku']}
               </div>
             )}
@@ -3809,7 +3840,7 @@ function SkillHexagon({ data, size = 240 }) {
       <defs>
         <radialGradient id="hexFill">
           <stop offset="0%" stopColor="#8B7CF6" stopOpacity="0.6"/>
-          <stop offset="100%" stopColor="#5B5BD6" stopOpacity="0.18"/>
+          <stop offset="100%" stopColor="var(--acc)" stopOpacity="0.18"/>
         </radialGradient>
       </defs>
       {[0.25,0.5,0.75,1].map((frac,gi) => (
@@ -3960,9 +3991,9 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         onClick={()=>{ if(setSpielInitialGame) setSpielInitialGame('journey'); if(setTab) setTab('spiel'); }}
         style={{ backgroundImage:"linear-gradient(180deg,rgba(20,15,45,.35) 0%,rgba(20,15,45,.15) 45%,rgba(10,10,25,.8) 100%), url(/journey-banner.jpg)",
           backgroundSize:"cover", backgroundPosition:"center 35%",
-          borderRadius:22, padding:"18px 22px 18px", cursor:"pointer",
+          borderRadius:28, padding:"18px 22px 18px", cursor:"pointer",
           minHeight:180, display:"flex", flexDirection:"column", justifyContent:"space-between",
-          boxShadow:"0 6px 28px rgba(102,126,234,.38)", transition:"transform .2s, box-shadow .2s",
+          boxShadow:"var(--sh-dark)", transition:"transform .2s, box-shadow .2s",
           position:"relative", overflow:"hidden" }}>
         <div style={{ position:"relative", zIndex:1, fontWeight:900, fontSize:22, color:"#fff",
           letterSpacing:"-.3px", textShadow:"0 2px 10px rgba(0,0,0,.4)" }}>
@@ -3971,8 +4002,8 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         <div style={{ position:"relative", zIndex:1 }}>
           {/* Progress bar */}
           <div style={{ height:8, background:"rgba(255,255,255,.22)", borderRadius:99, overflow:"hidden" }}>
-            <div style={{ height:"100%", width:`${journeyPct}%`, background:"linear-gradient(90deg,#FFB36B,#FF8A3D)",
-              borderRadius:99, boxShadow:"0 0 10px rgba(255,138,61,.7)", transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
+            <div style={{ height:"100%", width:`${journeyPct}%`, background:"linear-gradient(90deg,var(--acc-lt),var(--acc))",
+              borderRadius:99, boxShadow:"0 0 10px rgba(22,40,58,.35)", transition:"width .6s", minWidth:journeyPct>0?6:0 }}/>
           </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:5 }}>
             <div style={{ fontSize:12, color:"rgba(255,255,255,.55)" }}>
@@ -3985,9 +4016,9 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
 
       {/* ── Progress board: level pyramid + skill hexagon (real data) ── */}
       <div style={{
-        background:"linear-gradient(160deg,#14102E 0%,#1B1240 60%,#0E0B24 100%)",
-        borderRadius:22, padding:"20px 18px 24px", marginTop:20,
-        boxShadow:"0 6px 28px rgba(20,10,50,.35)", position:"relative", overflow:"hidden",
+        background:"var(--surface-dark)", color:"var(--ice)",
+        borderRadius:28, padding:"20px 18px 24px", marginTop:20,
+        boxShadow:"var(--sh-dark)", position:"relative", overflow:"hidden",
       }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
           <div style={{ fontWeight:800, fontSize:16, color:"#fff" }}>{ht.heading}</div>
@@ -4025,7 +4056,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           </div>
           <div style={{ height:6, background:"rgba(255,255,255,.12)", borderRadius:3, overflow:"hidden", maxWidth:220, margin:"0 auto" }}>
             <div style={{ height:"100%", width:`${levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}%`,
-              background:"linear-gradient(90deg,#8B7CF6,#5B5BD6)", borderRadius:3, transition:"width .6s" }} />
+              background:"linear-gradient(90deg,var(--acc),var(--acc-btn))", borderRadius:3, transition:"width .6s" }} />
           </div>
         </div>
       </div>
@@ -4041,8 +4072,8 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
   const CARD_CFG = [
     { from:"#FF7E2E", to:"#FF3B8C", Icon:BookOpen,      descKey:"lv_desc_0" },
     { from:"#FF3B8C", to:"#C040E0", Icon:Star,           descKey:"lv_desc_1" },
-    { from:"#8B5CF6", to:"#6D28D9", Icon:Target,         descKey:"lv_desc_2" },
-    { from:"#6D28D9", to:"#3B52F5", Icon:TrendingUp,     descKey:"lv_desc_3" },
+    { from:"var(--acc)", to:"var(--acc-dk)", Icon:Target,         descKey:"lv_desc_2" },
+    { from:"var(--acc-dk)", to:"#3B52F5", Icon:TrendingUp,     descKey:"lv_desc_3" },
     { from:"#3B82F6", to:"#1E9EF1", Icon:GraduationCap,  descKey:"lv_desc_4" },
     { from:"#1E9EF1", to:"#31D4CF", Icon:Trophy,         descKey:"lv_desc_5" },
   ];
@@ -4053,7 +4084,8 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
     const done = lvLessons.filter((l) => (progress[l.id] || 0) >= 95).length;
     const pct = lvLessons.length > 0 ? Math.round((done / lvLessons.length) * 100) : 0;
     const vocabCount = lvLessons.reduce((n, l) => n + l.words.length, 0);
-    return { ...lv, ...cfg, lessonCount: lvLessons.length, vocabCount, pct };
+    const pal = LEVEL_PALETTE[lv.id];
+    return { ...lv, ...cfg, from: `color-mix(in srgb, ${pal.acc} 55%, ${pal.dk})`, to: pal.dk, lessonCount: lvLessons.length, vocabCount, pct };
   });
 
   // SVG ring for header
@@ -4080,12 +4112,12 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
     <div className="rise">
       <style>{`
         .step-card { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s ease; cursor:pointer; }
-        .step-card:hover { transform: translateY(-5px); box-shadow: 0 10px 0 rgba(0,0,0,.1), 0 24px 52px rgba(0,0,0,.13) !important; }
+        .step-card:hover { transform: translateY(-5px); box-shadow: var(--sh-lift) !important; }
         .step-card:hover .step-cta { opacity:1; transform:translateX(0); }
         .step-cta { opacity:.6; transform:translateX(4px); transition: opacity .2s, transform .2s; }
       `}</style>
 
-      <h2 style={{ fontWeight:800, fontSize:24, margin:"0 0 18px", color:"#1A1F2E", letterSpacing:"-.02em" }}>
+      <h2 style={{ fontWeight:800, fontSize:24, margin:"0 0 18px", color:"var(--ink)", letterSpacing:"-.02em" }}>
         {tApp(lang,"nav_levels")}
       </h2>
 
@@ -4124,8 +4156,8 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
             <div style={{ padding:"14px 14px 16px" }}>
               {/* icon box */}
               <div style={{ width:42, height:42, borderRadius:13,
-                background:`linear-gradient(135deg,${lv.from}18 0%,${lv.to}18 100%)`,
-                border:`1.5px solid ${lv.from}28`,
+                background:`linear-gradient(135deg,${A(lv.from,"18")} 0%,${A(lv.to,"18")} 100%)`,
+                border:`1.5px solid ${A(lv.from,"28")}`,
                 display:"grid", placeItems:"center", marginBottom:10 }}>
                 <lv.Icon size={20} color={lv.from} />
               </div>
@@ -4137,10 +4169,10 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
 
               {/* stats pills */}
               <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:12 }}>
-                <span style={{ fontSize:12.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
+                <span style={{ fontSize:12.5, fontWeight:700, color:"var(--muted)", background:"var(--surface-hi)", borderRadius:99, padding:"2px 8px" }}>
                   {lv.lessonCount} {STAT_LABEL.lesson[lang] || STAT_LABEL.lesson.ku}
                 </span>
-                <span style={{ fontSize:12.5, fontWeight:700, color:"#71717A", background:"#F4F4F5", borderRadius:99, padding:"2px 8px" }}>
+                <span style={{ fontSize:12.5, fontWeight:700, color:"var(--muted)", background:"var(--surface-hi)", borderRadius:99, padding:"2px 8px" }}>
                   {lv.vocabCount} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}
                 </span>
               </div>
@@ -4243,15 +4275,15 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
         const chosen = answers[i];
         return (
           <div key={i} style={{ ...CARD, padding:"14px 16px", marginBottom:10 }}>
-            <div style={{ fontWeight:700, fontSize:13.5, color:"#1A1F2E", marginBottom:10, lineHeight:1.65 }} dir="ltr">
+            <div style={{ fontWeight:700, fontSize:13.5, color:"var(--ink)", marginBottom:10, lineHeight:1.65 }} dir="ltr">
               {i + 1}. {q.q}
             </div>
             {q.options.map((opt, j) => {
-              let bg = "#F8F9FC", border = "1.5px solid #E4E8F0", color = "#1A1F2E";
+              let bg = "#F8F9FC", border = "1.5px solid #E4E8F0", color = "var(--ink)";
               if (reviewed) {
                 if (j === q.correct)      { bg = "rgba(16,185,129,.12)";  border = "1.5px solid #10b981"; color = "#065f46"; }
                 else if (j === chosen)    { bg = "rgba(239,68,68,.1)";    border = "1.5px solid #ef4444"; color = "#991b1b"; }
-              } else if (j === chosen)    { bg = "rgba(91,91,214,.1)";    border = "1.5px solid #5B5BD6"; color = "#3730a3"; }
+              } else if (j === chosen)    { bg = "color-mix(in srgb, var(--acc) 10%, transparent)";    border = "1.5px solid var(--acc)"; color = "#3730a3"; }
               return (
                 <button key={j}
                   onClick={() => !reviewed && setAnswers(a => ({ ...a, [i]: j }))}
@@ -4265,7 +4297,7 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
               );
             })}
             {reviewed && q.why && (
-              <div style={{ marginTop:6, background:"rgba(91,91,214,.06)", borderRadius:8, padding:"7px 10px", fontSize:12, color:"#4338ca", fontWeight:600, lineHeight:1.7 }}>
+              <div style={{ marginTop:6, background:"color-mix(in srgb, var(--acc) 6%, transparent)", borderRadius:8, padding:"7px 10px", fontSize:12, color:"#4338ca", fontWeight:600, lineHeight:1.7 }}>
                 💡 {q.why}
               </div>
             )}
@@ -4276,7 +4308,7 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
       {!reviewed ? (
         <button onClick={check}
           disabled={Object.keys(answers).length < shuffled.length}
-          style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor: Object.keys(answers).length < shuffled.length ? "default" : "pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background: Object.keys(answers).length < shuffled.length ? "#E4E4E8" : "linear-gradient(135deg,#f59e0b,#d97706)", color: Object.keys(answers).length < shuffled.length ? "#A1A1AA" : "#fff", marginTop:4 }}>
+          style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor: Object.keys(answers).length < shuffled.length ? "default" : "pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background: Object.keys(answers).length < shuffled.length ? "var(--line)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: Object.keys(answers).length < shuffled.length ? "#A1A1AA" : "#fff", marginTop:4 }}>
           {tApp(lang,"quiz_check")}
         </button>
       ) : (
@@ -4284,7 +4316,7 @@ function StaticExercise({ questions = [], pct = 0, onBatch, lang = "ku" }) {
           <div style={{ textAlign:"center", padding:"14px", background: correctCount >= shuffled.length * 0.7 ? "rgba(16,185,129,.1)" : "rgba(239,68,68,.08)", borderRadius:12, color: correctCount >= shuffled.length * 0.7 ? "#065f46" : "#991b1b", fontWeight:700, fontSize:15 }}>
             {correctCount >= shuffled.length * 0.7 ? tApp(lang,"quiz_good") : tApp(lang,"quiz_study")} — {correctCount}/{shuffled.length} {tApp(lang,"quiz_right")}
           </div>
-          <button onClick={startQuiz} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff" }}>
+          <button onClick={startQuiz} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,var(--acc-btn),#818cf8)", color:"#fff" }}>
             {tApp(lang,"quiz_retry")}
           </button>
         </div>
@@ -4645,10 +4677,10 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
       {/* ── Accordion header ── */}
       <div
         onClick={onToggle}
-        style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: open ? "rgba(91,91,214,.04)" : "#fff", transition:"background .15s" }}
+        style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: open ? "color-mix(in srgb, var(--acc) 4%, transparent)" : "#fff", transition:"background .15s" }}
       >
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 3px 10px rgba(91,91,214,.28)" }}>
+          <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,var(--acc-btn),#818cf8)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 3px 10px color-mix(in srgb, var(--acc) 28%, transparent)" }}>
             <span style={{ fontSize:18 }}>🧩</span>
           </div>
           <div>
@@ -4660,7 +4692,7 @@ function DragDropExercise({ exercises = A1_DRAG_EXERCISES, lang = "ku", open = f
       </div>
 
       {/* ── Collapsible content ── */}
-      <div style={{ padding:"14px 18px 18px", borderTop:"1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding:"14px 18px 18px", borderTop:"1px solid var(--line)", display: open ? "" : "none" }}>
         <SbQuiz exercises={exercises} lang={lang} />
       </div>
     </div>
@@ -4827,7 +4859,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
   }
 
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
         {lang==="tr" ? `Alıştırma ${idx+1} · Doğru başlığı her metnin üzerine sürükle` : lang==="en" ? `Exercise ${idx+1} · Drag the correct title onto each text` : lang==="ar" ? `تمرين ${idx+1} · اسحب العنوان الصحيح فوق كل نص` : lang === "fa" ? `تمرین ${idx+1} · عنوان درست را روی هر متن بکشید` : lang === "es" ? `Ejercicio ${idx+1} · Arrastra el título correcto sobre cada texto` : lang==="uk" ? `Вправа ${idx+1} · Перетягніть правильний заголовок на кожен текст` : `تاقیکردنەوە ${idx+1} · سەردێڕی دروست بکێشە بۆ سەر هەر دەقێک`}
       </div>
@@ -4842,7 +4874,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
               onDragOver={onDragOver}
               onDrop={e => handleSlotDrop(ti, e)}
               onClick={() => handleSlotClick(ti)}
-              style={{ border: `2px ${hasPl ? "solid" : "dashed"} ${isCorrect ? "#22C55E" : isWrong ? "#EF4444" : hasPl ? "#5B5BD6" : "#C9CDD8"}`,
+              style={{ border: `2px ${hasPl ? "solid" : "dashed"} ${isCorrect ? "#22C55E" : isWrong ? "#EF4444" : hasPl ? "var(--acc)" : "#C9CDD8"}`,
                 borderRadius: 11, padding: 12, cursor: "pointer",
                 background: isCorrect ? "#F0FDF4" : isWrong ? "#FEF2F2" : hasPl ? "#F5F6FF" : "#fff" }}
             >
@@ -4852,7 +4884,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
                     draggable={!revealed}
                     onDragStart={!revealed ? () => handleOptDragStart(placed, ti) : undefined}
                     style={{ background: isCorrect ? "#DCFCE7" : isWrong ? "#FEE2E2" : "#EEF0FF",
-                      color: isCorrect ? "#16A34A" : isWrong ? "#DC2626" : "#5B5BD6",
+                      color: isCorrect ? "#16A34A" : isWrong ? "#DC2626" : "var(--acc)",
                       borderRadius: 7, padding: "3px 10px", fontSize: 13, fontWeight: 700,
                       cursor: revealed ? "default" : "grab", display: "inline-block" }}
                   >
@@ -4864,7 +4896,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "#1A1F2E" }} dir="ltr">{textObj.body}</div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "var(--ink)" }} dir="ltr">{textObj.body}</div>
             </div>
           );
         })}
@@ -4881,9 +4913,9 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
               onClick={() => !revealed && handleOptClick(oi)}
               style={{ opacity: isPlaced ? 0.3 : 1, pointerEvents: revealed ? "none" : "auto",
                 cursor: isPlaced ? "not-allowed" : "grab",
-                background: isSel ? "#5B5BD6" : "#fff",
+                background: isSel ? "var(--acc)" : "#fff",
                 color: isSel ? "#fff" : "#1A1F2E",
-                border: `1.5px solid ${isSel ? "#5B5BD6" : "#E4E4E8"}`,
+                border: `1.5px solid ${isSel ? "var(--acc)" : "var(--line)"}`,
                 borderRadius: 8, padding: "5px 12px", fontSize: 13, fontWeight: 600, userSelect: "none" }}
             >
               {opt}
@@ -4895,7 +4927,7 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
         <button onClick={() => setRevealed(true)} disabled={!allFilled}
           style={{ marginTop: 12, width: "100%", padding: "9px", borderRadius: 10, border: "none",
             cursor: allFilled ? "pointer" : "not-allowed",
-            background: allFilled ? "#5B5BD6" : "#E4E4E8",
+            background: allFilled ? "var(--acc)" : "var(--line)",
             color: allFilled ? "#fff" : "#9CA3AF", fontWeight: 700, fontSize: 14 }}>
           {allFilled ? `✓ ${DONE_WORD[lang] || "تەواو"}` : `${Object.keys(placements).length} / ${ex.texts.length} ${tApp(lang,"ubung_filled")}`}
         </button>
@@ -4905,8 +4937,8 @@ function LesenAItem({ ex, idx, lang = "ku" }) {
             {score} / {ex.texts.length} ✓
           </div>
           <button onClick={reset}
-            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid #E4E4E8",
-              background: "#fff", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
+            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid var(--line)",
+              background: "var(--surface)", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
             {tApp(lang,"ubung_reset")}
           </button>
         </div>
@@ -4934,7 +4966,7 @@ function LesenASection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_LESEN_A.map((ex, idx) => (
           <LesenAItem key={ex.id} ex={ex} idx={idx} lang={lang} />
         ))}
@@ -4959,12 +4991,12 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
   }
 
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>
         {lang==="tr" ? `Alıştırma ${idx+1} · Metni okuyun, ardından her cümle için «Richtig» ya da «Falsch» seçin` : lang==="en" ? `Exercise ${idx+1} · Read the text, then choose «Richtig» or «Falsch» for each sentence` : lang==="ar" ? `تمرين ${idx+1} · اقرأ النص، ثم اختر «Richtig» أو «Falsch» لكل جملة` : lang === "fa" ? `تمرین ${idx+1} · متن را بخوانید، سپس برای هر جمله «Richtig» یا «Falsch» را انتخاب کنید` : lang === "es" ? `Ejercicio ${idx+1} · Lee el texto y elige «Richtig» o «Falsch» para cada frase` : lang==="uk" ? `Вправа ${idx+1} · Прочитайте текст, потім оберіть «Richtig» або «Falsch» для кожного речення` : `تاقیکردنەوە ${idx+1} · دەقەکە بخوێنەرەوە، پاشان بۆ هەر رستەیەک «Richtig» یان «Falsch» کلیک بکە`}
       </div>
-      <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #E4E4E8", padding: 12, marginBottom: 12,
-        fontSize: 13.5, lineHeight: 1.85, color: "#1A1F2E", whiteSpace: "pre-line" }} dir="ltr">
+      <div style={{ background: "var(--surface)", borderRadius: 10, border: "1px solid var(--line)", padding: 12, marginBottom: 12,
+        fontSize: 13.5, lineHeight: 1.85, color: "var(--ink)", whiteSpace: "pre-line" }} dir="ltr">
         {ex.mainText}
       </div>
       <div style={{ display: "grid", gap: 10, marginBottom: 12 }}>
@@ -4973,10 +5005,10 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
           const isCorrect = revealed && p !== undefined && (p === "r") === st.answer;
           const isWrong   = revealed && p !== undefined && (p === "r") !== st.answer;
           const bg = isCorrect ? "#F0FDF4" : isWrong ? "#FEF2F2" : "#fff";
-          const border = isCorrect ? "#22C55E" : isWrong ? "#EF4444" : "#E4E4E8";
+          const border = isCorrect ? "#22C55E" : isWrong ? "#EF4444" : "var(--line)";
           return (
             <div key={si} style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 11, padding: "10px 12px" }}>
-              <div style={{ fontSize: 13.5, color: "#1A1F2E", lineHeight: 1.6, marginBottom: 8 }} dir="ltr">
+              <div style={{ fontSize: 13.5, color: "var(--ink)", lineHeight: 1.6, marginBottom: 8 }} dir="ltr">
                 {st.text}
                 {revealed && isWrong && (
                   <span style={{ fontSize: 12, color: "#15803D", fontWeight: 700, marginInlineStart: 8 }}>
@@ -4993,7 +5025,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
                     <button key={val} onClick={() => pick(si, val)} disabled={revealed}
                       style={{ flex: 1, padding: "7px 0", borderRadius: 9, fontWeight: 800, fontSize: 13.5,
                         cursor: revealed ? "default" : "pointer", transition: "all .15s",
-                        border: `2px solid ${isSelected ? selBorder : "#E4E4E8"}`,
+                        border: `2px solid ${isSelected ? selBorder : "var(--line)"}`,
                         background: isSelected ? selBg : "#F6F7FA",
                         color: isSelected ? clr : "#6B7280" }}>
                       {label}{showResult && (isCorrect ? " ✓" : " ✗")}
@@ -5009,7 +5041,7 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
         <button onClick={() => setRevealed(true)} disabled={!allFilled}
           style={{ marginTop: 4, width: "100%", padding: "9px", borderRadius: 10, border: "none",
             cursor: allFilled ? "pointer" : "not-allowed",
-            background: allFilled ? "#5B5BD6" : "#E4E4E8",
+            background: allFilled ? "var(--acc)" : "var(--line)",
             color: allFilled ? "#fff" : "#9CA3AF", fontWeight: 700, fontSize: 14 }}>
           {allFilled ? `✓ ${DONE_WORD[lang] || "تەواو"}` : `${Object.keys(picks).length} / ${ex.statements.length} ${tApp(lang,"ubung_filled")}`}
         </button>
@@ -5019,8 +5051,8 @@ function LesenBItem({ ex, idx, lang = "ku" }) {
             {score} / {ex.statements.length} ✓
           </div>
           <button onClick={reset}
-            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid #E4E4E8",
-              background: "#fff", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
+            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid var(--line)",
+              background: "var(--surface)", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
             {tApp(lang,"ubung_reset")}
           </button>
         </div>
@@ -5048,7 +5080,7 @@ function LesenBSection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_LESEN_B.map((ex, idx) => (
           <LesenBItem key={ex.id} ex={ex} idx={idx} lang={lang} />
         ))}
@@ -5079,7 +5111,7 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
   }
 
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 12 }}>
         {lang==="tr" ? `Alıştırma ${idx + 1} · Her durum için doğru seçeneği seç` : lang==="en" ? `Exercise ${idx + 1} · Choose the correct option for each situation` : lang==="ar" ? `تمرين ${idx + 1} · اختر الخيار الصحيح لكل موقف` : lang === "fa" ? `تمرین ${idx + 1} · برای هر موقعیت گزینهٔ درست را انتخاب کنید` : lang === "es" ? `Ejercicio ${idx + 1} · Elige la opción correcta para cada situación` : lang==="uk" ? `Вправа ${idx + 1} · Оберіть правильний варіант для кожної ситуації` : `تاقیکردنەوە ${idx + 1} · بۆ هەر دۆخێک هەڵبژاردەی دروست کلیک بکە`}
       </div>
@@ -5087,8 +5119,8 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
         {ex.questions.map((q, qi) => {
           const pick = picks[qi];
           return (
-            <div key={qi} style={{ background: "#fff", borderRadius: 11, border: "1px solid #E4E4E8", padding: 12 }}>
-              <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1A1F2E", marginBottom: 3, lineHeight: 1.6 }} dir="ltr">{q.situation}</div>
+            <div key={qi} style={{ background: "var(--surface)", borderRadius: 11, border: "1px solid var(--line)", padding: 12 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--ink)", marginBottom: 3, lineHeight: 1.6 }} dir="ltr">{q.situation}</div>
               {lang !== "tr" && <div style={{ fontSize: 12, color: C.muted, marginBottom: 10 }}>{q.situKu}</div>}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {[["a", q.optA, q.descA], ["b", q.optB, q.descB]].map(([letter, url, desc]) => {
@@ -5099,16 +5131,16 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
                   return (
                     <div key={letter} onClick={() => select(qi, letter)}
                       style={{ borderRadius: 10, padding: "10px 12px", cursor: revealed ? "default" : "pointer",
-                        border: `2px solid ${isCorrect ? "#22C55E" : isWrong ? "#EF4444" : isMissed ? "#22C55E" : isSel ? "#5B5BD6" : "#E4E4E8"}`,
+                        border: `2px solid ${isCorrect ? "#22C55E" : isWrong ? "#EF4444" : isMissed ? "#22C55E" : isSel ? "var(--acc)" : "var(--line)"}`,
                         background: isCorrect ? "#F0FDF4" : isWrong ? "#FEF2F2" : isMissed ? "#F0FDF4" : isSel ? "#EEF0FF" : "#F6F7FA",
                         transition: "all .15s", userSelect: "none" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                         <div style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center",
-                          background: isCorrect ? "#22C55E" : isWrong ? "#EF4444" : isMissed ? "#22C55E" : isSel ? "#5B5BD6" : "#E4E4E8",
+                          background: isCorrect ? "#22C55E" : isWrong ? "#EF4444" : isMissed ? "#22C55E" : isSel ? "var(--acc)" : "var(--line)",
                           color: "#fff", fontSize: 12, fontWeight: 800 }}>
                           {isCorrect ? "✓" : isWrong ? "✗" : isMissed ? "✓" : letter.toUpperCase()}
                         </div>
-                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "#1A1F2E", wordBreak: "break-all" }} dir="ltr">{url}</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink)", wordBreak: "break-all" }} dir="ltr">{url}</div>
                       </div>
                       <div style={{ fontSize: 12.5, color: C.muted, lineHeight: 1.5, paddingInlineStart: 28 }}>{desc}</div>
                     </div>
@@ -5123,7 +5155,7 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
         <button onClick={() => setRevealed(true)} disabled={!allFilled}
           style={{ marginTop: 14, width: "100%", padding: "9px", borderRadius: 10, border: "none",
             cursor: allFilled ? "pointer" : "not-allowed",
-            background: allFilled ? "#5B5BD6" : "#E4E4E8",
+            background: allFilled ? "var(--acc)" : "var(--line)",
             color: allFilled ? "#fff" : "#9CA3AF", fontWeight: 700, fontSize: 14 }}>
           {allFilled ? `✓ ${DONE_WORD[lang] || "تەواو"}` : `${Object.keys(picks).length} / ${ex.questions.length} ${tApp(lang,"ubung_filled")}`}
         </button>
@@ -5133,8 +5165,8 @@ function LesenCItem({ ex, idx, lang = "ku" }) {
             {score} / {ex.questions.length} ✓
           </div>
           <button onClick={reset}
-            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid #E4E4E8",
-              background: "#fff", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
+            style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1.5px solid var(--line)",
+              background: "var(--surface)", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
             {tApp(lang,"ubung_reset")}
           </button>
         </div>
@@ -5162,7 +5194,7 @@ function LesenCSection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_LESEN_C.map((ex, idx) => (
           <LesenCItem key={ex.id} ex={ex} idx={idx} lang={lang} />
         ))}
@@ -5387,11 +5419,11 @@ function SchreibenAItem({ ex, idx, lang = "ku" }) {
   const shownCount = Object.values(shown).filter(Boolean).length;
   const allShown = shownCount === ex.fields.length;
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>
         {lang==="tr" ? `Alıştırma ${idx+1} · ` : lang==="uk" ? `Вправа ${idx+1} · ` : lang==="es" ? `Ejercicio ${idx+1} · ` : `تاقیکردنەوە ${idx+1} · `}<span dir="ltr">{ex.title}</span> · {lang==="tr" ? (ex.titleTr||ex.titleKu) : lang==="en" ? (ex.titleEn||ex.titleKu) : lang==="ar" ? (ex.titleAr||ex.titleKu) : lang==="uk" ? (ex.titleUk||ex.titleEn||ex.titleKu) : lang==="fa" ? (ex.titleFa||ex.titleEn||ex.titleKu) : lang==="es" ? (ex.titleEs||ex.titleEn||ex.titleKu) : ex.titleKu}
       </div>
-      <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13, lineHeight: 1.75 }} dir="ltr">
+      <div style={{ background: "var(--surface-hi)", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13, lineHeight: 1.75 }} dir="ltr">
         {ex.personInfo}
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.personInfoTr||ex.personInfoKu) : lang==="en" ? (ex.personInfoEn||ex.personInfoKu) : lang==="ar" ? (ex.personInfoAr||ex.personInfoKu) : lang === "es" ? (ex.personInfoEs||ex.personInfoKu) : lang==="uk" ? (ex.personInfoUk||ex.personInfoEn||ex.personInfoKu) : lang==="fa" ? (ex.personInfoFa||ex.personInfoEn||ex.personInfoKu) : ex.personInfoKu}</div>
@@ -5399,8 +5431,8 @@ function SchreibenAItem({ ex, idx, lang = "ku" }) {
         {ex.fields.map((f, i) => (
           <div key={i} onClick={() => toggleField(i)}
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, alignItems: "center",
-              background: "#fff", borderRadius: 8, padding: "8px 12px", cursor: "pointer",
-              border: `1.5px solid ${shown[i] ? "#86EFAC" : "#E4E4E8"}`, transition: "all .15s" }}>
+              background: "var(--surface)", borderRadius: 8, padding: "8px 12px", cursor: "pointer",
+              border: `1.5px solid ${shown[i] ? "#86EFAC" : "var(--line)"}`, transition: "all .15s" }}>
             <div style={{ fontSize: 12.5, fontWeight: 600, color: C.muted }} dir="ltr">{f.label}</div>
             <div style={{ fontSize: 13, fontWeight: shown[i] ? 700 : 400, color: shown[i] ? "#16A34A" : "#C0C0C8" }} dir="ltr">
               {shown[i] ? f.answer : "· · · · ·"}
@@ -5411,8 +5443,8 @@ function SchreibenAItem({ ex, idx, lang = "ku" }) {
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <button onClick={allShown ? reset : showAll}
           style={{ flex: 1, padding: "8px", borderRadius: 9, border: "none",
-            background: allShown ? "#F0F0F5" : "#5B5BD6",
-            color: allShown ? "#71717A" : "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+            background: allShown ? "#F0F0F5" : "var(--acc)",
+            color: allShown ? "var(--muted)" : "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
           {allShown ? tApp(lang,"ubung_reset") : `✓ ${DONE_WORD[lang] || "تەواو"}`}
         </button>
         <span style={{ fontSize: 12, color: C.muted, flexShrink: 0 }}>{shownCount} / {ex.fields.length}</span>
@@ -5430,7 +5462,7 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
       <div onClick={onToggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", cursor: "pointer", userSelect: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 38, height: 38, borderRadius: 11, background: "#EEF0FF", display: "grid", placeItems: "center" }}>
+          <div style={{ width: 38, height: 38, borderRadius: 11, background: "var(--surface-hi)", display: "grid", placeItems: "center" }}>
             <span style={{ fontSize: 18 }}>📝</span>
           </div>
           <div>
@@ -5440,7 +5472,7 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_SCHREIBEN_A.map((ex, idx) => <SchreibenAItem key={ex.id} ex={ex} idx={idx} lang={lang} />)}
       </div>
     </div>
@@ -5451,7 +5483,7 @@ function SchreibenASection({ lang = "ku", open = false, onToggle }) {
 function SchreibenBItem({ ex, idx, lang = "ku" }) {
   const [showModel, setShowModel] = useState(false);
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF7E6", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75 }} dir="ltr">
         {ex.task}
@@ -5475,9 +5507,9 @@ function SchreibenBItem({ ex, idx, lang = "ku" }) {
       </div>
       <button onClick={() => setShowModel(s => !s)}
         style={{ width: "100%", padding: "9px", borderRadius: 9,
-          border: `1.5px solid #5B5BD6`,
-          background: showModel ? "#5B5BD6" : "#fff",
-          color: showModel ? "#fff" : "#5B5BD6",
+          border: `1.5px solid var(--acc)`,
+          background: showModel ? "var(--acc)" : "#fff",
+          color: showModel ? "#fff" : "var(--acc)",
           fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
         {showModel ? (lang==="tr" ? "▲ Kapat" : lang==="en" ? "▲ Close" : lang==="ar" ? "▲ إغلاق" : lang === "es" ? "▲ Cerrar" : lang === "uk" ? "▲ Закрити" : lang === "fa" ? "▲ بستن" : "▲ داخستن") : (lang==="tr" ? "▼ Örnek cevap — Musterlösung" : lang==="en" ? "▼ Sample answer — Musterlösung" : lang==="ar" ? "▼ إجابة نموذجية — Musterlösung" : lang === "es" ? "▼ Respuesta modelo — Musterlösung" : lang === "uk" ? "▼ Зразок відповіді — Musterlösung" : lang === "fa" ? "▼ نمونه پاسخ — Musterlösung" : "▼ نموونەی وەڵام — Musterlösung")}
       </button>
@@ -5511,7 +5543,7 @@ function SchreibenBSection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_SCHREIBEN_B.map((ex, idx) => <SchreibenBItem key={ex.id} ex={ex} idx={idx} lang={lang} />)}
       </div>
     </div>
@@ -5525,10 +5557,10 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
   function openAll() { const a = {}; ex.prompts.forEach((_, i) => a[i] = true); setOpenCards(a); }
   function closeAll() { setOpenCards({}); }
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FDF4FF", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12.5, border: "1px solid #E9D5FF" }}>
-        <span style={{ fontWeight: 700, color: "#7C3AED" }}>{ex.person}</span>
+        <span style={{ fontWeight: 700, color: "var(--acc-dk)" }}>{ex.person}</span>
         <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{lang==="tr" ? (ex.personTr||ex.personKu) : lang==="en" ? (ex.personEn||ex.personKu) : lang==="ar" ? (ex.personAr||ex.personKu) : lang === "es" ? (ex.personEs||ex.personKu) : lang==="uk" ? (ex.personUk||ex.personEn||ex.personKu) : lang==="fa" ? (ex.personFa||ex.personEn||ex.personKu) : ex.personKu}</div>
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? "Her karta tıklayarak örneği gör:" : lang==="en" ? "Tap each card to see the example:" : lang==="ar" ? "انقر كل بطاقة لرؤية المثال:" : lang === "es" ? "Toca cada tarjeta para ver el ejemplo:" : lang === "uk" ? "Торкніться кожної картки, щоб побачити приклад:" : lang === "fa" ? "روی هر کارت بزنید تا مثال را ببینید:" : "هەر کارتێک کلیک بکە نموونەکە ببینیت:"}</div>
@@ -5536,9 +5568,9 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
         {ex.prompts.map((p, i) => (
           <div key={i} onClick={() => toggle(i)}
             style={{ background: openCards[i] ? "#F0FDF4" : "#fff",
-              border: `1.5px solid ${openCards[i] ? "#86EFAC" : "#E4E4E8"}`,
+              border: `1.5px solid ${openCards[i] ? "#86EFAC" : "var(--line)"}`,
               borderRadius: 10, padding: "10px 12px", cursor: "pointer", transition: "all .15s", userSelect: "none" }}>
-            <div style={{ fontSize: 12.5, fontWeight: 700, color: openCards[i] ? "#16A34A" : "#7C3AED" }}>{p.topic}</div>
+            <div style={{ fontSize: 12.5, fontWeight: 700, color: openCards[i] ? "#16A34A" : "var(--acc-dk)" }}>{p.topic}</div>
             <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }} dir="ltr">{p.question}</div>
             {openCards[i] && (
               <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid #86EFAC" }}>
@@ -5551,11 +5583,11 @@ function MündlichAItem({ ex, idx, lang = "ku" }) {
       </div>
       <div style={{ display: "flex", gap: 8 }}>
         <button onClick={openAll}
-          style={{ flex: 1, padding: "7px", borderRadius: 8, border: "none", background: "#7C3AED", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+          style={{ flex: 1, padding: "7px", borderRadius: 8, border: "none", background: "var(--acc-dk)", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
           {lang==="tr" ? "✓ Tüm örnekler" : lang==="en" ? "✓ All examples" : lang==="ar" ? "✓ كل الأمثلة" : lang === "es" ? "✓ Todos los ejemplos" : lang === "uk" ? "✓ Усі приклади" : lang === "fa" ? "✓ همه مثال‌ها" : "✓ هەموو نموونەکان"}
         </button>
         <button onClick={closeAll}
-          style={{ flex: 1, padding: "7px", borderRadius: 8, border: "1.5px solid #E4E4E8", background: "#fff", color: C.muted, fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+          style={{ flex: 1, padding: "7px", borderRadius: 8, border: "1.5px solid var(--line)", background: "var(--surface)", color: C.muted, fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
           {lang==="tr" ? "↺ Kapat" : lang==="en" ? "↺ Close" : lang==="ar" ? "↺ إغلاق" : lang === "es" ? "↺ Cerrar" : lang === "uk" ? "↺ Закрити" : lang === "fa" ? "↺ بستن" : "↺ داخستن"}
         </button>
       </div>
@@ -5582,7 +5614,7 @@ function MündlichASection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_MÜNDLICH_A.map((ex, idx) => <MündlichAItem key={ex.id} ex={ex} idx={idx} lang={lang} />)}
       </div>
     </div>
@@ -5593,16 +5625,16 @@ function MündlichASection({ lang = "ku", open = false, onToggle }) {
 function MündlichBItem({ ex, idx, lang = "ku" }) {
   const [showDlg, setShowDlg] = useState(false);
   return (
-    <div style={{ marginBottom: 16, background: "#F9F9FB", borderRadius: 14, border: "1.5px solid #E4E4E8", padding: 14 }}>
+    <div style={{ marginBottom: 16, background: "var(--surface-hi)", borderRadius: 14, border: "1.5px solid var(--line)", padding: 14 }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8 }}>{lang==="tr" ? `Alıştırma ${idx+1}` : lang==="en" ? `Exercise ${idx+1}` : lang==="ar" ? `تمرين ${idx+1}` : lang === "fa" ? `تمرین ${idx+1}` : lang === "es" ? `Ejercicio ${idx+1}` : lang==="uk" ? `Вправа ${idx+1}` : `تاقیکردنەوە ${idx+1}`}</div>
       <div style={{ background: "#FFF0F5", borderRadius: 10, padding: "10px 12px", marginBottom: 6, fontSize: 13.5, lineHeight: 1.75, border: "1px solid #FBCFE8" }} dir="ltr">
         {ex.scenario}
       </div>
       <div style={{ fontSize: 12.5, color: C.muted, marginBottom: 12 }}>{lang==="tr" ? (ex.scenarioTr||ex.scenarioKu) : lang==="en" ? (ex.scenarioEn||ex.scenarioKu) : lang==="ar" ? (ex.scenarioAr||ex.scenarioKu) : lang === "es" ? (ex.scenarioEs||ex.scenarioKu) : lang==="uk" ? (ex.scenarioUk||ex.scenarioEn||ex.scenarioKu) : lang==="fa" ? (ex.scenarioFa||ex.scenarioEn||ex.scenarioKu) : ex.scenarioKu}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
-        <div style={{ background: "#EEF0FF", borderRadius: 10, padding: "10px 12px" }}>
+        <div style={{ background: "var(--surface-hi)", borderRadius: 10, padding: "10px 12px" }}>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 2 }}>{lang==="tr" ? "Senin rolün" : lang==="en" ? "Your role" : lang==="ar" ? "دورك" : lang === "es" ? "Tu papel" : lang === "uk" ? "Твоя роль" : lang === "fa" ? "نقش تو" : "ڕۆڵی تۆ"}</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#5B5BD6" }}>{lang==="tr" ? (ex.yourRoleTr||ex.yourRoleKu) : lang==="en" ? (ex.yourRoleEn||ex.yourRoleKu) : lang==="ar" ? (ex.yourRoleAr||ex.yourRoleKu) : lang === "es" ? (ex.yourRoleEs||ex.yourRoleKu) : lang==="uk" ? (ex.yourRoleUk||ex.yourRoleEn||ex.yourRoleKu) : lang==="fa" ? (ex.yourRoleFa||ex.yourRoleEn||ex.yourRoleKu) : ex.yourRoleKu}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--acc-tx)" }}>{lang==="tr" ? (ex.yourRoleTr||ex.yourRoleKu) : lang==="en" ? (ex.yourRoleEn||ex.yourRoleKu) : lang==="ar" ? (ex.yourRoleAr||ex.yourRoleKu) : lang === "es" ? (ex.yourRoleEs||ex.yourRoleKu) : lang==="uk" ? (ex.yourRoleUk||ex.yourRoleEn||ex.yourRoleKu) : lang==="fa" ? (ex.yourRoleFa||ex.yourRoleEn||ex.yourRoleKu) : ex.yourRoleKu}</div>
           <div style={{ fontSize: 12.5, color: C.muted }} dir="ltr">{ex.yourRole}</div>
         </div>
         <div style={{ background: "#F5F5FA", borderRadius: 10, padding: "10px 12px" }}>
@@ -5615,7 +5647,7 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
         <div style={{ fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 6 }}>🗣️ {lang==="tr" ? "Bu ifadeleri kullanabilirsin:" : lang==="en" ? "You can use these phrases:" : lang==="ar" ? "يمكنك استخدام هذه العبارات:" : lang === "es" ? "Puedes usar estas frases:" : lang === "uk" ? "Ви можете використати ці фрази:" : lang === "fa" ? "می‌توانید از این عبارات استفاده کنید:" : "دەتوانیت ئەم ووتانەت بەکار بێنیت:"}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
           {ex.hints.map((h, i) => (
-            <span key={i} style={{ background: "#fff", border: "1.5px solid #E4E4E8", borderRadius: 8, padding: "4px 10px", fontSize: 12 }} dir="ltr">{h}</span>
+            <span key={i} style={{ background: "var(--surface)", border: "1.5px solid var(--line)", borderRadius: 8, padding: "4px 10px", fontSize: 12 }} dir="ltr">{h}</span>
           ))}
         </div>
       </div>
@@ -5634,14 +5666,14 @@ function MündlichBItem({ ex, idx, lang = "ku" }) {
             return (
               <div key={i} style={{ display: "flex", gap: 8, flexDirection: isYou ? "row-reverse" : "row", alignItems: "flex-start" }}>
                 <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
-                  background: isYou ? "#5B5BD6" : "#E4E4E8",
+                  background: isYou ? "var(--acc)" : "var(--line)",
                   color: isYou ? "#fff" : "#374151",
                   display: "grid", placeItems: "center", fontSize: 12, fontWeight: 800, letterSpacing: "-0.5px" }}>
                   {isYou ? "SIE" : d.speaker.substring(0, 3).toUpperCase()}
                 </div>
                 <div style={{ flex: 1, maxWidth: "80%" }}>
                   <div style={{ background: isYou ? "#EEF0FF" : "#fff",
-                    border: `1.5px solid ${isYou ? "#818cf8" : "#E4E4E8"}`,
+                    border: `1.5px solid ${isYou ? "#818cf8" : "var(--line)"}`,
                     borderRadius: 10, padding: "8px 12px" }}>
                     <div style={{ fontSize: 13, lineHeight: 1.6 }} dir="ltr">{d.de}</div>
                     <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{tC(d, lang)}</div>
@@ -5675,7 +5707,7 @@ function MündlichBSection({ lang = "ku", open = false, onToggle }) {
         </div>
         <span style={{ fontSize: 20, color: C.muted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .2s" }}>›</span>
       </div>
-      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid #E4E4E8", display: open ? "" : "none" }}>
+      <div style={{ padding: "4px 16px 16px", borderTop: "1px solid var(--line)", display: open ? "" : "none" }}>
         {A1_MÜNDLICH_B.map((ex, idx) => <MündlichBItem key={ex.id} ex={ex} idx={idx} lang={lang} />)}
       </div>
     </div>
@@ -5734,7 +5766,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
       <div style={{ marginTop: 26, background: C.card, borderRadius: 22, padding: "24px 20px", border: `1px solid ${C.line}`, boxShadow: "0 4px 24px rgba(0,0,0,.06)" }}>
         {/* header */}
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-          <div style={{ width:40, height:40, borderRadius:12, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 4px 12px rgba(91,91,214,.3)" }}>
+          <div style={{ width:40, height:40, borderRadius:12, background:"linear-gradient(135deg,var(--acc-btn),#818cf8)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 4px 12px color-mix(in srgb, var(--acc) 30%, transparent)" }}>
             <span style={{ fontSize:20 }}>🧠</span>
           </div>
           <div>
@@ -5753,7 +5785,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
           {[
             { label: lang === "tr" ? "Doğru" : lang === "en" ? "Correct" : lang === "ar" ? "صحيح" : lang === "es" ? "Correcto" : lang === "uk" ? "Правильно" : lang === "fa" ? "درست" : "وەڵامی ڕاست", val:"+١٪", color:"#0B8A63" },
             { label: lang === "tr" ? "Yanlış" : lang === "en" ? "Wrong" : lang === "ar" ? "خطأ" : lang === "es" ? "Incorrecto" : lang === "uk" ? "Неправильно" : lang === "fa" ? "غلط" : "وەڵامی هەڵە", val:"−١٪", color:"#C93A3F" },
-            { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "es" ? "Objetivo" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"#5B5BD6" },
+            { label: lang === "tr" ? "Hedef" : lang === "en" ? "Target" : lang === "ar" ? "الهدف" : lang === "es" ? "Objetivo" : lang === "uk" ? "Ціль" : lang === "fa" ? "هدف" : "ئامانج",       val:"٩٥٪",  color:"var(--acc-tx)" },
           ].map(r => (
             <div key={r.label} style={{ textAlign:"center" }}>
               <div style={{ fontWeight:700, fontSize:15, color:r.color }}>{r.val}</div>
@@ -5769,7 +5801,7 @@ function AITest({ subject, level, pct = 0, onBatch, hint, lang = "ku" }) {
         )}
 
         {/* button */}
-        <button onClick={generate} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,#5B5BD6,#818cf8)", color:"#fff", boxShadow:"0 4px 14px rgba(91,91,214,.35)" }}>
+        <button onClick={generate} style={{ width:"100%", padding:"13px", borderRadius:14, border:"none", cursor:"pointer", fontFamily:"'Vazirmatn',sans-serif", fontWeight:700, fontSize:15, background:"linear-gradient(135deg,var(--acc-btn),#818cf8)", color:"#fff", boxShadow:"0 4px 14px color-mix(in srgb, var(--acc) 35%, transparent)" }}>
           {pct > 0 ? tApp(lang,"ai_continue10") : tApp(lang,"ai_start")}
         </button>
       </div>
@@ -8430,14 +8462,14 @@ function ExamRunner({ provName, provDe, level, onClose, onScore, lang = "ku" }) 
   );
 }
 
-function ExpRenderer({ text, color = "#5B5BD6" }) {
+function ExpRenderer({ text, color = "var(--acc-tx)" }) {
   if (!text) return null;
 
   // pronoun → display label + color
   const PC = {
-    "ich": "#5B5BD6", "du": "#F5A524",
+    "ich": "var(--acc)", "du": "#F5A524",
     "er": "#16A06F",  "er/sie/es": "#16A06F", "er/sie": "#16A06F",
-    "wir": "#FF6B5E", "ihr": "#7C3AED",
+    "wir": "#FF6B5E", "ihr": "var(--acc-dk)",
     "sie": "#0F766E", "Sie": "#0F766E", "sie/Sie": "#0F766E",
     "man": "#94A3B8",
   };
@@ -8450,7 +8482,7 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
     const parts = str.split(/«([^»]+)»/);
     return parts.map((p, i) => i % 2 === 0
       ? <span key={i}>{p}</span>
-      : <span key={i} style={{ background:`${color}18`, color, fontWeight:700, borderRadius:6, padding:"1px 6px" }}>{p}</span>
+      : <span key={i} style={{ background:`${A(color,"18")}`, color, fontWeight:700, borderRadius:6, padding:"1px 6px" }}>{p}</span>
     );
   };
 
@@ -8468,13 +8500,13 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
       const content = seg.slice(seg.indexOf(":") + 1).trim();
       const parts = content.includes("→") ? content.split("→").map(s => s.trim()) : [content];
       return (
-        <div key={si} style={{ background:`${color}07`, border:`1.5px solid ${color}20`, borderRadius:16, padding:"13px 16px" }}>
+        <div key={si} style={{ background:`${A(color,"07")}`, border:`1.5px solid ${A(color,"20")}`, borderRadius:16, padding:"13px 16px" }}>
           <div style={{ fontSize:12, fontWeight:800, color, letterSpacing:".06em", marginBottom:10, opacity:.75 }}>نموونە</div>
           <div style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:10 }}>
             {parts.map((p, pi) => (
               <span key={pi} style={{ display:"flex", alignItems:"center", gap:10 }}>
                 {pi > 0 && <span style={{ color, fontWeight:900, fontSize:18, lineHeight:1 }}>→</span>}
-                <code dir="ltr" style={{ fontSize:14, fontWeight:700, color:"#1A1F2E", background:`${color}12`, borderRadius:8, padding:"4px 10px", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{p}</code>
+                <code dir="ltr" style={{ fontSize:14, fontWeight:700, color:"var(--ink)", background:`${A(color,"12")}`, borderRadius:8, padding:"4px 10px", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{p}</code>
               </span>
             ))}
           </div>
@@ -8516,9 +8548,9 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
             )}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:7 }}>
               {conjItems.map(({ pronoun, label: pl, form, color: pc }) => (
-                <div key={pronoun} style={{ background:`${pc}10`, border:`1.5px solid ${pc}28`, borderRadius:12, padding:"10px 6px", textAlign:"center" }}>
+                <div key={pronoun} style={{ background:`${A(pc,"10")}`, border:`1.5px solid ${A(pc,"28")}`, borderRadius:12, padding:"10px 6px", textAlign:"center" }}>
                   <div style={{ fontSize:12, fontWeight:800, color:pc, marginBottom:5, letterSpacing:".02em" }}>{pl}</div>
-                  <div dir="ltr" style={{ fontSize:14, fontWeight:800, color:"#1A1F2E", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{form}</div>
+                  <div dir="ltr" style={{ fontSize:14, fontWeight:800, color:"var(--ink)", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{form}</div>
                 </div>
               ))}
             </div>
@@ -8539,15 +8571,15 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
         return (
           <div key={si}>
             {label && (
-              <div style={{ fontSize:13, color:"#71717A", fontWeight:600, marginBottom:9, lineHeight:1.6 }}>
+              <div style={{ fontSize:13, color:"var(--muted)", fontWeight:600, marginBottom:9, lineHeight:1.6 }}>
                 {hilite(label)}
               </div>
             )}
             <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
               {wordItems.map(({ word, meaning }, wi) => (
-                <div key={wi} style={{ background:`${color}09`, border:`1.5px solid ${color}22`, borderRadius:10, padding:"6px 12px", display:"flex", alignItems:"baseline", gap:6 }}>
+                <div key={wi} style={{ background:`${A(color,"09")}`, border:`1.5px solid ${A(color,"22")}`, borderRadius:10, padding:"6px 12px", display:"flex", alignItems:"baseline", gap:6 }}>
                   <span dir="ltr" style={{ fontWeight:800, color, fontSize:13.5, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{word}</span>
-                  {meaning && <span style={{ fontSize:12.5, color:"#71717A", fontWeight:600 }}>{meaning}</span>}
+                  {meaning && <span style={{ fontSize:12.5, color:"var(--muted)", fontWeight:600 }}>{meaning}</span>}
                 </div>
               ))}
             </div>
@@ -8560,11 +8592,11 @@ function ExpRenderer({ text, color = "#5B5BD6" }) {
     if (seg.includes("→")) {
       const parts = seg.split("→").map(s => s.trim());
       return (
-        <div key={si} style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:8, background:`${color}07`, border:`1px solid ${color}18`, borderRadius:13, padding:"10px 14px" }}>
+        <div key={si} style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:8, background:`${A(color,"07")}`, border:`1px solid ${A(color,"18")}`, borderRadius:13, padding:"10px 14px" }}>
           {parts.map((p, pi) => (
             <span key={pi} style={{ display:"flex", alignItems:"center", gap:8 }}>
               {pi > 0 && <span style={{ color, fontWeight:900, fontSize:17, lineHeight:1 }}>→</span>}
-              <span dir="ltr" style={{ fontSize:14, fontWeight:700, color:"#1A1F2E", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{p}</span>
+              <span dir="ltr" style={{ fontSize:14, fontWeight:700, color:"var(--ink)", fontFamily:"'Satoshi',system-ui,sans-serif" }}>{p}</span>
             </span>
           ))}
         </div>
@@ -8600,7 +8632,7 @@ function WPLabel({ icon: Icon, label, color }) {
   const clr = color || C.muted;
   return (
     <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:10, marginTop:2 }}>
-      <div style={{ width:24, height:24, borderRadius:6, background:`${clr}18`, display:"grid", placeItems:"center" }}>
+      <div style={{ width:24, height:24, borderRadius:6, background:`${A(clr,"18")}`, display:"grid", placeItems:"center" }}>
         <Icon size={12} color={clr} />
       </div>
       <span style={{ fontSize:12, fontWeight:700, color:clr, letterSpacing:".03em" }}>{label}</span>
@@ -8612,7 +8644,7 @@ function WPLabel({ icon: Icon, label, color }) {
 const WP_IH  = 68;   // item height px
 const WP_VIS = 282;  // viewport height px
 
-function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", getItemColor, getProgress }) {
+function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "var(--acc)", getItemColor, getProgress }) {
   const CY  = Math.floor(WP_VIS / 2 - WP_IH / 2);
   const MAX = Math.max(0, (items.length - 1) * WP_IH);
 
@@ -8747,7 +8779,7 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
     ? items.map((item, i) => getItemColor ? getItemColor(item, i) : accent)
     : [accent];
   const tlGrad = iColors.length < 2
-    ? `linear-gradient(to bottom,${iColors[0]}99,${iColors[0]})`
+    ? `linear-gradient(to bottom,${A(iColors[0],"99")},${iColors[0]})`
     : `linear-gradient(to bottom,${iColors.map((c, i) => `${c} ${Math.round(i / (iColors.length - 1) * 100)}%`).join(',')})`;
   const selColor = iColors[curIdx] || accent;
 
@@ -8784,7 +8816,7 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
         {/* ambient glow radiating from active card */}
         <div style={{ position:"absolute", left:16, right:16,
           top:CY-8, height:WP_IH+16, borderRadius:24,
-          background:`radial-gradient(ellipse 90% 70% at 50% 50%,${selColor}1C,transparent 72%)`,
+          background:`radial-gradient(ellipse 90% 70% at 50% 50%,${A(selColor,"1C")},transparent 72%)`,
           pointerEvents:"none", zIndex:4 }} />
 
         {/* glassmorphism focus zone */}
@@ -8800,7 +8832,7 @@ function WheelPicker({ items, selIdx, onSelect, renderCard, accent = "#5B5BD6", 
         {/* animated energy line */}
         <div style={{ position:"absolute", left:5, top:CY+6,
           width:3, height:WP_IH-12, borderRadius:99,
-          background:"linear-gradient(to bottom,#38BDF8,#8B5CF6,#06B6D4)",
+          background:"linear-gradient(to bottom,#38BDF8,var(--acc),#06B6D4)",
           backgroundSize:"100% 300%",
           animation:"wpEnergyFlow 2s linear infinite",
           pointerEvents:"none", zIndex:8, opacity:.92 }} />
@@ -8868,7 +8900,7 @@ const QZ_T = {
 };
 const qzT = (lang, k) => (QZ_T[lang] || QZ_T.en)[k] ?? QZ_T.en[k];
 
-function QuizRunner({ items, lang = "ku", accent = "#5B5BD6" }) {
+function QuizRunner({ items, lang = "ku", accent = "var(--acc)" }) {
   const [run, setRun]         = useState(0);
   const [idx, setIdx]         = useState(0);
   const [sel, setSel]         = useState(null);
@@ -8885,7 +8917,7 @@ function QuizRunner({ items, lang = "ku", accent = "#5B5BD6" }) {
   if (idx >= items.length) {
     const pct = Math.round((score / items.length) * 100);
     return (
-      <div style={{ background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "26px 18px", textAlign: "center" }}>
+      <div style={{ background: "var(--surface)", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "26px 18px", textAlign: "center" }}>
         <div style={{ fontSize: 40, marginBottom: 6 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</div>
         <div style={{ fontWeight: 800, fontSize: 24, color: accent }}>{score} / {items.length}</div>
         <div style={{ color: C.muted, fontSize: 13, margin: "4px 0 16px" }}>{qzT(lang, "score")} · {pct}%</div>
@@ -8908,7 +8940,7 @@ function QuizRunner({ items, lang = "ku", accent = "#5B5BD6" }) {
   function next()  { setIdx(i => i + 1); setSel(null); setChecked(false); }
 
   return (
-    <div style={{ background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "16px 16px 14px" }}>
+    <div style={{ background: "var(--surface)", border: "1.5px solid #F0F1F5", borderRadius: 18, padding: "16px 16px 14px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
         <span style={{ fontSize: 12.5, fontWeight: 700, color: C.muted }}>{idx + 1} / {items.length}</span>
         <span style={{ fontSize: 12.5, fontWeight: 700, color: C.green }}>✓ {score}</span>
@@ -8923,7 +8955,7 @@ function QuizRunner({ items, lang = "ku", accent = "#5B5BD6" }) {
           <button key={i} disabled={checked} onClick={() => setSel(i)} dir="auto"
             style={{ display: "block", width: "100%", textAlign: "start", marginBottom: 8, padding: "11px 14px", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: checked ? "default" : "pointer",
               border: `2px solid ${isC ? "#16A06F" : isW ? "#E5484D" : isSel ? accent : C.line}`,
-              background: isC ? "rgba(22,160,111,.08)" : isW ? "rgba(229,72,77,.07)" : isSel ? `${accent}10` : "#FBFBFC", color: C.ink }}>
+              background: isC ? "rgba(22,160,111,.08)" : isW ? "rgba(229,72,77,.07)" : isSel ? `${A(accent,"10")}` : "var(--page)", color: C.ink }}>
             {o}{isC ? " ✓" : isW ? " ✗" : ""}
           </button>
         );
@@ -8954,7 +8986,7 @@ function GrammarMiniQuiz({ level, g, lang, accent }) {
   if (!items?.length) return null;
   return (
     <div className="rise" style={{ animationDelay: "170ms" }}>
-      <button onClick={() => setOpen(o => !o)} style={{ width: "100%", textAlign: "start", background: `${accent}12`, border: `1.5px solid ${accent}40`, color: accent, borderRadius: 14, padding: "12px 14px", fontWeight: 800, fontSize: 14.5, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: "100%", textAlign: "start", background: `${A(accent,"12")}`, border: `1.5px solid ${A(accent,"40")}`, color: accent, borderRadius: 14, padding: "12px 14px", fontWeight: 800, fontSize: 14.5, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span>📝 {qzT(lang, "mini")} · {items.length}</span><span>{open ? "▲" : "▼"}</span>
       </button>
       {open && <div style={{ marginTop: 10 }}><QuizRunner items={items} lang={lang} accent={accent} /></div>}
@@ -8964,17 +8996,17 @@ function GrammarMiniQuiz({ level, g, lang, accent }) {
 
 // ── Übung section metadata (used by WheelPicker in ubung mode) ──────
 const UBUNG_SECTIONS = [
-  { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків", subFa:"پر کردن جای خالی",   emoji:"🧩", color:"#5B5BD6" },
+  { id:"drag",      label:"Sprachbausteine", sub:"پڕکردنەوەی بۆشایی",    subTr:"Boşluk doldurma",    subUk:"Заповнення пропусків", subFa:"پر کردن جای خالی",   emoji:"🧩", color:"var(--acc-tx)" },
   { id:"lesenA",    label:"Lesen A",          sub:"سەردێڕ دیاری بکە",    subTr:"Başlık seç",          subUk:"Оберіть заголовок", subFa:"انتخاب عنوان",       emoji:"📰", color:"#059669" },
   { id:"lesenB",    label:"Lesen B",          sub:"ڕاست یان هەڵە",       subTr:"Doğru ya da yanlış",  subUk:"Правда чи хиба", subFa:"درست یا نادرست",          emoji:"📖", color:"#0E7490" },
-  { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    subUk:"Текст і питання", subFa:"متن و پرسش",         emoji:"📚", color:"#7C3AED" },
+  { id:"lesenC",    label:"Lesen C",          sub:"دەق و پرسیار",        subTr:"Metin ve sorular",    subUk:"Текст і питання", subFa:"متن و پرسش",         emoji:"📚", color:"var(--acc-dk)" },
   { id:"schreibA",  label:"Schreiben A",      sub:"نووسینی فۆرم",        subTr:"Form doldurma",       subUk:"Заповнення форми", subFa:"پر کردن فرم",        emoji:"✍️", color:"#B45309" },
   { id:"schreibB",  label:"Schreiben B",      sub:"نووسینی ئازاد",       subTr:"Serbest yazma",       subUk:"Вільне письмо", subFa:"نوشتن آزاد",           emoji:"📝", color:"#BE185D" },
   { id:"mundlichA", label:"Mündlich A",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення", subFa:"آمادگی برای صحبت",  emoji:"🗣️", color:"#0F766E" },
   { id:"mundlichB", label:"Mündlich B",       sub:"ئامادەکاری قسەکردن",  subTr:"Konuşma hazırlığı",  subUk:"Підготовка до мовлення", subFa:"آمادگی برای صحبت",  emoji:"💬", color:"#1D4ED8" },
   { id:"qLuecke",   label:"Lückentext",      sub:"پڕکردنەوەی ڕستە",     subTr:"Cümle tamamlama",    subUk:"Доповни речення", subFa:"تکمیل جمله",          emoji:"✏️", color:"#0E7C7A" },
   { id:"qTrans",    label:"Übersetzung",     sub:"واتای دەستەواژە",     subTr:"İfade anlamı",        subUk:"Значення фрази", subFa:"معنی عبارت",         emoji:"🔤", color:"#C2410C" },
-  { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"#6D28D9" },
+  { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"var(--acc-dk)" },
 ];
 
 // ── Collapsing Picker Header ─────────────────────────────────────────
@@ -8983,7 +9015,7 @@ const UBUNG_SECTIONS = [
 const CPH_COMPACT = 58;    // px — height when fully collapsed
 const CPH_RANGE   = 110;   // px of page-scroll that drives full→compact
 
-function CollapsingPickerHeader({ children, compact, accent = "#5B5BD6" }) {
+function CollapsingPickerHeader({ children, compact, accent = "var(--acc)" }) {
   const outerRef      = useRef(null);
   const pickerRef     = useRef(null);
   const compactRef    = useRef(null);
@@ -9052,7 +9084,7 @@ function CollapsingPickerHeader({ children, compact, accent = "#5B5BD6" }) {
     <div ref={outerRef}
       style={{ position:"sticky", top:0, zIndex:10,
         height: WP_VIS, overflow:"hidden",
-        background:"#fff", borderRadius:18,
+        background:"var(--surface)", borderRadius:18,
         border:"1.5px solid #E4E6EE",
         boxShadow:"0 4px 24px rgba(0,0,0,.11)",
         marginBottom:16 }}>
@@ -9070,7 +9102,7 @@ function CollapsingPickerHeader({ children, compact, accent = "#5B5BD6" }) {
           background:"rgba(255,255,255,0.84)",
           backdropFilter:"blur(20px) saturate(200%)",
           WebkitBackdropFilter:"blur(20px) saturate(200%)",
-          boxShadow:`inset 0 -1px 0 ${accent}22, 0 2px 16px rgba(0,0,0,.06)`,
+          boxShadow:`inset 0 -1px 0 ${A(accent,"22")}, 0 2px 16px rgba(0,0,0,.06)`,
           cursor:"pointer", padding:"0 14px", gap:10,
           transform:"translateY(12px)" }}
         onClick={expandInPlace}>
@@ -9097,7 +9129,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
   return (
     <div key={g.de} style={{ display:"flex", flexDirection:"column", gap:13, paddingTop:14 }}>
       {/* hero */}
-      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${lc}CC)`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 10px 26px ${lc}44`, position:"relative", overflow:"hidden" }}>
+      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${A(lc,"CC")})`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 10px 26px ${A(lc,"44")}`, position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:-25, left:-25, width:100, height:100, borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <div style={{ width:44, height:44, borderRadius:13, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:22, flexShrink:0, boxShadow:"0 2px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
@@ -9108,7 +9140,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
         </div>
       </div>
       {/* explanation */}
-      <div className="rise" style={{ animationDelay:"30ms", background:"#fff", border:`1.5px solid ${lc}22`, borderRadius:16, padding:"14px 16px", boxShadow:`0 2px 0 rgba(0,0,0,.06),0 5px 16px ${lc}0E` }}>
+      <div className="rise" style={{ animationDelay:"30ms", background:"var(--surface)", border:`1.5px solid ${A(lc,"22")}`, borderRadius:16, padding:"14px 16px", boxShadow:`0 2px 0 rgba(0,0,0,.06),0 5px 16px ${A(lc,"0E")}` }}>
         <WPLabel icon={AlertCircle} label={tApp(lang,"gc_explain")} color={lc} />
         <ExpRenderer text={lang === "tr" ? (g.expTr || g.exp) : lang === "en" ? (g.expEn || g.exp) : lang === "ar" ? (g.expAr || g.exp) : lang === "uk" ? (g.expUk || g.exp) : lang === "fa" ? (g.expFa || g.exp) : lang === "es" ? (g.expEs || g.expEn || g.exp) : g.exp} color={lc} />
       </div>
@@ -9136,7 +9168,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       )}
       {/* article groups */}
       {g.groups && g.groups.map((grp,gi) => (
-        <div key={grp.art} className="rise" style={{ animationDelay:`${70+gi*35}ms`, background:"#fff", border:`1.5px solid ${grp.color}22`, borderRadius:16, overflow:"hidden", boxShadow:`0 2px 0 rgba(0,0,0,.06),0 5px 18px ${grp.color}10` }}>
+        <div key={grp.art} className="rise" style={{ animationDelay:`${70+gi*35}ms`, background:"var(--surface)", border:`1.5px solid ${A(grp.color,"22")}`, borderRadius:16, overflow:"hidden", boxShadow:`0 2px 0 rgba(0,0,0,.06),0 5px 18px ${A(grp.color,"10")}` }}>
           <div style={{ background:grp.color, padding:"11px 14px", display:"flex", alignItems:"center", gap:9 }}>
             <div style={{ width:34,height:34,borderRadius:10,background:"rgba(255,255,255,.2)",display:"grid",placeItems:"center",fontSize:18,flexShrink:0 }}>{grp.emoji}</div>
             <div>
@@ -9152,8 +9184,8 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
             <WPLabel icon={FileText} label={tApp(lang,"gc_examples")} color={grp.color} />
             <div style={{ display:"flex",flexWrap:"wrap",gap:7 }}>
               {grp.words.map((w,wi) => (
-                <span key={wi} style={{ display:"inline-flex",flexDirection:"column",gap:3,background:`${grp.color}0D`,border:`1.5px solid ${grp.color}22`,borderRadius:11,padding:"7px 11px",minWidth:86 }}>
-                  <span style={{ display:"flex",alignItems:"center",gap:3 }}><De size={14} color="#1A1F2E">{w[0]}</De><Speak text={w[0]} size={13} /></span>
+                <span key={wi} style={{ display:"inline-flex",flexDirection:"column",gap:3,background:`${A(grp.color,"0D")}`,border:`1.5px solid ${A(grp.color,"22")}`,borderRadius:11,padding:"7px 11px",minWidth:86 }}>
+                  <span style={{ display:"flex",alignItems:"center",gap:3 }}><De size={14} color="var(--ink)">{w[0]}</De><Speak text={w[0]} size={13} /></span>
                   <span style={{ fontSize:12,color:grp.color,fontWeight:700 }}>{({tr:w[2],en:w[3],ar:w[4],uk:w[5],fa:w[6],es:w[7]}[lang]) || w[1]}</span>
                 </span>
               ))}
@@ -9163,7 +9195,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
       ))}
       {/* merksatz */}
       {g.merksatz && (
-        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${lc}DD)`, borderRadius:16, padding:"14px 16px", boxShadow:`0 8px 24px ${lc}40` }}>
+        <div className="rise" style={{ animationDelay:"100ms", background:`linear-gradient(145deg,${lc},${A(lc,"DD")})`, borderRadius:16, padding:"14px 16px", boxShadow:`0 8px 24px ${A(lc,"40")}` }}>
           <div style={{ display:"flex",alignItems:"center",gap:6,marginBottom:10 }}>
             <div style={{ width:26,height:26,borderRadius:7,background:"rgba(255,255,255,.2)",display:"grid",placeItems:"center" }}><Zap size={13} color="#fff" /></div>
             <span style={{ fontSize:12.5,fontWeight:800,color:"#fff",letterSpacing:".03em" }}>{lang === "tr" ? "Hatırlatma Cümlesi (Merksatz)" : lang === "en" ? "Memory Sentence (Merksatz)" : lang === "ar" ? "جملة تذكيرية (Merksatz)" : lang === "es" ? "Frase para recordar (Merksatz)" : lang === "uk" ? "Речення для запам'ятовування (Merksatz)" : lang === "fa" ? "جمله برای به خاطر سپردن (Merksatz)" : "ڕستەی بیرهێنانەوە (Merksatz)"}</span>
@@ -9183,11 +9215,11 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
         <WPLabel icon={BookOpen} label={`${tApp(lang,"gc_examples")} / Beispiele (${exList.length})`} color={C.gold} />
         <div style={{ display:"grid", gap:8 }}>
           {exList.map((e,i) => (
-            <div key={i} className="rise" style={{ animationDelay:`${142+i*18}ms`, background:"#fff", border:"1.5px solid #F0F1F5", borderRadius:13, padding:"11px 13px", display:"flex", gap:10, alignItems:"flex-start", boxShadow:"0 1px 0 rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.05)" }}>
-              <span style={{ width:21,height:21,borderRadius:6,background:`${C.gold}18`,display:"grid",placeItems:"center",fontSize:12,fontWeight:800,color:C.gold,flexShrink:0,marginTop:1 }}>{i+1}</span>
+            <div key={i} className="rise" style={{ animationDelay:`${142+i*18}ms`, background:"var(--surface)", border:"1.5px solid #F0F1F5", borderRadius:13, padding:"11px 13px", display:"flex", gap:10, alignItems:"flex-start", boxShadow:"0 1px 0 rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.05)" }}>
+              <span style={{ width:21,height:21,borderRadius:6,background:`${A(C.gold,"18")}`,display:"grid",placeItems:"center",fontSize:12,fontWeight:800,color:C.gold,flexShrink:0,marginTop:1 }}>{i+1}</span>
               <div style={{ flex:1 }}>
                 <div style={{ display:"flex",alignItems:"flex-start",gap:4 }}>
-                  <div style={{ flex:1 }}><De size={15} color="#1A1F2E">{e.de}</De></div>
+                  <div style={{ flex:1 }}><De size={15} color="var(--ink)">{e.de}</De></div>
                   <Speak text={e.de} size={13} />
                 </div>
                 {(e[lang] || e.ku) && (
@@ -9222,7 +9254,7 @@ const MASALS = {
       { de: "Sie fragte: Ist das mein Handy? Noah zeigte ihr das Handy. Das Mädchen lächelte: Vielen Dank, ich habe es gestern verloren.", ku: "پرسیاری کرد: ئەمە مۆبایلەکەمە? نۆا مۆبایلەکەی پیشانی دا. کچەکە پێکەنی: زۆر سپاس، دوێنێ وەستاندمبوو.", tr: "Kız sordu: Bu benim telefonum mu? Noah telefonu ona gösterdi. Kız gülümsedi: Çok teşekkürler, dün kaybetmiştim.", en: "She asked: Is this my phone? Noah showed her the phone. The girl smiled: Thank you very much, I lost it yesterday.", ar: "سألته: هل هذا هاتفي؟ أراها نوح الهاتف. ابتسمت الفتاة: شكرًا جزيلًا، لقد فقدته أمس." , uk: "Вона запитала: Це мій телефон? Ноа показав їй телефон. Дівчина усміхнулася: Дуже дякую, я загубила його вчора." , fa: "دختر لبخندی زد و گفت: «این تلفن من است؟» دختر گفت: «خیلی ممنونم، دیروز آن را گم کردم.»","es":"Ella preguntó: ¿Es este mi teléfono? Noah le mostró el teléfono. La chica sonrió: Muchas gracias, lo perdí ayer."},
       { de: "Noah gab ihr das Handy zurück. Sie setzten sich auf eine Bank und unterhielten sich lange. Manchmal beginnt eine neue Freundschaft mit einem kleinen Zufall.", ku: "نۆا مۆبایلەکەی پێدایەوە. دانیشتن لەسەر دانیشتنێک و زۆر قسەیان کرد. هەندێکجار هاوڕێیەکی نوێ لە مەترسییەکی بچووکدا دەستپێدەکات.", tr: "Noah telefonu ona geri verdi. Bir bankta oturup uzun uzun sohbet ettiler. Bazen yeni bir arkadaşlık küçük bir tesadüfle başlar.", en: "Noah gave her the phone back. They sat down on a bench and talked for a long time. Sometimes a new friendship begins with a small coincidence.", ar: "أعاد نوح الهاتف إليها. جلسا على مقعد وتحدثا طويلًا. أحيانًا تبدأ صداقة جديدة بمصادفة صغيرة." , uk: "Ноа повернув їй телефон. Вони сіли на лавку й довго розмовляли. Іноді нова дружба починається з невеликого випадку." , fa: "نوح تلفن را به او پس داد. آنها روی نیمکت نشستند و برای مدت طولانی صحبت کردند. گاهی اوقات دوستی جدید با یک تصادف کوچک آغاز می شود.","es":"Noah le devolvió el teléfono, se sentaron en un banco y hablaron durante mucho tiempo, a veces una nueva amistad comienza con una pequeña coincidencia."},
     ] , fa: "تلفن مرموز","es":"El misterioso teléfono"},
-    { id: "a1_2", emoji: "🚂", title: "Die Reise ohne Plan", ku: "گەشتی بێ پلان", tr: "Plansız yolculuk", en: "The trip without a plan", uk: "Подорож без плану", ar: "الرحلة بلا خطة", color: "#5B5BD6", paragraphs: [
+    { id: "a1_2", emoji: "🚂", title: "Die Reise ohne Plan", ku: "گەشتی بێ پلان", tr: "Plansız yolculuk", en: "The trip without a plan", uk: "Подорож без плану", ar: "الرحلة بلا خطة", color: "var(--acc-tx)", paragraphs: [
       { de: "Tom war 19 Jahre alt und lebte in Köln. Er hatte zwei Wochen Urlaub, aber keinen Plan.", ku: "تۆم نۆزدە ساڵی بوو و لە کۆڵندا دەژیا. دوو هەفتە پشووی هەبوو، بەڵام هیچ پلانێکی نەبوو.", tr: "Tom 19 yaşındaydı ve Köln'de yaşıyordu. İki hafta izni vardı ama hiçbir planı yoktu.", en: "Tom was 19 years old and lived in Cologne. He had two weeks of vacation, but no plan.", ar: "كان توم يبلغ من العمر 19 عامًا ويعيش في كولونيا. كان لديه إجازة أسبوعين، لكن بلا خطة." , uk: "Тому було дев'ятнадцять років, і він жив у Кельні. Він мав два тижні відпустки, але не мав жодного плану." , fa: "تام 19 ساله بود و در کلن زندگی می کرد. او دو هفته تعطیلات داشت، اما هیچ برنامه ای نداشت.","es":"Tom tenía 19 años y vivía en Colonia. Tenía dos semanas de vacaciones, pero no tenía planes."},
       { de: "Seine Freunde fragten: Wohin fährst du? Tom antwortete immer: Ich weiss es noch nicht.", ku: "هاوڕێکانی پرسیان: کوێ دەچیت? تۆم هەمیشە وەڵامی دەدا: هێشتا نازانم.", tr: "Arkadaşları sordu: Nereye gidiyorsun? Tom her zaman şöyle cevap veriyordu: Henüz bilmiyorum.", en: "His friends asked: Where are you going? Tom always answered: I don't know yet.", ar: "سأله أصدقاؤه: إلى أين تذهب؟ كان توم يجيب دائمًا: لا أعرف بعد." , uk: "Друзі запитували: Куди ти їдеш? Том завжди відповідав: Я ще не знаю." , fa: "دوستانش از او پرسیدند: کجا میروی؟ تام همیشه جواب میداد: هنوز نمیدانم.","es":"Sus amigos preguntaron: ¿A dónde vas? Tom siempre respondió: No lo sé todavía."},
       { de: "An einem Montagmorgen stand er am Bahnhof. Er kaufte ein Ticket für den nächsten Zug. Der Zug fuhr nach München.", ku: "بەیانیانێکی دووشەممە لە وێستگەی شەمەندەفەرەکەدا ڕاوەستا. بلێتێکی کڕی بۆ قتاری داهاتوو. قتارەکە دەچوو بۆ میونیخ.", tr: "Bir pazartesi sabahı istasyondaydı. Bir sonraki tren için bilet aldı. Tren Münih'e gidiyordu.", en: "On a Monday morning he stood at the train station. He bought a ticket for the next train. The train went to Munich.", ar: "في صباح أحد أيام الاثنين، وقف في المحطة. اشترى تذكرة للقطار التالي. كان القطار متجهًا إلى ميونخ." , uk: "У понеділок вранці він стояв на вокзалі. Він купив квиток на найближчий потяг. Потяг їхав до Мюнхена." , fa: "صبح دوشنبه او در ایستگاه قطار ایستاد. او یک بلیط برای قطار بعدی خرید. قطار به مونیخ رفت.","es":"Un lunes por la mañana se paró en la estación de tren, compró un billete para el siguiente tren, el tren se fue a Munich."},
@@ -9249,7 +9281,7 @@ const MASALS = {
       { de: "Zwei Wochen später kam eine E-Mail: Herzlichen Glückwunsch! Sie haben gewonnen. Jonas konnte es kaum glauben.", ku: "دوو هەفتە دواتر ئیمەیلێکی گەیشت: پیرۆزبادت! بەرکەوتیت. یۆناس بە ئەگەر باوەڕی نەکرد.", tr: "İki hafta sonra bir e-posta geldi: Tebrikler! Kazandınız. Jonas buna neredeyse inanamadı.", en: "Two weeks later an email arrived: Congratulations! You have won. Jonas could hardly believe it.", ar: "بعد أسبوعين وصلت رسالة بريد إلكتروني: تهانينا! لقد فزت. لم يستطع يوناس تصديق ذلك." , uk: "Через два тижні надійшов електронний лист: Вітаємо! Ви перемогли. Йонас ледве міг у це повірити." , fa: "دو هفته بعد یک ایمیل رسید: تبریک! شما برنده شده اید. جوناس به سختی می توانست آن را باور کند.","es":"Dos semanas después llegó un correo electrónico: ¡Felicidades! Has ganado. Jonas apenas podía creerlo."},
       { de: "Zum ersten Mal hatte er das Gefühl, dass sein Hobby wirklich etwas Besonderes war.", ku: "یەکەم جار هەستکرد کە مەشغەڵەکەی بەڕاستی شتێکی تایبەتە.", tr: "İlk kez hobisinin gerçekten özel bir şey olduğunu hissetti.", en: "For the first time he had the feeling that his hobby was really something special.", ar: "لأول مرة شعر بأن هوايته كانت حقًا شيئًا مميزًا." , uk: "Уперше він відчув, що його захоплення справді щось особливе." , fa: "برای اولین بار احساس کرد که سرگرمی او واقعا چیز خاصی است.","es":"Por primera vez tuvo la sensación de que su hobby era algo realmente especial."},
     ] , fa: "رقابت","es":"El concurso"},
-    { id: "a1_5", emoji: "🏚️", title: "Das alte Haus", ku: "خانووی کۆن", tr: "Eski ev", en: "The old house", uk: "Старий будинок", ar: "المنزل القديم", color: "#7C3AED", paragraphs: [
+    { id: "a1_5", emoji: "🏚️", title: "Das alte Haus", ku: "خانووی کۆن", tr: "Eski ev", en: "The old house", uk: "Старий будинок", ar: "المنزل القديم", color: "var(--acc-dk)", paragraphs: [
       { de: "Mara und Emma gingen oft spazieren. Am Rand ihrer Stadt stand ein altes Haus. Es war leer und niemand wohnte dort.", ku: "مارا و ئێما زۆر کات گەشتوگوزاری دەکردن. لەکەناری شارەکیاندا خانووێکی کۆن ڕاوەستابوو.", tr: "Mara ve Emma sık sık yürüyüşe çıkardı. Şehirlerinin kenarında eski bir ev vardı. Boştu ve kimse orada yaşamıyordu.", en: "Mara and Emma often went for walks. On the edge of their town stood an old house. It was empty and no one lived there.", ar: "كانت مارا وإيما تخرجان للتنزه كثيرًا. على أطراف مدينتهما كان يقف منزل قديم. كان خاليًا ولا يسكنه أحد." , uk: "Мара та Емма часто ходили на прогулянки. На околиці їхнього міста стояв старий будинок. Він був порожній, і ніхто там не жив." , fa: "مارا و اما اغلب برای پیاده روی می رفتند. در حاشیه شهرشان یک خانه قدیمی قرار داشت. خالی بود و هیچ کس در آنجا زندگی نمی کرد.","es":"Mara y Emma a menudo iban a dar paseos. En el borde de su ciudad estaba una casa vieja. Estaba vacía y nadie vivía allí."},
       { de: "Viele sagten, dass es dort spukt. Andere sagten, dass früher ein berühmter Musiker dort gelebt hatte.", ku: "هەندێکیان دەیانگوت ئەوێدا بۆنەگیانی هەیە. هەندێکی دیکەیان دەیانگوت پێشتر موزیکبازێکی ناودار لەوێ دەژیا.", tr: "Birçok kişi orada hayalet olduğunu söylüyordu. Diğerleri ise eskiden ünlü bir müzisyenin orada yaşadığını söylüyordu.", en: "Many said that it was haunted. Others said that a famous musician had lived there in the past.", ar: "قال كثيرون إن المكان مسكون بالأشباح. وقال آخرون إن موسيقيًا مشهورًا عاش هناك في الماضي." , uk: "Багато хто казав, що там водяться привиди. Інші казали, що колись там жив відомий музикант." , fa: "بسیاری گفتند که این مکان تسخیر شده است. دیگران گفتند که یک موسیقیدان مشهور در گذشته در آنجا زندگی کرده است.","es":"Muchos decían que estaba embrujada, otros que un músico famoso había vivido allí en el pasado."},
       { de: "Eines Nachmittags beschlossen sie, das Haus anzusehen. Der Garten war ruhig. Die Fenster waren schmutzig und die Tür war alt.", ku: "نیوەڕۆیانێک بڕیاریان دا خانووەکە ببینن. باخچەکە ئارام بوو. پەنجەرەکان پیس بوون و دەرگاکە کۆن بوو.", tr: "Bir öğleden sonra evi görmeye karar verdiler. Bahçe sessizdi. Pencereler kirliydi ve kapı eskiydi.", en: "One afternoon they decided to look at the house. The garden was quiet. The windows were dirty and the door was old.", ar: "في أحد بعد الظهر، قررتا النظر إلى المنزل. كانت الحديقة هادئة. كانت النوافذ متسخة والباب قديمًا." , uk: "Одного дня по обіді вони вирішили оглянути будинок. Сад був тихий. Вікна були брудні, а двері старі." , fa: "یک روز بعد از ظهر تصمیم گرفتند به خانه نگاه کنند. باغ ساکت بود. پنجره ها کثیف بودند و در قدیمی بود.","es":"Una tarde decidieron mirar la casa, el jardín estaba tranquilo, las ventanas sucias y la puerta vieja."},
@@ -9647,7 +9679,7 @@ const MASALS = {
     ] , fa: "ساعت شنی حکیم پیر","es":"El reloj de arena del viejo sabio"},
   ],
   C1: [
-    { id: "c1_1", emoji: "🧠", title: "Die Macht der Gewohnheit", ku: "هێزی ئامادەیی", tr: "Alışkanlığın Gücü", en: "The Power of Habit", uk: "Сила звички", ar: "قوة العادة", color: "#7C3AED", paragraphs: [
+    { id: "c1_1", emoji: "🧠", title: "Die Macht der Gewohnheit", ku: "هێزی ئامادەیی", tr: "Alışkanlığın Gücü", en: "The Power of Habit", uk: "Сила звички", ar: "قوة العادة", color: "var(--acc-dk)", paragraphs: [
       { de: "Sehr geehrte Zuhörerinnen und Zuhörer, ich möchte heute über ein Phänomen sprechen, das jeden von uns betrifft, ohne dass wir uns dessen stets bewusst sind: die Macht der Gewohnheit.", ku: "گوێگرانی بەڕێز، ئەمڕۆ دەمەوێت باسی دیاردەیەک بکەم کە هەموومانی دەگرێتەوە، بێ ئەوەی هەمیشە ئاگامان لێی بێت: هێزی ئامادەیی.", tr: "Sayın dinleyiciler, bugün her birimizi ilgilendiren, ancak çoğu zaman farkında bile olmadığımız bir olgudan söz etmek istiyorum: alışkanlığın gücü.", en: "Dear listeners, today I would like to speak about a phenomenon that affects each of us, even though we are not always aware of it: the power of habit.", ar: "أيها الحضور الكرام، أود اليوم أن أتحدث عن ظاهرة تمس كل واحد منا دون أن ندرك ذلك دائمًا: قوة العادة." , uk: "Шановні слухачі, сьогодні я хотів би поговорити про явище, яке стосується кожного з нас, хоча ми не завжди це усвідомлюємо: про силу звички." , fa: "شنوندگان عزیز، امروز می خواهم در مورد پدیده ای صحبت کنم که هر یک از ما را تحت تاثیر قرار می دهد، حتی اگر ما همیشه از آن آگاه نباشیم: قدرت عادت.","es":"Queridos oyentes, hoy quiero hablar de un fenómeno que nos afecta a cada uno de nosotros, aunque no siempre somos conscientes de ello: el poder del hábito."},
       { de: "Zahlreiche neurowissenschaftliche Studien der letzten zwei Jahrzehnte haben eindrucksvoll belegt, dass bis zu 40 Prozent unserer täglichen Handlungen nicht auf bewussten Entscheidungen beruhen, sondern auf automatisierten Verhaltensmustern.", ku: "چەندین لێکۆڵینەوەی زانستی دەماردا لە دوو دەیەی ڕابردوودا بە شێوەیەکی سەرنجڕاکێش سەلماندوویانە کە تا ڕادەی 40 لەسەدی کردەوە ڕۆژانەکانمان بنەمای لە بڕیاری ئاگاداری وەرناگرن، بەڵکو لە شێوازە ڕەفتاری ئۆتۆماتیکییەکانەوە سەرچاوە دەگرن.", tr: "Son yirmi yılda yapılan sayısız sinirbilim araştırması, günlük eylemlerimizin yüzde 40'a varan bir bölümünün bilinçli kararlara değil, otomatikleşmiş davranış kalıplarına dayandığını çarpıcı biçimde ortaya koymuştur.", en: "Numerous neuroscientific studies from the past two decades have impressively demonstrated that up to 40 percent of our daily actions are based not on conscious decisions but on automated behavioral patterns.", ar: "أثبتت دراسات عصبية عديدة أُجريت خلال العقدين الماضيين بشكل مثير للإعجاب أن ما يصل إلى 40 بالمئة من أفعالنا اليومية لا يقوم على قرارات واعية، بل على أنماط سلوكية آلية." , uk: "Численні нейронаукові дослідження останніх двох десятиліть переконливо показали, що до 40 відсотків наших щоденних дій ґрунтуються не на свідомих рішеннях, а на автоматизованих поведінкових шаблонах." , fa: "مطالعات متعدد عصب شناسی در دو دهه گذشته به طور قابل توجهی نشان داده است که تا 40 درصد از اقدامات روزانه ما نه بر اساس تصمیمات آگاهانه بلکه بر اساس الگوهای رفتاری خودکار است.","es":"Numerosos estudios neurocientíficos de las últimas dos décadas han demostrado de manera impresionante que hasta el 40 por ciento de nuestras acciones diarias no se basan en decisiones conscientes sino en patrones de comportamiento automatizados."},
       { de: "Das menschliche Gehirn, so könnte man sagen, ist ein außerordentlich faules Organ.", ku: "دەکرێت بگوترێت مێشکی مرۆڤ، ئەندامێکی زۆر تەمبەڵە.", tr: "Denilebilir ki insan beyni, olağanüstü derecede tembel bir organdır.", en: "One might say that the human brain is an extraordinarily lazy organ.", ar: "يمكن القول إن الدماغ البشري عضو كسول إلى حد غير عادي." , uk: "Можна сказати, що людський мозок — надзвичайно ледачий орган." , fa: "ممکن است گفته شود که مغز انسان یک عضو فوق العاده تنبل است.","es":"Se podría decir que el cerebro humano es un órgano extraordinariamente perezoso."},
@@ -9805,7 +9837,7 @@ const MASALS = {
       { de: "Einstein starb 1955, friedlich, aber mit dem Wissen, dass seine Formel die Welt für immer verändert hatte.", ku: "ئایشتاین لە ١٩٥٥ بە ئارامییەوە کۆچی دوایی کرد، بەڵام بەم زانیارییەوە کە فۆرمولەکەی جیهانی بۆ هەتاهەتایە گۆڕیوە.", tr: "Einstein 1955'te huzur içinde öldü, ama formülünün dünyayı sonsuza dek değiştirdiğini bilerek.", en: "Einstein died in 1955, peacefully, but with the knowledge that his formula had changed the world forever.", ar: "توفي أينشتاين عام 1955 بسلام، لكنه كان يعلم أن معادلته غيّرت العالم إلى الأبد." , uk: "Einstein помер у 1955 році, мирно, але з усвідомленням, що його формула назавжди змінила світ." , fa: "اینشتین در سال 1955 در آرامش درگذشت، اما با آگاهی از اینکه فرمول او جهان را برای همیشه تغییر داده است.","es":"Einstein murió en 1955, pacíficamente, pero con el conocimiento de que su fórmula había cambiado el mundo para siempre."},
       { de: "Zwei Männer, zwei Gewissen – eine Spaltung, die tiefer war als jedes Atom.", ku: "دوو پیاو، دوو وجدان – لەتبوونێک قووڵتر لە هەر ئەتۆمێک.", tr: "İki adam, iki vicdan – herhangi bir atomdan daha derin bir yarılma.", en: "Two men, two consciences – a split deeper than any atom.", ar: "رجلان، وضميران – انشطار أعمق من أي ذرة." , uk: "Двоє чоловіків, дві совісті — розкол глибший за будь-який атом." , fa: "دو مرد، دو وجدان - شکاف عمیق تر از هر اتم.","es":"Dos hombres, dos conciencias, una división más profunda que cualquier átomo."},
     ] , fa: "انیشتین و اوپنهایمر - پرینستون 1947","es":"Einstein y Oppenheimer – Princeton 1947"},
-    { id: "c2_2", emoji: "🕯️", title: "Descartes und Nietzsche im Streitgespräch", ku: "دێکارت و نیتچە لە گفتوگۆی ناكۆكیدا", tr: "Descartes ve Nietzsche Arasında Bir Tartışma", en: "Descartes and Nietzsche in Dispute", uk: "Декарт і Ніцше в суперечці", ar: "ديكارت ونيتشه في حوار جدلي", color: "#6D28D9", paragraphs: [
+    { id: "c2_2", emoji: "🕯️", title: "Descartes und Nietzsche im Streitgespräch", ku: "دێکارت و نیتچە لە گفتوگۆی ناكۆكیدا", tr: "Descartes ve Nietzsche Arasında Bir Tartışma", en: "Descartes and Nietzsche in Dispute", uk: "Декарт і Ніцше в суперечці", ar: "ديكارت ونيتشه في حوار جدلي", color: "var(--acc-dk)", paragraphs: [
       { de: "Was folgt, ist eine fiktive Begegnung: Descartes (gestorben 1650) und Nietzsche (gestorben 1900) begegnen sich in einem zeitlosen Raum.", ku: "ئەوەی دێت چاوپێکەوتنێکی خەیاڵییە: دێکارت (کۆچی دوایی کردوو لە ١٦٥٠) و نیتچە (کۆچی دوایی کردوو لە ١٩٠٠) لە بۆشاییەکی بێ کاتدا یەکتر دەبینن.", tr: "Aşağıda kurgusal bir karşılaşma anlatılıyor: Descartes (1650'de öldü) ile Nietzsche (1900'de öldü), zamansız bir mekânda karşılaşırlar.", en: "What follows is a fictional encounter: Descartes (died 1650) and Nietzsche (died 1900) meet in a timeless space.", ar: "ما يلي هو لقاء متخيَّل: يلتقي ديكارت (المتوفى عام 1650) ونيتشه (المتوفى عام 1900) في فضاء خارج الزمن." , uk: "Далі йде вигадана зустріч: Декарт (помер 1650) і Ніцше (помер 1900) зустрічаються в позачасовому просторі." , fa: "آنچه در ادامه می آید یک برخورد داستانی است: دکارت (مرگ 1650) و نیچه (مرده 1900) در یک فضای بی انتها ملاقات می کنند.","es":"Lo que sigue es un encuentro ficticio: Descartes (muerto en 1650) y Nietzsche (muerto en 1900) se encuentran en un espacio atemporal."},
       { de: "Descartes sitzt an einem Tisch, auf dem eine brennende Kerze steht. Er spricht langsam, fast meditativ.", ku: "دێکارت لەسەر مێزێک دانیشتووە کە مۆمێکی داگیرساو لەسەرییەتی. بە هێواشی قسە دەکات، خۆی نزیکە لە تیفکرکردن.", tr: "Descartes, üzerinde yanan bir mum bulunan bir masada oturmaktadır. Yavaş, neredeyse meditatif bir şekilde konuşur.", en: "Descartes sits at a table on which a lit candle stands. He speaks slowly, almost meditatively.", ar: "يجلس ديكارت إلى طاولة توجد عليها شمعة مضاءة. يتحدث ببطء، بأسلوب أقرب إلى التأمل." , uk: "Декарт сидить за столом, на якому стоїть запалена свічка. Він говорить повільно, майже медитативно." , fa: "دکارت پشت میزی مینشیند که شمعی روشن بر روی آن ایستاده است. او آهسته و تقریباً متفکرانه صحبت میکند.","es":"Descartes se sienta en una mesa en la que se levanta una vela encendida. Habla lentamente, casi meditativamente."},
       { de: "Descartes: Ich habe mich lange getäuscht. Die Sinne täuschen. Das Feuer da vor mir – ist es wirklich da? Oder träume ich es?", ku: "دێکارت: ماوەیەکی زۆرە خۆم دەخەڵەتاند. هەستەکان دەخەڵەتێنن. ئەو ئاگرەی لەبەردەمم – ئایا بەڕاستی لەوێیە؟ یان خەونم پێوە دەبینم؟", tr: "Descartes: Uzun süre kendimi kandırdım. Duyular aldatır. Önümdeki şu ateş – gerçekten orada mı? Yoksa onu düşlüyor muyum?", en: "Descartes: I have long deceived myself. The senses deceive. That fire before me – is it really there? Or am I dreaming it?", ar: "ديكارت: لطالما خدعت نفسي. الحواس تخدع. هذه النار أمامي – هل هي موجودة حقًا؟ أم أنني أحلم بها؟" , uk: "Декарт: Я довго себе обманював. Чуття обманюють. Той вогонь переді мною — чи справді він там? Чи, може, я його мрію?" , fa: "دکارت: من مدتهاست که خودم را فریب داده ام. حواس فریب می دهند. این آتش پیش از من - آیا واقعاً وجود دارد؟ یا من آن را خواب می بینم؟","es":"Descartes: Me he engañado por mucho tiempo. Los sentidos engañan. Ese fuego delante de mí – ¿está realmente ahí? ¿O lo estoy soñando?"},
@@ -9927,8 +9959,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const LEVEL_GRADS = {
     A1: { from:"#FF7E2E", to:"#FF3B8C" },
     A2: { from:"#FF3B8C", to:"#C040E0" },
-    B1: { from:"#8B5CF6", to:"#6D28D9" },
-    B2: { from:"#6D28D9", to:"#3B52F5" },
+    B1: { from:"var(--acc)", to:"var(--acc-dk)" },
+    B2: { from:"var(--acc-dk)", to:"#3B52F5" },
     C1: { from:"#3B82F6", to:"#1E9EF1" },
     C2: { from:"#1E9EF1", to:"#31D4CF" },
   };
@@ -9955,6 +9987,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [dialogDictEntry, setDialogDictEntry] = useState(null); // dialog reader: tapped umgangssprachlich word popup
   useEffect(() => { setDialogDictEntry(null); }, [mode, level, openDialogId]);
   useNavLayer(!!level, () => setLevel(null), { depth: 1 });
+  useEffect(() => { setThemeLevel(level || dailyLevel()); return () => setThemeLevel(dailyLevel()); }, [level]);
   useNavLayer(!!mode, () => setMode(null), { depth: 2 });
   useNavLayer(!!examType, () => setExamType(null), { depth: 3 });
   useNavLayer(!!examLevel, () => setExamLevel(null), { depth: 4 });
@@ -10023,7 +10056,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     const lc = levelColor(level);
     const SectionLabel = ({ icon: Icon, label, color = C.muted }) => (
       <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12, marginTop: 4 }}>
-        <div style={{ width: 26, height: 26, borderRadius: 7, background: `${color}18`, display: "grid", placeItems: "center" }}>
+        <div style={{ width: 26, height: 26, borderRadius: 7, background: `${A(color,"18")}`, display: "grid", placeItems: "center" }}>
           <Icon size={13} color={color} />
         </div>
         <span style={{ fontSize: 12.5, fontWeight: 700, color, letterSpacing: ".03em" }}>{label}</span>
@@ -10033,12 +10066,12 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       <div>
         {/* back */}
         <button className="rise" onClick={() => closeDetail()}
-          style={{ animationDelay:"0ms", border: `1.5px solid ${C.line}`, background: "#fff", color: C.muted, fontWeight: 700, fontSize: 13, marginBottom: 18, borderRadius: 99, padding: "7px 16px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 2px 6px rgba(0,0,0,.06)" }}>
+          style={{ animationDelay:"0ms", border: `1.5px solid ${C.line}`, background: "var(--surface)", color: C.muted, fontWeight: 700, fontSize: 13, marginBottom: 18, borderRadius: 99, padding: "7px 16px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 2px 6px rgba(0,0,0,.06)" }}>
           <span style={{ fontSize: 15 }}>↩</span> {UI_LABEL.allTopics[lang] || UI_LABEL.allTopics.ku}
         </button>
 
         {/* hero card */}
-        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div className="rise" style={{ animationDelay:"40ms", background: `linear-gradient(145deg, ${lc} 0%, ${A(lc,"CC")} 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${A(lc,"44")}`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, left: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,.08)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 26, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{g.icon}</div>
@@ -10054,7 +10087,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </div>
 
         {/* explanation */}
-        <div className="rise" style={{ animationDelay:"80ms", background: "#fff", border: `1.5px solid ${lc}25`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 18px ${lc}10` }}>
+        <div className="rise" style={{ animationDelay:"80ms", background: "var(--surface)", border: `1.5px solid ${A(lc,"25")}`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 18px ${A(lc,"10")}` }}>
           <SectionLabel icon={AlertCircle} label={UI_LABEL.explanation[lang] || UI_LABEL.explanation.ku} color={lc} />
           <ExpRenderer text={lang === "tr" ? (g.expTr || g.exp) : lang === "en" ? (g.expEn || g.exp) : lang === "ar" ? (g.expAr || g.exp) : lang === "uk" ? (g.expUk || g.exp) : lang === "fa" ? (g.expFa || g.exp) : lang === "es" ? (g.expEs || g.expEn || g.exp) : g.exp} color={lc} />
         </div>
@@ -10092,7 +10125,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         {g.groups && (
           <div style={{ display: "grid", gap: 14, marginBottom: 16 }}>
             {g.groups.map((grp, gi) => (
-              <div key={grp.art} className="rise" style={{ animationDelay:`${120 + gi * 50}ms`, background: "#fff", border: `1.5px solid ${grp.color}25`, borderRadius: 18, overflow: "hidden", boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 20px ${grp.color}12` }}>
+              <div key={grp.art} className="rise" style={{ animationDelay:`${120 + gi * 50}ms`, background: "var(--surface)", border: `1.5px solid ${A(grp.color,"25")}`, borderRadius: 18, overflow: "hidden", boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 20px ${A(grp.color,"12")}` }}>
                 {/* group header */}
                 <div style={{ background: grp.color, padding: "13px 16px", display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 38, height: 38, borderRadius: 11, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 20, boxShadow: "0 2px 0 rgba(0,0,0,.1)", flexShrink: 0 }}>{grp.emoji}</div>
@@ -10110,8 +10143,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <SectionLabel icon={FileText} label={lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "es" ? "Ejemplos" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} color={grp.color} />
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {grp.words.map((w, wi) => (
-                      <span key={wi} style={{ display: "inline-flex", flexDirection: "column", gap: 3, background: `${grp.color}0D`, border: `1.5px solid ${grp.color}25`, borderRadius: 12, padding: "8px 12px", minWidth: 92 }}>
-                        <span style={{ display: "flex", alignItems: "center", gap: 3 }}><De size={14.5} color="#1A1F2E">{w[0]}</De><Speak text={w[0]} size={13} /></span>
+                      <span key={wi} style={{ display: "inline-flex", flexDirection: "column", gap: 3, background: `${A(grp.color,"0D")}`, border: `1.5px solid ${A(grp.color,"25")}`, borderRadius: 12, padding: "8px 12px", minWidth: 92 }}>
+                        <span style={{ display: "flex", alignItems: "center", gap: 3 }}><De size={14.5} color="var(--ink)">{w[0]}</De><Speak text={w[0]} size={13} /></span>
                         <span style={{ fontSize: 12.5, color: grp.color, fontWeight: 700 }}>{({tr:w[2],en:w[3],ar:w[4],uk:w[5],fa:w[6],es:w[7]}[lang]) || w[1]}</span>
                       </span>
                     ))}
@@ -10124,7 +10157,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
         {/* merksatz */}
         {g.merksatz && (
-          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${lc}DD 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 10px 28px ${lc}40` }}>
+          <div className="rise" style={{ animationDelay:"160ms", background: `linear-gradient(145deg, ${lc} 0%, ${A(lc,"DD")} 100%)`, borderRadius: 18, padding: "16px 18px", marginBottom: 16, boxShadow: `0 10px 28px ${A(lc,"40")}` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center" }}>
                 <Zap size={14} color="#fff" />
@@ -10147,11 +10180,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           <SectionLabel icon={BookOpen} label={`${lang === "tr" ? "Örnekler" : lang === "en" ? "Examples" : lang === "ar" ? "أمثلة" : lang === "es" ? "Ejemplos" : lang === "uk" ? "Приклади" : lang === "fa" ? "مثال‌ها" : "نموونەکان"} / Beispiele  (${exList.length})`} color={C.gold} />
           <div style={{ display: "grid", gap: 9 }}>
             {exList.map((e, i) => (
-              <div key={i} className="rise" style={{ animationDelay:`${220 + i * 30}ms`, background: "#fff", border: "1.5px solid #F0F1F5", borderRadius: 16, padding: "13px 16px", display: "flex", gap: 12, alignItems: "flex-start", boxShadow: "0 1px 0 rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05)" }}>
-                <span style={{ width: 24, height: 24, borderRadius: 7, background: `${C.gold}18`, display: "grid", placeItems: "center", fontSize: 12, fontWeight: 800, color: C.gold, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+              <div key={i} className="rise" style={{ animationDelay:`${220 + i * 30}ms`, background: "var(--surface)", border: "1.5px solid #F0F1F5", borderRadius: 16, padding: "13px 16px", display: "flex", gap: 12, alignItems: "flex-start", boxShadow: "0 1px 0 rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05)" }}>
+                <span style={{ width: 24, height: 24, borderRadius: 7, background: `${A(C.gold,"18")}`, display: "grid", placeItems: "center", fontSize: 12, fontWeight: 800, color: C.gold, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 4 }}>
-                    <div style={{ flex: 1 }}><De size={16} color="#1A1F2E">{e.de}</De></div>
+                    <div style={{ flex: 1 }}><De size={16} color="var(--ink)">{e.de}</De></div>
                     <Speak text={e.de} size={14} />
                   </div>
                   {(e[lang] || e.ku) && (
@@ -10178,17 +10211,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     return (
       <div className="rise">
         <style>{`
-          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px ${lc}18 !important; }
+          .wword-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px ${A(lc,"18")} !important; }
           .wword-card { transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
         `}</style>
 
         {/* back */}
-        <button onClick={() => closeDetail()} style={{ border: `1.5px solid ${C.line}`, background: "#fff", color: C.muted, fontWeight: 700, fontSize: 13, marginBottom: 18, borderRadius: 99, padding: "7px 16px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 2px 6px rgba(0,0,0,.06)" }}>
+        <button onClick={() => closeDetail()} style={{ border: `1.5px solid ${C.line}`, background: "var(--surface)", color: C.muted, fontWeight: 700, fontSize: 13, marginBottom: 18, borderRadius: 99, padding: "7px 16px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 2px 6px rgba(0,0,0,.06)" }}>
           <span style={{ fontSize: 15 }}>↩</span> {lang === "tr" ? "Tüm dersler" : lang === "en" ? "All lessons" : lang === "ar" ? "كل الدروس" : lang === "es" ? "Todas las lecciones" : lang === "uk" ? "Усі уроки" : lang === "fa" ? "همه درس‌ها" : "هەموو وانەکان"}
         </button>
 
         {/* hero */}
-        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${lc}CC 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${lc}44`, position: "relative", overflow: "hidden" }}>
+        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${A(lc,"CC")} 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${A(lc,"44")}`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, right: -20, width: 130, height: 130, borderRadius: "50%", background: "rgba(255,255,255,.07)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{l.icon}</div>
@@ -10208,9 +10241,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </div>
 
         {/* grammar note */}
-        <div style={{ background: "#fff", border: `1.5px solid ${C.gold}28`, borderRadius: 18, padding: "14px 18px", marginBottom: 20, boxShadow: "0 2px 0 rgba(0,0,0,.05), 0 6px 16px rgba(245,165,36,.08)" }}>
+        <div style={{ background: "var(--surface)", border: `1.5px solid ${A(C.gold,"28")}`, borderRadius: 18, padding: "14px 18px", marginBottom: 20, boxShadow: "0 2px 0 rgba(0,0,0,.05), 0 6px 16px rgba(245,165,36,.08)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 9 }}>
-            <div style={{ width: 26, height: 26, borderRadius: 7, background: `${C.gold}18`, display: "grid", placeItems: "center" }}>
+            <div style={{ width: 26, height: 26, borderRadius: 7, background: `${A(C.gold,"18")}`, display: "grid", placeItems: "center" }}>
               <AlertCircle size={13} color={C.gold} />
             </div>
             <span style={{ fontSize: 12.5, fontWeight: 700, color: C.gold }}>{lang === "tr" ? "Dilbilgisi Notu" : lang === "en" ? "Grammar Note" : lang === "ar" ? "ملاحظة نحوية" : lang === "es" ? "Nota gramatical" : lang === "uk" ? "Граматична примітка" : lang === "fa" ? "نکته دستوری" : "تێبینی ڕێزمان"}</span>
@@ -10221,17 +10254,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         {/* word grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 10 }}>
           {l.words.map((w, i) => (
-            <div key={i} className="wword-card" style={{ background: "#fff", border: `1.5px solid ${lc}20`, borderRadius: 16, padding: "14px 15px", boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 16px ${lc}0E` }}>
+            <div key={i} className="wword-card" style={{ background: "var(--surface)", border: `1.5px solid ${A(lc,"20")}`, borderRadius: 16, padding: "14px 15px", boxShadow: `0 2px 0 rgba(0,0,0,.06), 0 6px 16px ${A(lc,"0E")}` }}>
               {/* German + TTS */}
               <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 6 }}>
-                <div style={{ flex: 1 }}><De size={16} color="#1A1F2E" style={{ fontWeight: 700 }}>{w.de}</De></div>
+                <div style={{ flex: 1 }}><De size={16} color="var(--ink)" style={{ fontWeight: 700 }}>{w.de}</De></div>
                 <Speak text={w.de} size={14} />
               </div>
               {/* Native lang translation */}
               <div style={{ fontSize: 14.5, color: lc, fontWeight: 700, lineHeight: 1.5 }}>{tC(w, lang)}</div>
               {/* number badge */}
               <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: `${lc}AA`, background: `${lc}10`, borderRadius: 99, padding: "2px 7px" }}>{i + 1}</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: `${A(lc,"AA")}`, background: `${A(lc,"10")}`, borderRadius: 99, padding: "2px 7px" }}>{i + 1}</span>
               </div>
             </div>
           ))}
@@ -10241,13 +10274,13 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   }
 
   // ── Circular progress helper ──
-  const CircleProgress = ({ pct = 0, color = "#5B5BD6", size = 38, done = false }) => {
+  const CircleProgress = ({ pct = 0, color = "var(--acc-tx)", size = 38, done = false }) => {
     const r = 13, circ = 2 * Math.PI * r;
     const offset = circ - (Math.min(pct, 100) / 100) * circ;
     return (
       <div style={{ position:"relative", width:size, height:size, flexShrink:0 }}>
         <svg width={size} height={size} style={{ transform:"rotate(-90deg)", display:"block" }}>
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={`${color}25`} strokeWidth={2.5} />
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={`${A(color,"25")}`} strokeWidth={2.5} />
           <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={done ? "#16A06F" : color} strokeWidth={2.5}
             strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
             style={{ transition:"stroke-dashoffset .5s ease" }} />
@@ -10290,7 +10323,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
     { id: "grammar",  label: tL("tab_grammar"),  Icon: BookOpen,      activeColor: "#1A1E2F" },
     { id: "words",    label: tL("tab_words"),    Icon: WIcon,         activeColor: "#2D4A6A" },
     { id: "cards",    label: tL("tab_cards"),    Icon: LayoutGrid,    activeColor: "#FFA586" },
-    { id: "masal",    label: tL("tab_stories"),  Icon: BookMarked,    activeColor: "#7C3AED" },
+    { id: "masal",    label: tL("tab_stories"),  Icon: BookMarked,    activeColor: "var(--acc-dk)" },
     { id: "ubung",    label: tL("tab_ubung"),    Icon: PenLine,       activeColor: "#B51A2B" },
     { id: "dialog",   label: tL("tab_dialog"),   Icon: MessageCircle, activeColor: "#341A2B" },
     { id: "pre",      label: tL("tab_pretest"),  Icon: ClipboardCheck,activeColor: "#384358" },
@@ -10311,18 +10344,18 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {/* ── Page header ── */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20, gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "#1A1F2E", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : lang === "es" ? "Lecciones y gramática" : lang === "uk" ? "Уроки та граматика" : lang === "fa" ? "درس‌ها و دستور زبان" : "وانە و ڕێزمان"}</h2>
+          <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0, color: "var(--ink)", letterSpacing: "-.02em" }}>{lang === "tr" ? "Dersler ve Dilbilgisi" : lang === "en" ? "Lessons and Grammar" : lang === "ar" ? "الدروس والقواعد" : lang === "es" ? "Lecciones y gramática" : lang === "uk" ? "Уроки та граматика" : lang === "fa" ? "درس‌ها و دستور زبان" : "وانە و ڕێزمان"}</h2>
           <p style={{ color: C.muted, fontSize: 13.5, margin: "4px 0 0", lineHeight: 1.5 }}>
             {mode === "exam" ? tL("exam_pick_desc") : tL("lesson_pick_desc")}
           </p>
         </div>
         {/* progress badge */}
-        <div style={{ background: "#fff", border: `1.5px solid ${C.line}`, borderRadius: 12, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)", flexShrink: 0 }}>
+        <div style={{ background: "var(--surface)", border: `1.5px solid ${C.line}`, borderRadius: 12, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)", flexShrink: 0 }}>
           <div style={{ width: 28, height: 28, borderRadius: 8, background: avgPct >= 95 ? "#E8F8F2" : "#F3F0FC", display: "grid", placeItems: "center" }}>
             <TrendingUp size={14} color={avgPct >= 95 ? C.green : "#7B6BB5"} />
           </div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#1A1F2E", lineHeight: 1 }}>{avgPct}%</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: "var(--ink)", lineHeight: 1 }}>{avgPct}%</div>
             <div style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "es" ? "temas" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
           </div>
         </div>
@@ -10341,19 +10374,19 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 }
                 .home-back-btn {
                   background-size: 200% auto;
-                  background-image: linear-gradient(135deg, ${lg.from}18 0%, ${lg.to}30 40%, ${lg.from}18 100%);
+                  background-image: linear-gradient(135deg, ${A(lg.from,"18")} 0%, ${A(lg.to,"30")} 40%, ${A(lg.from,"18")} 100%);
                   animation: home-btn-shine 2.8s linear infinite;
                   transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
                 }
                 .home-back-btn:hover {
                   transform: translateY(-2px);
-                  box-shadow: 0 4px 14px ${lg.from}30 !important;
+                  box-shadow: 0 4px 14px ${A(lg.from,"30")} !important;
                 }
                 .home-back-btn:active { transform: scale(.97); }
               `}</style>
               <button onClick={() => setTab("home")} className="home-back-btn" style={{
                 display:"inline-flex", alignItems:"center", gap:6,
-                border:`1px solid ${lg.from}30`,
+                border:`1px solid ${A(lg.from,"30")}`,
                 color: lg.from,
                 fontSize:13.5, fontWeight:700,
                 padding:"8px 18px 8px 14px", borderRadius:12,
@@ -10371,7 +10404,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             background:`linear-gradient(135deg,${lg.from} 0%,${lg.to} 100%)`,
             borderRadius:22, padding:"20px 20px 22px", marginBottom:18,
             position:"relative", overflow:"hidden",
-            boxShadow:`0 12px 32px ${lg.from}44`,
+            boxShadow:`0 12px 32px ${A(lg.from,"44")}`,
           }}>
             <div style={{ position:"absolute",top:-24,right:-24,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.13)",pointerEvents:"none" }} />
             <div style={{ position:"absolute",bottom:-16,left:-16,width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none" }} />
@@ -10409,7 +10442,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div style={{ position:"relative", marginTop:16, display:"flex", alignItems:"center", gap:12 }}>
               <div style={{ flex:1 }}>
                 <div style={{ height:6, background:"rgba(255,255,255,.25)", borderRadius:3, overflow:"hidden" }}>
-                  <div style={{ height:"100%", width:`${avgPct}%`, background:"#fff",
+                  <div style={{ height:"100%", width:`${avgPct}%`, background:"var(--surface)",
                     borderRadius:3, transition:"width .6s cubic-bezier(.22,1,.36,1)", minWidth:avgPct>0?4:0 }} />
                 </div>
                 <div style={{ fontSize:12, color:"rgba(255,255,255,.8)", fontWeight:700, marginTop:5 }}>
@@ -10440,7 +10473,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               <div key={i} style={{ display:"flex", alignItems:"center", gap:6, flex:"1 1 auto", minWidth:0 }}>
                 <Icon size={15} color={lg.from} style={{ flexShrink:0 }} />
                 <div style={{ minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:800, color:"#1A1F2E", lineHeight:1.1 }}>{v}</div>
+                  <div style={{ fontSize:13, fontWeight:800, color:"var(--ink)", lineHeight:1.1 }}>{v}</div>
                   <div style={{ fontSize:12, color:C.muted, fontWeight:600, whiteSpace:"nowrap" }}>{l}</div>
                 </div>
               </div>
@@ -10565,11 +10598,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   style={{
                     animationDelay: `${idx * 35}ms`,
                     background: C.panel,
-                    border: `1.5px solid ${isOpen ? "#5B5BD6" : C.line}`,
+                    border: `1.5px solid ${isOpen ? "var(--acc)" : C.line}`,
                     borderRadius: 16,
                     overflow: "hidden",
                     boxShadow: isOpen
-                      ? "0 8px 28px rgba(91,91,214,.18), 0 2px 8px rgba(91,91,214,.08)"
+                      ? "0 8px 28px color-mix(in srgb, var(--acc) 18%, transparent), 0 2px 8px color-mix(in srgb, var(--acc) 8%, transparent)"
                       : "0 1px 4px rgba(0,0,0,.04)",
                     transition: "border-color .28s, box-shadow .32s",
                   }}>
@@ -10581,7 +10614,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     style={{
                       width: "100%", border: "none",
                       background: isOpen
-                        ? "linear-gradient(135deg,#5B5BD6 0%,#4B45C4 100%)"
+                        ? "linear-gradient(135deg,var(--acc-btn) 0%,var(--acc-dk) 100%)"
                         : C.panel,
                       color: isOpen ? "#fff" : C.ink,
                       padding: "14px 16px",
@@ -10597,7 +10630,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       transition: "background .32s",
                     }}>
-                      <MessageCircle size={16} color={isOpen ? "#fff" : "#5B5BD6"} />
+                      <MessageCircle size={16} color={isOpen ? "#fff" : "var(--acc)"} />
                     </div>
 
                     {/* text */}
@@ -10701,7 +10734,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             const top = Math.min(dialogDictEntry._y + 6, window.innerHeight - 220);
             return (
               <div onClick={e => e.stopPropagation()} dir="ltr"
-                style={{ position: 'fixed', left, top, width: tooltipW, zIndex: 2002, background: '#fff', borderRadius: 14,
+                style={{ position: 'fixed', left, top, width: tooltipW, zIndex: 2002, background: 'var(--surface)', borderRadius: 14,
                   padding: '12px 14px 14px', boxShadow: '0 8px 32px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.10)', border: '1px solid #ece9ff' }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 16, fontWeight: 800, color: '#18181B', fontFamily: 'Georgia,serif' }}>{dialogDictEntry.word}</span>
@@ -10714,23 +10747,23 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     dialogDictEntry.ku && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: '#16A06F', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>KU</span>
-                        <span style={{ fontSize: 13, color: '#18181B', fontWeight: 600, direction: 'rtl' }}>{dialogDictEntry.ku}</span>
+                        <span style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 600, direction: 'rtl' }}>{dialogDictEntry.ku}</span>
                       </div>
                     )
                   ) : (
                     (dialogDictEntry[lang] || dialogDictEntry.tr) && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: '#E05A00', padding: '1px 5px', borderRadius: 3, flexShrink: 0 }}>{lang.toUpperCase()}</span>
-                        <span dir={(lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize: 13, color: '#18181B', fontWeight: 600 }}>{dialogDictEntry[lang] || dialogDictEntry.tr}</span>
+                        <span dir={(lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 600 }}>{dialogDictEntry[lang] || dialogDictEntry.tr}</span>
                       </div>
                     )
                   )}
                 </div>
-                <div style={{ background: '#f8f7ff', borderLeft: '2px solid #5B5BD6', borderRadius: '0 6px 6px 0', padding: '6px 10px' }}>
-                  <div style={{ fontSize: 12, color: '#5B5BD6', fontWeight: 700, marginBottom: 2 }}>
+                <div style={{ background: 'var(--surface-hi)', borderLeft: '2px solid var(--acc)', borderRadius: '0 6px 6px 0', padding: '6px 10px' }}>
+                  <div style={{ fontSize: 12, color: 'var(--acc-tx)', fontWeight: 700, marginBottom: 2 }}>
                     {DLG_POPUP_LABEL.formalHint[lang] || DLG_POPUP_LABEL.formalHint.ku}
                   </div>
-                  <div dir="ltr" style={{ fontSize: 13, color: '#18181B', fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 600 }}>{dialogDictEntry.formal}</div>
+                  <div dir="ltr" style={{ fontSize: 13, color: 'var(--ink)', fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 600 }}>{dialogDictEntry.formal}</div>
                 </div>
               </div>
             );
@@ -10750,7 +10783,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             compact={(() => { const s = UBUNG_SECTIONS[selUbungIdx]; return s ? (
               <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
                 <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                  background:`linear-gradient(135deg,${s.color},${s.color}BB)`,
+                  background:`linear-gradient(135deg,${s.color},${A(s.color,"BB")})`,
                   display:"grid", placeItems:"center", fontSize:18 }}>{s.emoji}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
@@ -10770,17 +10803,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
                     background: isSel ? sec.color : "#fff",
                     border:`2.5px solid ${sec.color}`,
-                    boxShadow: isSel ? `0 0 0 4px ${sec.color}28,0 3px 10px ${sec.color}50` : `0 0 0 3px ${sec.color}18`,
+                    boxShadow: isSel ? `0 0 0 4px ${A(sec.color,"28")},0 3px 10px ${A(sec.color,"50")}` : `0 0 0 3px ${A(sec.color,"18")}`,
                     display:"grid", placeItems:"center" }}>
-                    {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"#fff" }} />}
+                    {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
                   </div>
                   <div style={{ width:10, flexShrink:0 }} />
                   {/* gradient-border pill */}
                   <div style={{ flex:1, height:"87%",
-                    background:`linear-gradient(135deg,${sec.color},${sec.color}AA)`,
+                    background:`linear-gradient(135deg,${sec.color},${A(sec.color,"AA")})`,
                     borderRadius:99, padding:"2.5px",
-                    boxShadow: isSel ? `0 8px 20px ${sec.color}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                    <div style={{ height:"100%", background:"#fff", borderRadius:97,
+                    boxShadow: isSel ? `0 8px 20px ${A(sec.color,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                    <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
                       display:"flex", alignItems:"center", padding:"0 12px", gap:8 }}>
                       <div style={{ flex:1, minWidth:0 }}>
                         <div style={{ fontWeight:800, fontSize:15, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} dir="ltr">{sec.label}</div>
@@ -10856,11 +10889,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           return (
             <div className="rise">
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:18 }}>
-                <div style={{ width:42, height:42, borderRadius:13, background:`${C.green}18`, display:"grid", placeItems:"center" }}>
+                <div style={{ width:42, height:42, borderRadius:13, background:`${A(C.green,"18")}`, display:"grid", placeItems:"center" }}>
                   <GraduationCap size={22} color={C.green} />
                 </div>
                 <div>
-                  <div style={{ fontWeight:800, fontSize:17, color:"#1A1F2E" }}>{tL("exam_formal")}</div>
+                  <div style={{ fontWeight:800, fontSize:17, color:"var(--ink)" }}>{tL("exam_formal")}</div>
                   <div style={{ fontSize:12.5, color:C.muted }}>{lang === "tr" ? `${level} Seviyesi — Hangi sınavı istersiniz?` : lang === "en" ? `${level} Level — Which exam would you like?` : lang === "ar" ? `مستوى ${level} — أي اختبار تريد؟` : lang === "fa" ? `سطح ${level} — کدام آزمون را می‌خواهید؟` : lang === "es" ? `Nivel ${level} — ¿Qué examen prefieres?` : lang === "uk" ? `Рівень ${level} — який іспит ви хочете?` : `ئاستی ${level} — کام تاقیکردنەوە دەتەوێت؟`}</div>
                 </div>
               </div>
@@ -10869,10 +10902,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   const sc = progress[`${k}::${level}::exam`] || 0;
                   return (
                     <button key={k} onClick={() => { setExamType(k); setExamLevel(level); }}
-                      style={{ textAlign:"right", background:"#fff", border:`1.5px solid ${C.line}`, borderInlineStart:`5px solid ${p.color}`, borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer", boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)", transition:"transform .18s,box-shadow .18s" }}
-                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 12px 24px ${p.color}33`;}}
+                      style={{ textAlign:"right", background:"var(--surface)", border:`1.5px solid ${C.line}`, borderInlineStart:`5px solid ${p.color}`, borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer", boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)", transition:"transform .18s,box-shadow .18s" }}
+                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 12px 24px ${A(p.color,"33")}`;}}
                       onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 2px 0 rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.07)";}}>
-                      <div style={{ width:50, height:50, borderRadius:14, background:p.color, color:"#fff", display:"grid", placeItems:"center", flexShrink:0, boxShadow:`0 3px 10px ${p.color}55` }}>
+                      <div style={{ width:50, height:50, borderRadius:14, background:p.color, color:"#fff", display:"grid", placeItems:"center", flexShrink:0, boxShadow:`0 3px 10px ${A(p.color,"55")}` }}>
                         <p.Icon size={24} />
                       </div>
                       <div style={{ flex:1 }}>
@@ -10882,7 +10915,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                           {sc >= 95 ? (lang === "tr" ? `✓ Daha önce %${Math.round(sc)} aldınız` : lang === "en" ? `✓ You previously scored ${Math.round(sc)}%` : lang === "ar" ? `✓ حصلت سابقًا على ${Math.round(sc)}%` : lang === "fa" ? `✓ قبلاً ${Math.round(sc)}% گرفتید` : lang === "es" ? `✓ Antes obtuviste ${Math.round(sc)}%` : lang === "uk" ? `✓ Ви раніше набрали ${Math.round(sc)}%` : `✓ پێشتر ${Math.round(sc)}% گەیشتووتە`) : (lang === "tr" ? `↻ Son sonuç: %${Math.round(sc)}` : lang === "en" ? `↻ Last result: ${Math.round(sc)}%` : lang === "ar" ? `↻ آخر نتيجة: ${Math.round(sc)}%` : lang === "es" ? `↻ Último resultado: ${Math.round(sc)}%` : lang === "uk" ? `↻ Останній результат: ${Math.round(sc)}%` : `↻ دواین ئەنجام: ${Math.round(sc)}%`)}
                         </div>}
                       </div>
-                      <div style={{ background:`${p.color}14`, borderRadius:10, padding:"8px 14px", fontSize:13, fontWeight:800, color:p.color, flexShrink:0 }}>
+                      <div style={{ background:`${A(p.color,"14")}`, borderRadius:10, padding:"8px 14px", fontSize:13, fontWeight:800, color:p.color, flexShrink:0 }}>
                         {tL("exam_go")} ←
                       </div>
                     </button>
@@ -10898,7 +10931,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         return (
           <div className="rise">
             <button onClick={() => { setExamType(null); setExamLevel(null); }}
-              style={{ border:`1.5px solid ${C.line}`, background:"#fff", color:C.muted, fontWeight:700, fontSize:13, marginBottom:16, borderRadius:99, padding:"7px 16px", cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6, boxShadow:"0 2px 6px rgba(0,0,0,.06)" }}>
+              style={{ border:`1.5px solid ${C.line}`, background:"var(--surface)", color:C.muted, fontWeight:700, fontSize:13, marginBottom:16, borderRadius:99, padding:"7px 16px", cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6, boxShadow:"0 2px 6px rgba(0,0,0,.06)" }}>
               <span style={{ fontSize:15 }}>↩</span> {lang === "tr" ? "Sınav türünü değiştir" : lang === "en" ? "Change exam type" : lang === "ar" ? "تغيير نوع الاختبار" : lang === "es" ? "Cambiar tipo de examen" : lang === "uk" ? "Змінити тип іспиту" : lang === "fa" ? "تغییر نوع آزمون" : "گۆڕینی جۆری تاقیکردنەوە"}
             </button>
             <ExamRunner provName={prov.name} provDe={prov.de} level={level} lang={lang}
@@ -10916,7 +10949,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             compact={selectedGrammar && (
               <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
                 <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                  background:`linear-gradient(135deg,${levelColor(level)},${levelColor(level)}BB)`,
+                  background:`linear-gradient(135deg,${levelColor(level)},${A(levelColor(level),"BB")})`,
                   display:"grid", placeItems:"center", fontSize:18 }}>{selectedGrammar.icon}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
@@ -10943,18 +10976,18 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
                       background: isSel ? ac : "#fff",
                       border:`2.5px solid ${ac}`,
-                      boxShadow: isSel ? `0 0 0 4px ${ac}28,0 3px 10px ${ac}50` : `0 0 0 3px ${ac}18`,
+                      boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
                       display:"grid", placeItems:"center" }}>
-                      {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"#fff" }} />}
+                      {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
                     </div>
                     {/* spacer */}
                     <div style={{ width:10, flexShrink:0 }} />
                     {/* gradient-border pill card */}
                     <div style={{ flex:1, height:"87%",
-                      background:`linear-gradient(135deg,${ac},${ac}AA)`,
+                      background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
                       borderRadius:99, padding:"2.5px",
-                      boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                      <div style={{ height:"100%", background:"#fff", borderRadius:97,
+                      boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                      <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
                         display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                         <div style={{ flex:1, minWidth:0 }}>
                           <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tC(item, lang)}</div>
@@ -10999,7 +11032,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="fiil"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
             </div>
-            <div style={{ display: openWordsSub==="fiil" ? "" : "none", borderTop:"1px solid #E4E4E8" }}>
+            <div style={{ display: openWordsSub==="fiil" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Verb category picker */}
               <CollapsingPickerHeader
                 accent="#2D5C8A"
@@ -11032,17 +11065,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
                         background: isSel ? ac : "#fff",
                         border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${ac}28,0 3px 10px ${ac}50` : `0 0 0 3px ${ac}18`,
+                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
                         display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"#fff" }} />}
+                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
                       </div>
                       <div style={{ width:10, flexShrink:0 }} />
                       {/* gradient-border pill */}
                       <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${ac}AA)`,
+                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"#fff", borderRadius:97,
+                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
@@ -11060,7 +11093,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected verb category words */}
               {selectedVerb && (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVerb.icon}</div>
                       <div>
@@ -11072,7 +11105,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedVerb.words.map((w,i) => (
-                      <div key={i} className="wword-card2" style={{ background:"#fff", border:`1.5px solid ${levelColor(level)}1A`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${levelColor(level)}0C` }}>
+                      <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>
                         <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:5 }}>
                           <div style={{ flex:1 }}><De size={15} color="#1A1F2E">{w.de}</De></div>
                           <Speak text={w.de} size={13} />
@@ -11082,10 +11115,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         </div>
                         <div style={{ fontSize:13.5, color:levelColor(level), fontWeight:700, lineHeight:1.4 }}>{tC(w, lang)}</div>
                         {w.ex && (
-                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
+                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${A(levelColor(level),"15")}` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"var(--muted)", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11118,7 +11151,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="vocab"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
             </div>
-            <div style={{ display: openWordsSub==="vocab" ? "" : "none", borderTop:"1px solid #E4E4E8" }}>
+            <div style={{ display: openWordsSub==="vocab" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Vocab topic wheel picker */}
               <CollapsingPickerHeader
                 accent="#3E5A7A"
@@ -11151,17 +11184,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
                         background: isSel ? ac : "#fff",
                         border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${ac}28,0 3px 10px ${ac}50` : `0 0 0 3px ${ac}18`,
+                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
                         display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"#fff" }} />}
+                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
                       </div>
                       <div style={{ width:10, flexShrink:0 }} />
                       {/* gradient-border pill */}
                       <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${ac}AA)`,
+                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"#fff", borderRadius:97,
+                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
@@ -11180,7 +11213,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {selectedVocab && (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVocab.icon}</div>
                       <div>
@@ -11192,7 +11225,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedVocab.words.map((w,i) => (
-                      <div key={i} className="wword-card2" style={{ background:"#fff", border:`1.5px solid ${levelColor(level)}1A`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${levelColor(level)}0C` }}>
+                      <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>
                         <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:5 }}>
                           <div style={{ flex:1 }}><De size={15} color="#1A1F2E">{w.de}</De></div>
                           <Speak text={w.de} size={13} />
@@ -11202,10 +11235,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         </div>
                         <div style={{ fontSize:13.5, color:levelColor(level), fontWeight:700, lineHeight:1.4 }}>{tC(w, lang)}</div>
                         {w.ex && (
-                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
+                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${A(levelColor(level),"15")}` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"var(--muted)", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11238,7 +11271,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </div>
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
             </div>
-            <div style={{ display: openWordsSub==="adj" ? "" : "none", borderTop:"1px solid #E4E4E8" }}>
+            <div style={{ display: openWordsSub==="adj" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               <CollapsingPickerHeader
                 accent="#2D6B52"
                 compact={selectedAdj && (
@@ -11269,16 +11302,16 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
                         background: isSel ? ac : "#fff",
                         border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${ac}28,0 3px 10px ${ac}50` : `0 0 0 3px ${ac}18`,
+                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
                         display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"#fff" }} />}
+                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
                       </div>
                       <div style={{ width:10, flexShrink:0 }} />
                       <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${ac}AA)`,
+                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
                         borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${ac}30` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"#fff", borderRadius:97,
+                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
+                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
                           display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
@@ -11296,7 +11329,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               {/* Selected adjective category words */}
               {selectedAdj && (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${levelColor(level)}BB)`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${levelColor(level)}38` }}>
+                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                       <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedAdj.icon}</div>
                       <div>
@@ -11308,7 +11341,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedAdj.words.map((w,i) => (
-                      <div key={i} className="wword-card2" style={{ background:"#fff", border:`1.5px solid ${levelColor(level)}1A`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${levelColor(level)}0C` }}>
+                      <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>
                         <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:5 }}>
                           <div style={{ flex:1 }}><De size={15} color="#1A1F2E">{w.de}</De></div>
                           <Speak text={w.de} size={13} />
@@ -11318,10 +11351,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         </div>
                         <div style={{ fontSize:13.5, color:levelColor(level), fontWeight:700, lineHeight:1.4 }}>{tC(w, lang)}</div>
                         {w.ex && (
-                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${levelColor(level)}15` }}>
+                          <div style={{ marginTop:6, paddingTop:6, borderTop:`1px solid ${A(levelColor(level),"15")}` }}>
                             <div dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontSize:12.5, color:"#5A6478", lineHeight:1.4, fontStyle:"italic", overflowWrap:"break-word", wordBreak:"break-word" }}>{w.ex}</div>
                             {(tEx(w, lang)) && (
-                              <div style={{ fontSize:12.5, color:"#6B7280", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
+                              <div style={{ fontSize:12.5, color:"var(--muted)", marginTop:2, lineHeight:1.35, overflowWrap:"break-word", wordBreak:"break-word" }}>{tEx(w, lang)}</div>
                             )}
                           </div>
                         )}
@@ -11385,7 +11418,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div className="rise">
               {/* back */}
               <button onClick={() => { setSelMasalId(null); setMasalDictEntry(null); }}
-                style={{ border:`1.5px solid ${C.line}`, background:"#fff", color:C.muted,
+                style={{ border:`1.5px solid ${C.line}`, background:"var(--surface)", color:C.muted,
                   fontWeight:700, fontSize:13, marginBottom:18, borderRadius:99, padding:"7px 16px",
                   cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6,
                   boxShadow:"0 2px 6px rgba(0,0,0,.06)" }}>
@@ -11393,9 +11426,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </button>
 
               {/* hero */}
-              <div style={{ background:`linear-gradient(145deg,${story.color},${story.color}BB)`,
+              <div style={{ background:`linear-gradient(145deg,${story.color},${A(story.color,"BB")})`,
                 borderRadius:22, padding:"22px 20px 20px", color:"#fff", marginBottom:20,
-                boxShadow:`0 12px 32px ${story.color}44`,
+                boxShadow:`0 12px 32px ${A(story.color,"44")}`,
                 position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:-30, left:-30, width:120, height:120,
                   borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
@@ -11409,13 +11442,13 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </div>
 
               {/* single continuous story text */}
-              <div style={{ background:"#fff", borderRadius:16,
-                border:"1.5px solid #E8EAF0",
+              <div style={{ background:"var(--surface)", borderRadius:16,
+                border:"1.5px solid var(--line)",
                 boxShadow:"0 2px 0 rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.06)",
                 overflow:"hidden" }}>
                 <div style={{ padding:"18px 18px 18px", display:"flex", flexDirection:"column", gap:8 }}>
                   <div id="story-audio-text" dir="ltr" style={{ fontFamily:"'Satoshi',system-ui,sans-serif",
-                    fontSize:15, fontWeight:500, color:"#1A1F2E", lineHeight:1.85 }}>
+                    fontSize:15, fontWeight:500, color:"var(--ink)", lineHeight:1.85 }}>
                     {story.paragraphs.map((p, i) => (
                       <span key={i}>{renderStoryWithDict(p.de)}{i < story.paragraphs.length - 1 ? " " : ""}</span>
                     ))}
@@ -11442,15 +11475,15 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <>
                   <div onClick={() => setMasalDictEntry(null)} style={{ position:'fixed', inset:0, zIndex:2001 }} />
                   <div onClick={e => e.stopPropagation()}
-                    style={{ position:'fixed', left, top, width:tooltipW, zIndex:2002, background:'#fff', borderRadius:14,
+                    style={{ position:'fixed', left, top, width:tooltipW, zIndex:2002, background:'var(--surface)', borderRadius:14,
                       padding:'12px 14px 14px', boxShadow:'0 8px 32px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.10)', border:'1px solid #ece9ff' }}>
                     <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8, flexWrap:"wrap" }}>
                       {masalDictEntry.article && (
-                        <span style={{ fontSize:12, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>{masalDictEntry.article}</span>
+                        <span style={{ fontSize:12, fontWeight:700, color:ac, background:A(ac,"18"), padding:'2px 8px', borderRadius:20 }}>{masalDictEntry.article}</span>
                       )}
-                      <span style={{ fontSize:16, fontWeight:800, color:'#18181B', fontFamily:'Georgia,serif' }}>{masalDictEntry.word}</span>
+                      <span style={{ fontSize:16, fontWeight:800, color:'var(--ink)', fontFamily:'Georgia,serif' }}>{masalDictEntry.word}</span>
                       {masalDictEntry.type && (
-                        <span style={{ fontSize:12, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>{TYPE_LABEL[masalDictEntry.type] || masalDictEntry.type}</span>
+                        <span style={{ fontSize:12, color:'var(--muted)', background:'var(--surface-hi)', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>{TYPE_LABEL[masalDictEntry.type] || masalDictEntry.type}</span>
                       )}
                     </div>
                     <div style={{ display:"flex", flexDirection:"column", gap:4, marginBottom: masalDictEntry.ex ? 8 : 0 }}>
@@ -11460,15 +11493,15 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                         return val ? (
                           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                             <span style={{ fontSize:12, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
-                            <span style={{ fontSize:13, color:'#18181B', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
+                            <span style={{ fontSize:13, color:'var(--ink)', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
                           </div>
                         ) : null;
                       })()}
                     </div>
                     {masalDictEntry.ex && (
-                      <div style={{ background:'#f8f7ff', borderLeft:'2px solid ' + story.color, borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
+                      <div style={{ background:'var(--surface-hi)', borderLeft:'2px solid ' + story.color, borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
                         <div style={{ fontSize:12, color:story.color, fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>{masalDictEntry.ex}</div>
-                        <div dir={(lang === "ku" || lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize:12, color:'#71717A' }}>{masalDictEntry['ex_' + lang] || masalDictEntry.ex_tr}</div>
+                        <div dir={(lang === "ku" || lang === "ar" || lang === "fa") ? "rtl" : "ltr"} style={{ fontSize:12, color:'var(--muted)' }}>{masalDictEntry['ex_' + lang] || masalDictEntry.ex_tr}</div>
                       </div>
                     )}
                     <div style={{ marginTop:10, display:"flex", justifyContent:"flex-end" }}>
@@ -11499,11 +11532,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 {masals.map((story, i) => (
                   <div key={story.id} className="rise lcard"
                     onClick={() => { setSelMasalId(story.id); setMasalDictEntry(null); window.scrollTo({top:0,behavior:"instant"}); }}
-                    style={{ animationDelay:`${i * 60}ms`, background:"#fff", borderRadius:20,
+                    style={{ animationDelay:`${i * 60}ms`, background:"var(--surface)", borderRadius:20,
                       overflow:"hidden", cursor:"pointer",
                       boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
                     {/* gradient header */}
-                    <div style={{ background:`linear-gradient(135deg,${story.color},${story.color}BB)`,
+                    <div style={{ background:`linear-gradient(135deg,${story.color},${A(story.color,"BB")})`,
                       padding:"18px 18px 16px", position:"relative", overflow:"hidden" }}>
                       <div style={{ position:"absolute", top:-16, right:-16, width:56, height:56,
                         borderRadius:"50%", background:"rgba(255,255,255,.14)", pointerEvents:"none" }} />
@@ -11524,11 +11557,11 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                       alignItems:"center", justifyContent:"space-between" }}>
                       <div style={{ display:"flex", gap:8 }}>
                         <span style={{ fontSize:12, fontWeight:700, color:C.muted,
-                          background:"#F4F4F5", borderRadius:99, padding:"3px 10px" }}>
+                          background:"var(--surface-hi)", borderRadius:99, padding:"3px 10px" }}>
                           {story.paragraphs.length} {tL("stories_para")}
                         </span>
                         <span style={{ fontSize:12, fontWeight:700,
-                          color:story.color, background:`${story.color}14`,
+                          color:story.color, background:`${A(story.color,"14")}`,
                           borderRadius:99, padding:"3px 10px" }}>{level}</span>
                       </div>
                       <span style={{ fontSize:18, color:story.color, fontWeight:700 }}>←</span>
@@ -11815,7 +11848,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
   const progress = deck.length > 0 ? Math.min((idx / deck.length) * 100, 100) : 0;
   const total    = scores.correct + scores.wrong;
   const accuracy = total > 0 ? Math.round((scores.correct / total) * 100) : 0;
-  const lvColor  = level === "REVIEW" ? "#7C3AED" : levelColor(level);
+  const lvColor  = level === "REVIEW" ? "var(--acc-dk)" : levelColor(level);
   const dueCount = srsDueCount();
   const meta     = card ? WORD_META[card.de] : null;
   const artInfo  = card ? detectArticle(card.de) : null;
@@ -11841,13 +11874,13 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
           <div style={{ display:"flex", justifyContent:"center", marginTop:10 }}>
             <button onClick={() => changeLevel("REVIEW")} disabled={level !== "REVIEW" && dueCount === 0}
               style={{ display:"inline-flex", alignItems:"center", gap:7, borderRadius:99, padding:"7px 16px", cursor: (level !== "REVIEW" && dueCount === 0) ? "default" : "pointer",
-                border: `1.5px solid ${level === "REVIEW" ? "#7C3AED" : (dueCount ? "#7C3AED55" : C.line)}`,
-                background: level === "REVIEW" ? "#7C3AED" : (dueCount ? "#7C3AED10" : "transparent"),
-                color: level === "REVIEW" ? "#fff" : (dueCount ? "#7C3AED" : C.muted), fontWeight:700, fontSize:13 }}>
+                border: `1.5px solid ${level === "REVIEW" ? "var(--acc-dk)" : (dueCount ? "var(--acc-dk)55" : C.line)}`,
+                background: level === "REVIEW" ? "var(--acc-dk)" : (dueCount ? "var(--acc-dk)10" : "transparent"),
+                color: level === "REVIEW" ? "#fff" : (dueCount ? "var(--acc-dk)" : C.muted), fontWeight:700, fontSize:13 }}>
               <RefreshCw size={14} />
               {lang === "tr" ? "Tekrar" : lang === "en" ? "Review" : lang === "ar" ? "مراجعة" : lang === "es" ? "Repaso" : lang === "uk" ? "Повторення" : lang === "fa" ? "مرور" : "پێداچوونەوە"}
               {dueCount > 0 && (
-                <span style={{ background: level === "REVIEW" ? "rgba(255,255,255,.25)" : "#7C3AED", color:"#fff", borderRadius:99, padding:"1px 8px", fontSize:12, fontWeight:800 }}>{dueCount}</span>
+                <span style={{ background: level === "REVIEW" ? "rgba(255,255,255,.25)" : "var(--acc-dk)", color:"#fff", borderRadius:99, padding:"1px 8px", fontSize:12, fontWeight:800 }}>{dueCount}</span>
               )}
             </button>
           </div>
@@ -11882,7 +11915,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
       ) : finished ? (
         /* ── Completion ── */
         <div className="rise" style={{ textAlign:"center", padding:"32px 0" }}>
-          <div style={{ width:80, height:80, borderRadius:"50%", background:`linear-gradient(135deg,${lvColor},${C.gold})`, display:"grid", placeItems:"center", margin:"0 auto 16px", boxShadow:`0 12px 32px ${lvColor}55` }}>
+          <div style={{ width:80, height:80, borderRadius:"50%", background:`linear-gradient(135deg,${lvColor},${C.gold})`, display:"grid", placeItems:"center", margin:"0 auto 16px", boxShadow:`0 12px 32px ${A(lvColor,"55")}` }}>
             <Trophy size={36} color="#fff" />
           </div>
           <h3 style={{ fontWeight:800, fontSize:26, margin:"0 0 8px" }}>{lang === "tr" ? "Tebrikler!" : lang === "en" ? "Congratulations!" : lang === "ar" ? "تهانينا!" : lang === "es" ? "¡Enhorabuena!" : lang === "uk" ? "Вітаємо!" : lang === "fa" ? "تبریک!" : "تەواوت کرد!"}</h3>
@@ -11902,7 +11935,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
             ))}
           </div>
           <button onClick={() => reset(level)}
-            style={{ background:`linear-gradient(135deg,${lvColor},${C.gold})`, color:"#fff", border:"none", padding:"13px 32px", borderRadius:16, fontWeight:700, fontSize:15, cursor:"pointer", display:"inline-flex", alignItems:"center", gap:8, boxShadow:`0 6px 20px ${lvColor}44` }}>
+            style={{ background:`linear-gradient(135deg,${lvColor},${C.gold})`, color:"#fff", border:"none", padding:"13px 32px", borderRadius:16, fontWeight:700, fontSize:15, cursor:"pointer", display:"inline-flex", alignItems:"center", gap:8, boxShadow:`0 6px 20px ${A(lvColor,"44")}` }}>
             <RefreshCw size={16} /> {lang === "tr" ? "Tekrar Pratik Yap" : lang === "en" ? "Practice Again" : lang === "ar" ? "تدرّب مرة أخرى" : lang === "es" ? "Practicar de nuevo" : lang === "uk" ? "Потренуватися ще раз" : lang === "fa" ? "دوباره تمرین کن" : "دووبارە مەشق بکە"}
           </button>
         </div>
@@ -11940,7 +11973,7 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                   {/* SVG progress ring */}
                   <svg width={SIZE} height={SIZE}
                     style={{ position:"absolute", inset:0, transform:"rotate(-90deg)", pointerEvents:"none", zIndex:0 }}>
-                    <circle cx={CX} cy={CY} r={R} fill="none" stroke="#E8EAF0" strokeWidth={7} />
+                    <circle cx={CX} cy={CY} r={R} fill="none" stroke="var(--line)" strokeWidth={7} />
                     <circle cx={CX} cy={CY} r={R} fill="none" stroke="#16A06F" strokeWidth={7}
                       strokeDasharray={`${dash} ${CIRC}`} strokeLinecap="round"
                       style={{ transition:"stroke-dasharray .6s cubic-bezier(.34,1.56,.64,1)" }} />
@@ -12020,8 +12053,8 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
                 <div style={{ fontWeight:700, fontSize:20, color:lvColor, marginBottom:6 }}>{tC(card, lang)}</div>
                 {meta && (
                   <div style={{ display:"inline-flex", alignItems:"center", gap:6, marginBottom:8,
-                    background: meta.ant ? "rgba(229,72,77,.08)" : "rgba(91,91,214,.08)",
-                    border:`1px solid ${meta.ant ? "rgba(229,72,77,.25)" : "rgba(91,91,214,.25)"}`,
+                    background: meta.ant ? "rgba(229,72,77,.08)" : "color-mix(in srgb, var(--acc) 8%, transparent)",
+                    border:`1px solid ${meta.ant ? "rgba(229,72,77,.25)" : "color-mix(in srgb, var(--acc) 25%, transparent)"}`,
                     borderRadius:99, padding:"3px 12px", fontSize:12 }}>
                     <span style={{ fontWeight:700, color: meta.ant ? "#E5484D" : C.red }}>
                       {meta.ant ? "↔ Antonym:" : "≈ Synonym:"}
@@ -12146,7 +12179,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
           <Heart size={32} color="#ef4444" />
         </div>
         <h3 style={{ fontWeight:800, fontSize:22, margin:"0 0 8px" }}>{tApp(lang,"fav_empty_h")}</h3>
-        <p style={{ color:"#6B7280", fontSize:14, margin:0 }}>
+        <p style={{ color:"var(--muted)", fontSize:14, margin:0 }}>
           {tApp(lang,"fav_empty_p")}
         </p>
       </div>
@@ -12161,7 +12194,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
         </div>
         <div>
           <h2 style={{ fontWeight:800, fontSize:22, margin:0 }}>{tApp(lang,"fav_title")}</h2>
-          <div style={{ fontSize:13, color:"#6B7280", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
+          <div style={{ fontSize:13, color:"var(--muted)", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
         </div>
       </div>
 
@@ -12173,7 +12206,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
           const typeLabel = dictEntry && FAV_TYPE_LABEL[dictEntry.type];
           return (
             <div key={w.de} className="rise"
-              style={{ background:"#fff", borderRadius:16, border:"1.5px solid #E8EAF0",
+              style={{ background:"var(--surface)", borderRadius:16, border:"1.5px solid var(--line)",
                 boxShadow:"0 2px 0 rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.06)",
                 display:"flex", alignItems:"stretch", overflow:"hidden" }}>
 
@@ -12194,19 +12227,19 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                     <span style={{ background:artInfo.color, color:"#fff", fontSize:12, fontWeight:700,
                       padding:"1px 8px", borderRadius:99 }}>{artInfo.art}</span>
                   )}
-                  <span style={{ fontWeight:800, fontSize:15, color:"#1A1F2E" }} dir="ltr">{displayWord}</span>
+                  <span style={{ fontWeight:800, fontSize:15, color:"var(--ink)" }} dir="ltr">{displayWord}</span>
                   {typeLabel && (
-                    <span style={{ background:"#f4f4f5", color:"#71717A", fontSize:12, fontWeight:700,
+                    <span style={{ background:"var(--surface-hi)", color:"var(--muted)", fontSize:12, fontWeight:700,
                       padding:"1px 8px", borderRadius:99 }}>{typeLabel}</span>
                   )}
                   <Speak text={w.de} size={14} />
                 </div>
-                <div style={{ fontWeight:700, fontSize:13, color:"#5B5BD6" }}>{tC(w, lang)}</div>
+                <div style={{ fontWeight:700, fontSize:13, color:"var(--acc-tx)" }}>{tC(w, lang)}</div>
                 {w.ex && (
                   <>
                     <div style={{ fontSize:12, color:"#5A6480", fontStyle:"italic" }} dir="ltr">{w.ex}</div>
                     {(tEx(w, lang)) && (
-                      <div style={{ fontSize:12, color:"#6B7280" }}>{tEx(w, lang)}</div>
+                      <div style={{ fontSize:12, color:"var(--muted)" }}>{tEx(w, lang)}</div>
                     )}
                   </>
                 )}
@@ -12589,7 +12622,7 @@ function tSpiel(lang, key) {
 }
 
 const SPIEL_GAMES = [
-  { id:"word-match", icon:"🃏", img:"/game-wordmatch.jpg", nameKey:"wm_name", descKey:"wm_desc", color:"#5B5BD6", ready:true  },
+  { id:"word-match", icon:"🃏", img:"/game-wordmatch.jpg", nameKey:"wm_name", descKey:"wm_desc", color:"var(--acc-tx)", ready:true  },
   { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#C93A3F", ready:true, pos:"center top" },
   { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#1F8A57", ready:true, pos:"center top" },
   { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#B45309", ready:true  },
@@ -12744,14 +12777,14 @@ function SatzPuzzle({ lang = "ku", onBack }) {
   /* SETUP */
   if(phase==='setup') return (
     <div style={{maxWidth:480,margin:'0 auto',padding:'8px 0'}}>
-      <button onClick={onBack} style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
+      <button onClick={onBack} style={{background:'none',border:'none',color:'var(--muted)',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20}}>← {spt('back')}</button>
       <div style={{textAlign:'center',marginBottom:28}}>
         <div style={{fontSize:44}}>🧩</div>
         <div style={{fontWeight:800,fontSize:22,marginTop:8}}>{spt('title')}</div>
-        <div style={{fontSize:14,color:'#6B6B73',marginTop:4}}>{spt('sub')}</div>
+        <div style={{fontSize:14,color:'var(--muted)',marginTop:4}}>{spt('sub')}</div>
       </div>
       <div style={{...CARD, padding:18, marginBottom:22}}>
-        <div style={{fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
+        <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',letterSpacing:'.06em',marginBottom:12}}>{spt('lvl_label')}</div>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
@@ -12781,7 +12814,7 @@ function SatzPuzzle({ lang = "ku", onBack }) {
         <div style={{fontSize:52,fontWeight:900,color:'#30A46C',lineHeight:1}}>{score}<span style={{fontSize:22,color:'#aaa'}}> / {questions.length}</span></div>
         <div style={{fontSize:24,marginTop:6,fontWeight:700,color:pct>=70?'#30A46C':'#f97316'}}>{pct}%</div>
         <div style={{display:'flex',gap:12,marginTop:32,justifyContent:'center'}}>
-          <button onClick={()=>setPhase('setup')} style={{padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'#fff',fontWeight:600,fontSize:15,cursor:'pointer'}}>{spt('back')}</button>
+          <button onClick={()=>setPhase('setup')} style={{padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'var(--surface)',fontWeight:600,fontSize:15,cursor:'pointer'}}>{spt('back')}</button>
           <button onClick={startGame} style={{padding:'12px 28px',borderRadius:12,border:'none',background:'linear-gradient(135deg,#30A46C,#12a15a)',color:'#fff',fontWeight:700,fontSize:15,cursor:'pointer'}}>{spt('restart')}</button>
         </div>
       </div>
@@ -12797,34 +12830,34 @@ function SatzPuzzle({ lang = "ku", onBack }) {
       {/* Progress bar */}
       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
         <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}}
-          style={{background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18}}>←</button>
-        <div style={{flex:1,height:7,background:'#ebebf0',borderRadius:4}}>
+          style={{background:'none',border:'none',color:'var(--muted)',cursor:'pointer',fontSize:18}}>←</button>
+        <div style={{flex:1,height:7,background:'var(--line)',borderRadius:4}}>
           <div style={{height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#30A46C,#12a15a)',borderRadius:4,transition:'width .4s'}}/>
         </div>
-        <div style={{fontSize:13,color:'#6B6B73',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
+        <div style={{fontSize:13,color:'var(--muted)',fontWeight:600}}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Translation hint card */}
       <div style={{...CARD, padding:'18px 20px', marginBottom:16}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
           <div style={{display:'inline-block',padding:'3px 10px',borderRadius:20,background:'rgba(48,164,108,.1)',color:'#1F8A57',fontSize:12,fontWeight:700,letterSpacing:'.08em'}}>{q.lv}</div>
-          <button onClick={()=>speak(q.de)} style={{width:32,height:32,borderRadius:8,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:14}}>🔊</button>
+          <button onClick={()=>speak(q.de)} style={{width:32,height:32,borderRadius:8,border:'1px solid #eee',background:'var(--surface-hi)',cursor:'pointer',fontSize:14}}>🔊</button>
         </div>
         <div style={{fontSize:13,color:'#666',fontWeight:500,marginBottom:4}}>{spt('hint')}</div>
         <div style={{fontSize:17,fontWeight:600,color:'#1a1a2e'}}>{getNat(q)}</div>
       </div>
 
       {/* Answer zone */}
-      <div style={{minHeight:58,background:status==='correct'?'rgba(48,164,108,.08)':status==='wrong'?'rgba(229,72,77,.06)':'rgba(91,91,214,.04)',
+      <div style={{minHeight:58,background:status==='correct'?'rgba(48,164,108,.08)':status==='wrong'?'rgba(229,72,77,.06)':'color-mix(in srgb, var(--acc) 4%, transparent)',
         border:`2px dashed ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#c7c7e8'}`,
         borderRadius:16,padding:'10px 12px',marginBottom:16,display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',minWidth:0,transition:'all .2s'}}>
         {answer.length===0 && !status &&
-          <span style={{color:'#71717A',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
+          <span style={{color:'var(--muted)',fontSize:13,fontStyle:'italic'}}>{spt('tap_hint')}</span>}
         {answer.map(chip=>(
           <button key={chip.id} onClick={()=>removeWord(chip)} disabled={!!status}
-            style={{padding:'8px 14px',borderRadius:10,border:`1.5px solid ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#5B5BD6'}`,
-              background:status==='correct'?'rgba(48,164,108,.15)':status==='wrong'?'rgba(229,72,77,.1)':'rgba(91,91,214,.08)',
-              color:status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'#5B5BD6',
+            style={{padding:'8px 14px',borderRadius:10,border:`1.5px solid ${status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'var(--acc)'}`,
+              background:status==='correct'?'rgba(48,164,108,.15)':status==='wrong'?'rgba(229,72,77,.1)':'color-mix(in srgb, var(--acc) 8%, transparent)',
+              color:status==='correct'?'#30A46C':status==='wrong'?'#E5484D':'var(--acc)',
               fontWeight:600,fontSize:15,cursor:status?'default':'pointer',transition:'all .15s'}}>
             {chip.word}
           </button>
@@ -12845,16 +12878,16 @@ function SatzPuzzle({ lang = "ku", onBack }) {
       )}
 
       {/* Word bank */}
-      <div style={{background:'#f8f8fb',borderRadius:16,padding:'12px',border:'1px solid #ebebf0',display:'flex',flexWrap:'wrap',gap:8}}>
+      <div style={{background:'var(--surface-hi)',borderRadius:16,padding:'12px',border:'1px solid var(--line)',display:'flex',flexWrap:'wrap',gap:8}}>
         {bank.map(chip=>(
           <button key={chip.id} onClick={()=>addWord(chip)} disabled={!!status}
-            style={{padding:'8px 14px',borderRadius:10,border:'1.5px solid #ddd',background:'#fff',
+            style={{padding:'8px 14px',borderRadius:10,border:'1.5px solid #ddd',background:'var(--surface)',
               color:'#1a1a2e',fontWeight:600,fontSize:15,cursor:status?'default':'pointer',
               boxShadow:'0 1px 4px rgba(0,0,0,.07)',transition:'all .15s'}}>
             {chip.word}
           </button>
         ))}
-        {bank.length===0 && !status && <span style={{color:'#71717A',fontSize:13}}>—</span>}
+        {bank.length===0 && !status && <span style={{color:'var(--muted)',fontSize:13}}>—</span>}
       </div>
     </div>
   );
@@ -13000,18 +13033,18 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
   /* SETUP */
   if (phase==='setup') return (
     <div style={{ maxWidth:480, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'var(--muted)',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {aqt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:28 }}>
         <div style={{ fontSize:44 }}>🎯</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{aqt('title')}</div>
-        <div style={{ fontSize:14, color:'#6B6B73', marginTop:4 }}>{aqt('sub')}</div>
+        <div style={{ fontSize:14, color:'var(--muted)', marginTop:4 }}>{aqt('sub')}</div>
       </div>
       <div style={{ ...CARD, padding:18, marginBottom:22 }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
+        <div style={{ fontSize:12,fontWeight:700,color:'var(--muted)',letterSpacing:'.06em',marginBottom:12 }}>{aqt('lvl_label')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LEVELS.map(lv=>(
             <button key={lv} onClick={()=>setSelLvl(lv)}
-              style={{ padding:'8px 16px',borderRadius:10,border:`2px solid ${selLvl===lv?'#5B5BD6':'#ddd'}`,background:selLvl===lv?'rgba(91,91,214,.1)':'#fff',color:selLvl===lv?'#5B5BD6':'#555',fontWeight:selLvl===lv?700:500,fontSize:14,cursor:'pointer',transition:'all .15s' }}>
+              style={{ padding:'8px 16px',borderRadius:10,border:`2px solid ${selLvl===lv?'var(--acc)':'#ddd'}`,background:selLvl===lv?'color-mix(in srgb, var(--acc) 10%, transparent)':'#fff',color:selLvl===lv?'var(--acc)':'#555',fontWeight:selLvl===lv?700:500,fontSize:14,cursor:'pointer',transition:'all .15s' }}>
               {lv==='All' ? aqt('lvl_all') : lv}
             </button>
           ))}
@@ -13020,7 +13053,7 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
       {/* Article color legend */}
       <div style={{ display:'flex',gap:10,marginBottom:22,justifyContent:'center' }}>
         {Object.entries(ART_COLOR).map(([a,c])=>(
-          <div key={a} style={{ display:'flex',alignItems:'center',gap:6,padding:'6px 14px',borderRadius:10,background:`${c}15`,border:`1px solid ${c}44` }}>
+          <div key={a} style={{ display:'flex',alignItems:'center',gap:6,padding:'6px 14px',borderRadius:10,background:`${A(c,"15")}`,border:`1px solid ${A(c,"44")}` }}>
             <div style={{ width:8,height:8,borderRadius:'50%',background:c }} />
             <span style={{ fontWeight:700,color:c,fontSize:15 }}>{a}</span>
           </div>
@@ -13043,7 +13076,7 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
         <div style={{ fontSize:52,fontWeight:900,color:'#E5484D',lineHeight:1 }}>{score}<span style={{ fontSize:22,color:'#aaa' }}> / {questions.length}</span></div>
         <div style={{ fontSize:24,marginTop:6,color:pct>=70?'#30A46C':'#f97316',fontWeight:700 }}>{pct}%</div>
         <div style={{ display:'flex',gap:12,marginTop:32,justifyContent:'center' }}>
-          <button onClick={()=>setPhase('setup')} style={{ padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'#fff',fontWeight:600,fontSize:15,cursor:'pointer' }}>{aqt('back')}</button>
+          <button onClick={()=>setPhase('setup')} style={{ padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'var(--surface)',fontWeight:600,fontSize:15,cursor:'pointer' }}>{aqt('back')}</button>
           <button onClick={startGame} style={{ padding:'12px 28px',borderRadius:12,border:'none',background:'linear-gradient(135deg,#E5484D,#f97316)',color:'#fff',fontWeight:700,fontSize:15,cursor:'pointer' }}>{aqt('restart')}</button>
         </div>
       </div>
@@ -13059,21 +13092,21 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
     <div style={{ maxWidth:480, margin:'0 auto' }}>
       {/* Progress */}
       <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:24 }}>
-        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',fontSize:18 }}>←</button>
-        <div style={{ flex:1,height:7,background:'#ebebf0',borderRadius:4 }}>
+        <button onClick={()=>{if(timerRef.current)clearTimeout(timerRef.current);setPhase('setup');}} style={{ background:'none',border:'none',color:'var(--muted)',cursor:'pointer',fontSize:18 }}>←</button>
+        <div style={{ flex:1,height:7,background:'var(--line)',borderRadius:4 }}>
           <div style={{ height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#E5484D,#f97316)',borderRadius:4,transition:'width .4s' }} />
         </div>
-        <div style={{ fontSize:13,color:'#6B6B73',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
+        <div style={{ fontSize:13,color:'var(--muted)',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Word card */}
-      <div style={{ background:'#fff',borderRadius:24,padding:'32px 24px',textAlign:'center',border:'1px solid #ebebf0',boxShadow:'0 4px 20px rgba(0,0,0,.08)',marginBottom:28 }}>
+      <div style={{ background:'var(--surface)',borderRadius:24,padding:'32px 24px',textAlign:'center',border:'1px solid var(--line)',boxShadow:'0 4px 20px rgba(0,0,0,.08)',marginBottom:28 }}>
         {/* Level badge */}
         <div style={{ display:'inline-block',padding:'3px 12px',borderRadius:20,background:'rgba(229,72,77,.1)',color:'#C93A3F',fontSize:12,fontWeight:700,letterSpacing:'.08em',marginBottom:16 }}>{q.lv}</div>
         {/* Word + audio */}
         <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:12 }}>
           <div style={{ fontSize:38,fontWeight:900,color:'#1a1a2e',letterSpacing:'-.5px' }}>{q.w}</div>
-          <button onClick={()=>speak(q.w)} style={{ width:38,height:38,borderRadius:10,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:17 }}>🔊</button>
+          <button onClick={()=>speak(q.w)} style={{ width:38,height:38,borderRadius:10,border:'1px solid #eee',background:'var(--surface-hi)',cursor:'pointer',fontSize:17 }}>🔊</button>
         </div>
         {/* Translation */}
         <div style={{ fontSize:18,color:'#666',fontWeight:500 }}>{getNat(q)}</div>
@@ -13105,7 +13138,7 @@ function ArtikelQuiz({ lang = "ku", onBack }) {
                 fontWeight:800,fontSize:22,cursor:chosen?'default':'pointer',
                 transition:'all .2s',
                 transform: isPicked?'scale(1.04)':'scale(1)',
-                boxShadow: isPicked?`0 4px 16px ${ART_COLOR[art]}44`:'none' }}>
+                boxShadow: isPicked?`0 4px 16px ${A(ART_COLOR[art],"44")}`:'none' }}>
               {art}
             </button>
           );
@@ -13198,19 +13231,19 @@ function WordMatch({ lang = "ku", onBack }) {
   /* ── SETUP ── */
   if (phase==='setup') return (
     <div style={{ maxWidth:540, margin:'0 auto', padding:'8px 0' }}>
-      <button onClick={onBack} style={{ background:'none',border:'none',color:'#6B6B73',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
+      <button onClick={onBack} style={{ background:'none',border:'none',color:'var(--muted)',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:14,marginBottom:20 }}>← {wt('back')}</button>
       <div style={{ textAlign:'center', marginBottom:24 }}>
         <div style={{ fontSize:40 }}>🃏</div>
         <div style={{ fontWeight:800, fontSize:22, marginTop:8 }}>{tSpiel(lang,'wm_name')}</div>
-        <div style={{ fontSize:13, color:'#6B6B73', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
+        <div style={{ fontSize:13, color:'var(--muted)', marginTop:4 }}>{tSpiel(lang,'wm_desc')}</div>
       </div>
       {/* Level 1 */}
       <div style={{ ...CARD, padding:18, marginBottom:10 }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
+        <div style={{ fontSize:12,fontWeight:700,color:'var(--muted)',letterSpacing:'.06em',marginBottom:10 }}>{wt('ref')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl1(i)}
-              style={{ padding:'8px 18px',borderRadius:10,border:`2px solid ${lvl1===i?lc(i):'#ddd'}`,background:lvl1===i?`${lc(i)}15`:'#fff',color:lvl1===i?lc(i):'#555',fontWeight:700,fontSize:15,cursor:'pointer',transition:'all .15s' }}>
+              style={{ padding:'8px 18px',borderRadius:10,border:`2px solid ${lvl1===i?lc(i):'#ddd'}`,background:lvl1===i?`${A(lc(i),"15")}`:'#fff',color:lvl1===i?lc(i):'#555',fontWeight:700,fontSize:15,cursor:'pointer',transition:'all .15s' }}>
               {LL[i]}
             </button>
           ))}
@@ -13218,11 +13251,11 @@ function WordMatch({ lang = "ku", onBack }) {
       </div>
       {/* Level 2 */}
       <div style={{ ...CARD, padding:18, marginBottom:10 }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
+        <div style={{ fontSize:12,fontWeight:700,color:'var(--muted)',letterSpacing:'.06em',marginBottom:10 }}>{wt('match')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LK.map((k,i)=>(
             <button key={k} onClick={()=>setLvl2(i)}
-              style={{ padding:'8px 18px',borderRadius:10,border:`2px solid ${lvl2===i?lc(i):'#ddd'}`,background:lvl2===i?`${lc(i)}15`:'#fff',color:lvl2===i?lc(i):'#555',fontWeight:700,fontSize:15,cursor:'pointer',transition:'all .15s' }}>
+              style={{ padding:'8px 18px',borderRadius:10,border:`2px solid ${lvl2===i?lc(i):'#ddd'}`,background:lvl2===i?`${A(lc(i),"15")}`:'#fff',color:lvl2===i?lc(i):'#555',fontWeight:700,fontSize:15,cursor:'pointer',transition:'all .15s' }}>
               {LL[i]}
             </button>
           ))}
@@ -13230,11 +13263,11 @@ function WordMatch({ lang = "ku", onBack }) {
       </div>
       {/* Category */}
       <div style={{ ...CARD, padding:18, marginBottom:20 }}>
-        <div style={{ fontSize:12,fontWeight:700,color:'#6B6B73',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
+        <div style={{ fontSize:12,fontWeight:700,color:'var(--muted)',letterSpacing:'.06em',marginBottom:10 }}>{wt('cat')}</div>
         <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
           {LCK.map((k,i)=>(
             <button key={k} onClick={()=>setCateg(k)}
-              style={{ padding:'8px 16px',borderRadius:10,border:`2px solid ${categ===k?'#5B5BD6':'#ddd'}`,background:categ===k?'rgba(91,91,214,.1)':'#fff',color:categ===k?'#5B5BD6':'#555',fontWeight:600,fontSize:14,cursor:'pointer',transition:'all .15s' }}>
+              style={{ padding:'8px 16px',borderRadius:10,border:`2px solid ${categ===k?'var(--acc)':'#ddd'}`,background:categ===k?'color-mix(in srgb, var(--acc) 10%, transparent)':'#fff',color:categ===k?'var(--acc)':'#555',fontWeight:600,fontSize:14,cursor:'pointer',transition:'all .15s' }}>
               {(LC[lang]||LC.tr)[i]}
             </button>
           ))}
@@ -13242,7 +13275,7 @@ function WordMatch({ lang = "ku", onBack }) {
       </div>
       {lvl1===lvl2 && <div style={{ color:'#E5484D',fontSize:13,textAlign:'center',marginBottom:10 }}>{wt('lvl_same')}</div>}
       <button onClick={startGame} disabled={lvl1===lvl2}
-        style={{ width:'100%',padding:'14px',borderRadius:14,border:'none',background:lvl1===lvl2?'#ccc':'linear-gradient(135deg,#5B5BD6,#7c3aed)',color:'#fff',fontWeight:700,fontSize:16,cursor:lvl1===lvl2?'not-allowed':'pointer' }}>
+        style={{ width:'100%',padding:'14px',borderRadius:14,border:'none',background:lvl1===lvl2?'#ccc':'linear-gradient(135deg,var(--acc-btn),var(--acc))',color:'#fff',fontWeight:700,fontSize:16,cursor:lvl1===lvl2?'not-allowed':'pointer' }}>
         {wt('start')} →
       </button>
     </div>
@@ -13255,11 +13288,11 @@ function WordMatch({ lang = "ku", onBack }) {
       <div style={{ maxWidth:480,margin:'0 auto',textAlign:'center',padding:'32px 0' }}>
         <div style={{ fontSize:56 }}>{pct>=70?'🏆':pct>=40?'👍':'💪'}</div>
         <div style={{ fontWeight:800,fontSize:22,margin:'16px 0 6px' }}>{wt('score')}</div>
-        <div style={{ fontSize:52,fontWeight:900,color:'#5B5BD6',lineHeight:1 }}>{score}<span style={{ fontSize:22,color:'#aaa' }}>{wt('of')}{questions.length}</span></div>
+        <div style={{ fontSize:52,fontWeight:900,color:'var(--acc-tx)',lineHeight:1 }}>{score}<span style={{ fontSize:22,color:'#aaa' }}>{wt('of')}{questions.length}</span></div>
         <div style={{ fontSize:24,marginTop:6,color:pct>=70?'#30A46C':'#F76B15',fontWeight:700 }}>{pct}%</div>
         <div style={{ display:'flex',gap:12,marginTop:32,justifyContent:'center' }}>
-          <button onClick={()=>setPhase('setup')} style={{ padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'#fff',fontWeight:600,fontSize:15,cursor:'pointer' }}>{wt('back')}</button>
-          <button onClick={startGame} style={{ padding:'12px 28px',borderRadius:12,border:'none',background:'linear-gradient(135deg,#5B5BD6,#7c3aed)',color:'#fff',fontWeight:700,fontSize:15,cursor:'pointer' }}>{wt('restart')}</button>
+          <button onClick={()=>setPhase('setup')} style={{ padding:'12px 28px',borderRadius:12,border:'1px solid #ddd',background:'var(--surface)',fontWeight:600,fontSize:15,cursor:'pointer' }}>{wt('back')}</button>
+          <button onClick={startGame} style={{ padding:'12px 28px',borderRadius:12,border:'none',background:'linear-gradient(135deg,var(--acc-btn),var(--acc))',color:'#fff',fontWeight:700,fontSize:15,cursor:'pointer' }}>{wt('restart')}</button>
         </div>
       </div>
     );
@@ -13277,14 +13310,14 @@ function WordMatch({ lang = "ku", onBack }) {
       {/* Progress bar */}
       <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:20 }}>
         <button onClick={()=>setPhase('setup')} style={{ background:'none',border:'none',color:'#888',cursor:'pointer',fontSize:18 }}>←</button>
-        <div style={{ flex:1,height:7,background:'#ebebf0',borderRadius:4 }}>
-          <div style={{ height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,#5B5BD6,#7c3aed)',borderRadius:4,transition:'width .4s' }} />
+        <div style={{ flex:1,height:7,background:'var(--line)',borderRadius:4 }}>
+          <div style={{ height:'100%',width:`${(qIdx/questions.length)*100}%`,background:'linear-gradient(90deg,var(--acc-btn),var(--acc))',borderRadius:4,transition:'width .4s' }} />
         </div>
         <div style={{ fontSize:13,color:'#888',whiteSpace:'nowrap',fontWeight:600 }}>{qIdx+1}/{questions.length}</div>
       </div>
 
       {/* Reference word */}
-      <div style={{ background:'linear-gradient(135deg,#5B5BD6,#7c3aed)',borderRadius:20,padding:'22px 20px',marginBottom:14,color:'#fff' }}>
+      <div style={{ background:'linear-gradient(135deg,var(--acc-btn),var(--acc))',borderRadius:20,padding:'22px 20px',marginBottom:14,color:'#fff' }}>
         <div style={{ fontSize:12,fontWeight:700,opacity:.65,letterSpacing:'.1em',marginBottom:6 }}>{LL[lvl1]}</div>
         <div style={{ display:'flex',alignItems:'center',gap:10 }}>
           <div style={{ fontSize:34,fontWeight:900,flex:1,lineHeight:1.15 }}>{refWord}</div>
@@ -13302,13 +13335,13 @@ function WordMatch({ lang = "ku", onBack }) {
       <div
         onDragOver={e=>e.preventDefault()}
         onDrop={e=>{ e.preventDefault(); handleAnswer(e.dataTransfer.getData('word')); }}
-        style={{ border:`2px dashed ${dropResult==='correct'?'#30A46C':dropResult==='wrong'?'#E5484D':'#5B5BD6'}`,
+        style={{ border:`2px dashed ${dropResult==='correct'?'#30A46C':dropResult==='wrong'?'#E5484D':'var(--acc)'}`,
           borderRadius:16,padding:'16px 18px',marginBottom:16,
-          background:dropResult==='correct'?'#30A46C0e':dropResult==='wrong'?'#E5484D0e':'rgba(91,91,214,.04)',
+          background:dropResult==='correct'?'#30A46C0e':dropResult==='wrong'?'#E5484D0e':'color-mix(in srgb, var(--acc) 4%, transparent)',
           textAlign:'center',minHeight:68,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:5,
           transition:'all .25s' }}>
         {!dropResult && <>
-          <div style={{ fontSize:13,color:'#5B5BD6',fontWeight:600 }}>{wt('drag_here')}</div>
+          <div style={{ fontSize:13,color:'var(--acc-tx)',fontWeight:600 }}>{wt('drag_here')}</div>
           <div style={{ fontSize:12,color:'#bbb' }}>{LL[lvl1]} → {LL[lvl2]} · {wt('tap_hint')}</div>
         </>}
         {dropResult==='correct' && <>
@@ -13321,7 +13354,7 @@ function WordMatch({ lang = "ku", onBack }) {
         {dropResult==='wrong' && <>
           <div style={{ fontSize:13,color:'#E5484D',fontWeight:600 }}>{wt('wrong')}</div>
           <div style={{ fontSize:12,color:'#555' }}>✓ <strong>{correctWord}</strong></div>
-          <button onClick={()=>speak(correctWord)} style={{ marginTop:4,padding:'3px 12px',borderRadius:8,border:'1px solid #ddd',background:'#fff',cursor:'pointer',fontSize:12 }}>🔊 {correctWord}</button>
+          <button onClick={()=>speak(correctWord)} style={{ marginTop:4,padding:'3px 12px',borderRadius:8,border:'1px solid #ddd',background:'var(--surface)',cursor:'pointer',fontSize:12 }}>🔊 {correctWord}</button>
         </>}
       </div>
 
@@ -13338,7 +13371,7 @@ function WordMatch({ lang = "ku", onBack }) {
               onDragEnd={()=>setDragging(null)}
               onClick={()=>handleAnswer(word)}
               style={{ background:isOk?'#30A46C12':reveal?'#30A46C08':isBad?'#E5484D10':'#fff',
-                border:`2px solid ${isOk?'#30A46C':reveal?'#30A46C55':isBad?'#E5484D':'#ebebf0'}`,
+                border:`2px solid ${isOk?'#30A46C':reveal?'#30A46C55':isBad?'#E5484D':'var(--line)'}`,
                 borderRadius:14,padding:'15px 12px',textAlign:'center',
                 cursor:dropResult?'default':'grab',
                 opacity:dropResult&&!isOk&&!isBad&&!reveal?.45:1,
@@ -13346,7 +13379,7 @@ function WordMatch({ lang = "ku", onBack }) {
                 display:'flex',flexDirection:'column',alignItems:'center',gap:8 }}>
               <div style={{ fontSize:15,fontWeight:700,color:'#1a1a2e',lineHeight:1.3,wordBreak:'break-word' }}>{word}</div>
               <button onClick={e=>{e.stopPropagation();speak(word);}}
-                style={{ padding:'3px 10px',borderRadius:7,border:'1px solid #eee',background:'#f8f8fb',cursor:'pointer',fontSize:12,color:'#666' }}>🔊</button>
+                style={{ padding:'3px 10px',borderRadius:7,border:'1px solid #eee',background:'var(--surface-hi)',cursor:'pointer',fontSize:12,color:'#666' }}>🔊</button>
             </div>
           );
         })}
@@ -13355,7 +13388,7 @@ function WordMatch({ lang = "ku", onBack }) {
       {/* Next */}
       {dropResult && (
         <button onClick={handleNext}
-          style={{ width:'100%',padding:'14px',borderRadius:14,border:'none',background:'linear-gradient(135deg,#5B5BD6,#7c3aed)',color:'#fff',fontWeight:700,fontSize:16,cursor:'pointer' }}>
+          style={{ width:'100%',padding:'14px',borderRadius:14,border:'none',background:'linear-gradient(135deg,var(--acc-btn),var(--acc))',color:'#fff',fontWeight:700,fontSize:16,cursor:'pointer' }}>
           {qIdx+1>=questions.length ? wt('finish') : wt('next')} →
         </button>
       )}
@@ -19562,7 +19595,7 @@ function ChapterQuiz({ scenes, lang = 'tr', onPass, onCancel }) {
               {correctCount}/{total} {passed ? t('passSub') : t('failSub')}
             </div>
             {passed ? (
-              <button onClick={onPass} style={{ background: 'linear-gradient(135deg,#5B5BD6,#7c3aed)', color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 800, fontSize: 15, cursor: 'pointer' }}>{t('continueBtn')}</button>
+              <button onClick={onPass} style={{ background: 'linear-gradient(135deg,var(--acc-btn),var(--acc))', color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 800, fontSize: 15, cursor: 'pointer' }}>{t('continueBtn')}</button>
             ) : (
               <button onClick={retry} style={{ background: 'linear-gradient(135deg,#f7971e,#f5576c)', color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 800, fontSize: 15, cursor: 'pointer' }}>{t('retry')}</button>
             )}
@@ -19744,7 +19777,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               setSessionWords(prev => prev.includes(cleanWord) ? prev : [...prev, cleanWord]);
               journeySrsAdd(cleanWord, entry);
             }}
-            style={{ borderBottom: '1.5px dotted #5B5BD6', color: '#3D37A8', cursor: 'pointer', fontStyle: 'inherit' }}>
+            style={{ borderBottom: '1.5px dotted var(--acc)', color: '#3D37A8', cursor: 'pointer', fontStyle: 'inherit' }}>
             {part}
           </span>
         );
@@ -19796,19 +19829,19 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -10, marginBottom: st && st.open ? 4 : 12, direction: 'ltr' }}>
           <button type="button" onClick={(e) => { e.stopPropagation(); toggleLineTr(key, de); }}
             aria-label={trUI.line} aria-expanded={!!(st && st.open)} title={trUI.line}
-            style={{ background: st && st.open ? 'rgba(91,91,214,.14)' : 'rgba(120,80,30,.07)', border: 'none', borderRadius: 14, padding: '4px 10px', minHeight: 28, fontSize: 13, cursor: 'pointer', opacity: st && st.open ? 1 : 0.75 }}>
+            style={{ background: st && st.open ? 'color-mix(in srgb, var(--acc) 14%, transparent)' : 'rgba(120,80,30,.07)', border: 'none', borderRadius: 14, padding: '4px 10px', minHeight: 28, fontSize: 13, cursor: 'pointer', opacity: st && st.open ? 1 : 0.75 }}>
             🌐
           </button>
         </div>
         {st && st.open && (
-          <div dir={trRtl ? 'rtl' : 'ltr'} style={{ margin: '0 0 14px', padding: '9px 12px', background: 'rgba(91,91,214,.07)', borderRadius: 10, borderLeft: trRtl ? 'none' : '3px solid rgba(91,91,214,.45)', borderRight: trRtl ? '3px solid rgba(91,91,214,.45)' : 'none', fontSize: 14, lineHeight: 1.7, color: '#2b2670', fontFamily: 'Georgia,serif', textAlign: trRtl ? 'right' : 'left' }}>
+          <div dir={trRtl ? 'rtl' : 'ltr'} style={{ margin: '0 0 14px', padding: '9px 12px', background: 'color-mix(in srgb, var(--acc) 7%, transparent)', borderRadius: 10, borderLeft: trRtl ? 'none' : '3px solid color-mix(in srgb, var(--acc) 45%, transparent)', borderRight: trRtl ? '3px solid color-mix(in srgb, var(--acc) 45%, transparent)' : 'none', fontSize: 14, lineHeight: 1.7, color: '#2b2670', fontFamily: 'Georgia,serif', textAlign: trRtl ? 'right' : 'left' }}>
             {st.status === 'loading' && <span style={{ opacity: 0.7 }}>{trUI.loading}</span>}
             {st.status === 'ok' && st.text}
             {st.status === 'err' && (
               <span>
                 {trUI[st.err] || trUI.fail}{' '}
                 {st.err !== 'auth' && (
-                  <button type="button" onClick={(e) => { e.stopPropagation(); toggleLineTr(key, de); }} style={{ background: 'none', border: 'none', color: '#5B5BD6', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline', fontSize: 13 }}>{trUI.retry}</button>
+                  <button type="button" onClick={(e) => { e.stopPropagation(); toggleLineTr(key, de); }} style={{ background: 'none', border: 'none', color: 'var(--acc-tx)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline', fontSize: 13 }}>{trUI.retry}</button>
                 )}
               </span>
             )}
@@ -19890,7 +19923,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
             <div style={{ fontSize: 12.5, color: '#6B4A2A', fontStyle: 'italic', marginBottom: 18, lineHeight: 1.55 }}>📍 {scene['place_' + userLang] || (userLang === 'ku' && scene.place_ku ? scene.place_ku : scene.place)}</div>
           )}
           {!hintSeen && (
-            <div style={{ display:'flex', alignItems:'center', gap:8, margin:'0 0 16px', padding:'8px 12px', background:'rgba(91,91,214,.08)', borderRadius:10, fontSize:12.5, color:'#3D37A8', lineHeight:1.5 }} dir={trRtl ? 'rtl' : 'ltr'}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, margin:'0 0 16px', padding:'8px 12px', background:'color-mix(in srgb, var(--acc) 8%, transparent)', borderRadius:10, fontSize:12.5, color:'#3D37A8', lineHeight:1.5 }} dir={trRtl ? 'rtl' : 'ltr'}>
               <span style={{ flex:1 }}>💡 {trUI.hint}</span>
               <button type="button" onClick={dismissHint} aria-label={trUI.close} style={{ background:'none', border:'none', fontSize:16, cursor:'pointer', color:'#3D37A8', padding:'2px 6px' }}>✕</button>
             </div>
@@ -19997,7 +20030,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
       {dictEntry && (() => {
         const ARTICLE_COLOR = { der:'#2a78d6', die:'#e34948', das:'#1baf7a' };
         const TYPE_LABEL = { noun:'Substantiv', verb:'Verb', adj:'Adjektiv', adv:'Adverb', phrase:'Phrasel' };
-        const ac = dictEntry.article ? ARTICLE_COLOR[dictEntry.article] : '#5B5BD6';
+        const ac = dictEntry.article ? ARTICLE_COLOR[dictEntry.article] : 'var(--acc)';
         const vw = window.innerWidth;
         const tooltipW = 260;
         let left = dictEntry._x;
@@ -20011,7 +20044,7 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
             <div onClick={e => e.stopPropagation()}
               style={{
                 position:'fixed', left, top, width:tooltipW, zIndex:2002,
-                background:'#fff', borderRadius:14,
+                background:'var(--surface)', borderRadius:14,
                 padding:'12px 14px 14px',
                 boxShadow:'0 8px 32px rgba(0,0,0,.18), 0 1px 4px rgba(0,0,0,.10)',
                 border:'1px solid #ece9ff',
@@ -20019,30 +20052,30 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
               {/* Word row */}
               <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8, flexWrap:'wrap' }}>
                 {dictEntry.article && (
-                  <span style={{ fontSize:12, fontWeight:700, color:ac, background:ac+'18', padding:'2px 8px', borderRadius:20 }}>
+                  <span style={{ fontSize:12, fontWeight:700, color:ac, background:A(ac,"18"), padding:'2px 8px', borderRadius:20 }}>
                     {dictEntry.article}
                   </span>
                 )}
-                <span style={{ fontSize:16, fontWeight:800, color:'#18181B', fontFamily:'Georgia,serif' }}>
+                <span style={{ fontSize:16, fontWeight:800, color:'var(--ink)', fontFamily:'Georgia,serif' }}>
                   {dictEntry.word}
                 </span>
                 {!(dictEntry._ai && dictEntry.status !== 'ok') && (
-                  <span style={{ fontSize:12, color:'#71717A', background:'#f4f4f5', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
+                  <span style={{ fontSize:12, color:'var(--muted)', background:'var(--surface-hi)', padding:'2px 7px', borderRadius:20, fontWeight:600 }}>
                     {TYPE_LABEL[dictEntry.type] || dictEntry.type}
                   </span>
                 )}
                 {dictEntry._ai && dictEntry.status === 'ok' && dictEntry.base && dictEntry.base.toLowerCase() !== dictEntry.word.toLowerCase() && (
-                  <span style={{ fontSize:12, color:'#71717A', fontFamily:'Georgia,serif', fontStyle:'italic' }}>→ {dictEntry.base}</span>
+                  <span style={{ fontSize:12, color:'var(--muted)', fontFamily:'Georgia,serif', fontStyle:'italic' }}>→ {dictEntry.base}</span>
                 )}
               </div>
               {dictEntry._ai && dictEntry.status === 'loading' && (
-                <div style={{ fontSize:13, color:'#71717A' }}>{trUI.loading}</div>
+                <div style={{ fontSize:13, color:'var(--muted)' }}>{trUI.loading}</div>
               )}
               {dictEntry._ai && dictEntry.status === 'err' && (
                 <div style={{ fontSize:12.5, color:'#b42318', lineHeight:1.5 }}>
                   {trUI[dictEntry.err] || trUI.fail}{' '}
                   {dictEntry.err !== 'auth' && (
-                    <button type="button" onClick={() => lookupWord(dictEntry.word, dictEntry._ctx || dictEntry.word, dictEntry._x, dictEntry._y)} style={{ background:'none', border:'none', color:'#5B5BD6', fontWeight:700, cursor:'pointer', textDecoration:'underline', fontSize:12.5 }}>{trUI.retry}</button>
+                    <button type="button" onClick={() => lookupWord(dictEntry.word, dictEntry._ctx || dictEntry.word, dictEntry._x, dictEntry._y)} style={{ background:'none', border:'none', color:'var(--acc-tx)', fontWeight:700, cursor:'pointer', textDecoration:'underline', fontSize:12.5 }}>{trUI.retry}</button>
                   )}
                 </div>
               )}
@@ -20054,18 +20087,18 @@ function BookReaderModal({ scenes, onClose, userName, userLang, resumeKey }) {
                   return val ? (
                     <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                       <span style={{ fontSize:12, fontWeight:700, color:'#fff', background:meta.bg, padding:'1px 5px', borderRadius:3, flexShrink:0 }}>{meta.badge}</span>
-                      <span style={{ fontSize:13, color:'#18181B', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
+                      <span style={{ fontSize:13, color:'var(--ink)', fontWeight:600, direction: meta.rtl ? 'rtl' : 'ltr' }}>{val}</span>
                     </div>
                   ) : null;
                 })()}
               </div>
               {/* Example */}
               {dictEntry.ex && (
-                <div style={{ background:'#f8f7ff', borderLeft:'2px solid #5B5BD6', borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
+                <div style={{ background:'var(--surface-hi)', borderLeft:'2px solid var(--acc)', borderRadius:'0 6px 6px 0', padding:'6px 10px' }}>
                   <div style={{ fontSize:12, color:'#3D37A8', fontFamily:'Georgia,serif', fontStyle:'italic', marginBottom:2 }}>
                     {dictEntry.ex}
                   </div>
-                  <div dir={(userLang === 'ku' || userLang === 'ar') ? 'rtl' : 'ltr'} style={{ fontSize:12, color:'#71717A' }}>{dictEntry['ex_' + userLang] || dictEntry.ex_tr}</div>
+                  <div dir={(userLang === 'ku' || userLang === 'ar') ? 'rtl' : 'ltr'} style={{ fontSize:12, color:'var(--muted)' }}>{dictEntry['ex_' + userLang] || dictEntry.ex_tr}</div>
                 </div>
               )}
               {/* Favori button */}
@@ -20276,7 +20309,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
 
       {/* ── Back button ── */}
       <div style={{ padding:'12px 16px 0' }}>
-        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'#6B6B73',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
+        <button onClick={onBack} style={{ background:'none',border:'none',cursor:'pointer',color:'var(--muted)',fontSize:14,padding:'2px 0' }}>← {jt('back')}</button>
       </div>
 
 
@@ -20300,9 +20333,9 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
                     alt={lv.cefr}
                     style={{ display:'block', width:'calc(100% - 80px)', maxWidth:280, margin:'0 auto 12px', borderRadius:16, boxShadow:'0 4px 16px rgba(0,0,0,.13)', objectFit:'cover' }}
                   />
-                  {idx > 0 && <div style={{ height:2, background:'#ebebf0', margin:'0 10% 12px' }}/>}
+                  {idx > 0 && <div style={{ height:2, background:'var(--line)', margin:'0 10% 12px' }}/>}
                   <div style={{ display:'inline-flex', flexDirection:'column', alignItems:'center', gap:5 }}>
-                    <span style={{ background:meta.grad, color:'#fff', padding:'5px 18px', borderRadius:20, fontSize:12, fontWeight:800, boxShadow:`0 3px 12px ${meta.border}44` }}>
+                    <span style={{ background:meta.grad, color:'#fff', padding:'5px 18px', borderRadius:20, fontSize:12, fontWeight:800, boxShadow:`0 3px 12px ${A(meta.border,"44")}` }}>
                       {lv.cefr} · {getCefrLabel(lv.cefr)}
                     </span>
                     <span style={{ fontSize:12, fontWeight:700, color:'#555', letterSpacing:'.01em' }}>
@@ -20397,7 +20430,7 @@ function JourneyScreen({ lang="ku", onBack, onPractice }) {
                 <div style={{ fontSize:12.5, color:state==='locked'?'#ccc':'#999', marginTop:1 }}>
                   {getNat(lv)}
                 </div>
-                <div style={{ fontSize:12, color:'#71717A', marginTop:1 }}>
+                <div style={{ fontSize:12, color:'var(--muted)', marginTop:1 }}>
                   {lv.l} {jt('lessons')} · {lv.w} {jt('words')}
                 </div>
               </div>
@@ -20956,7 +20989,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   }
 
   const backBtn = (s) => (
-    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+    <button onClick={() => s === 'exit' ? onBack() : setScreen(s)} style={{ border:'none', background:'transparent', color:'var(--muted)', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
       ← {zt('back')}
     </button>
   );
@@ -20988,7 +21021,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
       <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:8 }}>
         {Array.from({ length: PUZZLES_PER_LEVEL }, (_,i) => i+1).map(p => (
           <button key={p} onClick={() => startGame(selLvl, p)}
-            style={{ background:'#f4f4f6', border:'1.5px solid #ebebf0', borderRadius:12, padding:'12px 4px', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+            style={{ background:'#f4f4f6', border:'1.5px solid var(--line)', borderRadius:12, padding:'12px 4px', fontWeight:700, fontSize:14, cursor:'pointer' }}>
             {p}
           </button>
         ))}
@@ -20999,12 +21032,12 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
   // ── Game screen ───────────────────────────────────────────────────────────
   return (
     <div style={{ maxWidth:440, margin:'0 auto', padding:16 }}>
-      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'#6B6B73', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
+      <button onClick={() => setScreen('puzzles')} style={{ border:'none', background:'transparent', color:'var(--muted)', cursor:'pointer', fontSize:14, marginBottom:8, display:'flex', alignItems:'center', gap:6 }}>
         ← {zt('back')}
       </button>
 
       <h2 style={{ textAlign:'center', fontWeight:900, fontSize:18, margin:'0 0 4px' }}>Entschlüssle die Wörter</h2>
-      <div style={{ textAlign:'center', fontSize:12, color:'#6B6B73', marginBottom:12 }}>
+      <div style={{ textAlign:'center', fontSize:12, color:'var(--muted)', marginBottom:12 }}>
         {selLvl} · {zt('chapter')} {selPuzz}
         {hintNum && (
           <span style={{ marginLeft:12, background:'#fef3c7', border:'1px solid #fbbf24', padding:'2px 10px', borderRadius:20, fontWeight:800, color:'#92400e' }}>
@@ -21037,7 +21070,7 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
                         cursor: isHint?'default':'pointer', transition:'border-color .12s',
                       }}>
                         <div style={{ fontSize:13, fontWeight:900, color:isOk?'#30A46C':isBad?'#E5484D':'#1a1a2e', lineHeight:1 }}>{displayed||''}</div>
-                        <div style={{ fontSize:8, color:'#71717A', lineHeight:1 }}>{num}</div>
+                        <div style={{ fontSize:8, color:'var(--muted)', lineHeight:1 }}>{num}</div>
                       </div>
                     );
                   })}
@@ -21054,12 +21087,12 @@ function ZahlkodeGame({ lang = "tr", onBack }) {
           <div style={{ display:'flex', flexWrap:'wrap', gap:3, justifyContent:'center', marginBottom:10 }}>
             {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(lt => (
               <button key={lt} onClick={() => handleKey(lt)} style={{
-                width:26, height:26, border:'1.5px solid #ebebf0', borderRadius:5,
+                width:26, height:26, border:'1.5px solid var(--line)', borderRadius:5,
                 background: selNum ? '#fff8ed' : '#f4f4f6',
                 fontWeight:700, fontSize:12, cursor:'pointer', padding:0,
               }}>{lt}</button>
             ))}
-            <button onClick={() => { if (selNum) { setFills(f => { const c={...f}; delete c[selNum]; return c; }); setSelNum(null); }}} style={{ width:40, height:26, border:'1.5px solid #ebebf0', borderRadius:5, background:'#fdecea', fontWeight:700, fontSize:12, cursor:'pointer' }}>⌫</button>
+            <button onClick={() => { if (selNum) { setFills(f => { const c={...f}; delete c[selNum]; return c; }); setSelNum(null); }}} style={{ width:40, height:26, border:'1.5px solid var(--line)', borderRadius:5, background:'#fdecea', fontWeight:700, fontSize:12, cursor:'pointer' }}>⌫</button>
           </div>
           <button onClick={check} style={{ width:'100%', padding:'13px', background:'linear-gradient(135deg,#f59e0b,#ef8c00)', color:'#fff', border:'none', borderRadius:14, fontWeight:800, fontSize:15, cursor:'pointer' }}>
             {zt('check')} ✓
@@ -21104,7 +21137,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {setTab && (
         <button onClick={()=>setTab("home")} style={{
-          background:'none', border:'none', color:'#6B6B73', cursor:'pointer',
+          background:'none', border:'none', color:'var(--muted)', cursor:'pointer',
           display:'flex', alignItems:'center', gap:6, fontSize:14, marginTop:20 }}>
           ← {tApp(lang,"home_back")}
         </button>
@@ -21114,7 +21147,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
         <div style={{ fontWeight:800, fontSize:26, color:"#1a1a2e", marginBottom:6 }}>
           {tSpiel(lang,"title")}
         </div>
-        <div style={{ fontSize:15, color:"#6B6B73", marginBottom:0 }}>
+        <div style={{ fontSize:15, color:"var(--muted)", marginBottom:0 }}>
           {tSpiel(lang,"sub")}
         </div>
       </div>
@@ -21124,7 +21157,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
         {SPIEL_GAMES.map(g => (
           <div key={g.id}
             onClick={()=>{ if(g.ready) setActiveGame(g.id); }}
-            style={{ borderRadius:22, border:"1px solid #ebebf0",
+            style={{ borderRadius:22, border:"1px solid var(--line)",
               boxShadow:"0 2px 12px rgba(0,0,0,.06)", position:"relative", overflow:"hidden",
               opacity: g.ready ? 1 : 0.68, cursor: g.ready ? "pointer" : "default",
               transition:"transform .15s, box-shadow .15s",
@@ -21138,7 +21171,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
             onMouseLeave={e=>{ e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'; }}>
             {!g.ready && (
               <div style={{ position:"absolute", top:12, right:12, zIndex:1,
-                background:"rgba(91,91,214,.10)", color:"#5B5BD6",
+                background:"color-mix(in srgb, var(--acc) 10%, transparent)", color:"var(--acc-tx)",
                 fontSize:12, fontWeight:700, padding:"3px 8px", borderRadius:20, letterSpacing:".04em" }}>
                 {tSpiel(lang,"soon")}
               </div>
@@ -21146,7 +21179,7 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
             <div style={{ position:"relative", zIndex:1, padding:"14px 20px" }}>
               {!g.img && (
                 <div style={{ width:44, height:44, borderRadius:14,
-                  background:`${g.color}18`, display:"grid", placeItems:"center",
+                  background:`${A(g.color,"18")}`, display:"grid", placeItems:"center",
                   fontSize:22, marginBottom:14 }}>
                   {g.icon}
                 </div>
@@ -21174,7 +21207,7 @@ function LiD({ lang = "ku" }) {
   const trOf = (q, isSt) => (hasTr && showTr) ? lidTr(lang, q, isSt ? bundesland : null) : null;
   const trLabel = lang === "tr" ? "Türkçe çeviri" : "وەرگێڕان";
   const TrToggle = hasTr ? (
-    <button onClick={toggleTr} style={{ background: showTr ? "rgba(91,91,214,.1)" : "transparent", border: "1px solid " + (showTr ? "#5B5BD6" : C.line), color: showTr ? "#5B5BD6" : C.muted, borderRadius: 10, padding: "4px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+    <button onClick={toggleTr} style={{ background: showTr ? "color-mix(in srgb, var(--acc) 10%, transparent)" : "transparent", border: "1px solid " + (showTr ? "var(--acc)" : C.line), color: showTr ? "var(--acc)" : C.muted, borderRadius: 10, padding: "4px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
       🌐 {trLabel}: {showTr ? "✓" : "✗"}
     </button>
   ) : null;
@@ -21288,15 +21321,15 @@ function LiD({ lang = "ku" }) {
   }
 
   const card = {
-    background: "#fff", borderRadius: 20,
+    background: "var(--surface)", borderRadius: 20,
     border: `1px solid ${C.line}`,
-    boxShadow: "0 4px 24px rgba(91,91,214,.08)",
+    boxShadow: "0 4px 24px color-mix(in srgb, var(--acc) 8%, transparent)",
     padding: "28px 24px", marginBottom: 20,
   };
 
   function optStyle(isSel, isChk, optIdx, correctIdx) {
-    let bg = "#FBFBFC", border = C.line, color = C.ink, fw = 500;
-    if (isSel && !isChk) { bg = "rgba(91,91,214,.10)"; border = "#5B5BD6"; color = "#5B5BD6"; fw = 700; }
+    let bg = "var(--page)", border = C.line, color = C.ink, fw = 500;
+    if (isSel && !isChk) { bg = "color-mix(in srgb, var(--acc) 10%, transparent)"; border = "var(--acc)"; color = "var(--acc-tx)"; fw = 700; }
     if (isChk) {
       if (optIdx === correctIdx) { bg = "rgba(22,160,111,.12)"; border = "#16A06F"; color = "#16A06F"; fw = 700; }
       else if (isSel) { bg = "rgba(229,72,77,.10)"; border = "#E5484D"; color = "#E5484D"; }
@@ -21309,7 +21342,7 @@ function LiD({ lang = "ku" }) {
     <div style={{ maxWidth: 600, margin: "0 auto" }}>
       <div style={{ textAlign: "center", marginBottom: 32 }}>
         <div style={{ fontSize: 48, marginBottom: 8 }}>🇩🇪</div>
-        <h1 style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 28, fontWeight: 900, margin: "0 0 6px", background: "linear-gradient(135deg,#5B5BD6,#FF6B5E)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+        <h1 style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 28, fontWeight: 900, margin: "0 0 6px", background: "linear-gradient(135deg,var(--acc-btn),#FF6B5E)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           {t("title")}
         </h1>
         <p style={{ color: C.muted, margin: 0, fontSize: 14 }}>{t("sub")}</p>
@@ -21320,7 +21353,7 @@ function LiD({ lang = "ku" }) {
           {t("pick_state")}
         </label>
         <select value={bundesland} onChange={e => { setBundesland(e.target.value); setStateWarn(false); }}
-          style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: `2px solid ${stateWarn ? "#E5484D" : bundesland ? "#5B5BD6" : C.line}`, fontSize: 15, background: "#FBFBFC", color: C.ink, outline: "none", cursor: "pointer", fontFamily: "inherit" }}>
+          style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: `2px solid ${stateWarn ? "#E5484D" : bundesland ? "var(--acc)" : C.line}`, fontSize: 15, background: "var(--page)", color: C.ink, outline: "none", cursor: "pointer", fontFamily: "inherit" }}>
           <option value="">{t("pick_state_ph")}</option>
           {BUNDESLAENDER.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -21329,7 +21362,7 @@ function LiD({ lang = "ku" }) {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <button onClick={startPractice}
-          style={{ background: "linear-gradient(135deg,#5B5BD6,#7B61FF)", color: "#fff", border: "none", borderRadius: 18, padding: "22px 16px", cursor: "pointer", textAlign: "center", boxShadow: "0 8px 24px rgba(91,91,214,.32)" }}>
+          style={{ background: "linear-gradient(135deg,var(--acc-btn),#7B61FF)", color: "#fff", border: "none", borderRadius: 18, padding: "22px 16px", cursor: "pointer", textAlign: "center", boxShadow: "0 8px 24px color-mix(in srgb, var(--acc) 32%, transparent)" }}>
           <div style={{ fontSize: 22, marginBottom: 6 }}>🎯</div>
           <div style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 800, fontSize: 15, marginBottom: 4 }}>
             {lang === "ku" ? "تاقیکردنەوەی تاک" : lang === "ar" ? "تدريب فردي" : lang === "tr" ? "Bireysel Alıştırma" : lang === "es" ? "Modo de práctica" : lang === "uk" ? "Режим практики" : lang === "fa" ? "حالت تمرین" : "Practice Mode"}
@@ -21346,7 +21379,7 @@ function LiD({ lang = "ku" }) {
         </button>
       </div>
 
-      <div style={{ ...card, marginTop: 20, background: "rgba(91,91,214,.04)", border: "1px solid rgba(91,91,214,.12)" }}>
+      <div style={{ ...card, marginTop: 20, background: "color-mix(in srgb, var(--acc) 4%, transparent)", border: "1px solid color-mix(in srgb, var(--acc) 12%, transparent)" }}>
         <p style={{ margin: 0, fontSize: 13, color: C.muted, lineHeight: 1.7 }}>
           📌 <strong>Fragenaufbau:</strong> 30 allgemeine + 3 länderspezifische Fragen<br />
           📌 <strong>Mindestantworten:</strong> Mind. 30 von 33 Fragen beantworten<br />
@@ -21375,11 +21408,11 @@ function LiD({ lang = "ku" }) {
         </div>
         {TrToggle && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>{TrToggle}</div>}
         <div style={{ height: 5, borderRadius: 99, background: C.line, marginBottom: 24 }}>
-          <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg,#5B5BD6,#FF6B5E)", width: `${(pracIdx / pracQ.length) * 100}%`, transition: "width .3s" }} />
+          <div style={{ height: "100%", borderRadius: 99, background: "linear-gradient(90deg,var(--acc-btn),#FF6B5E)", width: `${(pracIdx / pracQ.length) * 100}%`, transition: "width .3s" }} />
         </div>
 
         <div style={card}>
-          {isStQ && <div style={{ fontSize: 12, fontWeight: 700, color: "#5B5BD6", background: "rgba(91,91,214,.1)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
+          {isStQ && <div style={{ fontSize: 12, fontWeight: 700, color: "var(--acc-tx)", background: "color-mix(in srgb, var(--acc) 10%, transparent)", borderRadius: 8, padding: "3px 10px", display: "inline-block", marginBottom: 12 }}>{t("state_q")}: {bundesland}</div>}
           <p style={{ fontSize: 13, color: C.muted, fontWeight: 600, margin: "0 0 4px" }}>Aufgabe {q.n}</p>
           <p style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontSize: 18, fontWeight: 700, color: C.ink, margin: trOf(q, isStQ) ? "0 0 6px" : "0 0 22px", lineHeight: 1.5 }}>{q.q}</p>
           {trOf(q, isStQ) && <p dir="auto" style={{ fontSize: 14.5, color: C.muted, margin: "0 0 22px", lineHeight: 1.6 }}>{trOf(q, isStQ).q}</p>}
@@ -21398,8 +21431,8 @@ function LiD({ lang = "ku" }) {
         </div>
 
         {!pracChecked
-          ? <button onClick={pracCheck} disabled={pracSel === null} style={{ width: "100%", padding: "16px", borderRadius: 14, border: "none", background: pracSel === null ? C.line : "linear-gradient(135deg,#5B5BD6,#7B61FF)", color: pracSel === null ? C.muted : "#fff", fontWeight: 800, fontSize: 16, cursor: pracSel === null ? "not-allowed" : "pointer", boxShadow: pracSel === null ? "none" : "0 6px 20px rgba(91,91,214,.3)" }}>{t("check")}</button>
-          : <button onClick={pracNext} style={{ width: "100%", padding: "16px", borderRadius: 14, border: "none", background: "linear-gradient(135deg,#5B5BD6,#7B61FF)", color: "#fff", fontWeight: 800, fontSize: 16, cursor: "pointer", boxShadow: "0 6px 20px rgba(91,91,214,.3)" }}>{pracIdx + 1 >= pracQ.length ? t("finish_practice") : t("next")}</button>
+          ? <button onClick={pracCheck} disabled={pracSel === null} style={{ width: "100%", padding: "16px", borderRadius: 14, border: "none", background: pracSel === null ? C.line : "linear-gradient(135deg,var(--acc-btn),#7B61FF)", color: pracSel === null ? C.muted : "#fff", fontWeight: 800, fontSize: 16, cursor: pracSel === null ? "not-allowed" : "pointer", boxShadow: pracSel === null ? "none" : "0 6px 20px color-mix(in srgb, var(--acc) 30%, transparent)" }}>{t("check")}</button>
+          : <button onClick={pracNext} style={{ width: "100%", padding: "16px", borderRadius: 14, border: "none", background: "linear-gradient(135deg,var(--acc-btn),#7B61FF)", color: "#fff", fontWeight: 800, fontSize: 16, cursor: "pointer", boxShadow: "0 6px 20px color-mix(in srgb, var(--acc) 30%, transparent)" }}>{pracIdx + 1 >= pracQ.length ? t("finish_practice") : t("next")}</button>
         }
       </div>
     );
@@ -21412,11 +21445,11 @@ function LiD({ lang = "ku" }) {
       <div style={{ maxWidth: 480, margin: "40px auto", textAlign: "center" }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>{pct >= 60 ? "🎉" : "💪"}</div>
         <h2 style={{ fontFamily: "'Satoshi',system-ui,sans-serif", fontWeight: 900, fontSize: 26, margin: "0 0 8px" }}>{t("score")}</h2>
-        <div style={{ fontSize: 56, fontWeight: 900, color: "#5B5BD6", fontFamily: "'Satoshi',system-ui,sans-serif", marginBottom: 8 }}>{pracCorrect}<span style={{ fontSize: 28, color: C.muted }}>/{pracQ.length}</span></div>
+        <div style={{ fontSize: 56, fontWeight: 900, color: "var(--acc-tx)", fontFamily: "'Satoshi',system-ui,sans-serif", marginBottom: 8 }}>{pracCorrect}<span style={{ fontSize: 28, color: C.muted }}>/{pracQ.length}</span></div>
         <p style={{ color: C.muted, margin: "0 0 32px" }}>{pct}%</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-          <button onClick={startPractice} style={{ padding: "12px 28px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5B5BD6,#7B61FF)", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("restart")}</button>
-          <button onClick={() => setView("menu")} style={{ padding: "12px 28px", borderRadius: 12, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("back")}</button>
+          <button onClick={startPractice} style={{ padding: "12px 28px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,var(--acc-btn),#7B61FF)", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("restart")}</button>
+          <button onClick={() => setView("menu")} style={{ padding: "12px 28px", borderRadius: 12, border: `1px solid ${C.line}`, background: "var(--surface)", color: C.ink, fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("back")}</button>
         </div>
       </div>
     );
@@ -21442,9 +21475,9 @@ function LiD({ lang = "ku" }) {
         {/* Timer bar */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
           <button onClick={() => setView("menu")} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 14, padding: "6px 10px 6px 0" }}>← {t("back")}</button>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, background: timerRed ? "rgba(229,72,77,.1)" : timerYellow ? "rgba(245,165,36,.1)" : "rgba(91,91,214,.08)", borderRadius: 10, padding: "5px 14px", border: `1px solid ${timerRed ? "#E5484D44" : timerYellow ? "#F5A52444" : "#5B5BD644"}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: timerRed ? "rgba(229,72,77,.1)" : timerYellow ? "rgba(245,165,36,.1)" : "color-mix(in srgb, var(--acc) 8%, transparent)", borderRadius: 10, padding: "5px 14px", border: `1px solid ${timerRed ? "#E5484D44" : timerYellow ? "#F5A52444" : "color-mix(in srgb, var(--acc) 27%, transparent)"}` }}>
             <span style={{ fontSize: 15 }}>⏱</span>
-            <span style={{ fontSize: 15, fontWeight: 800, fontFamily: "'Satoshi',system-ui,sans-serif", color: timerRed ? "#E5484D" : timerYellow ? "#D97706" : "#5B5BD6", letterSpacing: ".04em" }}>{mm}:{ss}</span>
+            <span style={{ fontSize: 15, fontWeight: 800, fontFamily: "'Satoshi',system-ui,sans-serif", color: timerRed ? "#E5484D" : timerYellow ? "#D97706" : "var(--acc)", letterSpacing: ".04em" }}>{mm}:{ss}</span>
           </div>
           <span style={{ fontSize: 13, color: C.muted, fontWeight: 600 }}>{answered}/33 {t("answered")}</span>
         </div>
@@ -21455,8 +21488,8 @@ function LiD({ lang = "ku" }) {
           {testQ.map((tq, i) => (
             <div key={i} onClick={() => setTestIdx(i)}
               style={{ width: 14, height: 8, borderRadius: 4, cursor: "pointer", transition: "all .15s",
-                background: i === testIdx ? "#5B5BD6" : testSel[i] !== undefined ? (testSel[i] === testQ[i].a ? "#16A06F55" : "#E5484D55") : C.line,
-                border: i === testIdx ? "2px solid #5B5BD6" : "2px solid transparent" }} />
+                background: i === testIdx ? "var(--acc)" : testSel[i] !== undefined ? (testSel[i] === testQ[i].a ? "#16A06F55" : "#E5484D55") : C.line,
+                border: i === testIdx ? "2px solid var(--acc)" : "2px solid transparent" }} />
           ))}
         </div>
 
@@ -21485,8 +21518,8 @@ function LiD({ lang = "ku" }) {
             ← {lang === "ar" ? "السابق" : lang === "ku" ? "پێشتر" : lang === "tr" ? "Önceki" : lang === "es" ? "Anterior" : lang === "uk" ? "Попередній" : lang === "fa" ? "قبلی" : "Prev"}
           </button>
           {!isChk
-            ? <button onClick={testCheck} disabled={sel === null} style={{ flex: 1, padding: "13px", borderRadius: 12, border: "none", background: sel === null ? C.line : "rgba(91,91,214,.12)", color: sel === null ? C.muted : "#5B5BD6", fontWeight: 700, cursor: sel === null ? "not-allowed" : "pointer", fontSize: 15 }}>{t("check")}</button>
-            : <button onClick={() => testNav(1)} disabled={testIdx + 1 >= testQ.length} style={{ flex: 1, padding: "13px", borderRadius: 12, border: "none", background: testIdx + 1 >= testQ.length ? C.line : "rgba(91,91,214,.12)", color: testIdx + 1 >= testQ.length ? C.muted : "#5B5BD6", fontWeight: 700, cursor: testIdx + 1 >= testQ.length ? "not-allowed" : "pointer", fontSize: 15 }}>{t("next")} →</button>
+            ? <button onClick={testCheck} disabled={sel === null} style={{ flex: 1, padding: "13px", borderRadius: 12, border: "none", background: sel === null ? C.line : "color-mix(in srgb, var(--acc) 12%, transparent)", color: sel === null ? C.muted : "var(--acc)", fontWeight: 700, cursor: sel === null ? "not-allowed" : "pointer", fontSize: 15 }}>{t("check")}</button>
+            : <button onClick={() => testNav(1)} disabled={testIdx + 1 >= testQ.length} style={{ flex: 1, padding: "13px", borderRadius: 12, border: "none", background: testIdx + 1 >= testQ.length ? C.line : "color-mix(in srgb, var(--acc) 12%, transparent)", color: testIdx + 1 >= testQ.length ? C.muted : "var(--acc)", fontWeight: 700, cursor: testIdx + 1 >= testQ.length ? "not-allowed" : "pointer", fontSize: 15 }}>{t("next")} →</button>
           }
         </div>
 
@@ -21522,7 +21555,7 @@ function LiD({ lang = "ku" }) {
           <p style={{ color: C.muted, margin: "0 0 16px", fontSize: 15 }}>{pct}% — {t("pass_rule")}</p>
           <div style={{ height: 12, borderRadius: 99, background: C.line, margin: "0 0 28px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", left: 0, top: 0, height: "100%", borderRadius: 99, background: passed ? "linear-gradient(90deg,#16A06F,#22D37C)" : "linear-gradient(90deg,#E5484D,#FF6B5E)", width: `${pct}%`, transition: "width 1s ease" }} />
-            <div style={{ position: "absolute", left: "51.5%", top: 0, width: 2, height: "100%", background: "#5B5BD6", opacity: .7 }} />
+            <div style={{ position: "absolute", left: "51.5%", top: 0, width: 2, height: "100%", background: "var(--acc-btn)", opacity: .7 }} />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 28 }}>
             <div style={{ background: "rgba(22,160,111,.08)", borderRadius: 12, padding: "14px 0" }}>
@@ -21536,7 +21569,7 @@ function LiD({ lang = "ku" }) {
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button onClick={startTest} style={{ padding: "12px 28px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#FF6B5E,#FF8C42)", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("restart")}</button>
-            <button onClick={() => setView("menu")} style={{ padding: "12px 28px", borderRadius: 12, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("back")}</button>
+            <button onClick={() => setView("menu")} style={{ padding: "12px 28px", borderRadius: 12, border: `1px solid ${C.line}`, background: "var(--surface)", color: C.ink, fontWeight: 700, cursor: "pointer", fontSize: 15 }}>{t("back")}</button>
           </div>
         </div>
 
@@ -21547,7 +21580,7 @@ function LiD({ lang = "ku" }) {
           const isStO = (STATE_QUESTIONS[bundesland] || []).some(s => s.n === q.n && s.q === q.q);
           const trO = trOf(q, isStO);
           return (
-            <div key={i} style={{ background: "#fff", borderRadius: 14, border: `1px solid ${ok ? "#16A06F33" : "#E5484D33"}`, padding: "14px 18px", marginBottom: 10 }}>
+            <div key={i} style={{ background: "var(--surface)", borderRadius: 14, border: `1px solid ${ok ? "#16A06F33" : "#E5484D33"}`, padding: "14px 18px", marginBottom: 10 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                 <span style={{ fontSize: 18, flexShrink: 0 }}>{ok ? "✅" : "❌"}</span>
                 <div style={{ flex: 1 }}>

@@ -103,3 +103,59 @@ body {
   }
   .s-app > main > * { max-width: 1040px; margin-inline: auto; }
 }
+
+/* ── Level screen (A1–C2): dark level panel, 8 section boxes, stats ───────── */
+.s-capsule {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px; border: none; border-radius: 99px;
+  cursor: pointer; font: inherit; font-weight: 700; font-size: 13.5px; color: var(--acc-tx);
+  background: var(--surface); box-shadow: var(--sh-card); transition: transform .15s ease, box-shadow .15s ease;
+}
+.s-capsule:hover { transform: translateY(-1px); }
+.s-capsule:active { box-shadow: var(--sh-press); transform: none; }
+
+.s-lv-hero {
+  position: relative; overflow: hidden; border-radius: 28px; padding: 22px 22px 22px; margin-bottom: 16px;
+  background: var(--surface-dark); box-shadow: var(--sh-dark); color: var(--ice);
+}
+.s-lv-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(420px 220px at 0% 0%, color-mix(in srgb, var(--acc) 38%, transparent), transparent 70%),
+              radial-gradient(260px 160px at 100% 100%, color-mix(in srgb, var(--acc) 22%, transparent), transparent 70%);
+}
+.s-lv-chip {
+  padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; color: var(--ice);
+  background: rgba(255,255,255,.09); box-shadow: inset 1px 1px 0 rgba(255,255,255,.12), inset -1px -1px 0 rgba(0,0,0,.2);
+}
+.s-lv-pct {
+  width: 66px; height: 66px; border-radius: 20px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; background: linear-gradient(160deg, var(--acc), var(--acc-btn));
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.4), inset -1px -1px 0 rgba(0,0,0,.18), 0 6px 12px -2px rgba(8,20,32,.45);
+}
+.s-lv-track { height: 8px; border-radius: 99px; overflow: hidden; background: rgba(8,20,32,.35); box-shadow: inset 1px 1px 3px rgba(0,0,0,.35); }
+
+/* 8 boxes: edges line up with the level panel above (same container, no side margin) */
+.s-lv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 16px; padding: 0; }
+@media (min-width: 640px)  { .s-lv-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .s-lv-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+.s-lv-box {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  min-height: 112px; padding: 14px 6px; border: none; border-radius: 22px; cursor: pointer; font: inherit; min-width: 0;
+  color: var(--ink); background: var(--surface); box-shadow: var(--sh-card);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.s-lv-box:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
+.s-lv-ico {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; color: var(--acc-tx);
+  background: linear-gradient(150deg, var(--acc-lt), color-mix(in srgb, var(--acc-lt) 70%, var(--acc)));
+  box-shadow: var(--edge), 0 2px 3px rgba(22,40,58,.22), 0 8px 14px -4px rgba(22,40,58,.25);
+}
+.s-lv-lbl { font-size: 12.5px; font-weight: 700; line-height: 1.25; text-align: center; overflow-wrap: anywhere; max-width: 100%; }
+.s-lv-box.is-active { background: var(--surface-hi); box-shadow: var(--sh-press), 0 0 0 2px var(--acc-btn); }
+.s-lv-box.is-active .s-lv-ico { color: #fff; background: linear-gradient(160deg, var(--acc), var(--acc-btn)); }
+.s-lv-box.is-active .s-lv-lbl { color: var(--acc-tx); }
+
+.s-lv-stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; padding: 16px 18px; margin-bottom: 22px;
+  border-radius: 22px; background: var(--surface); box-shadow: var(--sh-card);
+}
+@media (min-width: 640px) { .s-lv-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

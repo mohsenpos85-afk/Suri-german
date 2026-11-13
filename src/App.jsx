@@ -10221,10 +10221,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </button>
 
         {/* hero */}
-        <div style={{ background: `linear-gradient(145deg, ${lc} 0%, ${A(lc,"CC")} 100%)`, borderRadius: 22, padding: "22px 20px 20px", color: "#fff", marginBottom: 18, boxShadow: `0 12px 32px ${A(lc,"44")}`, position: "relative", overflow: "hidden" }}>
+        <div style={{ background: "var(--surface-dark)", borderRadius: 28, padding: "22px 20px 20px", color: "var(--ice)", marginBottom: 18, boxShadow: "var(--sh-dark)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -30, right: -20, width: 130, height: 130, borderRadius: "50%", background: "rgba(255,255,255,.07)", pointerEvents: "none" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 56, height: 56, borderRadius: 18, background: "rgba(255,255,255,.2)", display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0, boxShadow: "0 2px 6px rgba(30,30,70,.10)" }}>{l.icon}</div>
+            <div className="s-plate" style={{ width: 56, height: 56, borderRadius: 18, fontSize: 28, flexShrink: 0 }}>{l.icon}</div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                 <span style={{ background: "rgba(255,255,255,.22)", borderRadius: 99, padding: "2px 10px", fontSize: 12.5, fontWeight: 800 }}>{l.level}</span>
@@ -10350,10 +10350,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           </p>
         </div>
         {/* progress badge */}
-        <div style={{ background: "var(--surface)", border: `1.5px solid ${C.line}`, borderRadius: 12, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 0 rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.05)", flexShrink: 0 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: avgPct >= 95 ? "#E8F8F2" : "#F3F0FC", display: "grid", placeItems: "center" }}>
-            <TrendingUp size={14} color={avgPct >= 95 ? C.green : "#7B6BB5"} />
-          </div>
+        <div style={{ background: "var(--surface)", borderRadius: 18, padding: "8px 14px", display: "flex", alignItems: "center", gap: 10, boxShadow: "var(--sh-card)", flexShrink: 0 }}>
+          <span className="s-plate" style={{ width: 32, height: 32 }}>
+            <TrendingUp size={15} />
+          </span>
           <div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "var(--ink)", lineHeight: 1 }}>{avgPct}%</div>
             <div style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{doneCount}/{topicKeys.length} {lang === "tr" ? "konu" : lang === "en" ? "topics" : lang === "ar" ? "موضوعات" : lang === "es" ? "temas" : lang === "uk" ? "тем" : lang === "fa" ? "موضوع" : "تاک"}</div>
@@ -10367,53 +10367,21 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           {/* Back to home — standalone, above header */}
           {setTab && (
             <>
-              <style>{`
-                @keyframes home-btn-shine {
-                  0%   { background-position: -200% center; }
-                  100% { background-position:  200% center; }
-                }
-                .home-back-btn {
-                  background-size: 200% auto;
-                  background-image: linear-gradient(135deg, ${A(lg.from,"18")} 0%, ${A(lg.to,"30")} 40%, ${A(lg.from,"18")} 100%);
-                  animation: home-btn-shine 2.8s linear infinite;
-                  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-                }
-                .home-back-btn:hover {
-                  transform: translateY(-2px);
-                  box-shadow: 0 4px 14px ${A(lg.from,"30")} !important;
-                }
-                .home-back-btn:active { transform: scale(.97); }
-              `}</style>
-              <button onClick={() => setTab("home")} className="home-back-btn" style={{
-                display:"inline-flex", alignItems:"center", gap:6,
-                border:`1px solid ${A(lg.from,"30")}`,
-                color: lg.from,
-                fontSize:13.5, fontWeight:700,
-                padding:"8px 18px 8px 14px", borderRadius:12,
-                cursor:"pointer", marginBottom:14,
-                boxShadow:`0 1px 4px rgba(0,0,0,.06)`,
-              }}>
-                <HomeIcon size={15} color={lg.from} />
+              <button onClick={() => setTab("home")} className="home-back-btn s-capsule" style={{ marginBottom:16 }}>
+                <HomeIcon size={15} />
                 {tL("home_back")}
               </button>
             </>
           )}
 
-          {/* Gradient level header */}
-          <div style={{
-            background:`linear-gradient(135deg,${lg.from} 0%,${lg.to} 100%)`,
-            borderRadius:22, padding:"20px 20px 22px", marginBottom:18,
-            position:"relative", overflow:"hidden",
-            boxShadow:`0 12px 32px ${A(lg.from,"44")}`,
-          }}>
-            <div style={{ position:"absolute",top:-24,right:-24,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.13)",pointerEvents:"none" }} />
-            <div style={{ position:"absolute",bottom:-16,left:-16,width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none" }} />
-
-            <div style={{ position:"relative", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-              <div>
-                <div style={{ display:"flex", alignItems:"baseline", gap:10 }}>
-                  <span style={{ fontSize:38, fontWeight:900, color:"#fff", lineHeight:1, letterSpacing:"-.03em" }}>{level}</span>
-                  <span style={{ fontSize:16, fontWeight:700, color:"rgba(255,255,255,.85)" }}>
+          {/* Level header — dark matte panel, accent = current level */}
+          <div className="s-lv-hero">
+            <div className="s-lv-glow" aria-hidden="true" />
+            <div style={{ position:"relative", display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+              <div style={{ minWidth:0 }}>
+                <div style={{ display:"flex", alignItems:"baseline", gap:10, flexWrap:"wrap" }}>
+                  <span style={{ fontSize:40, fontWeight:900, color:"var(--ice)", lineHeight:1, letterSpacing:"-.03em" }}>{level}</span>
+                  <span style={{ fontSize:16, fontWeight:700, color:"var(--acc-lt)" }}>
                     {(() => { const lv = LEVELS.find(l=>l.id===level); return lv?.['label' + lang.charAt(0).toUpperCase() + lang.slice(1)] || lv?.label; })()}
                   </span>
                 </div>
@@ -10424,124 +10392,80 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     { v: lvGrammarCount,   l: STAT_LABEL.grammar[lang] || STAT_LABEL.grammar.ku },
                     { v: lvVerbCount,      l: STAT_LABEL.verb[lang] || STAT_LABEL.verb.ku },
                   ].map(({v,l}) => (
-                    <span key={l} style={{ background:"rgba(255,255,255,.22)", backdropFilter:"blur(8px)", borderRadius:99, padding:"4px 12px", fontSize:12, fontWeight:700, color:"#fff" }}>
-                      {v} {l}
-                    </span>
+                    <span key={l} className="s-lv-chip">{v} {l}</span>
                   ))}
                 </div>
               </div>
-              <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,.2)", border:"1.5px solid rgba(255,255,255,.62)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 6px rgba(30,30,70,.10)", flexShrink:0 }}>
-                <span style={{ fontSize:18, fontWeight:900, color:"#fff", lineHeight:1 }}>{avgPct}%</span>
-                <span style={{ fontSize:8.5, fontWeight:700, color:"rgba(255,255,255,.75)", marginTop:2, letterSpacing:".02em" }}>
+              <div className="s-lv-pct">
+                <span style={{ fontSize:18, fontWeight:900, lineHeight:1 }}>{avgPct}%</span>
+                <span style={{ fontSize:10, fontWeight:700, marginTop:3, opacity:.9 }}>
                   {STAT_LABEL.progress[lang] || STAT_LABEL.progress.ku}
                 </span>
               </div>
             </div>
 
             {/* progress bar + continue CTA */}
-            <div style={{ position:"relative", marginTop:16, display:"flex", alignItems:"center", gap:12 }}>
-              <div style={{ flex:1 }}>
-                <div style={{ height:6, background:"rgba(255,255,255,.25)", borderRadius:3, overflow:"hidden" }}>
-                  <div style={{ height:"100%", width:`${avgPct}%`, background:"var(--surface)",
-                    borderRadius:3, transition:"width .6s cubic-bezier(.22,1,.36,1)", minWidth:avgPct>0?4:0 }} />
+            <div style={{ position:"relative", marginTop:18, display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
+              <div style={{ flex:"1 1 200px", minWidth:0 }}>
+                <div className="s-lv-track">
+                  <div style={{ height:"100%", width:`${avgPct}%`, background:"linear-gradient(90deg, var(--acc-lt), var(--acc))",
+                    borderRadius:99, transition:"width .6s cubic-bezier(.22,1,.36,1)", minWidth:avgPct>0?6:0 }} />
                 </div>
-                <div style={{ fontSize:12, color:"rgba(255,255,255,.8)", fontWeight:700, marginTop:5 }}>
+                <div style={{ fontSize:12.5, color:"var(--ice)", fontWeight:700, marginTop:6 }}>
                   {avgPct}% {STAT_LABEL.completed[lang] || STAT_LABEL.completed.ku}
                 </div>
               </div>
-              <button
-                className="lesson-continue-btn"
-                onClick={() => goToMode("grammar")}
-                style={{ flexShrink:0, border:"none", borderRadius:12, padding:"9px 16px",
-                  background:"rgba(255,255,255,.95)", color:lg.from, fontWeight:800, fontSize:13,
-                  cursor:"pointer", boxShadow:"0 2px 8px rgba(0,0,0,.15)",
-                  transition:"transform .18s cubic-bezier(.34,1.56,.64,1)" }}>
+              <button className="s-cta lesson-continue-btn" onClick={() => goToMode("grammar")} style={{ flexShrink:0 }}>
                 {STAT_LABEL.continue[lang] || STAT_LABEL.continue.ku} →
               </button>
             </div>
           </div>
 
-          {/* ── Compact stats row ── */}
-          <div style={{ display:"flex", gap:0, marginTop:14, marginBottom:4, padding:"10px 4px",
-            justifyContent:"space-between", flexWrap:"wrap" }}>
-            {[
-              { Icon: BookOpen,    v: lvLessons.length, l: STAT_LABEL.lesson[lang] || STAT_LABEL.lesson.ku },
-              { Icon: Type,        v: lvVocabCount,      l: STAT_LABEL.word[lang] || STAT_LABEL.word.ku },
-              { Icon: TrendingUp,  v: `${avgPct}%`,      l: STAT_LABEL.completed[lang] || STAT_LABEL.completed.ku },
-              { Icon: Clock,       v: 0,                 l: STAT_LABEL.hoursStudied[lang] || STAT_LABEL.hoursStudied.ku },
-            ].map(({Icon, v, l}, i) => (
-              <div key={i} style={{ display:"flex", alignItems:"center", gap:6, flex:"1 1 auto", minWidth:0 }}>
-                <Icon size={15} color={lg.from} style={{ flexShrink:0 }} />
-                <div style={{ minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:800, color:"var(--ink)", lineHeight:1.1 }}>{v}</div>
-                  <div style={{ fontSize:12, color:C.muted, fontWeight:600, whiteSpace:"nowrap" }}>{l}</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </>
       )}
 
-      {/* ── Pill tab strip ── */}
+      {/* ── Section boxes: 2×4 phone, 4×2 tablet, 8×1 desktop; aligned with the level panel ── */}
       {level !== null && (
-        <div style={{ marginBottom:24 }}>
-          <style>{`
-            .ptab { transition: transform .22s cubic-bezier(.34,1.56,.64,1); cursor:pointer; user-select:none; }
-            .ptab:hover { transform: translateY(-3px); }
-            .ptab-active { transform: translateY(-3px); }
-            .ptab:active .ptab-pill { transform: scale(.97); }
-            .ptab-strip::-webkit-scrollbar { display:none; }
-          `}</style>
-          <div className="ptab-strip" style={{ display:"flex", gap:9, overflowX:"auto", scrollbarWidth:"none", margin:"0 -2px", padding:"6px 2px 16px" }}>
-            {TABS.map((tb, i) => {
-              const active = mode === tb.id;
-              return (
-                <div key={tb.id} className={`ptab${active?" ptab-active":""}`}
-                  onClick={(e)=>{
-                    if (tb.id === "exam" && !examUnlocked) {
-                      const r = e.currentTarget.getBoundingClientRect();
-                      setExamLockMsg({ x: r.left + r.width / 2, y: r.top });
-                      clearTimeout(examLockMsgTimer.current);
-                      examLockMsgTimer.current = setTimeout(() => setExamLockMsg(null), 2500);
-                      return;
-                    }
-                    goToMode(tb.id);
-                  }}
-                  style={{ position:"relative", flexShrink:0 }}>
+        <div className="s-lv-grid" role="tablist">
+          {TABS.map((tb) => {
+            const active = mode === tb.id;
+            return (
+              <button key={tb.id} type="button" role="tab" aria-selected={active}
+                className={`s-lv-box${active ? " is-active" : ""}`}
+                onClick={(e)=>{
+                  if (tb.id === "exam" && !examUnlocked) {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    setExamLockMsg({ x: r.left + r.width / 2, y: r.top });
+                    clearTimeout(examLockMsgTimer.current);
+                    examLockMsgTimer.current = setTimeout(() => setExamLockMsg(null), 2500);
+                    return;
+                  }
+                  goToMode(tb.id);
+                }}>
+                <span className="s-lv-ico"><tb.Icon size={22} strokeWidth={1.75} /></span>
+                <span className="s-lv-lbl">{tb.label}{tb.id === "exam" && examUnlocked ? " ✓" : ""}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-                  {/* inner pill — soft surface, thin border, subtle shadow */}
-                  <div className="ptab-pill" style={{
-                    width:72, borderRadius:20,
-                    padding:"12px 6px",
-                    display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:6,
-                    minHeight:78,
-                    border: active ? "none" : "1px solid rgba(0,0,0,.06)",
-                    background: active
-                      ? `linear-gradient(160deg, ${lg?.from||C.red}, ${lg?.to||C.red})`
-                      : "rgba(255,255,255,.7)",
-                    backdropFilter: active ? "none" : "blur(6px)",
-                    boxShadow: active
-                      ? `0 6px 16px ${lg?.from||C.red}38`
-                      : "0 1px 3px rgba(0,0,0,.05)",
-                    transition:"transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, background .2s",
-                  }}>
-                    <tb.Icon size={22} strokeWidth={1.6}
-                      color={active ? "#fff" : "#9AA1B0"} />
-                    <div style={{ fontSize:12, fontWeight:700, textAlign:"center", lineHeight:1.2,
-                      color: active ? "#fff" : "#8892A4" }}>
-                      {tb.label}
-                    </div>
-                    {tb.id === "exam" && examUnlocked && (
-                      <div style={{ fontSize:12, lineHeight:1, color: active ? "#fff" : C.green }}>
-                        ✓
-                      </div>
-                    )}
-                  </div>
-
-                </div>
-              );
-            })}
-          </div>
+      {level !== null && lg && (
+        <div className="s-lv-stats">
+          {[
+            { Icon: BookOpen,    v: lvLessons.length, l: STAT_LABEL.lesson[lang] || STAT_LABEL.lesson.ku },
+            { Icon: Type,        v: lvVocabCount,      l: STAT_LABEL.word[lang] || STAT_LABEL.word.ku },
+            { Icon: TrendingUp,  v: `${avgPct}%`,      l: STAT_LABEL.completed[lang] || STAT_LABEL.completed.ku },
+            { Icon: Clock,       v: 0,                 l: STAT_LABEL.hoursStudied[lang] || STAT_LABEL.hoursStudied.ku },
+          ].map(({Icon, v, l}, i) => (
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:10, minWidth:0 }}>
+              <span className="s-plate" style={{ width:38, height:38, flexShrink:0 }}><Icon size={17} /></span>
+              <div style={{ minWidth:0 }}>
+                <div style={{ fontSize:15, fontWeight:800, color:"var(--ink)", lineHeight:1.1 }}>{v}</div>
+                <div style={{ fontSize:12, color:C.muted, fontWeight:600 }}>{l}</div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

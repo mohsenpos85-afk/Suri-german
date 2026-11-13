@@ -25,14 +25,6 @@ body {
   }
 }
 
-/* ── Dark mode ───────────────────────────────────────
-   The UI is styled with inline colours, so dark mode inverts the page and
-   flips media back so photos, mascots and video keep their real colours. */
-html[data-theme="dark"] { background: #fff; filter: invert(1) hue-rotate(180deg); }
-html[data-theme="dark"] img,
-html[data-theme="dark"] video,
-html[data-theme="dark"] canvas { filter: invert(1) hue-rotate(180deg); }
-
 /* ── Toast ───────────────────────────────────────── */
 .suri-toast {
   position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%);

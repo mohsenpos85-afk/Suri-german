@@ -1,0 +1,174 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Suri soft-3D design system (reference: blue-grey embossed dashboard).
+   One shared set of surfaces, shadows and type; each CEFR level only swaps the
+   three accent variables below (set on <html data-level="A1…C2">).
+   Light always comes from the top-left.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --page: #A8BAC4;            /* outer ground */
+  --panel: #B8CAD3;           /* light panels */
+  --nav: #21394D;             /* dark navigation */
+  --hero: #304B5D;            /* dark hero panel */
+  --ink: #16283A;             /* text on light surfaces */
+  --muted: #3F566A;
+  --ice: #E8F0F4;             /* text on dark surfaces */
+  --line: rgba(33, 57, 77, .16);
+
+  /* level accent — A1 by default */
+  --acc: #659DB8; --acc-lt: #D7E8EF; --acc-dk: #315B71;
+
+  --surface: linear-gradient(150deg, #C4D4DC 0%, #B7CAD3 55%, #B1C4CE 100%);
+  --surface-hi: linear-gradient(150deg, #D3E0E6 0%, #C2D3DB 100%);
+  --surface-dark: linear-gradient(160deg, #3A5568 0%, #304B5D 55%, #2A4252 100%);
+
+  /* light top-left, shade bottom-right, tight contact shadow + wide soft one */
+  --edge: inset 1px 1px 0 rgba(255,255,255,.55), inset -1px -1px 0 rgba(22,40,58,.10);
+  --sh-card: var(--edge), 0 2px 3px rgba(22,40,58,.20), 0 14px 28px -6px rgba(22,40,58,.20);
+  --sh-lift: var(--edge), 0 3px 5px rgba(22,40,58,.22), 0 22px 40px -8px rgba(22,40,58,.28);
+  --sh-dark: inset 1px 1px 0 rgba(255,255,255,.14), inset -1px -1px 0 rgba(0,0,0,.25), 0 3px 5px rgba(8,20,32,.35), 0 20px 36px -8px rgba(8,20,32,.45);
+  --sh-press: inset 2px 2px 5px rgba(22,40,58,.28), inset -1px -1px 0 rgba(255,255,255,.35);
+
+  --r-frame: 36px; --r-card: 24px; --r-plate: 14px;
+}
+/* accent families: main / light surface / dark tone */
+html[data-level="A1"] { --acc: #659DB8; --acc-lt: #D7E8EF; --acc-dk: #315B71; }
+html[data-level="A2"] { --acc: #569F95; --acc-lt: #D4EBE6; --acc-dk: #2C655F; }
+html[data-level="B1"] { --acc: #547CB6; --acc-lt: #D8E3F3; --acc-dk: #304D7C; }
+html[data-level="B2"] { --acc: #8877B5; --acc-lt: #E8E1F2; --acc-dk: #544477; }
+html[data-level="C1"] { --acc: #BD8D52; --acc-lt: #F2E5D4; --acc-dk: #785329; }
+html[data-level="C2"] { --acc: #9A657F; --acc-lt: #EDDEE6; --acc-dk: #633F53; }
+:root {
+  --acc-btn: color-mix(in srgb, var(--acc) 40%, var(--acc-dk));          /* white text passes 4.5:1 */
+  --acc-tx: color-mix(in srgb, var(--acc-dk) 78%, #0D1B28);              /* accent text on light panels */
+}
+
+html { background: var(--page); }
+body {
+  background-color: var(--page);
+  /* fine, low-contrast matte grain */
+  background-image:
+    radial-gradient(1200px 700px at 12% -8%, rgba(255,255,255,.35), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .13 0 0 0 0 .23 0 0 0 0 .3 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--ink);
+}
+
+/* Capsule main action: level accent, thin light on top, short shadow below */
+.s-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 24px;
+  border: none; border-radius: 99px; cursor: pointer; font: inherit; font-weight: 800; color: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 70%, #fff 0%) 0%, var(--acc-btn) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.12), 0 3px 0 var(--acc-dk), 0 10px 18px -4px rgba(22,40,58,.4);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.s-cta:hover { transform: translateY(-1px); }
+.s-cta:active { transform: translateY(2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 1px 0 var(--acc-dk), 0 4px 8px -2px rgba(22,40,58,.35); }
+
+/* Icon plate: small raised tile, pearl icon in the level's light tone */
+.s-plate {
+  display: inline-grid; place-items: center; width: 46px; height: 46px; border-radius: var(--r-plate); color: var(--acc-dk);
+  background: linear-gradient(150deg, var(--acc-lt), color-mix(in srgb, var(--acc-lt) 70%, var(--acc)));
+  box-shadow: var(--edge), 0 2px 3px rgba(22,40,58,.22), 0 8px 14px -4px rgba(22,40,58,.25);
+}
+
+:focus-visible { outline: 3px solid var(--acc-dk) !important; outline-offset: 2px; }
+
+/* ── Desktop shell: dark navigation on the left, content in a large rounded frame ── */
+.s-side { display: none; }
+@media (min-width: 1024px) {
+  body { padding: 20px; }
+  .s-side {
+    display: flex; flex-direction: column; position: fixed; z-index: 30; top: 20px; bottom: 20px; inset-inline-start: 20px; width: 252px;
+    padding: 22px 14px 16px; border-radius: 32px; color: var(--ice);
+    background: linear-gradient(170deg, #2C4A60 0%, var(--nav) 45%, #1B3042 100%);
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,.16), inset -1px -1px 0 rgba(0,0,0,.3), 0 4px 6px rgba(8,20,32,.3), 0 28px 50px -10px rgba(8,20,32,.5);
+  }
+  .s-side-item {
+    display: flex; align-items: center; gap: 14px; width: 100%; min-height: 48px; padding: 0 16px; margin-bottom: 8px;
+    border: none; border-radius: 16px; background: transparent; color: var(--ice); font: inherit; font-weight: 600; font-size: 15px;
+    cursor: pointer; text-align: start; opacity: .86; transition: background .15s, transform .15s;
+  }
+  .s-side-item:hover { background: rgba(255,255,255,.07); opacity: 1; }
+  .s-side-item[aria-current="page"] {
+    opacity: 1; color: var(--nav); font-weight: 800;
+    background: linear-gradient(150deg, #F1F6F8, #CFDDE4);
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(22,40,58,.12), 0 6px 14px -2px rgba(0,0,0,.4);
+  }
+  /* page content sits right of the nav; the old top bar and hamburger are not needed */
+  .s-app > header { display: none !important; }
+  .s-app > main {
+    margin-inline-start: 292px !important; margin-inline-end: 0 !important; max-width: none !important;
+    min-height: calc(100vh - 40px); padding: 32px 36px 56px !important; border-radius: var(--r-frame);
+    background: linear-gradient(160deg, rgba(196,212,220,.55), rgba(176,196,206,.55));
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,.65), inset -1px -1px 0 rgba(22,40,58,.08), 0 24px 50px -24px rgba(22,40,58,.4);
+  }
+  .s-app > main > * { max-width: 1040px; margin-inline: auto; }
+}
+
+/* ── Level screen (A1–C2): dark level panel, 8 section boxes, stats ───────── */
+.s-capsule {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px; border: none; border-radius: 99px;
+  cursor: pointer; font: inherit; font-weight: 700; font-size: 13.5px; color: var(--acc-tx);
+  background: var(--surface); box-shadow: var(--sh-card); transition: transform .15s ease, box-shadow .15s ease;
+}
+.s-capsule:hover { transform: translateY(-1px); }
+.s-capsule:active { box-shadow: var(--sh-press); transform: none; }
+
+.s-lv-hero {
+  position: relative; overflow: hidden; border-radius: 28px; padding: 22px 22px 22px; margin-bottom: 16px;
+  background: var(--surface-dark); box-shadow: var(--sh-dark); color: var(--ice);
+}
+.s-lv-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(420px 220px at 0% 0%, color-mix(in srgb, var(--acc) 38%, transparent), transparent 70%),
+              radial-gradient(260px 160px at 100% 100%, color-mix(in srgb, var(--acc) 22%, transparent), transparent 70%);
+}
+.s-lv-chip {
+  padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; color: var(--ice);
+  background: rgba(255,255,255,.09); box-shadow: inset 1px 1px 0 rgba(255,255,255,.12), inset -1px -1px 0 rgba(0,0,0,.2);
+}
+.s-lv-pct {
+  width: 66px; height: 66px; border-radius: 20px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; background: linear-gradient(160deg, var(--acc), var(--acc-btn));
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.4), inset -1px -1px 0 rgba(0,0,0,.18), 0 6px 12px -2px rgba(8,20,32,.45);
+}
+.s-lv-track { height: 8px; border-radius: 99px; overflow: hidden; background: rgba(8,20,32,.35); box-shadow: inset 1px 1px 3px rgba(0,0,0,.35); }
+
+/* 8 boxes: edges line up with the level panel above (same container, no side margin) */
+.s-lv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 16px; padding: 0; }
+@media (min-width: 640px)  { .s-lv-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .s-lv-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+.s-lv-box {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  min-height: 112px; padding: 14px 6px; border: none; border-radius: 22px; cursor: pointer; font: inherit; min-width: 0;
+  color: var(--ink); background: var(--surface); box-shadow: var(--sh-card);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.s-lv-box:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
+.s-lv-ico {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; color: var(--acc-tx);
+  background: linear-gradient(150deg, var(--acc-lt), color-mix(in srgb, var(--acc-lt) 70%, var(--acc)));
+  box-shadow: var(--edge), 0 2px 3px rgba(22,40,58,.22), 0 8px 14px -4px rgba(22,40,58,.25);
+}
+.s-lv-lbl { font-size: 12.5px; font-weight: 700; line-height: 1.25; text-align: center; overflow-wrap: anywhere; max-width: 100%; }
+.s-lv-box.is-active { background: var(--surface-hi); box-shadow: var(--sh-press), 0 0 0 2px var(--acc-btn); }
+.s-lv-box.is-active .s-lv-ico { color: #fff; background: linear-gradient(160deg, var(--acc), var(--acc-btn)); }
+.s-lv-box.is-active .s-lv-lbl { color: var(--acc-tx); }
+
+.s-lv-stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; padding: 16px 18px; margin-bottom: 22px;
+  border-radius: 22px; background: var(--surface); box-shadow: var(--sh-card);
+}
+@media (min-width: 640px) { .s-lv-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ── Plain white ground: splash, sign-in, onboarding (before the app is entered) ── */
+html[data-shell="plain"], html[data-shell="plain"] body { background: #fff !important; background-image: none !important; }
+html[data-shell="plain"] {
+  --page: #fff; --panel: #fff; --surface: #fff; --surface-hi: #F4F6F8;
+  --ink: #16283A; --muted: #4A5D70; --line: rgba(33,57,77,.14);
+  --sh-card: 0 1px 2px rgba(22,40,58,.10), 0 8px 20px -8px rgba(22,40,58,.16);
+  --sh-lift: 0 2px 4px rgba(22,40,58,.12), 0 14px 28px -8px rgba(22,40,58,.22);
+  --sh-press: inset 0 2px 4px rgba(22,40,58,.16);
+}
+
+/* Opt out of browser force-dark (Chrome/Samsung auto dark inverts colours and photos). */
+html { color-scheme: only light; }

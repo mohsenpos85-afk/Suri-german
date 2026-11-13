@@ -1,3 +1,4 @@
+import { A } from './theme';
 import React, { useState, useRef, useEffect } from "react";
 import {
   ScanText, Upload, Camera, FileText, Sparkles, Calendar, AlertTriangle,
@@ -219,9 +220,9 @@ const INFO_ICONS = {
 };
 
 const T = {
-  bg: "#FBFBFC", card: "#FFFFFF", ink: "#18181B", ink2: "#3F3F46", muted: "#71717A", faint: "#A1A1AA",
+  bg: "var(--page)", card: "#FFFFFF", ink: "var(--ink)", ink2: "#3F3F46", muted: "var(--muted)", faint: "#A1A1AA",
   line: "#ECECEF", line2: "#F6F6F7",
-  accent: "#5B5BD6", accentSoft: "#EEEEFC", accentDk: "#4B45C4",
+  accent: "var(--acc)", accentSoft: "#EEEEFC", accentDk: "var(--acc-dk)",
   green: "#16A06F", greenSoft: "#E7F6EF", amber: "#B7791F", amberSoft: "#FEF3E2",
   rose: "#E5484D", roseSoft: "#FDECEC", blue: "#2F6FED", blueSoft: "#EAF1FE",
 };
@@ -473,7 +474,7 @@ Here is the full text of the user's document (may be in another language):
           ))}
         </div>
         <button onClick={() => last ? finishOnboarding() : setObStep(obStep + 1)}
-          style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: T.accent, color: "#fff", fontSize: 16, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 20px rgba(91,91,214,.28)" }}>
+          style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: T.accent, color: "#fff", fontSize: 16, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 20px color-mix(in srgb, var(--acc) 28%, transparent)" }}>
           {last ? L(lang, "start") : L(lang, "next")}
         </button>
       </div>
@@ -529,7 +530,7 @@ Here is the full text of the user's document (may be in another language):
       <div style={wrap}>
         {topBar(L(lang, "back"))}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 22 }}>
-          <div style={{ width: 54, height: 54, borderRadius: 16, background: "linear-gradient(135deg,#5B5BD6,#7C6BF0)", display: "grid", placeItems: "center", boxShadow: "0 8px 20px rgba(91,91,214,.3)" }}>
+          <div style={{ width: 54, height: 54, borderRadius: 16, background: "linear-gradient(135deg,var(--acc-btn),var(--acc))", display: "grid", placeItems: "center", boxShadow: "0 8px 20px color-mix(in srgb, var(--acc) 30%, transparent)" }}>
             <ScanText size={26} color="#fff" strokeWidth={1.7} />
           </div>
           <div>
@@ -659,7 +660,7 @@ Here is the full text of the user's document (may be in another language):
               </button>
 
               <button onClick={acceptConsent} disabled={!agree}
-                style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: agree ? T.accent : T.line, color: agree ? "#fff" : T.faint, fontSize: 15.5, fontWeight: 700, cursor: agree ? "pointer" : "default", boxShadow: agree ? "0 8px 20px rgba(91,91,214,.28)" : "none", marginBottom: 6, transition: "all .2s" }}>
+                style={{ width: "100%", padding: "15px", borderRadius: 15, border: "none", background: agree ? T.accent : T.line, color: agree ? "#fff" : T.faint, fontSize: 15.5, fontWeight: 700, cursor: agree ? "pointer" : "default", boxShadow: agree ? "0 8px 20px color-mix(in srgb, var(--acc) 28%, transparent)" : "none", marginBottom: 6, transition: "all .2s" }}>
                 {L(lang, "pv_accept")}
               </button>
               <button onClick={() => setPending(null)}
@@ -891,9 +892,9 @@ Here is the full text of the user's document (may be in another language):
     const detail = Array.isArray(d.detailedExplanation) ? d.detailedExplanation.map((p) => `<p>${esc(p)}</p>`).join("") : "";
     const faq = Array.isArray(d.faq) ? d.faq.map((f) => `<p><b>${esc(f.q)}</b><br>${esc(f.a)}</p>`).join("") : "";
     return `<!doctype html><html dir="${dir}"><head><meta charset="utf-8"><title>${esc(d.documentType || "Document")}</title>
-<style>@page{margin:22mm}body{font-family:'Vazirmatn',system-ui,Arial,sans-serif;color:#18181B;line-height:1.6;max-width:720px;margin:0 auto;padding:20px}
-h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;color:#4B45C4;border-bottom:1px solid #eee;padding-bottom:4px}
-.meta{color:#71717A;font-size:13px;margin-bottom:8px}table{border-collapse:collapse;width:100%}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}td.k{color:#71717A;width:38%}
+<style>@page{margin:22mm}body{font-family:'Vazirmatn',system-ui,Arial,sans-serif;color:var(--ink);line-height:1.6;max-width:720px;margin:0 auto;padding:20px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;color:var(--acc-dk);border-bottom:1px solid #eee;padding-bottom:4px}
+.meta{color:var(--muted);font-size:13px;margin-bottom:8px}table{border-collapse:collapse;width:100%}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}td.k{color:var(--muted);width:38%}
 ul{padding-inline-start:20px}li{margin:4px 0}p{margin:8px 0}</style></head><body>
 <h1>${esc(d.documentType || "Document")}</h1>
 <div class="meta">${esc(d.detectedLanguage || "")} · ${L(lang, "confidence")} ${Math.round(d.confidence || 0)}%</div>
@@ -970,7 +971,7 @@ ${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
     return (
       <div style={{ ...cardStyle, marginBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-          <div style={{ width: 30, height: 30, borderRadius: 9, background: `${color}14`, display: "grid", placeItems: "center" }}>
+          <div style={{ width: 30, height: 30, borderRadius: 9, background: `${A(color,"14")}`, display: "grid", placeItems: "center" }}>
             <Icon size={16} color={color} />
           </div>
           <h3 style={{ fontSize: 15.5, fontWeight: 800, margin: 0 }}>{title}</h3>
@@ -980,14 +981,14 @@ ${block(L(lang, "s_next"), ul(d.nextSteps, "→ "))}
     );
   }
   function bigBtn(bg, fg, primary) {
-    return { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "26px 14px", borderRadius: 18, border: primary ? "none" : `1px solid ${T.line}`, background: bg, color: fg, fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: primary ? "0 10px 24px rgba(91,91,214,.28)" : "0 1px 2px rgba(0,0,0,.04)" };
+    return { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "26px 14px", borderRadius: 18, border: primary ? "none" : `1px solid ${T.line}`, background: bg, color: fg, fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: primary ? "0 10px 24px color-mix(in srgb, var(--acc) 28%, transparent)" : "0 1px 2px rgba(0,0,0,.04)" };
   }
   function toastEl() {
     return <div style={{ position: "fixed", bottom: 90, left: "50%", transform: "translateX(-50%)", background: T.ink, color: "#fff", padding: "10px 18px", borderRadius: 999, fontSize: 13.5, fontWeight: 600, zIndex: 300 }}>{toast}</div>;
   }
 }
 
-const pStyle = { fontSize: 14.5, lineHeight: 1.65, color: "#3F3F46", margin: 0 };
+const pStyle = { fontSize: 14.5, lineHeight: 1.65, color: "var(--ink)", margin: 0 };
 
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);

@@ -5,11 +5,12 @@ import { GRAMMAR_QUIZ } from "./data/grammarQuiz";
 import { DAILY_READING } from "./data/dailyReading";
 import { Library, Puzzle, BookOpen, Tag, PenLine, Check, Trophy, Sparkles, TrendingUp, ChevronRight } from "lucide-react";
 import { useNavLayer } from "./lib/nav";
+import { setThemeLevel } from "./theme";
 
 const LEVEL_IDS = ["A1", "A2", "B1", "B2", "C1", "C2"];
 const STEPS = ["w", "g", "r", "a", "s"];
 const XP_STEP = 10, XP_BONUS = 20;
-const ORANGE = "#FF8A3D", PRIMARY = "#5B5BD6", INK = "#18181B", MUTED = "#71717A";
+const ORANGE = "var(--acc-btn)", PRIMARY = "var(--acc-tx)", INK = "var(--ink)", MUTED = "var(--muted)";
 
 const TXT = {
   tr: { title: "Günlük Bölüm", sub: "Her gün 5 kısa adım", level: "Seviyeni seç", left: n => `${n} XP kaldı`, lv: "Seviye",
@@ -126,10 +127,10 @@ function LevelRing({ xp, size = 132, t }) {
   return (
     <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }} role="img" aria-label={`${t.lv} ${info.lvl}, ${info.cur}/${info.need} XP`}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)", display: "block" }}>
-        <defs><linearGradient id={gid} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FFB36B" /><stop offset="55%" stopColor={ORANGE} /><stop offset="100%" stopColor="#8B7CF6" /></linearGradient></defs>
-        <circle cx={size / 2} cy={size / 2} r={R} fill="none" stroke="rgba(91,91,214,.12)" strokeWidth="10" />
+        <defs><linearGradient id={gid} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="var(--acc)" /><stop offset="55%" stopColor={ORANGE} /><stop offset="100%" stopColor="var(--acc)" /></linearGradient></defs>
+        <circle cx={size / 2} cy={size / 2} r={R} fill="none" stroke="color-mix(in srgb, var(--acc) 12%, transparent)" strokeWidth="10" />
         <circle cx={size / 2} cy={size / 2} r={R} fill="none" stroke={`url(#${gid})`} strokeWidth="10" strokeLinecap="round"
-          strokeDasharray={C} strokeDashoffset={C * (1 - Math.min(1, shown))} style={{ transition: "stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)", filter: "drop-shadow(0 0 6px rgba(255,138,61,.45))" }} />
+          strokeDasharray={C} strokeDashoffset={C * (1 - Math.min(1, shown))} style={{ transition: "stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)", filter: "drop-shadow(0 0 6px rgba(22,40,58,.4))" }} />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", direction: "ltr" }}>
         <div style={{ fontSize: size * 0.11, fontWeight: 700, color: MUTED, letterSpacing: ".06em", textTransform: "uppercase" }}>{t.lv}</div>
@@ -146,16 +147,16 @@ export function DailyHomeCard({ lang, onOpen, getXp }) {
   return (
     <button type="button" onClick={onOpen} className="s-press"
       style={{ width: "100%", display: "flex", alignItems: "center", gap: 16, textAlign: "start", border: "none", cursor: "pointer", fontFamily: "inherit",
-        background: "#fff", borderRadius: 24, padding: "14px 18px", marginBottom: 18, boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 10px 28px rgba(91,91,214,.16)" }}>
+        background: "var(--surface)", borderRadius: 24, padding: "14px 18px", marginBottom: 18, boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 10px 28px color-mix(in srgb, var(--acc) 16%, transparent)" }}>
       <LevelRing xp={getXp()} size={84} t={t} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 900, fontSize: 18, color: INK }}>{t.title}</div>
         <div style={{ fontSize: 13, color: MUTED, margin: "2px 0 8px" }}>{st.level} · {st.done}/{st.total} {t.progress}</div>
         <div style={{ display: "flex", gap: 5 }}>
-          {STEPS.map((s, i) => <span key={s} style={{ flex: 1, height: 7, borderRadius: 99, background: i < st.done ? `linear-gradient(90deg,#FFB36B,${ORANGE})` : "rgba(91,91,214,.12)" }} />)}
+          {STEPS.map((s, i) => <span key={s} style={{ flex: 1, height: 7, borderRadius: 99, background: i < st.done ? `linear-gradient(90deg,var(--acc),${ORANGE})` : "color-mix(in srgb, var(--acc) 12%, transparent)" }} />)}
         </div>
       </div>
-      <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 99, background: `linear-gradient(135deg,${ORANGE},#F0701A)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "0 6px 16px rgba(255,138,61,.45)", flexShrink: 0 }}><ChevronRight size={22} strokeWidth={3} className="s-flip" /></span>
+      <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 99, background: `linear-gradient(135deg,${ORANGE},var(--acc-dk))`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "0 6px 16px rgba(22,40,58,.4)", flexShrink: 0 }}><ChevronRight size={22} strokeWidth={3} className="s-flip" /></span>
     </button>
   );
 }
@@ -176,7 +177,7 @@ function McqRun({ items, t, onComplete, onClose }) {
   if (end) {
     return (
       <div style={{ textAlign: "center", padding: "30px 0" }}>
-        <div style={{ width: 84, height: 84, margin: "0 auto 8px", borderRadius: 28, display: "grid", placeItems: "center", background: pct >= 60 ? "linear-gradient(135deg,#FFB36B,#FF8A3D)" : "linear-gradient(135deg,#A99CF7,#5B5BD6)", color: "#fff", boxShadow: "0 10px 26px rgba(91,91,214,.3)" }}>{pct === 100 ? <Trophy size={40} strokeWidth={2} /> : pct >= 60 ? <Sparkles size={40} strokeWidth={2} /> : <TrendingUp size={40} strokeWidth={2} />}</div>
+        <div style={{ width: 84, height: 84, margin: "0 auto 8px", borderRadius: 28, display: "grid", placeItems: "center", background: pct >= 60 ? "linear-gradient(135deg,var(--acc),var(--acc-btn))" : "linear-gradient(135deg,var(--acc),var(--acc-btn))", color: "#fff", boxShadow: "0 10px 26px color-mix(in srgb, var(--acc) 30%, transparent)" }}>{pct === 100 ? <Trophy size={40} strokeWidth={2} /> : pct >= 60 ? <Sparkles size={40} strokeWidth={2} /> : <TrendingUp size={40} strokeWidth={2} />}</div>
         <div style={{ fontSize: 40, fontWeight: 900, color: INK }}>{pct}%</div>
         <div style={{ color: MUTED, marginBottom: 22 }}>{score} / {total}</div>
         <button type="button" className="s-press" onClick={onClose} style={bigBtn}>{t.done}</button>
@@ -187,10 +188,10 @@ function McqRun({ items, t, onComplete, onClose }) {
   return (
     <div>
       <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-        {items.map((_, k) => <span key={k} style={{ flex: 1, height: 6, borderRadius: 99, background: k < i ? ORANGE : k === i ? "#FFB36B" : "rgba(91,91,214,.12)" }} />)}
+        {items.map((_, k) => <span key={k} style={{ flex: 1, height: 6, borderRadius: 99, background: k < i ? ORANGE : k === i ? "var(--acc)" : "color-mix(in srgb, var(--acc) 12%, transparent)" }} />)}
       </div>
       {it.context && (
-        <div dir="ltr" style={{ background: "#fff", borderRadius: 20, padding: "16px 18px", marginBottom: 16, boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 8px 22px rgba(30,30,70,.08)" }}>
+        <div dir="ltr" style={{ background: "var(--surface)", borderRadius: 20, padding: "16px 18px", marginBottom: 16, boxShadow: "var(--sh-card)" }}>
           <div style={{ fontWeight: 800, color: PRIMARY, marginBottom: 6 }}>{it.context.title}</div>
           <div style={{ fontSize: 15, lineHeight: 1.7, color: INK }}>{it.context.text}</div>
         </div>
@@ -207,7 +208,7 @@ function McqRun({ items, t, onComplete, onClose }) {
               style={{ minHeight: it.big ? 64 : 52, padding: "10px 16px", borderRadius: 18, cursor: "pointer", fontFamily: "inherit", fontSize: it.big ? 20 : 15, fontWeight: 800,
                 border: `2px solid ${right ? "#16A06F" : wrong ? "#E5484D" : "transparent"}`,
                 background: right ? "#E6F7F0" : wrong ? "#FDECEC" : "#fff", color: right ? "#0F7A55" : wrong ? "#C0343A" : INK,
-                boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 6px 16px rgba(30,30,70,.08)", opacity: picked !== null && !right && !wrong ? 0.55 : 1 }}>
+                boxShadow: "var(--sh-card)", opacity: picked !== null && !right && !wrong ? 0.55 : 1 }}>
               <span dir="auto">{o}</span>
             </button>
           );
@@ -225,7 +226,7 @@ function McqRun({ items, t, onComplete, onClose }) {
   );
 }
 const bigBtn = { width: "100%", minHeight: 52, border: "none", borderRadius: 99, cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 16, color: "#fff",
-  background: `linear-gradient(135deg,${ORANGE},#F0701A)`, boxShadow: "0 8px 22px rgba(255,138,61,.4)" };
+  background: `linear-gradient(135deg,${ORANGE},var(--acc-dk))`, boxShadow: "0 8px 22px rgba(22,40,58,.4)" };
 
 // ── the daily plan screen ─────────────────────────────────────────────
 export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, addXp, getXp, Confetti }) {
@@ -240,7 +241,7 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
   useNavLayer(true, onClose, { depth: 3 });
   useNavLayer(!!step, () => setStep(null), { depth: 4 });
 
-  const setLevel = (l) => { setLevelState(l); setStep(null); try { localStorage.setItem("suri_daily_level", l); } catch { /* */ } };
+  const setLevel = (l) => { setLevelState(l); setStep(null); setThemeLevel(l); try { localStorage.setItem("suri_daily_level", l); } catch { /* */ } };
   const lvState = state.byLevel[level] || { done: {}, awarded: {} };
   const doneCount = STEPS.filter(s => lvState.done[s] !== undefined).length;
   const allDone = doneCount === STEPS.length;
@@ -260,11 +261,11 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
 
   const desc = { w: t.dw, g: t.dg, r: t.dr, a: t.da, s: t.ds };
   const STEP_ICON = { w: Library, g: Puzzle, r: BookOpen, a: Tag, s: PenLine };
-  const STEP_TINT = { w: ["#EEF0FF", "#5B5BD6"], g: ["#FFF1E6", "#F0701A"], r: ["#E9F7F1", "#16A06F"], a: ["#FDEBF3", "#D63384"], s: ["#EAF3FE", "#2E7CF6"] };
+  const STEP_TINT = { w: ["var(--acc-lt)", "var(--acc-dk)"], g: ["var(--acc-lt)", "var(--acc-dk)"], r: ["var(--acc-lt)", "var(--acc-dk)"], a: ["var(--acc-lt)", "var(--acc-dk)"], s: ["var(--acc-lt)", "var(--acc-dk)"] };
   const info = levelInfo(xp);
 
   return (
-    <div role="dialog" aria-label={t.title} style={{ position: "fixed", inset: 0, zIndex: 205, overflowY: "auto", background: "linear-gradient(180deg,#F3F1FF 0%,#FBFBFC 40%)", fontFamily: "'Satoshi',system-ui,sans-serif" }}>
+    <div role="dialog" aria-label={t.title} style={{ position: "fixed", inset: 0, zIndex: 205, overflowY: "auto", background: "var(--page)", color: "var(--ink)", fontFamily: "'Vazirmatn','Satoshi',system-ui,sans-serif" }}>
       {burst && Confetti && <div style={{ position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none" }}><Confetti /></div>}
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "68px 18px 40px", position: "relative" }}>
         {!step ? (
@@ -283,12 +284,12 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
               {LEVEL_IDS.map(l => (
                 <button key={l} type="button" className="s-press" onClick={() => setLevel(l)} aria-pressed={l === level}
                   style={{ minWidth: 52, minHeight: 40, padding: "0 14px", borderRadius: 99, border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14,
-                    background: l === level ? PRIMARY : "#fff", color: l === level ? "#fff" : PRIMARY, boxShadow: l === level ? "0 6px 16px rgba(91,91,214,.4)" : "0 1px 2px rgba(30,30,70,.05), 0 4px 12px rgba(30,30,70,.07)" }}>{l}</button>
+                    background: l === level ? PRIMARY : "#fff", color: l === level ? "#fff" : PRIMARY, boxShadow: l === level ? "0 6px 16px color-mix(in srgb, var(--acc) 40%, transparent)" : "var(--sh-card)" }}>{l}</button>
               ))}
             </div>
 
             {allDone && (
-              <div style={{ background: `linear-gradient(135deg,${ORANGE},#F0701A)`, color: "#fff", borderRadius: 20, padding: "14px 18px", fontWeight: 800, marginBottom: 14, boxShadow: "0 8px 22px rgba(255,138,61,.4)" }}>
+              <div style={{ background: `linear-gradient(135deg,${ORANGE},var(--acc-dk))`, color: "#fff", borderRadius: 20, padding: "14px 18px", fontWeight: 800, marginBottom: 14, boxShadow: "0 8px 22px rgba(22,40,58,.4)" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Sparkles size={20} />{t.allDone}</span> <span style={{ opacity: .85, fontWeight: 700 }}>(+{XP_BONUS} XP {t.bonus})</span>
               </div>
             )}
@@ -299,9 +300,9 @@ export default function DailyPlan({ lang = "tr", onClose, SbQuiz, sbForLevel, ad
                 return (
                   <button key={s} type="button" className="s-press" onClick={() => setStep(s)}
                     style={{ display: "flex", alignItems: "center", gap: 14, textAlign: "start", width: "100%", border: "none", cursor: "pointer", fontFamily: "inherit",
-                      background: "#fff", borderRadius: 22, padding: "14px 16px", boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 8px 22px rgba(30,30,70,.08)" }}>
+                      background: "var(--surface)", borderRadius: 22, padding: "14px 16px", boxShadow: "var(--sh-card)" }}>
                     <span style={{ width: 46, height: 46, borderRadius: 16, display: "grid", placeItems: "center", flexShrink: 0,
-                      background: d !== undefined ? "#E6F7F0" : STEP_TINT[s][0], color: d !== undefined ? "#16A06F" : STEP_TINT[s][1] }}>
+                      background: d !== undefined ? "#D6EFE3" : STEP_TINT[s][0], color: d !== undefined ? "#0F7A55" : STEP_TINT[s][1], boxShadow: "var(--edge), 0 2px 3px rgba(22,40,58,.22), 0 8px 14px -4px rgba(22,40,58,.25)" }}>
                       {d !== undefined ? <Check size={24} strokeWidth={3} /> : (() => { const Ic = STEP_ICON[s]; return <Ic size={24} strokeWidth={2.2} />; })()}
                     </span>
                     <span style={{ flex: 1, minWidth: 0 }}>

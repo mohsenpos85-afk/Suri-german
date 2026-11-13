@@ -225,7 +225,7 @@ const TR_UI = {
 };
 
 // ── ناوەڕۆک / Content ──────────────────────────────────────────────
-// ڕووکار: سۆرانی (RTL) · فێرکردن: ئەڵمانی · ئاست: A1–B2
+// ڕووکار: سۆرانی (RTL) · فێرکردن: ئەڵمانی · ئاست: A1–C2
 
 const C = {
   // ── Soft-3D design tokens (values come from src/theme.css) ───────────
@@ -611,7 +611,7 @@ function Intro({ onDone }) {
         animation:"sp-stats-in .6s 1.1s ease both",
       }}>
         {[
-          {val:"A1 → B2",             label:"Structured Curriculum", sub:"6 CEFR levels"},
+          {val:"A1 → C2",             label:"Structured Curriculum", sub:"6 CEFR levels"},
           {val:"AI Tutor",            label:"Personal German Coach", sub:"Always available"},
           {val:"TR · KU · AR · +7",  label:"Your Language First",   sub:"10 UI languages"},
         ].map((s, i) => (

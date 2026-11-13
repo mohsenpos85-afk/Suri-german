@@ -169,3 +169,6 @@ html[data-shell="plain"] {
   --sh-lift: 0 2px 4px rgba(22,40,58,.12), 0 14px 28px -8px rgba(22,40,58,.22);
   --sh-press: inset 0 2px 4px rgba(22,40,58,.16);
 }
+
+/* Opt out of browser force-dark (Chrome/Samsung auto dark inverts colours and photos). */
+html { color-scheme: only light; }

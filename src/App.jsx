@@ -1677,7 +1677,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   // ── Wrapper — memoized so toggleMulti doesn't remount it ─────────
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const W = useCallback(({children, showBack=false, backTo}) => (
-    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"var(--surface)", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
+    <div style={{ position:"fixed", inset:0, zIndex:9998, background:"#fff", display:"flex", flexDirection:"column", fontFamily:"'Vazirmatn',sans-serif", direction:"ltr", overflowY:"auto" }}>
       {/* Progress */}
       {screen !== "welcome" && screen !== "auth" && screen !== "login" && progressIdx >= 1 && authMode === "main" && (
         <div style={{ flexShrink:0 }}>
@@ -2466,6 +2466,15 @@ export default function App() {
   const [firstJourneySummary, setFirstJourneySummary] = useState(null); // { xpEarned, sessionWords }
   const [spielInitialGame, setSpielInitialGame] = useState(null); // deep-link Das Spiel into a specific game (e.g. from the practice CTA)
   useEffect(() => { setThemeLevel(dailyLevel()); }, []);
+  // Splash, sign-in and onboarding stay on a plain white ground; the soft-3D shell starts once the app is entered.
+  useEffect(() => {
+    try {
+      const plain = !appLoaded || intro || onboarding;
+      document.documentElement.setAttribute("data-shell", plain ? "plain" : "app");
+      const m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute("content", plain ? "#FFFFFF" : "#21394D");
+    } catch { /* non-browser */ }
+  }, [appLoaded, intro, onboarding]);
   const [tab, setTabRaw] = useState("home");
   const tabRef = useRef("home"); tabRef.current = tab;
   const tabHist = useRef([]);
@@ -2650,7 +2659,7 @@ export default function App() {
       )}
       {/* Loading overlay while session check completes */}
       {!appLoaded && (
-        <div style={{ position:"fixed", inset:0, background:"var(--surface)", zIndex:99999, display:"grid", placeItems:"center" }}>
+        <div style={{ position:"fixed", inset:0, background:"#fff", zIndex:99999, display:"grid", placeItems:"center" }}>
           <img src="/fuxi-mascot.png" alt="SURI" style={{ width:120, height:120, objectFit:"contain" }} />
         </div>
       )}

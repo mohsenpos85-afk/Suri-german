@@ -14,6 +14,7 @@ import {
 import DocAssistant from "./DocAssistant.jsx";
 import { SB_EXTRA } from "./data/sprachbausteine.js";
 import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
+import { kmj } from "./data/kmj/index.js";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -1494,7 +1495,7 @@ function useIsMobile(bp=768){
 const tApp = (lang, key) => {
   if (lang === "ku") { const dv = kuDialect(); if (dv !== "sorani") { const o = KU_DIALECT_UI[dv]?.[key]; if (o) return o; } }
   if (lang === "uk") return APP_TRANS.uk?.[key] || key;
-  return APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku?.[key] || key;
+  { const v = APP_TRANS[lang]?.[key] || APP_TRANS.en?.[key] || APP_TRANS.ku?.[key] || key; return lang === "ku" ? kmj(v) : v; }
 };
 
 // Content item translation: picks item[lang] if available, falls back to item.ku
@@ -1502,7 +1503,7 @@ const tApp = (lang, key) => {
 const tC = (item, lang) => {
   if (!item) return "";
   if (lang === "uk") return item.uk ?? "";
-  return (lang && lang !== "ku" && item[lang]) ? item[lang] : (item.ku ?? "");
+  return (lang && lang !== "ku" && item[lang]) ? item[lang] : (lang === "ku" ? kmj(item.ku ?? "") : (item.ku ?? ""));
 };
 // Field-suffix translation: picks item[field+'Tr'/'En'/'Ar'] based on lang, falls back to item[field] (the ku/base value)
 // Usage: tF(lesson, lang, 'title') instead of (lang==="tr" ? (lesson.titleTr||lesson.title) : lesson.title)
@@ -1513,13 +1514,13 @@ const tF = (item, lang, field) => {
     if (suffixed) return suffixed;
     if (lang === "uk") return "";
   }
-  return item[field] ?? "";
+  return lang === "ku" ? kmj(item[field] ?? "") : (item[field] ?? "");
 };
 // Example-sentence translation: picks item['ex'+lang] (exen/exar/extr), falls back to item.exku
 const tEx = (item, lang) => {
   if (!item) return "";
   if (lang === "uk") return item.exuk ?? item.ex_uk ?? "";
-  return (lang && lang !== "ku" && item["ex" + lang]) ? item["ex" + lang] : (item.exku ?? "");
+  return (lang && lang !== "ku" && item["ex" + lang]) ? item["ex" + lang] : (lang === "ku" ? kmj(item.exku ?? "") : (item.exku ?? ""));
 };
 // Dictionary popup language badge/colour/direction per UI language (Stories + Journey tap-word tooltips)
 const DICT_LANG_META = {

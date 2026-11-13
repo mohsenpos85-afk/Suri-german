@@ -5,12 +5,8 @@ import './theme.css'
 import App from './App.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
 
-// Dark mode: saved choice, otherwise follow the system setting.
-try {
-  const saved = localStorage.getItem('suri_theme');
-  const dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-} catch { /* storage unavailable */ }
+// The soft-3D design is light only (the old invert-filter dark mode broke colours and photos).
+try { document.documentElement.dataset.theme = 'light'; localStorage.removeItem('suri_theme'); } catch { /* storage unavailable */ }
 
 // Icon-only buttons get an accessible name: title, else the icon's own name in the app language.
 const LABELS = {

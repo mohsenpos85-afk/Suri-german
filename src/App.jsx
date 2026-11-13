@@ -1419,13 +1419,6 @@ function ProfileScreen({ lang="ku", onLogout }) {
         </div>
       )}
 
-      {/* Theme */}
-      <div style={{ padding:"0 16px 12px" }}>
-        <button onClick={() => { const d = document.documentElement.dataset.theme !== "dark"; document.documentElement.dataset.theme = d ? "dark" : "light"; try { localStorage.setItem("suri_theme", d ? "dark" : "light"); } catch {} }}
-          style={{ width:"100%", padding:"14px", borderRadius:14, border:`1.5px solid ${C.line}`, background:"transparent", color:C.ink, fontWeight:700, fontSize:15, cursor:"pointer" }}>
-          🌓 {({ tr:"Karanlık / Aydınlık mod", en:"Dark / Light mode", ar:"الوضع الداكن / الفاتح", es:"Modo oscuro / claro", uk:"Темна / світла тема", fa:"حالت تیره / روشن", ku:"دۆخی تاریک / ڕووناک" })[lang] || "Dark / Light mode"}
-        </button>
-      </div>
 
       {/* Logout */}
       <div style={{ padding:"0 16px" }}>

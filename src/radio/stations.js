@@ -4,6 +4,8 @@
 // per station, then set this to false. Unlicensed stations are blocked again automatically.
 export const RADIO_PREVIEW_UNLICENSED = true;
 
+// Logos: put the broadcaster logo files in public/radio/ (dlf.png, dlf-nova.png, dlf-kultur.png, wdr5.png).
+// They are shown while preview mode is on or once license.logoAuthorized is true; a missing file falls back to an icon.
 // Radio station configuration. These are CANDIDATE broadcasters only — none is licensed or enabled.
 // A station becomes playable only when ALL of: enabled === true, license.status === "licensed",
 // a streamUrl is set, and the authorization has not expired (see isPlayable in license.js).
@@ -21,32 +23,32 @@ const pending = (extra = {}) => ({
 
 export const STATIONS = [
   {
-    id: "dlf", name: "Deutschlandfunk", levelMin: "B2", levelMax: "C2",
+    id: "dlf", logo: "/radio/dlf.png", name: "Deutschlandfunk", levelMin: "B2", levelMax: "C2",
     category: "Nachrichten, Wissenschaft, Politik",
     description: "Informationsprogramm mit Nachrichten, Hintergründen und Wissenschaft.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunk.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
   },
   {
-    id: "dlf-nova", name: "Deutschlandfunk Nova", levelMin: "B1", levelMax: "C1",
+    id: "dlf-nova", logo: "/radio/dlf-nova.png", name: "Deutschlandfunk Nova", levelMin: "B1", levelMax: "C1",
     category: "Alltag, Kultur, junge Themen",
     description: "Wissen, Alltag und Kultur — gesprochen für ein junges Publikum.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunknova.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
   },
   {
-    id: "dlf-kultur", name: "Deutschlandfunk Kultur", levelMin: "B2", levelMax: "C2",
+    id: "dlf-kultur", logo: "/radio/dlf-kultur.png", name: "Deutschlandfunk Kultur", levelMin: "B2", levelMax: "C2",
     category: "Kultur, Gesellschaft, Diskussionen",
     description: "Kultur, Gesellschaft und ausführliche Gespräche.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunkkultur.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
   },
   {
-    id: "wdr5", name: "WDR 5", levelMin: "B1", levelMax: "C2",
+    id: "wdr5", logo: "/radio/wdr5.png", name: "WDR 5", levelMin: "B1", levelMax: "C2",
     category: "Interviews, Nachrichten, Alltag",
     description: "Wortprogramm mit Interviews, Nachrichten und Alltagsthemen.",
     broadcaster: "Westdeutscher Rundfunk (WDR)", website: "https://www.wdr.de/radio/wdr5/",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
   },
 ];
 

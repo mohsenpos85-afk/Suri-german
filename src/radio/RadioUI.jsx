@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headphones, Info, ExternalLink, Loader2 } from "lucide-react";
 import { LEVEL_PALETTE, A } from "../theme";
 import { useNavLayer } from "../lib/nav";
-import { STATIONS, TEST_STATION } from "./stations.js";
+import { STATIONS, RADIO_PREVIEW_UNLICENSED } from "./stations.js";
 import { listStations, getStation, blockReason, isPlayable, isRealLive, isPreview, devToolsOn, BLOCK_TEXT } from "./license.js";
 import { radio, useRadio } from "./service.js";
 
@@ -29,6 +29,22 @@ function LevelChips({ s }) {
       {s.levelMin !== s.levelMax && <><span style={{ color: "var(--muted)", fontSize: 11 }}>–</span><span className="s-radio-lv" style={{ background: A(b.acc, "2E"), color: b.dk }}>{s.levelMax}</span></>}
     </span>
   );
+}
+
+// Station logo next to the name. Falls back to the radio icon when no (authorized) logo file is available.
+function StationLogo({ s, size = 44, icon = 20, plate = true }) {
+  const [bad, setBad] = useState(false);
+  const ok = s.logo && !bad && (RADIO_PREVIEW_UNLICENSED || s.license?.logoAuthorized);
+  if (ok) {
+    return (
+      <span className="s-radio-logo" style={{ width: size, height: size }}>
+        <img src={s.logo} alt="" loading="lazy" onError={() => setBad(true)} />
+      </span>
+    );
+  }
+  return plate
+    ? <span className="s-plate" style={{ width: size, height: size, flexShrink: 0 }}><Radio size={icon} /></span>
+    : <Radio size={icon} />;
 }
 
 function PlayBtn({ station, size = 44 }) {
@@ -62,7 +78,7 @@ function StationCard({ s, onOpenFull }) {
   return (
     <div className="s-radio-card">
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-        <span className="s-plate" style={{ width: 44, height: 44, flexShrink: 0 }}><Radio size={20} /></span>
+        <StationLogo s={s} size={48} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             <span style={{ fontWeight: 800, fontSize: 15.5, color: "var(--ink)" }}>{s.name}</span>
@@ -107,7 +123,7 @@ export function HomeRadioCard({ onOpen }) {
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
         {STATIONS.map((s) => (
           <span key={s.id} className="s-radio-chip" style={{ opacity: isPlayable(s) ? 1 : 0.75 }}>
-            {!isPlayable(s) && <Lock size={11} />} {s.name}
+            <StationLogo s={s} size={16} icon={11} plate={false} /> {!isPlayable(s) && <Lock size={11} />} {s.name}
           </span>
         ))}
       </div>
@@ -222,7 +238,7 @@ export function RadioFullPlayer() {
           <button type="button" className="s-wotd-x" aria-label="Player schließen" onClick={() => radio.closeFull()}><X size={18} /></button>
         </div>
         <div className="s-radio-art" aria-hidden="true">
-          {st.logo && st.license?.logoAuthorized ? <img src={st.logo} alt="" style={{ width: "62%" }} /> : <Radio size={72} strokeWidth={1.4} />}
+          <StationLogo s={st} size={120} icon={72} plate={false} />
         </div>
         <div style={{ textAlign: "center" }}>
           <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -279,9 +295,7 @@ export function RadioMiniPlayer() {
   return (
     <div className="s-radio-mini" role="region" aria-label="Radio-Player">
       <button type="button" className="s-radio-mini-main" onClick={() => radio.openFull()} aria-label={`Player öffnen: ${st.name}`}>
-        <span className="s-plate" style={{ width: 38, height: 38, flexShrink: 0 }}>
-          {st.logo && st.license?.logoAuthorized ? <img src={st.logo} alt="" style={{ width: 22 }} /> : <Radio size={18} />}
-        </span>
+        <StationLogo s={st} size={38} icon={18} />
         <span style={{ minWidth: 0, textAlign: "start" }}>
           <span style={{ display: "block", fontWeight: 800, fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{st.name}</span>
           <span style={{ display: "block", fontSize: 11.5, color: r.status === "error" ? "#B3402F" : "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{statusLine(r, st)}</span>

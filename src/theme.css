@@ -232,10 +232,7 @@ html { color-scheme: only light; }
 .s-wotd-box { color: var(--ink, #16283A); }
 
 /* ── Radio & Hören ─────────────────────────────────────────────────────────── */
-.s-radio-home { display: block; width: 100%; margin-top: 20px; padding: 16px; border: none; border-radius: 24px; cursor: pointer; font: inherit; text-align: start;
-  background: var(--surface); box-shadow: var(--sh-card); transition: transform .18s ease, box-shadow .18s ease; }
-.s-radio-home:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
-.s-radio-home:active { transform: none; box-shadow: var(--sh-press); }
+.s-radio-home { display: block; width: 100%; font: inherit; text-align: start; cursor: pointer; }
 .s-radio-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; color: var(--acc-tx); background: var(--surface-hi); box-shadow: var(--sh-press); }
 .s-radio-live { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 900; letter-spacing: .06em; color: #fff; background: #C2453A; }
 .s-radio-live i { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: radioBlink 1.4s ease-in-out infinite; }
@@ -281,3 +278,59 @@ html { color-scheme: only light; }
 .s-radio-logo { background: #fff; }
 .s-radio-logofull { display: block; width: 86%; max-height: 58%; object-fit: contain; border-radius: 6px; }
 .s-radio-art { background: #fff !important; }
+
+/* ── Home dashboard: every section is a raised, coloured tile (soft-3D) ───── */
+.s-dash { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.s-dt {
+  --tc: #659DB8; position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 14px; border: none; border-radius: 26px; overflow: hidden; color: #fff;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--tc) 74%, #fff) 0%, var(--tc) 52%, color-mix(in srgb, var(--tc) 70%, #0b1a24) 100%);
+  box-shadow: 0 16px 28px -12px color-mix(in srgb, var(--tc) 75%, #0b1a24), inset 1px 1px 0 rgba(255,255,255,.4), inset -2px -3px 7px rgba(0,0,0,.16);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+button.s-dt:hover, .s-dt.s-wotd-card:hover { transform: translateY(-2px); }
+button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
+.s-dt::after { content: ""; position: absolute; top: -40%; inset-inline-end: -25%; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.26), transparent 70%); pointer-events: none; }
+.s-dt-span { grid-column: 1 / -1; }
+.s-dt-span2 { grid-column: 1 / -1; }
+.s-dt-teal   { --tc: #3E9C95; }
+.s-dt-rose   { --tc: #B5667F; }
+.s-dt-amber  { --tc: #C48F4E; }
+.s-dt-green  { --tc: #5BA66E; }
+.s-dt-purple { --tc: #8877B5; }
+.s-dt-frost  { color: var(--ink); background: linear-gradient(150deg, rgba(255,255,255,.95), rgba(205,222,232,.8)); border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 16px 28px -14px rgba(22,40,58,.4), inset 1px 1px 0 #fff, inset -2px -3px 7px rgba(90,120,140,.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.s-dt-frost::after { display: none; }
+.s-dt-head { display: flex; align-items: center; gap: 8px; position: relative; z-index: 1; }
+.s-dt-ic { display: inline-grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 13px; background: rgba(255,255,255,.24);
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.5), inset -1px -2px 3px rgba(0,0,0,.18), 0 3px 6px rgba(0,0,0,.14); }
+.s-dt-t { font-size: 13.5px; font-weight: 800; letter-spacing: .01em; position: relative; z-index: 1; }
+.s-dt-s { font-size: 12px; font-weight: 600; opacity: .85; position: relative; z-index: 1; }
+.s-dt-big { font-size: 40px; font-weight: 900; line-height: 1.05; letter-spacing: -.02em; margin-top: 6px; text-shadow: 0 2px 6px rgba(0,0,0,.18); position: relative; z-index: 1; }
+.s-dt-bar { height: 7px; border-radius: 99px; background: rgba(0,0,0,.18); overflow: hidden; margin-top: 8px; box-shadow: inset 0 1px 2px rgba(0,0,0,.2); position: relative; z-index: 1; }
+.s-dt-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #fff, rgba(255,255,255,.7)); }
+.s-dt-pill { align-self: flex-start; margin-top: auto; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 800; color: #fff; background: #16283A; box-shadow: 0 6px 12px -4px rgba(0,0,0,.4); position: relative; z-index: 1; }
+.s-dt-steps { display: flex; gap: 5px; }
+.s-dt-steps span { flex: 1; height: 7px; border-radius: 99px; background: rgba(0,0,0,.18); box-shadow: inset 0 1px 2px rgba(0,0,0,.2); }
+.s-dt-steps span.on { background: #fff; box-shadow: none; }
+.s-dt-go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #16283A; color: #fff; box-shadow: 0 6px 14px -4px rgba(0,0,0,.45); flex-shrink: 0; }
+.s-dt .s-cta { background: #16283A; color: #fff; }
+.s-dt-frost .s-radio-chip { background: rgba(255,255,255,.8); }
+
+/* word-of-the-day card inside a coloured tile */
+.s-dt.s-wotd-card { padding: 14px; cursor: default; color: #fff; }
+.s-dt.s-wotd-card .s-wotd-label, .s-dt.s-wotd-card .s-wotd-tr { color: #fff; }
+.s-dt.s-wotd-card .s-wotd-ex, .s-dt.s-wotd-card .s-wotd-more { color: rgba(255,255,255,.85); }
+.s-dt.s-wotd-card .s-wotd-ic { background: rgba(255,255,255,.24); box-shadow: inset 1px 1px 0 rgba(255,255,255,.45), inset -1px -2px 3px rgba(0,0,0,.16); }
+.s-dt.s-wotd-card .s-wotd-ic svg { color: #fff; }
+.s-dt.s-wotd-card .s-wotd-plate { background: rgba(255,255,255,.24); color: #fff; box-shadow: inset 1px 1px 0 rgba(255,255,255,.45), inset -1px -2px 3px rgba(0,0,0,.16); }
+.s-dt.s-wotd-card .s-wotd-lv { background: rgba(255,255,255,.28) !important; color: #fff !important; }
+.s-dt > * { position: relative; z-index: 1; }
+.s-dt .s-hex { max-width: 210px; }
+
+@media (min-width: 760px) {
+  .s-dash { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .s-dt { padding: 18px; }
+  .s-dt-span2 { grid-column: auto; }
+  .s-dt-span { grid-column: auto; }
+  .s-dt.journey-featured { grid-column: 1 / -1; }
+}

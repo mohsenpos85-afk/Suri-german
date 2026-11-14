@@ -145,18 +145,20 @@ function LevelRing({ xp, size = 132, t }) {
 export function DailyHomeCard({ lang, onOpen, getXp }) {
   const t = tx(lang); const st = dailyStatus();
   return (
-    <button type="button" onClick={onOpen} className="s-press"
-      style={{ width: "100%", display: "flex", alignItems: "center", gap: 16, textAlign: "start", border: "none", cursor: "pointer", fontFamily: "inherit",
-        background: "var(--surface)", borderRadius: 24, padding: "14px 18px", marginBottom: 18, boxShadow: "0 1px 2px rgba(30,30,70,.05), 0 10px 28px color-mix(in srgb, var(--acc) 16%, transparent)" }}>
-      <LevelRing xp={getXp()} size={84} t={t} />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 900, fontSize: 18, color: INK }}>{t.title}</div>
-        <div style={{ fontSize: 13, color: MUTED, margin: "2px 0 8px" }}>{st.level} · {st.done}/{st.total} {t.progress}</div>
-        <div style={{ display: "flex", gap: 5 }}>
-          {STEPS.map((s, i) => <span key={s} style={{ flex: 1, height: 7, borderRadius: 99, background: i < st.done ? `linear-gradient(90deg,var(--acc),${ORANGE})` : "color-mix(in srgb, var(--acc) 12%, transparent)" }} />)}
+    <button type="button" onClick={onOpen} className="s-dt s-dt-teal s-dt-span s-press" style={{ font: "inherit", textAlign: "start", cursor: "pointer" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <span style={{ background: "rgba(255,255,255,.94)", borderRadius: "50%", padding: 4, display: "grid", boxShadow: "inset 0 2px 4px rgba(22,40,58,.15), 0 6px 14px -4px rgba(0,0,0,.3)", flexShrink: 0 }}>
+          <LevelRing xp={getXp()} size={78} t={t} />
+        </span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="s-dt-t" style={{ fontSize: 17 }}>{t.title}</div>
+          <div className="s-dt-s" style={{ margin: "2px 0 8px" }}>{st.level} · {st.done}/{st.total} {t.progress}</div>
+          <div className="s-dt-steps">
+            {STEPS.map((s, i) => <span key={s} className={i < st.done ? "on" : ""} />)}
+          </div>
         </div>
+        <span aria-hidden="true" className="s-dt-go"><ChevronRight size={20} /></span>
       </div>
-      <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 99, background: `linear-gradient(135deg,${ORANGE},var(--acc-dk))`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "0 6px 16px rgba(22,40,58,.4)", flexShrink: 0 }}><ChevronRight size={22} strokeWidth={3} className="s-flip" /></span>
     </button>
   );
 }

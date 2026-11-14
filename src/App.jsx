@@ -3998,18 +3998,28 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         </div>
       </div>
 
-      {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
+      <div className="s-dash">
+        {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
 
-      {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
+        {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
+
+        {/* Current level summary */}
+        <div className="s-dt s-dt-rose">
+          <div className="s-dt-head"><span className="s-dt-ic"><Target size={18} /></span><span className="s-dt-t">{ht.current}</span></div>
+          <div className="s-dt-big">{currentLevelId}</div>
+          <div className="s-dt-s">{levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}% {ht.done}</div>
+          <div className="s-dt-bar"><i style={{ width:`${levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}%` }} /></div>
+          <div className="s-dt-pill">👑 {xp}</div>
+        </div>
 
       {/* ── Featured: Your Journey ── */}
-      <div className="journey-featured"
+      <div className="journey-featured s-dt s-dt-span"
         onClick={()=>{ if(setSpielInitialGame) setSpielInitialGame('journey'); if(setTab) setTab('spiel'); }}
         style={{ backgroundImage:"linear-gradient(180deg,rgba(20,15,45,.35) 0%,rgba(20,15,45,.15) 45%,rgba(10,10,25,.8) 100%), url(/journey-banner.jpg)",
           backgroundSize:"cover", backgroundPosition:"center 35%",
-          borderRadius:28, padding:"18px 22px 18px", cursor:"pointer",
+          borderRadius:26, padding:"18px 22px 18px", cursor:"pointer",
           minHeight:180, display:"flex", flexDirection:"column", justifyContent:"space-between",
-          boxShadow:"var(--sh-dark)", transition:"transform .2s, box-shadow .2s",
+          
           position:"relative", overflow:"hidden" }}>
         <div style={{ position:"relative", zIndex:1, fontWeight:900, fontSize:22, color:"#fff",
           letterSpacing:"-.3px", textShadow:"0 2px 10px rgba(0,0,0,.4)" }}>
@@ -4030,58 +4040,28 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         </div>
       </div>
 
-      {/* ── Progress board: level pyramid + skill hexagon (real data) ── */}
-      <div style={{
-        background:"var(--surface-dark)", color:"var(--ice)",
-        borderRadius:28, padding:"20px 18px 24px", marginTop:20,
-        boxShadow:"var(--sh-dark)", position:"relative", overflow:"hidden",
-      }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
-          <div style={{ fontWeight:800, fontSize:16, color:"#fff" }}>{ht.heading}</div>
-          <div style={{ display:"flex", alignItems:"center", gap:5,
-            background:"linear-gradient(135deg,#FFCE00,#FFA500)", borderRadius:99,
-            padding:"4px 12px", fontSize:12, fontWeight:800, color:"#1A1A1A" }}>
-            👑 {xp}
+
+        {/* Level pyramid */}
+        <div className="s-dt s-dt-amber">
+          <div className="s-dt-head"><span className="s-dt-ic"><TrendingUp size={18} /></span><span className="s-dt-t">{ht.pyramidTitle}</span></div>
+          <div className="s-dt-s">{ht.pyramidSub}</div>
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
+              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={wideTiles ? 0.8 : 0.62} />
           </div>
         </div>
 
-        <div className="s-home-tiles">
-          {/* Tile 1: level pyramid */}
-          <div className="s-home-tile">
-            <div className="s-home-tile-t">{ht.pyramidTitle}</div>
-            <div className="s-home-tile-s">{ht.pyramidSub}</div>
-            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
-                selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={wideTiles ? 0.8 : 0.62} />
-            </div>
-          </div>
-
-          {/* Tile 2: skill hexagon */}
-          <div className="s-home-tile">
-            <div className="s-home-tile-t">{ht.hexTitle}</div>
-            <div className="s-home-tile-s">{ht.hexSub(selectedLevelId)}</div>
-            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", minWidth:0 }}>
-              <SkillHexagon data={hexData} />
-            </div>
-          </div>
-
-          {/* Tile 3: word of the day */}
-          <WordOfDay className="s-home-tile-wide" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
-        </div>
-
-        {/* Aktuelles Level summary */}
-        <div style={{ marginTop:20, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)",
-          borderRadius:16, padding:"14px 18px", textAlign:"center" }}>
-          <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", fontWeight:700, marginBottom:4 }}>{ht.current}</div>
-          <div style={{ fontSize:22, fontWeight:900, color:"#fff", marginBottom:6 }}>{currentLevelId}</div>
-          <div style={{ fontSize:13, color:"#A78BFA", fontWeight:700, marginBottom:8 }}>
-            {levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}% {ht.done}
-          </div>
-          <div style={{ height:6, background:"rgba(255,255,255,.12)", borderRadius:3, overflow:"hidden", maxWidth:220, margin:"0 auto" }}>
-            <div style={{ height:"100%", width:`${levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}%`,
-              background:"linear-gradient(90deg,var(--acc),var(--acc-btn))", borderRadius:3, transition:"width .6s" }} />
+        {/* Skill hexagon */}
+        <div className="s-dt s-dt-green">
+          <div className="s-dt-head"><span className="s-dt-ic"><Star size={18} /></span><span className="s-dt-t">{ht.hexTitle}</span></div>
+          <div className="s-dt-s">{ht.hexSub(selectedLevelId)}</div>
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", minWidth:0 }}>
+            <SkillHexagon data={hexData} />
           </div>
         </div>
+
+        {/* Word of the day */}
+        <WordOfDay className="s-dt s-dt-purple s-dt-span2" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
       </div>
 
     </div>

@@ -3839,7 +3839,7 @@ function SkillHexagon({ data, size = 240 }) {
   const dataPoints = data.map((d,i) => pointAt(i, Math.max(0,Math.min(100,d.value))/100));
   const dataPath = dataPoints.map(p=>p.join(',')).join(' ');
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg className="s-hex" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <defs>
         <radialGradient id="hexFill">
           <stop offset="0%" stopColor="#8B7CF6" stopOpacity="0.6"/>
@@ -3872,6 +3872,12 @@ function SkillHexagon({ data, size = 240 }) {
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
 function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily, favs = [], toggleFav }) {
+  const [wideTiles, setWideTiles] = useState(() => typeof window !== "undefined" && window.innerWidth >= 900);
+  useEffect(() => {
+    const on = () => setWideTiles(window.innerWidth >= 900);
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
   const journeyLevel = getJourneyLevel();
   const journeyPct   = Math.round((journeyLevel-1)/60*100);
   const xp = getXp();
@@ -4032,24 +4038,28 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           </div>
         </div>
 
-        <div style={{ display:"flex", flexWrap:"wrap", gap:16, alignItems:"center", justifyContent:"center" }}>
-          {/* Pyramid (compact) */}
-          <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", alignItems:"center" }}>
-            <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
-            <div style={{ fontSize:11.5, color:"rgba(255,255,255,.62)", marginBottom:10, textAlign:"center" }}>{ht.pyramidSub}</div>
-            <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
-              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={0.64} />
+        <div className="s-home-tiles">
+          {/* Tile 1: level pyramid */}
+          <div className="s-home-tile">
+            <div className="s-home-tile-t">{ht.pyramidTitle}</div>
+            <div className="s-home-tile-s">{ht.pyramidSub}</div>
+            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
+                selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={wideTiles ? 0.8 : 0.62} />
+            </div>
           </div>
 
-          {/* Word of the day */}
-          <WordOfDay lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
-        </div>
+          {/* Tile 2: skill hexagon */}
+          <div className="s-home-tile">
+            <div className="s-home-tile-t">{ht.hexTitle}</div>
+            <div className="s-home-tile-s">{ht.hexSub(selectedLevelId)}</div>
+            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", minWidth:0 }}>
+              <SkillHexagon data={hexData} />
+            </div>
+          </div>
 
-        {/* Skill hexagon */}
-        <div style={{ marginTop:22, display:"flex", flexDirection:"column", alignItems:"center" }}>
-          <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
-          <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
-          <SkillHexagon data={hexData} />
+          {/* Tile 3: word of the day */}
+          <WordOfDay className="s-home-tile-wide" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
         </div>
 
         {/* Aktuelles Level summary */}

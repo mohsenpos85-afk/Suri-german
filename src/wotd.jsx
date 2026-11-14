@@ -1,6 +1,7 @@
 // Word of the Day: 300 words (60 each for A1–C1) taken from the lessons, shuffled, with a card that
 // grows into a detail view (audio, example, translation in the chosen language, usage note).
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Volume2, Heart, Shuffle, X, Sparkles, Lightbulb, CheckCircle2, Quote } from "lucide-react";
 import { LESSONS } from "./data/lessons";
 import { LEVEL_PALETTE, A } from "./theme";
@@ -209,7 +210,7 @@ export default function WordOfDay({ lang = "tr", favs = [], toggleFav, speak, tC
         </div>
       </div>
 
-      {shown && (
+      {shown && createPortal(
         <div className="s-wotd-layer" role="dialog" aria-modal="true" aria-label={`${T.title}: ${w.de}`} dir={isRtl ? "rtl" : "ltr"}>
           <div className="s-wotd-backdrop" onClick={close} style={{ opacity: open_ ? 1 : 0, transition: reduce() ? "none" : `opacity ${DUR}ms ease` }} />
           <div className="s-wotd-box" style={overlayStyle}>
@@ -260,7 +261,8 @@ export default function WordOfDay({ lang = "tr", favs = [], toggleFav, speak, tC
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

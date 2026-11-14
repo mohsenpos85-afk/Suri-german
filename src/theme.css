@@ -211,3 +211,22 @@ html { color-scheme: only light; }
 .s-wotd-foot { display: flex; flex-direction: column; gap: 8px; align-items: stretch; padding-top: 12px; }
 .s-wotd-count { text-align: center; font-size: 11.5px; color: var(--muted); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .s-wotd-card, .s-wotd-ic { transition: none; } }
+
+/* ── Home: pyramid, skill hexagon and word of the day as three equal tiles ── */
+.s-home-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.s-home-tile {
+  display: flex; flex-direction: column; min-width: 0; padding: 14px 12px 12px; border-radius: 22px;
+  background: rgba(255,255,255,.06); box-shadow: inset 1px 1px 0 rgba(255,255,255,.10), inset -1px -1px 0 rgba(0,0,0,.28);
+}
+.s-home-tile-t { font-size: 12.5px; font-weight: 800; color: rgba(255,255,255,.75); text-align: center; }
+.s-home-tile-s { font-size: 11.5px; color: rgba(255,255,255,.58); text-align: center; margin: 2px 0 8px; }
+.s-home-tiles .s-wotd-card { grid-column: 1 / -1; flex: none; }
+.s-hex { width: 100%; height: auto; max-width: 240px; }
+@media (min-width: 900px) {
+  .s-home-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .s-home-tiles .s-wotd-card { grid-column: auto; }
+  .s-home-tile { padding: 16px 14px 14px; }
+}
+/* The big word box is drawn on <body>, so give it its own colours (not the dark board's white text). */
+.s-wotd-box, .s-wotd-box * { color-scheme: only light; }
+.s-wotd-box { color: var(--ink, #16283A); }

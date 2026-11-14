@@ -32,13 +32,17 @@ function LevelChips({ s }) {
 }
 
 // Station logo next to the name. Falls back to the radio icon when no (authorized) logo file is available.
-function StationLogo({ s, size = 44, icon = 20, plate = true }) {
+function StationLogo({ s, size = 44, icon = 20, plate = true, full = false }) {
   const [bad, setBad] = useState(false);
-  const ok = s.logo && !bad && (RADIO_PREVIEW_UNLICENSED || s.license?.logoAuthorized);
+  const src = full ? s.logo : (s.logoIcon || s.logo);
+  const ok = src && !bad && (RADIO_PREVIEW_UNLICENSED || s.license?.logoAuthorized);
+  if (ok && full) {
+    return <img src={src} alt={s.name} className="s-radio-logofull" loading="lazy" onError={() => setBad(true)} />;
+  }
   if (ok) {
     return (
       <span className="s-radio-logo" style={{ width: size, height: size }}>
-        <img src={s.logo} alt="" loading="lazy" onError={() => setBad(true)} />
+        <img src={src} alt="" loading="lazy" onError={() => setBad(true)} />
       </span>
     );
   }
@@ -243,7 +247,7 @@ export function RadioFullPlayer() {
           <button type="button" className="s-wotd-x" aria-label="Player schließen" onClick={() => radio.closeFull()}><X size={18} /></button>
         </div>
         <div className="s-radio-art" aria-hidden="true">
-          <StationLogo s={st} size={120} icon={72} plate={false} />
+          <StationLogo s={st} size={120} icon={72} plate={false} full />
         </div>
         <div style={{ textAlign: "center" }}>
           <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", flexWrap: "wrap" }}>

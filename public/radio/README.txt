@@ -1,2 +1,2 @@
-Hier die Senderlogos ablegen (nur mit Genehmigung des Senders):
-  dlf.png, dlf-nova.png, dlf-kultur.png, wdr5.png
+Senderlogos: <id>.png (volles Logo) und <id>-icon.png (quadratisches Symbol).
+Nur mit Genehmigung des Senders verwenden.

@@ -27,7 +27,7 @@ export const STATIONS = [
     category: "Nachrichten, Wissenschaft, Politik",
     description: "Informationsprogramm mit Nachrichten, Hintergründen und Wissenschaft.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunk.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://st01.sslstream.dlf.de/dlf/01/128/mp3/stream.mp3?aggregator=web", license: pending(),
   },
   {
     id: "dlf-nova", logo: "/radio/dlf-nova.png", name: "Deutschlandfunk Nova", levelMin: "B1", levelMax: "C1",

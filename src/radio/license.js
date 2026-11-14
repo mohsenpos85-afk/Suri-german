@@ -1,4 +1,4 @@
-import { STATIONS, TEST_STATION } from "./stations.js";
+import { STATIONS, TEST_STATION, RADIO_PREVIEW_UNLICENSED } from "./stations.js";
 
 export function devToolsOn() {
   try {
@@ -16,14 +16,17 @@ export function blockReason(s, now = Date.now()) {
   if (!s) return "unknown";
   if (s.licenseStatus === "test") return devToolsOn() && s.streamUrl ? null : "unavailable";
   if (!s.enabled) return "disabled";
-  if (s.licenseStatus !== "licensed" || !s.license || s.license.status !== "licensed") return "not-licensed";
   if (!s.streamUrl) return "no-stream";
+  const licensed = s.licenseStatus === "licensed" && s.license && s.license.status === "licensed";
+  if (!licensed) return RADIO_PREVIEW_UNLICENSED ? null : "not-licensed"; // preview mode: playable, but marked
   if (s.license.expiresAt && new Date(s.license.expiresAt).getTime() < now) return "expired";
   return null;
 }
 export const isPlayable = (s) => blockReason(s) === null;
-/** A genuine live radio station that may be played right now (test source never counts). */
-export const isRealLive = (s) => !!s && s.live === true && s.licenseStatus === "licensed" && isPlayable(s);
+/** A genuine live radio station that can be played right now (the test tone never counts). */
+export const isRealLive = (s) => !!s && s.live === true && s.licenseStatus !== "test" && isPlayable(s);
+/** Playable only because preview mode is on (no license yet). */
+export const isPreview = (s) => !!s && s.licenseStatus !== "test" && s.licenseStatus !== "licensed" && isPlayable(s);
 
 export const BLOCK_TEXT = {
   disabled: "Dieser Sender ist noch nicht freigeschaltet.",

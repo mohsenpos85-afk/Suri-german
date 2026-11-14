@@ -6,7 +6,7 @@ import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headpho
 import { LEVEL_PALETTE, A } from "../theme";
 import { useNavLayer } from "../lib/nav";
 import { STATIONS, TEST_STATION } from "./stations.js";
-import { listStations, getStation, blockReason, isPlayable, isRealLive, devToolsOn, BLOCK_TEXT } from "./license.js";
+import { listStations, getStation, blockReason, isPlayable, isRealLive, isPreview, devToolsOn, BLOCK_TEXT } from "./license.js";
 import { radio, useRadio } from "./service.js";
 
 const LV = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -68,6 +68,7 @@ function StationCard({ s, onOpenFull }) {
             <span style={{ fontWeight: 800, fontSize: 15.5, color: "var(--ink)" }}>{s.name}</span>
             <LevelChips s={s} />
             {isRealLive(s) && <span className="s-radio-live"><i /> LIVE</span>}
+            {isPreview(s) && <span className="s-radio-prev">Vorschau</span>}
           </div>
           <div style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2 }}>{s.category}</div>
           <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>{s.description}</div>

@@ -1,3 +1,9 @@
+// ── LAUNCH SWITCH ────────────────────────────────────────────────────────────────
+// While true, stations that have a streamUrl but no license yet are playable as a PREVIEW (marked "Vorschau").
+// BEFORE PUBLIC LAUNCH: obtain the broadcasters' permission, set licenseStatus:"licensed" + license.status:"licensed"
+// per station, then set this to false. Unlicensed stations are blocked again automatically.
+export const RADIO_PREVIEW_UNLICENSED = true;
+
 // Radio station configuration. These are CANDIDATE broadcasters only — none is licensed or enabled.
 // A station becomes playable only when ALL of: enabled === true, license.status === "licensed",
 // a streamUrl is set, and the authorization has not expired (see isPlayable in license.js).
@@ -19,28 +25,28 @@ export const STATIONS = [
     category: "Nachrichten, Wissenschaft, Politik",
     description: "Informationsprogramm mit Nachrichten, Hintergründen und Wissenschaft.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunk.de",
-    live: true, enabled: false, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
   },
   {
     id: "dlf-nova", name: "Deutschlandfunk Nova", levelMin: "B1", levelMax: "C1",
     category: "Alltag, Kultur, junge Themen",
     description: "Wissen, Alltag und Kultur — gesprochen für ein junges Publikum.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunknova.de",
-    live: true, enabled: false, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
   },
   {
     id: "dlf-kultur", name: "Deutschlandfunk Kultur", levelMin: "B2", levelMax: "C2",
     category: "Kultur, Gesellschaft, Diskussionen",
     description: "Kultur, Gesellschaft und ausführliche Gespräche.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunkkultur.de",
-    live: true, enabled: false, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
   },
   {
     id: "wdr5", name: "WDR 5", levelMin: "B1", levelMax: "C2",
     category: "Interviews, Nachrichten, Alltag",
     description: "Wortprogramm mit Interviews, Nachrichten und Alltagsthemen.",
     broadcaster: "Westdeutscher Rundfunk (WDR)", website: "https://www.wdr.de/radio/wdr5/",
-    live: true, enabled: false, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, logo: null, license: pending(),
   },
 ];
 

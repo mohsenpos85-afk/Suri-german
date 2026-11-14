@@ -272,3 +272,4 @@ html { color-scheme: only light; }
 .s-radio-vol input { flex: 1; accent-color: var(--acc-btn); }
 .s-radio-sleep { padding: 12px 14px; border-radius: 18px; background: var(--surface-hi); box-shadow: var(--sh-press); }
 @media (prefers-reduced-motion: reduce) { .s-radio-screen, .s-radio-full, .s-radio-fullin, .s-radio-live i, .s-radio-spin { animation: none; } }
+.s-radio-prev { padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 800; color: var(--acc-tx); background: var(--surface-hi); box-shadow: var(--sh-press); }

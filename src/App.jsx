@@ -14,6 +14,7 @@ import {
 import DocAssistant from "./DocAssistant.jsx";
 import { SB_EXTRA } from "./data/sprachbausteine.js";
 import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
+import WordOfDay from "./wotd.jsx";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -2970,7 +2971,7 @@ export default function App() {
         </div>
       )}
       {!intro && !onboarding && <main className="mob-pb" style={{ maxWidth: 880, margin: "0 auto", padding: "28px 20px 64px" }}>
-        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} />}
+        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} favs={favs} toggleFav={toggleFav} />}
         {tab === "levels" && <Seviyeler setTab={goToTab} setLessonsLevel={setLessonsLevel} progress={progress} lang={appLang} />}
         {tab === "lessons" && <Lessons open={openLesson} setOpen={setOpenLesson} progress={progress} setProgress={setProgress} startLevel={lessonsLevel} setTab={goToTab} favs={favs} toggleFav={toggleFav} lang={appLang} />}
         {tab === "cards" && <Flashcards favs={favs} toggleFav={toggleFav} lang={appLang} />}
@@ -3753,7 +3754,7 @@ function roundedTrianglePath(W, H, r) {
 }
 
 // ── Level Pyramid — 6 stacked CEFR tiers, tap to preview in the hexagon ──
-function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
+function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect, scale = 1 }) {
   const W = 190, H = 250, R = 12;
   const bandH = H / 6;
   const order = [...levels].reverse(); // C2 first (top) → A1 last (bottom)
@@ -3769,7 +3770,7 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
   return (
     <div style={{ display:"flex", alignItems:"center", gap:8, position:"relative" }}>
       {/* pyramid */}
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0, overflow:"visible" }}>
+      <svg width={W*scale} height={H*scale} viewBox={`0 0 ${W} ${H}`} style={{ flexShrink:0, overflow:"visible" }}>
         <style>{`@keyframes neonPulse{0%,100%{opacity:1}50%{opacity:.72}}`}</style>
         <defs>
           <clipPath id={clipId}><path d={roundedTrianglePath(W,H,R)} /></clipPath>
@@ -3809,12 +3810,12 @@ function LevelPyramid({ levels, currentLevelId, selectedLevelId, onSelect }) {
       </svg>
 
       {/* right-side percentage labels */}
-      <div style={{ height:H, position:"relative", flexShrink:0, minWidth:38 }}>
+      <div style={{ height:H*scale, position:"relative", flexShrink:0, minWidth:scale<1?30:38 }}>
         {order.map((lv, i) => {
           const isCurrent = lv.id === currentLevelId;
           return (
-            <div key={lv.id} style={{ position:"absolute", left:0, top:i*bandH, height:bandH,
-              display:"flex", alignItems:"center", fontSize:12,
+            <div key={lv.id} style={{ position:"absolute", left:0, top:i*bandH*scale, height:bandH*scale,
+              display:"flex", alignItems:"center", fontSize:scale<1?11:12,
               fontWeight: isCurrent ? 800 : 600,
               color: isCurrent ? "#fff" : "rgba(255,255,255,.45)", whiteSpace:"nowrap" }}>
               {lv.stats.completion}%
@@ -3870,7 +3871,7 @@ function SkillHexagon({ data, size = 240 }) {
 }
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
-function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily }) {
+function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily, favs = [], toggleFav }) {
   const journeyLevel = getJourneyLevel();
   const journeyPct   = Math.round((journeyLevel-1)/60*100);
   const xp = getXp();
@@ -4031,21 +4032,24 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           </div>
         </div>
 
-        <div style={{ display:"flex", flexWrap:"wrap", gap:20, justifyContent:"center" }}>
-          {/* Pyramid */}
-          <div style={{ flex:"1 1 240px", maxWidth:300 }}>
+        <div style={{ display:"flex", flexWrap:"wrap", gap:16, alignItems:"center", justifyContent:"center" }}>
+          {/* Pyramid (compact) */}
+          <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", alignItems:"center" }}>
             <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.pyramidTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.pyramidSub}</div>
+            <div style={{ fontSize:11.5, color:"rgba(255,255,255,.62)", marginBottom:10, textAlign:"center" }}>{ht.pyramidSub}</div>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
-              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} />
+              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={0.64} />
           </div>
 
-          {/* Hexagon */}
-          <div style={{ flex:"1 1 260px", maxWidth:300, display:"flex", flexDirection:"column", alignItems:"center" }}>
-            <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
-            <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
-            <SkillHexagon data={hexData} />
-          </div>
+          {/* Word of the day */}
+          <WordOfDay lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
+        </div>
+
+        {/* Skill hexagon */}
+        <div style={{ marginTop:22, display:"flex", flexDirection:"column", alignItems:"center" }}>
+          <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.55)", marginBottom:2, textAlign:"center" }}>{ht.hexTitle}</div>
+          <div style={{ fontSize:12.5, color:"rgba(255,255,255,.62)", marginBottom:14, textAlign:"center" }}>{ht.hexSub(selectedLevelId)}</div>
+          <SkillHexagon data={hexData} />
         </div>
 
         {/* Aktuelles Level summary */}

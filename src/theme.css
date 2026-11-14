@@ -172,3 +172,42 @@ html[data-shell="plain"] {
 
 /* Opt out of browser force-dark (Chrome/Samsung auto dark inverts colours and photos). */
 html { color-scheme: only light; }
+
+/* ── Word of the day ───────────────────────────────────────────────────────── */
+.s-wotd-card { flex: 1 1 230px; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 14px 14px 12px; border-radius: 22px; cursor: pointer;
+  color: var(--ink); background: var(--surface); box-shadow: var(--sh-card); transition: transform .18s ease, box-shadow .18s ease; text-align: start; }
+.s-wotd-card:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
+.s-wotd-card:active { transform: none; box-shadow: var(--sh-press); }
+.s-wotd-card:focus-visible { outline: 2px solid var(--acc-btn); outline-offset: 2px; }
+.s-wotd-head, .s-wotd-top { display: flex; align-items: center; gap: 8px; }
+.s-wotd-plate { width: 32px; height: 32px; flex-shrink: 0; }
+.s-wotd-label { font-size: 12.5px; font-weight: 800; color: var(--acc-tx); flex: 1; min-width: 0; }
+.s-wotd-lv { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 99px; }
+.s-wotd-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font-size: 24px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; margin-top: 2px; overflow-wrap: anywhere; }
+.s-wotd-word.big { font-size: 34px; margin-top: 4px; }
+.s-wotd-art { font-size: .62em; font-weight: 800; }
+.s-wotd-tr { font-size: 14px; font-weight: 700; color: var(--acc-tx); }
+.s-wotd-ex { font-size: 12.5px; color: var(--muted); font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.s-wotd-row { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; }
+.s-wotd-more { margin-inline-start: auto; font-size: 11px; color: var(--muted); font-weight: 600; }
+.s-wotd-ic { display: grid; place-items: center; width: 36px; height: 36px; border: none; border-radius: 12px; cursor: pointer; background: var(--surface-hi); box-shadow: var(--sh-card); transition: transform .15s ease, box-shadow .15s ease; }
+.s-wotd-ic:active { transform: scale(.94); box-shadow: var(--sh-press); }
+
+.s-wotd-layer { position: fixed; inset: 0; z-index: 320; }
+.s-wotd-backdrop { position: absolute; inset: 0; background: rgba(14, 28, 40, .55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.s-wotd-box { position: fixed; overflow: hidden; background: var(--surface); box-shadow: 0 24px 60px -12px rgba(8, 20, 32, .55), var(--sh-lift); }
+.s-wotd-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 16px 18px 16px; min-width: 0; }
+.s-wotd-x { display: grid; place-items: center; width: 36px; height: 36px; border: none; border-radius: 99px; cursor: pointer; color: var(--ink); background: var(--surface-hi); box-shadow: var(--sh-card); margin-inline-start: 4px; }
+.s-wotd-x:active { box-shadow: var(--sh-press); }
+.s-wotd-scroll { flex: 1; overflow-y: auto; padding: 6px 2px 4px; -webkit-overflow-scrolling: touch; }
+.s-wotd-actions { display: flex; gap: 10px; margin: 12px 0 6px; }
+.s-wotd-sec { margin-top: 14px; padding: 12px 14px; border-radius: 18px; background: var(--surface-hi); box-shadow: var(--sh-press); }
+.s-wotd-sec-t { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .02em; color: var(--acc-tx); margin-bottom: 6px; }
+.s-wotd-meaning { font-size: 22px; font-weight: 800; color: var(--ink); }
+.s-wotd-exrow { display: flex; align-items: center; gap: 10px; }
+.s-wotd-exde { flex: 1; min-width: 0; font-size: 16px; font-weight: 700; color: var(--ink); }
+.s-wotd-exmean { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.s-wotd-usage { font-size: 14px; line-height: 1.5; color: var(--ink); }
+.s-wotd-foot { display: flex; flex-direction: column; gap: 8px; align-items: stretch; padding-top: 12px; }
+.s-wotd-count { text-align: center; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .s-wotd-card, .s-wotd-ic { transition: none; } }

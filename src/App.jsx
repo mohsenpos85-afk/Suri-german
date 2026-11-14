@@ -15,6 +15,7 @@ import DocAssistant from "./DocAssistant.jsx";
 import { SB_EXTRA } from "./data/sprachbausteine.js";
 import { KU_DIALECTS, KU_DIALECT_UI, KU_DIALECT_OB, kuDialect } from "./data/kuDialects.js";
 import WordOfDay from "./wotd.jsx";
+import { HomeRadioCard, RadioScreen, RadioMiniPlayer, RadioFullPlayer } from "./radio/RadioUI.jsx";
 import { JOURNEY_LEVELS, JOURNEY_STORIES, CEFR_META } from "./data/journey.js";
 
 // ── Shared video singleton — one decode, N canvases ──────────────────
@@ -2485,6 +2486,7 @@ export default function App() {
   }, { depth: 0 }, tab);
   const [showMenu, setShowMenu] = useState(false);
   const [showDaily, setShowDaily] = useState(false);
+  const [showRadio, setShowRadio] = useState(false);
   useNavLayer(showMenu, () => setShowMenu(false), { depth: 8, modal: true });
   const [openLesson, setOpenLesson] = useState(null);
   const [lessonsLevel, setLessonsLevel] = useState(null);
@@ -2971,7 +2973,7 @@ export default function App() {
         </div>
       )}
       {!intro && !onboarding && <main className="mob-pb" style={{ maxWidth: 880, margin: "0 auto", padding: "28px 20px 64px" }}>
-        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} favs={favs} toggleFav={toggleFav} />}
+        {tab === "home" && <Home lang={appLang} setTab={goToTab} setSpielInitialGame={setSpielInitialGame} progress={progress} onOpenDaily={() => setShowDaily(true)} onOpenRadio={() => setShowRadio(true)} favs={favs} toggleFav={toggleFav} />}
         {tab === "levels" && <Seviyeler setTab={goToTab} setLessonsLevel={setLessonsLevel} progress={progress} lang={appLang} />}
         {tab === "lessons" && <Lessons open={openLesson} setOpen={setOpenLesson} progress={progress} setProgress={setProgress} startLevel={lessonsLevel} setTab={goToTab} favs={favs} toggleFav={toggleFav} lang={appLang} />}
         {tab === "cards" && <Flashcards favs={favs} toggleFav={toggleFav} lang={appLang} />}
@@ -2987,6 +2989,9 @@ export default function App() {
       {showDaily && !intro && !onboarding && (
         <DailyPlan lang={appLang} onClose={() => setShowDaily(false)} SbQuiz={SbQuiz} sbForLevel={sbForLevel} addXp={addXp} getXp={getXp} Confetti={Confetti} />
       )}
+      {showRadio && !intro && !onboarding && <RadioScreen onClose={() => setShowRadio(false)} onNavigate={goToTab} />}
+      {!intro && !onboarding && <RadioMiniPlayer />}
+      {!intro && !onboarding && <RadioFullPlayer />}
       {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}
       {!intro && !onboarding && streak.count > 0 && (
@@ -3871,7 +3876,7 @@ function SkillHexagon({ data, size = 240 }) {
 }
 
 // ── ماڵەوە / Home ──────────────────────────────────────────────────
-function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily, favs = [], toggleFav }) {
+function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenDaily, onOpenRadio, favs = [], toggleFav }) {
   const [wideTiles, setWideTiles] = useState(() => typeof window !== "undefined" && window.innerWidth >= 900);
   useEffect(() => {
     const on = () => setWideTiles(window.innerWidth >= 900);
@@ -3994,6 +3999,8 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
       </div>
 
       {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
+
+      {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
 
       {/* ── Featured: Your Journey ── */}
       <div className="journey-featured"

@@ -89,13 +89,18 @@ function StationCard({ s, onOpenFull }) {
           <div style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2 }}>{s.category}</div>
           <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>{s.description}</div>
           <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 6 }}>Sender: {s.broadcaster}</div>
-          {why && <div className="s-radio-note"><Lock size={13} /> {BLOCK_TEXT[why]}</div>}
+          {why && <div className="s-radio-note"><Lock size={13} /> {why === "no-stream" && s.playerPage ? "Wird über den offiziellen Player des Senders geöffnet." : BLOCK_TEXT[why]}</div>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
           <PlayBtn station={s} />
           <FavBtn id={s.id} name={s.name} />
         </div>
       </div>
+      {s.playerPage && !s.streamUrl && (
+        <a className="s-capsule" style={{ marginTop: 12, textDecoration: "none" }} href={s.playerPage} target="_blank" rel="noopener noreferrer">
+          <Play size={14} fill="currentColor" /> Offiziellen Player öffnen <ExternalLink size={12} />
+        </a>
+      )}
       {s.website && (
         <a className="s-radio-link" href={s.website} target="_blank" rel="noopener noreferrer">
           Offizielle Informationen <ExternalLink size={12} />

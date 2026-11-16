@@ -3999,26 +3999,13 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
       </div>
 
       <div className="s-dash">
-        {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
-
-        {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
-
-        {/* Current level summary */}
-        <div className="s-dt s-dt-rose">
-          <div className="s-dt-head"><span className="s-dt-ic"><Target size={18} /></span><span className="s-dt-t">{ht.current}</span></div>
-          <div className="s-dt-big">{currentLevelId}</div>
-          <div className="s-dt-s">{levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}% {ht.done}</div>
-          <div className="s-dt-bar"><i style={{ width:`${levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}%` }} /></div>
-          <div className="s-dt-pill">👑 {xp}</div>
-        </div>
-
       {/* ── Featured: Your Journey ── */}
       <div className="journey-featured s-dt s-dt-span"
         onClick={()=>{ if(setSpielInitialGame) setSpielInitialGame('journey'); if(setTab) setTab('spiel'); }}
         style={{ backgroundImage:"linear-gradient(180deg,rgba(20,15,45,.35) 0%,rgba(20,15,45,.15) 45%,rgba(10,10,25,.8) 100%), url(/journey-banner.jpg)",
           backgroundSize:"cover", backgroundPosition:"center 35%",
           borderRadius:26, padding:"18px 22px 18px", cursor:"pointer",
-          minHeight:180, display:"flex", flexDirection:"column", justifyContent:"space-between",
+          minHeight:150, display:"flex", flexDirection:"column", justifyContent:"space-between",
           
           position:"relative", overflow:"hidden" }}>
         <div style={{ position:"relative", zIndex:1, fontWeight:900, fontSize:22, color:"#fff",
@@ -4041,8 +4028,26 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
       </div>
 
 
+
+        {onOpenDaily && <DailyHomeCard lang={lang} onOpen={onOpenDaily} getXp={getXp} />}
+
+
+        {/* Word of the day */}
+        <WordOfDay className="s-dt s-dt-purple s-dt-span2" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
+
+        {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
+
+        {/* Current level summary */}
+        <div className="s-dt s-dt-rose s-dt-sq">
+          <div className="s-dt-head"><span className="s-dt-ic"><Target size={18} /></span><span className="s-dt-t">{ht.current}</span></div>
+          <div className="s-dt-big">{currentLevelId}</div>
+          <div className="s-dt-s">{levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}% {ht.done}</div>
+          <div className="s-dt-bar"><i style={{ width:`${levelsWithStats.find(l=>l.id===currentLevelId)?.stats.completion}%` }} /></div>
+          <div className="s-dt-pill">👑 {xp}</div>
+        </div>
+
         {/* Level pyramid */}
-        <div className="s-dt s-dt-amber">
+        <div className="s-dt s-dt-amber s-dt-sq">
           <div className="s-dt-head"><span className="s-dt-ic"><TrendingUp size={18} /></span><span className="s-dt-t">{ht.pyramidTitle}</span></div>
           <div className="s-dt-s">{ht.pyramidSub}</div>
           <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -4052,7 +4057,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         </div>
 
         {/* Skill hexagon */}
-        <div className="s-dt s-dt-green">
+        <div className="s-dt s-dt-green s-dt-sq">
           <div className="s-dt-head"><span className="s-dt-ic"><Star size={18} /></span><span className="s-dt-t">{ht.hexTitle}</span></div>
           <div className="s-dt-s">{ht.hexSub(selectedLevelId)}</div>
           <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", minWidth:0 }}>
@@ -4060,8 +4065,6 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           </div>
         </div>
 
-        {/* Word of the day */}
-        <WordOfDay className="s-dt s-dt-purple s-dt-span2" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
       </div>
 
     </div>

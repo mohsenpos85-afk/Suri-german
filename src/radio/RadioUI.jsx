@@ -118,7 +118,7 @@ function StationCard({ s, onOpenFull }) {
 export function HomeRadioCard({ onOpen }) {
   const live = STATIONS.some(isRealLive);
   return (
-    <button type="button" className="s-radio-home s-dt s-dt-frost" onClick={onOpen} aria-label="Radio & Hören öffnen">
+    <button type="button" className="s-radio-home s-dt s-dt-frost s-dt-sq" onClick={onOpen} aria-label="Radio & Hören öffnen">
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span className="s-plate" style={{ width: 46, height: 46, flexShrink: 0 }}><Headphones size={21} /></span>
         <div style={{ flex: 1, minWidth: 0, textAlign: "start" }}>

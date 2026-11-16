@@ -292,6 +292,7 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
 .s-dt::after { content: ""; position: absolute; top: -40%; inset-inline-end: -25%; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.26), transparent 70%); pointer-events: none; }
 .s-dt-span { grid-column: 1 / -1; }
 .s-dt-span2 { grid-column: 1 / -1; }
+.s-dt-span, .s-dt-span2 { min-height: 150px; justify-content: center; }
 .s-dt-teal   { --tc: #3E9C95; }
 .s-dt-rose   { --tc: #B5667F; }
 .s-dt-amber  { --tc: #C48F4E; }
@@ -327,10 +328,8 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
 .s-dt > * { position: relative; z-index: 1; }
 .s-dt .s-hex { max-width: 210px; }
 
+.s-dt-sq { aspect-ratio: 1 / 1; }
 @media (min-width: 760px) {
-  .s-dash { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .s-dash { gap: 18px; }
   .s-dt { padding: 18px; }
-  .s-dt-span2 { grid-column: auto; }
-  .s-dt-span { grid-column: auto; }
-  .s-dt.journey-featured { grid-column: 1 / -1; }
 }

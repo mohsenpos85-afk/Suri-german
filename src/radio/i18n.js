@@ -74,3 +74,20 @@ export function langDir(lang) {
   if (lang === "ku") return kuDialect() === "kurmanji" ? "ltr" : "rtl";
   return "ltr";
 }
+
+const TIPS = {
+  de: ["Tipps zum Hörverstehen", ["Höre zuerst ohne Pause und versuche, das Thema zu erkennen.", "Konzentriere dich auf bekannte Wörter, nicht auf jedes einzelne Wort.", "Höre kurze Abschnitte mehrmals, wenn du etwas nicht verstanden hast.", "Schreibe drei neue Wörter auf und suche sie in der App.", "Regelmäßig 10 Minuten täglich hilft mehr als einmal lange."]],
+  tr: ["Dinleme ipuçları", ["Önce durmadan dinle ve konuyu anlamaya çalış.", "Her kelimeye değil, bildiğin kelimelere odaklan.", "Anlamadığın kısa bölümleri birkaç kez tekrar dinle.", "Üç yeni kelime yaz ve uygulamada ara.", "Her gün düzenli 10 dakika, bir kerelik uzun dinlemeden daha faydalıdır."]],
+  en: ["Listening tips", ["First listen without pausing and try to get the topic.", "Focus on words you know, not on every single word.", "Replay short parts several times if you didn't understand something.", "Write down three new words and look them up in the app.", "10 minutes every day helps more than one long session."]],
+  ar: ["نصائح للاستماع", ["استمع أولًا دون توقّف وحاول فهم الموضوع.", "ركّز على الكلمات التي تعرفها لا على كل كلمة.", "أعد الاستماع إلى المقاطع القصيرة عدة مرات إذا لم تفهمها.", "اكتب ثلاث كلمات جديدة وابحث عنها في التطبيق.", "عشر دقائق كل يوم أفضل من جلسة طويلة واحدة."]],
+  fa: ["نکته‌های شنیداری", ["اول بدون توقف گوش کن و سعی کن موضوع را بفهمی.", "روی کلمه‌هایی که می‌شناسی تمرکز کن، نه روی تک‌تک کلمه‌ها.", "بخش‌های کوتاهی را که نفهمیدی چند بار گوش بده.", "سه کلمهٔ جدید بنویس و در برنامه جست‌وجو کن.", "هر روز ۱۰ دقیقه بیشتر از یک بار طولانی کمک می‌کند."]],
+  es: ["Consejos para escuchar", ["Escucha primero sin pausas e intenta captar el tema.", "Concéntrate en las palabras que conoces, no en cada palabra.", "Repite varias veces los fragmentos cortos que no entendiste.", "Anota tres palabras nuevas y búscalas en la app.", "10 minutos al día ayudan más que una sola sesión larga."]],
+  uk: ["Поради для аудіювання", ["Спершу слухай без пауз і спробуй зрозуміти тему.", "Зосереджуйся на знайомих словах, а не на кожному слові.", "Кілька разів повтори короткі уривки, яких не зрозумів.", "Запиши три нові слова й знайди їх у застосунку.", "10 хвилин щодня корисніше, ніж одне довге заняття."]],
+  ku: ["ئامۆژگاری بۆ گوێگرتن", ["سەرەتا بەبێ وەستان گوێ بگرە و هەوڵ بدە بابەتەکە تێبگەیت.", "سەرنج بخەرە سەر ئەو وشانەی دەیانناسیت، نەک هەموو وشەیەک.", "بەشە کورتەکانی تێنەگەیشتوویت چەند جارێک دووبارە گوێ لێ بگرە.", "سێ وشەی نوێ بنووسە و لە ئەپەکەدا بیانگەڕێ.", "١٠ خولەک هەموو ڕۆژێک لە یەک دانیشتنی درێژ باشترە."]],
+  kmj: ["Şîretên guhdarîkirinê", ["Pêşî bêyî rawestan guh bide û hewl bide mijarê fam bikî.", "Li ser peyvên ku tu dizanî bisekine, ne li ser her peyvekê.", "Beşên kurt ên ku fêm nekirine çend caran dubare guh bide.", "Sê peyvên nû binivîse û di sepanê de bigere.", "Rojane 10 deqe ji danişîneke dirêj bi qazanctir e."]],
+};
+export function tipsText(lang) {
+  const key = lang === "ku" && kuDialect() === "kurmanji" ? "kmj" : lang;
+  const r = TIPS[key] || TIPS.en;
+  return { title: r[0], items: r[1] };
+}

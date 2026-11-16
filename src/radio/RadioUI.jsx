@@ -1,6 +1,6 @@
 // Radio & Hören: home card, internal screen, persistent mini player and full player.
 // All strings are German on purpose (the feature is about listening to German).
-import { stationText, langDir } from "./i18n.js";
+import { stationText, langDir, tipsText } from "./i18n.js";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headphones, Info, ExternalLink, Loader2 } from "lucide-react";
@@ -98,7 +98,6 @@ function StationCard({ s, onOpenFull, lang }) {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
           <PlayBtn station={s} />
-          <FavBtn id={s.id} name={s.name} />
         </div>
       </div>
       {s.playerPage && !s.streamUrl && (
@@ -153,12 +152,10 @@ export function HomeRadioCard({ onOpen, lang }) {
 // ── Full radio screen ──
 export function RadioScreen({ onClose, onNavigate, lang }) {
   useNavLayer(true, onClose, { depth: 2, modal: true }, "radio");
-  const [lv, setLv] = useState("B1");
   const r = useRadio();
   const all = listStations();
   const live = all.filter((s) => isRealLive(s) || s.licenseStatus === "test");
-  const byLevel = STATIONS.filter((s) => inLevel(s, lv));
-  const favs = all.filter((s) => r.favs.includes(s.id));
+  const tips = tipsText(lang);
   const openFull = () => radio.openFull();
   return (
     <div className="s-radio-screen" dir="ltr" role="region" aria-label="Radio & Hören">
@@ -179,42 +176,10 @@ export function RadioScreen({ onClose, onNavigate, lang }) {
           </div>
         ) : live.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />)}
 
-        <h2 className="s-radio-h">Radiosender entdecken</h2>
-        {STATIONS.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />)}
-
-        <h2 className="s-radio-h">Nach Sprachniveau</h2>
-        <div className="s-radio-lvrow" role="tablist" aria-label="Sprachniveau">
-          {LV.map((x) => {
-            const p = LEVEL_PALETTE[x], on = x === lv;
-            return (
-              <button key={x} type="button" role="tab" aria-selected={on} onClick={() => setLv(x)}
-                className="s-radio-lvbtn" style={{ background: on ? p.acc : A(p.acc, "26"), color: on ? "#fff" : p.dk }}>{x}</button>
-            );
-          })}
-        </div>
-        {byLevel.length ? byLevel.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />) : (
-          <div className="s-radio-card">
-            <div style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>
-              Für {lv} gibt es noch keinen geeigneten Radiosender. Normale Radiosendungen sind für dieses Niveau zu schnell.
-              Übe stattdessen mit den Hör-Lektionen in der App.
-            </div>
-            {onNavigate && <button type="button" className="s-capsule" style={{ marginTop: 10 }} onClick={() => { onClose(); onNavigate("levels"); }}>Zu den Lektionen</button>}
-          </div>
-        )}
-
-        <h2 className="s-radio-h">Meine Favoriten</h2>
-        {favs.length ? favs.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />) : (
-          <div className="s-radio-card"><div style={{ fontSize: 13.5, color: "var(--muted)" }}>Tippe auf das Herz, um einen Sender hier zu speichern.</div></div>
-        )}
-
-        <h2 className="s-radio-h">Tipps zum Hörverstehen</h2>
-        <div className="s-radio-card">
-          <ul style={{ margin: 0, paddingInlineStart: 18, fontSize: 13.5, color: "var(--ink)", lineHeight: 1.65 }}>
-            <li>Höre zuerst ohne Pause und versuche, das Thema zu erkennen.</li>
-            <li>Konzentriere dich auf bekannte Wörter, nicht auf jedes einzelne Wort.</li>
-            <li>Höre kurze Abschnitte mehrmals, wenn du etwas nicht verstanden hast.</li>
-            <li>Schreibe drei neue Wörter auf und suche sie in der App.</li>
-            <li>Regelmäßig 10 Minuten täglich hilft mehr als einmal lange.</li>
+        <h2 className="s-radio-h" dir={langDir(lang)} style={{ textAlign: "start" }}>{tips.title}</h2>
+        <div className="s-radio-card" dir={langDir(lang)}>
+          <ul style={{ margin: 0, paddingInlineStart: 18, fontSize: 13.5, color: "var(--ink)", lineHeight: 1.65, textAlign: "start" }}>
+            {tips.items.map((t) => <li key={t}>{t}</li>)}
           </ul>
         </div>
 
@@ -272,7 +237,6 @@ export function RadioFullPlayer({ lang }) {
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 18, margin: "8px 0" }}>
-          <FavBtn id={st.id} name={st.name} />
           <button type="button" className="s-radio-big" onClick={() => radio.toggle()} aria-label={playing || busy ? "Pausieren" : "Abspielen"}>
             {busy ? <Loader2 size={30} className="s-radio-spin" /> : playing ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" />}
           </button>

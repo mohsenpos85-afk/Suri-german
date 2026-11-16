@@ -1,6 +1,6 @@
 // Radio & Hören: home card, internal screen, persistent mini player and full player.
 // All strings are German on purpose (the feature is about listening to German).
-import { stationText, langDir, tipsText } from "./i18n.js";
+import { stationText, langDir, tipsText, ui, errText } from "./i18n.js";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headphones, Info, ExternalLink, Loader2 } from "lucide-react";
@@ -14,11 +14,10 @@ const LV = ["A1", "A2", "B1", "B2", "C1", "C2"];
 const lvIdx = (x) => LV.indexOf(x);
 const inLevel = (s, lv) => lvIdx(lv) >= lvIdx(s.levelMin) && lvIdx(lv) <= lvIdx(s.levelMax);
 const SLEEP = [0, 10, 15, 30, 45, 60];
-const STATUS_TEXT = { loading: "Verbindung wird hergestellt …", buffering: "Puffert …", playing: "Läuft", paused: "Pausiert", idle: "" };
-
-function statusLine(r, st) {
-  if (r.status === "error") return r.error || BLOCK_TEXT.unavailable;
-  const base = STATUS_TEXT[r.status] || "";
+function statusLine(r, st, u) {
+  if (r.status === "error") return errText(u, r.error || BLOCK_TEXT.unavailable);
+  if (r.status === "loading") return u.connecting;
+  const base = { buffering: u.buffering, playing: u.playing, paused: u.paused, idle: "" }[r.status] || "";
   return st && st.licenseStatus === "test" && r.status === "playing" ? "Testton läuft" : base;
 }
 
@@ -52,12 +51,12 @@ function StationLogo({ s, size = 44, icon = 20, plate = true, full = false }) {
     : <Radio size={icon} />;
 }
 
-function PlayBtn({ station, size = 44 }) {
-  const r = useRadio();
+function PlayBtn({ station, size = 44, lang }) {
+  const r = useRadio(); const u = ui(lang);
   const mine = r.stationId === station.id;
   const active = mine && (r.status === "playing" || r.status === "buffering" || r.status === "loading");
   const why = blockReason(station);
-  const label = why ? `${station.name}: nicht verfügbar` : active ? `${station.name} pausieren` : `${station.name} abspielen`;
+  const label = why ? `${station.name}: ${errText(u, BLOCK_TEXT[why] || "")}` : active ? `${station.name} – ${u.pause}` : `${station.name} – ${u.play}`;
   return (
     <button type="button" className="s-radio-play" aria-label={label} aria-disabled={!!why} disabled={!!why}
       style={{ width: size, height: size }}
@@ -86,28 +85,28 @@ function StationCard({ s, onOpenFull, lang }) {
         <StationLogo s={s} size={48} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-            <span style={{ fontWeight: 800, fontSize: 15.5, color: "var(--ink)" }}>{s.name}</span>
+            <span style={{ fontWeight: 800, fontSize: 15.5, color: "var(--ink)" }}><bdi>{s.name}</bdi></span>
             <LevelChips s={s} />
             {isRealLive(s) && <span className="s-radio-live"><i /> LIVE</span>}
-            {isPreview(s) && <span className="s-radio-prev">Vorschau</span>}
+            {isPreview(s) && <span className="s-radio-prev">{ui(lang).preview}</span>}
           </div>
           <div dir={langDir(lang)} style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2, textAlign: "start" }}>{stationText(s, lang).category}</div>
           <div dir={langDir(lang)} style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4, textAlign: "start" }}>{stationText(s, lang).description}</div>
-          <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 6 }}>Sender: {s.broadcaster}</div>
-          {why && <div className="s-radio-note"><Lock size={13} /> {why === "no-stream" && s.playerPage ? "Wird über den offiziellen Player des Senders geöffnet." : BLOCK_TEXT[why]}</div>}
+          <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 6 }}>{ui(lang).sender}: {s.broadcaster}</div>
+          {why && <div className="s-radio-note"><Lock size={13} /> {why === "no-stream" && s.playerPage ? ui(lang).viaOfficial : errText(ui(lang), BLOCK_TEXT[why])}</div>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-          <PlayBtn station={s} />
+          <PlayBtn station={s} lang={lang} />
         </div>
       </div>
       {s.playerPage && !s.streamUrl && (
         <a className="s-capsule" style={{ marginTop: 12, textDecoration: "none" }} href={s.playerPage} target="_blank" rel="noopener noreferrer">
-          <Play size={14} fill="currentColor" /> Offiziellen Player öffnen <ExternalLink size={12} />
+          <Play size={14} fill="currentColor" /> {ui(lang).openPlayer} <ExternalLink size={12} />
         </a>
       )}
       {s.website && (
         <a className="s-radio-link" href={s.website} target="_blank" rel="noopener noreferrer">
-          Offizielle Informationen <ExternalLink size={12} />
+          {ui(lang).info} <ExternalLink size={12} />
         </a>
       )}
     </div>
@@ -117,32 +116,32 @@ function StationCard({ s, onOpenFull, lang }) {
 // ── Home card ──
 export function HomeRadioCard({ onOpen, lang }) {
   const live = STATIONS.some(isRealLive);
-  const list = STATIONS;
+  const list = STATIONS; const u = ui(lang);
   const track = useRef(null);
   const [idx, setIdx] = useState(0);
   const go = (i) => { const el = track.current; if (!el) return; const n = Math.max(0, Math.min(list.length - 1, i)); el.scrollTo({ left: n * el.clientWidth, behavior: "smooth" }); };
   const onScroll = () => { const el = track.current; if (!el || !el.clientWidth) return; setIdx(Math.round(el.scrollLeft / el.clientWidth)); };
   return (
-    <div className="s-radio-home s-dt s-dt-frost s-dt-sq" dir="ltr" role="region" aria-label="Radio & Hören">
-      <button type="button" className="s-radio-home-head" onClick={onOpen} aria-label="Radio & Hören öffnen">
+    <div className="s-radio-home s-dt s-dt-frost s-dt-sq" dir="ltr" role="region" aria-label={u.title}>
+      <button type="button" className="s-radio-home-head" onClick={onOpen} aria-label={`${u.title} – ${u.open}`}>
         <span className="s-dt-ic s-radio-home-ic"><Headphones size={14} /></span>
-        <span className="s-dt-t">Radio &amp; Hören</span>
+        <span className="s-dt-t" dir={langDir(lang)}>{u.title}</span>
         {live && <span className="s-radio-live"><i /> LIVE</span>}
       </button>
-      <div className="s-radio-track" ref={track} onScroll={onScroll} tabIndex={0} aria-label="Sender wechseln – nach links oder rechts wischen">
+      <div className="s-radio-track" ref={track} onScroll={onScroll} tabIndex={0} aria-label={u.swipe}>
         {list.map((s) => {
           const tx = stationText(s, lang);
           return (
-            <div key={s.id} className="s-radio-slide" role="button" tabIndex={-1} onClick={onOpen} aria-label={`${s.name} – Radio öffnen`}>
+            <div key={s.id} className="s-radio-slide" role="button" tabIndex={-1} onClick={onOpen} aria-label={`${s.name} – ${u.open}`}>
               <StationLogo s={s} size={38} icon={20} plate={false} />
               <div className="s-radio-slide-n">{!isPlayable(s) && <Lock size={12} />} {s.name}</div>
               <div className="s-radio-slide-c" dir={langDir(lang)}>{tx.category}</div>
-              <span onClick={(e) => e.stopPropagation()}><PlayBtn station={s} size={34} /></span>
+              <span onClick={(e) => e.stopPropagation()}><PlayBtn station={s} size={34} lang={lang} /></span>
             </div>
           );
         })}
       </div>
-      <div className="s-radio-dots" role="tablist" aria-label="Sender">
+      <div className="s-radio-dots" role="tablist" aria-label={u.sender}>
         {list.map((s, i) => <button key={s.id} type="button" role="tab" aria-selected={i === idx} aria-label={s.name} className={i === idx ? "on" : ""} onClick={() => go(i)} />)}
       </div>
     </div>
@@ -155,23 +154,23 @@ export function RadioScreen({ onClose, onNavigate, lang }) {
   const r = useRadio();
   const all = listStations();
   const live = all.filter((s) => isRealLive(s) || s.licenseStatus === "test");
-  const tips = tipsText(lang);
+  const tips = tipsText(lang); const u = ui(lang);
   const openFull = () => radio.openFull();
   return (
-    <div className="s-radio-screen" dir="ltr" role="region" aria-label="Radio & Hören">
+    <div className="s-radio-screen" dir={langDir(lang)} role="region" aria-label={u.title}>
       <div className="s-radio-wrap">
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <button type="button" className="s-capsule" onClick={onClose} aria-label="Zurück zur Startseite"><ChevronLeft size={18} /> Zurück</button>
+          <button type="button" className="s-capsule" onClick={onClose} aria-label={u.back}><ChevronLeft size={18} /> {u.back}</button>
         </div>
-        <h1 style={{ margin: "10px 0 2px", fontSize: 26, fontWeight: 900, color: "var(--ink)" }}>Radio &amp; Hören</h1>
-        <p style={{ margin: 0, fontSize: 14, color: "var(--muted)" }}>Lerne Deutsch mit echten Radiosendungen.</p>
+        <h1 style={{ margin: "10px 0 2px", fontSize: 26, fontWeight: 900, color: "var(--ink)" }}>{u.title}</h1>
+        <p style={{ margin: 0, fontSize: 14, color: "var(--muted)" }}>{u.tagline}</p>
 
-        <h2 className="s-radio-h">Jetzt live hören</h2>
+        <h2 className="s-radio-h">{u.liveNow}</h2>
         {live.length === 0 ? (
           <div className="s-radio-card" style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
             <Info size={18} style={{ flexShrink: 0, color: "var(--acc-tx)", marginTop: 2 }} />
             <div style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>
-              Zurzeit ist noch kein Live-Sender freigegeben. Sobald ein Sender genehmigt ist, erscheint er hier.
+              {u.noLive}
             </div>
           </div>
         ) : live.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />)}
@@ -183,10 +182,7 @@ export function RadioScreen({ onClose, onNavigate, lang }) {
           </ul>
         </div>
 
-        <p style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 18, lineHeight: 1.5 }}>
-          Hinweis: Beim Hören über das Internet kann deine IP-Adresse an den jeweiligen Streaming-Anbieter übermittelt werden.
-          Sender werden erst nach Genehmigung durch den jeweiligen Rundfunkanbieter freigeschaltet.
-        </p>
+        <p style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 18, lineHeight: 1.5 }}>{u.footer}</p>
         {devToolsOn() && <p style={{ fontSize: 11.5, color: "var(--muted)" }}>Entwicklungsmodus: Testton ist aktiv (kein Radio).</p>}
       </div>
     </div>
@@ -202,7 +198,7 @@ function Remaining({ endsAt }) {
 
 // ── Full player ──
 export function RadioFullPlayer({ lang }) {
-  const r = useRadio();
+  const r = useRadio(); const u = ui(lang);
   useNavLayer(r.full, () => radio.closeFull(), { depth: 4, modal: true }, "radio-full");
   useEffect(() => {
     if (!r.full) return undefined;
@@ -214,11 +210,11 @@ export function RadioFullPlayer({ lang }) {
   const busy = r.status === "loading" || r.status === "buffering";
   const playing = r.status === "playing";
   return createPortal(
-    <div className="s-radio-full" dir="ltr" role="dialog" aria-modal="true" aria-label={`Player: ${st.name}`}>
+    <div className="s-radio-full" dir={langDir(lang)} role="dialog" aria-modal="true" aria-label={`${u.title}: ${st.name}`}>
       <div className="s-radio-fullin">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 13, fontWeight: 800, color: "var(--acc-tx)" }}>Radio &amp; Hören</span>
-          <button type="button" className="s-wotd-x" aria-label="Player schließen" onClick={() => radio.closeFull()}><X size={18} /></button>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "var(--acc-tx)" }}>{u.title}</span>
+          <button type="button" className="s-wotd-x" aria-label={u.closePlayer} onClick={() => radio.closeFull()}><X size={18} /></button>
         </div>
         <div className="s-radio-art" aria-hidden="true">
           <StationLogo s={st} size={120} icon={72} plate={false} full />
@@ -233,33 +229,33 @@ export function RadioFullPlayer({ lang }) {
             <span dir={langDir(lang)} style={{ fontSize: 12.5, color: "var(--muted)" }}>{stationText(st, lang).category}</span>
           </div>
           <div role="status" aria-live="polite" style={{ marginTop: 10, minHeight: 20, fontSize: 13.5, fontWeight: 700, color: r.status === "error" ? "#B3402F" : "var(--acc-tx)" }}>
-            {statusLine(r, st)}
+            {statusLine(r, st, u)}
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 18, margin: "8px 0" }}>
-          <button type="button" className="s-radio-big" onClick={() => radio.toggle()} aria-label={playing || busy ? "Pausieren" : "Abspielen"}>
+          <button type="button" className="s-radio-big" onClick={() => radio.toggle()} aria-label={playing || busy ? u.pause : u.play}>
             {busy ? <Loader2 size={30} className="s-radio-spin" /> : playing ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" />}
           </button>
-          <button type="button" className="s-wotd-ic" aria-label="Wiedergabe beenden" onClick={() => radio.stop()}><X size={17} /></button>
+          <button type="button" className="s-wotd-ic" aria-label={u.stop} onClick={() => radio.stop()}><X size={17} /></button>
         </div>
         {r.volumeSupported && (
           <label className="s-radio-vol"><Volume2 size={16} aria-hidden="true" />
-            <input type="range" min="0" max="1" step="0.05" value={r.volume} onChange={(e) => radio.setVolume(parseFloat(e.target.value))} aria-label="Lautstärke" />
+            <input type="range" min="0" max="1" step="0.05" value={r.volume} onChange={(e) => radio.setVolume(parseFloat(e.target.value))} aria-label={u.volume} />
           </label>
         )}
         <div className="s-radio-sleep">
           <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 800, color: "var(--acc-tx)" }}>
-            <Moon size={14} /> Einschlaf-Timer {r.sleepEndsAt ? <span style={{ marginInlineStart: "auto", color: "var(--ink)" }}><Remaining endsAt={r.sleepEndsAt} /></span> : null}
+            <Moon size={14} /> {u.sleep} {r.sleepEndsAt ? <span style={{ marginInlineStart: "auto", color: "var(--ink)" }}><Remaining endsAt={r.sleepEndsAt} /></span> : null}
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
             {SLEEP.map((m) => {
               const on = m === 0 ? !r.sleepEndsAt : false;
-              return <button key={m} type="button" className="s-radio-chipbtn" aria-pressed={on} onClick={() => radio.setSleep(m)} style={on ? { background: "var(--acc-btn)", color: "#fff" } : undefined}>{m === 0 ? "Aus" : `${m} Min.`}</button>;
+              return <button key={m} type="button" className="s-radio-chipbtn" aria-pressed={on} onClick={() => radio.setSleep(m)} style={on ? { background: "var(--acc-btn)", color: "#fff" } : undefined}>{m === 0 ? u.off : `${m} ${u.min}`}</button>;
             })}
           </div>
         </div>
         <div style={{ fontSize: 11.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.5 }}>
-          {st.licenseStatus === "test" ? "Eigener Testton, keine Radiosendung." : `Sender: ${st.broadcaster}`}
+          {st.licenseStatus === "test" ? "Eigener Testton, keine Radiosendung." : `${u.sender}: ${st.broadcaster}`}
         </div>
       </div>
     </div>,
@@ -268,25 +264,25 @@ export function RadioFullPlayer({ lang }) {
 }
 
 // ── Persistent mini player (one shared audio element underneath) ──
-export function RadioMiniPlayer() {
-  const r = useRadio();
+export function RadioMiniPlayer({ lang }) {
+  const r = useRadio(); const u = ui(lang);
   const st = getStation(r.stationId);
   if (!st) return null;
   const busy = r.status === "loading" || r.status === "buffering";
   const playing = r.status === "playing";
   return (
-    <div className="s-radio-mini" dir="ltr" role="region" aria-label="Radio-Player">
-      <button type="button" className="s-radio-mini-main" onClick={() => radio.openFull()} aria-label={`Player öffnen: ${st.name}`}>
+    <div className="s-radio-mini" dir={langDir(lang)} role="region" aria-label={u.title}>
+      <button type="button" className="s-radio-mini-main" onClick={() => radio.openFull()} aria-label={`${u.title}: ${st.name}`}>
         <StationLogo s={st} size={38} icon={18} />
         <span style={{ minWidth: 0, textAlign: "start" }}>
           <span style={{ display: "block", fontWeight: 800, fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{st.name}</span>
-          <span style={{ display: "block", fontSize: 11.5, color: r.status === "error" ? "#B3402F" : "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{statusLine(r, st)}</span>
+          <span style={{ display: "block", fontSize: 11.5, color: r.status === "error" ? "#B3402F" : "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{statusLine(r, st, u)}</span>
         </span>
       </button>
-      <button type="button" className="s-radio-play" style={{ width: 40, height: 40 }} onClick={() => radio.toggle()} aria-label={playing || busy ? "Pausieren" : "Abspielen"}>
+      <button type="button" className="s-radio-play" style={{ width: 40, height: 40 }} onClick={() => radio.toggle()} aria-label={playing || busy ? u.pause : u.play}>
         {busy ? <Loader2 size={18} className="s-radio-spin" /> : playing ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
       </button>
-      <button type="button" className="s-wotd-ic" style={{ width: 32, height: 32 }} onClick={() => radio.stop()} aria-label="Wiedergabe beenden"><X size={15} /></button>
+      <button type="button" className="s-wotd-ic" style={{ width: 32, height: 32 }} onClick={() => radio.stop()} aria-label={u.stop}><X size={15} /></button>
     </div>
   );
 }

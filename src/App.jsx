@@ -2546,6 +2546,7 @@ export default function App() {
   // ── Scroll management ────────────────────────────────────────────
   const scrollSave = useRef({});
   const goToTab = useCallback((newTab) => {
+    setShowRadio(false); // any navigation leaves the radio screen
     if (newTab === tab) return; // aynı sayfadaysa hareket etme
     scrollSave.current[tab] = window.scrollY;
     setTab(newTab);
@@ -2990,7 +2991,7 @@ export default function App() {
         <DailyPlan lang={appLang} onClose={() => setShowDaily(false)} SbQuiz={SbQuiz} sbForLevel={sbForLevel} addXp={addXp} getXp={getXp} Confetti={Confetti} />
       )}
       {showRadio && !intro && !onboarding && <RadioScreen onClose={() => setShowRadio(false)} onNavigate={goToTab} lang={appLang} />}
-      {!intro && !onboarding && <RadioMiniPlayer />}
+      {!intro && !onboarding && <RadioMiniPlayer lang={appLang} />}
       {!intro && !onboarding && <RadioFullPlayer lang={appLang} />}
       {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}

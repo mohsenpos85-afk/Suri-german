@@ -50,6 +50,13 @@ export const STATIONS = [
     broadcaster: "Westdeutscher Rundfunk (WDR)", website: "https://www.wdr.de/radio/wdr5/",
     live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3", license: pending(),
   },
+  {
+    id: "diemaus", logo: "/radio/diemaus.png", logoIcon: "/radio/diemaus-icon.png", name: "Die Maus", levelMin: "A2", levelMax: "B1",
+    category: "Kinderradio, einfache Sprache",
+    description: "Kinderradio mit klarer, langsamer Sprache – gut zum Einstieg ins Hörverstehen.",
+    broadcaster: "Westdeutscher Rundfunk (WDR)", website: "https://www.wdrmaus.de/",
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://wdr-diemaus-live.icecastssl.wdr.de/wdr/diemaus/live/mp3/128/stream.mp3", license: pending(),
+  },
 ];
 
 // Development-only test source: an original tone sequence generated for this project (public/radio-test.wav).

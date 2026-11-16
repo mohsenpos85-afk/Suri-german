@@ -2989,9 +2989,9 @@ export default function App() {
       {showDaily && !intro && !onboarding && (
         <DailyPlan lang={appLang} onClose={() => setShowDaily(false)} SbQuiz={SbQuiz} sbForLevel={sbForLevel} addXp={addXp} getXp={getXp} Confetti={Confetti} />
       )}
-      {showRadio && !intro && !onboarding && <RadioScreen onClose={() => setShowRadio(false)} onNavigate={goToTab} />}
+      {showRadio && !intro && !onboarding && <RadioScreen onClose={() => setShowRadio(false)} onNavigate={goToTab} lang={appLang} />}
       {!intro && !onboarding && <RadioMiniPlayer />}
-      {!intro && !onboarding && <RadioFullPlayer />}
+      {!intro && !onboarding && <RadioFullPlayer lang={appLang} />}
       {!intro && !onboarding && <GlobalBackButton lang={appLang} />}
       {/* ── Streak badge — sağ üst köşe ──────────────────────────────── */}
       {!intro && !onboarding && streak.count > 0 && (

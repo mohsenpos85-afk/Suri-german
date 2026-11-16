@@ -1,5 +1,6 @@
 // Radio & Hören: home card, internal screen, persistent mini player and full player.
 // All strings are German on purpose (the feature is about listening to German).
+import { stationText } from "./i18n.js";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headphones, Info, ExternalLink, Loader2 } from "lucide-react";
@@ -77,7 +78,7 @@ function FavBtn({ id, name }) {
   );
 }
 
-function StationCard({ s, onOpenFull }) {
+function StationCard({ s, onOpenFull, lang }) {
   const why = blockReason(s);
   return (
     <div className="s-radio-card">
@@ -90,8 +91,8 @@ function StationCard({ s, onOpenFull }) {
             {isRealLive(s) && <span className="s-radio-live"><i /> LIVE</span>}
             {isPreview(s) && <span className="s-radio-prev">Vorschau</span>}
           </div>
-          <div style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2 }}>{s.category}</div>
-          <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>{s.description}</div>
+          <div style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2 }}>{stationText(s, lang).category}</div>
+          <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>{stationText(s, lang).description}</div>
           <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 6 }}>Sender: {s.broadcaster}</div>
           {why && <div className="s-radio-note"><Lock size={13} /> {why === "no-stream" && s.playerPage ? "Wird über den offiziellen Player des Senders geöffnet." : BLOCK_TEXT[why]}</div>}
         </div>
@@ -142,7 +143,7 @@ export function HomeRadioCard({ onOpen }) {
 }
 
 // ── Full radio screen ──
-export function RadioScreen({ onClose, onNavigate }) {
+export function RadioScreen({ onClose, onNavigate, lang }) {
   useNavLayer(true, onClose, { depth: 2, modal: true }, "radio");
   const [lv, setLv] = useState("B1");
   const r = useRadio();
@@ -168,10 +169,10 @@ export function RadioScreen({ onClose, onNavigate }) {
               Zurzeit ist noch kein Live-Sender freigegeben. Sobald ein Sender genehmigt ist, erscheint er hier.
             </div>
           </div>
-        ) : live.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} />)}
+        ) : live.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />)}
 
         <h2 className="s-radio-h">Radiosender entdecken</h2>
-        {STATIONS.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} />)}
+        {STATIONS.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />)}
 
         <h2 className="s-radio-h">Nach Sprachniveau</h2>
         <div className="s-radio-lvrow" role="tablist" aria-label="Sprachniveau">
@@ -183,7 +184,7 @@ export function RadioScreen({ onClose, onNavigate }) {
             );
           })}
         </div>
-        {byLevel.length ? byLevel.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} />) : (
+        {byLevel.length ? byLevel.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />) : (
           <div className="s-radio-card">
             <div style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>
               Für {lv} gibt es noch keinen geeigneten Radiosender. Normale Radiosendungen sind für dieses Niveau zu schnell.
@@ -194,7 +195,7 @@ export function RadioScreen({ onClose, onNavigate }) {
         )}
 
         <h2 className="s-radio-h">Meine Favoriten</h2>
-        {favs.length ? favs.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} />) : (
+        {favs.length ? favs.map((s) => <StationCard key={s.id} s={s} onOpenFull={openFull} lang={lang} />) : (
           <div className="s-radio-card"><div style={{ fontSize: 13.5, color: "var(--muted)" }}>Tippe auf das Herz, um einen Sender hier zu speichern.</div></div>
         )}
 
@@ -227,7 +228,7 @@ function Remaining({ endsAt }) {
 }
 
 // ── Full player ──
-export function RadioFullPlayer() {
+export function RadioFullPlayer({ lang }) {
   const r = useRadio();
   useNavLayer(r.full, () => radio.closeFull(), { depth: 4, modal: true }, "radio-full");
   useEffect(() => {
@@ -256,7 +257,7 @@ export function RadioFullPlayer() {
           </div>
           <div style={{ marginTop: 6, display: "flex", justifyContent: "center", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             <LevelChips s={st} />
-            <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{st.category}</span>
+            <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{stationText(st, lang).category}</span>
           </div>
           <div role="status" aria-live="polite" style={{ marginTop: 10, minHeight: 20, fontSize: 13.5, fontWeight: 700, color: r.status === "error" ? "#B3402F" : "var(--acc-tx)" }}>
             {statusLine(r, st)}

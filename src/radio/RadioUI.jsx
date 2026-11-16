@@ -126,7 +126,7 @@ export function HomeRadioCard({ onOpen, lang }) {
   return (
     <div className="s-radio-home s-dt s-dt-frost s-dt-sq" dir="ltr" role="region" aria-label="Radio & Hören">
       <button type="button" className="s-radio-home-head" onClick={onOpen} aria-label="Radio & Hören öffnen">
-        <span className="s-dt-ic s-radio-home-ic"><Headphones size={17} /></span>
+        <span className="s-dt-ic s-radio-home-ic"><Headphones size={14} /></span>
         <span className="s-dt-t">Radio &amp; Hören</span>
         {live && <span className="s-radio-live"><i /> LIVE</span>}
       </button>
@@ -135,11 +135,10 @@ export function HomeRadioCard({ onOpen, lang }) {
           const tx = stationText(s, lang);
           return (
             <div key={s.id} className="s-radio-slide" role="button" tabIndex={-1} onClick={onOpen} aria-label={`${s.name} – Radio öffnen`}>
-              <StationLogo s={s} size={54} icon={26} plate={false} />
+              <StationLogo s={s} size={38} icon={20} plate={false} />
               <div className="s-radio-slide-n">{!isPlayable(s) && <Lock size={12} />} {s.name}</div>
               <div className="s-radio-slide-c" dir={langDir(lang)}>{tx.category}</div>
-              <LevelChips s={s} />
-              <span onClick={(e) => e.stopPropagation()}><PlayBtn station={s} size={40} /></span>
+              <span onClick={(e) => e.stopPropagation()}><PlayBtn station={s} size={34} /></span>
             </div>
           );
         })}

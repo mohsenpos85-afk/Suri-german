@@ -139,6 +139,7 @@ export function HomeRadioCard({ onOpen, lang }) {
               <div className="s-radio-slide-n">{!isPlayable(s) && <Lock size={12} />} {s.name}</div>
               <div className="s-radio-slide-c" dir={langDir(lang)}>{tx.category}</div>
               <LevelChips s={s} />
+              <span onClick={(e) => e.stopPropagation()}><PlayBtn station={s} size={40} /></span>
             </div>
           );
         })}

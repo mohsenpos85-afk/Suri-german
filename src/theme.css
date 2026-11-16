@@ -342,7 +342,7 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
 .s-dt > * { position: relative; z-index: 1; }
 .s-dt .s-hex { max-width: 210px; }
 
-.s-dt-sq { aspect-ratio: 1 / 1; }
+.s-dt-sq { aspect-ratio: auto; }
 @media (min-width: 760px) {
   .s-dash { gap: 18px; }
   .s-dt { padding: 18px; }
@@ -353,3 +353,7 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
 .s-dt-head .s-dt-t { min-width: 0; overflow-wrap: anywhere; line-height: 1.2; }
 .s-dt .s-hex { width: 100%; max-width: 100%; height: auto; }
 .s-dt-amber, .s-dt-green { overflow: hidden; }
+/* tiles grow with their content (a fixed square clipped the pyramid and hexagon) */
+.s-dash .s-dt { aspect-ratio: auto; min-height: 0; }
+.s-dash .s-dt-amber, .s-dash .s-dt-green { min-height: 220px; }
+.s-dt-amber .s-dt-s, .s-dt-green .s-dt-s { margin-bottom: 6px; }

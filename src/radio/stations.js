@@ -34,21 +34,21 @@ export const STATIONS = [
     category: "Alltag, Kultur, junge Themen",
     description: "Wissen, Alltag und Kultur — gesprochen für ein junges Publikum.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunknova.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web", license: pending(),
   },
   {
     id: "dlf-kultur", playerPage: "https://consoles.radioplayer.cloud/276387/index.html", logo: "/radio/dlf-kultur.png", logoIcon: "/radio/dlf-kultur-icon.png", name: "Deutschlandfunk Kultur", levelMin: "B2", levelMax: "C2",
     category: "Kultur, Gesellschaft, Diskussionen",
     description: "Kultur, Gesellschaft und ausführliche Gespräche.",
     broadcaster: "Deutschlandradio", website: "https://www.deutschlandfunkkultur.de",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3?aggregator=web", license: pending(),
   },
   {
     id: "wdr5", playerPage: "https://www1.wdr.de/radio/player/radioplayer112~_layout-popupVersion.html", logo: "/radio/wdr5.png", logoIcon: "/radio/wdr5-icon.png", name: "WDR 5", levelMin: "B1", levelMax: "C2",
     category: "Interviews, Nachrichten, Alltag",
     description: "Wortprogramm mit Interviews, Nachrichten und Alltagsthemen.",
     broadcaster: "Westdeutscher Rundfunk (WDR)", website: "https://www.wdr.de/radio/wdr5/",
-    live: true, enabled: true, licenseStatus: "pending", streamUrl: null, license: pending(),
+    live: true, enabled: true, licenseStatus: "pending", streamUrl: "https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3", license: pending(),
   },
 ];
 

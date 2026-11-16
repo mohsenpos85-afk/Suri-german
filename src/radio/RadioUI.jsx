@@ -1,7 +1,7 @@
 // Radio & Hören: home card, internal screen, persistent mini player and full player.
 // All strings are German on purpose (the feature is about listening to German).
-import { stationText } from "./i18n.js";
-import { useEffect, useState } from "react";
+import { stationText, langDir } from "./i18n.js";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Radio, ChevronLeft, Play, Pause, Heart, Lock, Moon, Volume2, X, Headphones, Info, ExternalLink, Loader2 } from "lucide-react";
 import { LEVEL_PALETTE, A } from "../theme";
@@ -91,8 +91,8 @@ function StationCard({ s, onOpenFull, lang }) {
             {isRealLive(s) && <span className="s-radio-live"><i /> LIVE</span>}
             {isPreview(s) && <span className="s-radio-prev">Vorschau</span>}
           </div>
-          <div style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2 }}>{stationText(s, lang).category}</div>
-          <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>{stationText(s, lang).description}</div>
+          <div dir={langDir(lang)} style={{ fontSize: 12.5, color: "var(--acc-tx)", fontWeight: 700, marginTop: 2, textAlign: "start" }}>{stationText(s, lang).category}</div>
+          <div dir={langDir(lang)} style={{ fontSize: 13, color: "var(--muted)", marginTop: 4, lineHeight: 1.4, textAlign: "start" }}>{stationText(s, lang).description}</div>
           <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 6 }}>Sender: {s.broadcaster}</div>
           {why && <div className="s-radio-note"><Lock size={13} /> {why === "no-stream" && s.playerPage ? "Wird über den offiziellen Player des Senders geöffnet." : BLOCK_TEXT[why]}</div>}
         </div>
@@ -116,29 +116,37 @@ function StationCard({ s, onOpenFull, lang }) {
 }
 
 // ── Home card ──
-export function HomeRadioCard({ onOpen }) {
+export function HomeRadioCard({ onOpen, lang }) {
   const live = STATIONS.some(isRealLive);
+  const list = STATIONS;
+  const track = useRef(null);
+  const [idx, setIdx] = useState(0);
+  const go = (i) => { const el = track.current; if (!el) return; const n = Math.max(0, Math.min(list.length - 1, i)); el.scrollTo({ left: n * el.clientWidth, behavior: "smooth" }); };
+  const onScroll = () => { const el = track.current; if (!el || !el.clientWidth) return; setIdx(Math.round(el.scrollLeft / el.clientWidth)); };
   return (
-    <button type="button" className="s-radio-home s-dt s-dt-frost s-dt-sq" onClick={onOpen} aria-label="Radio & Hören öffnen">
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span className="s-plate" style={{ width: 46, height: 46, flexShrink: 0 }}><Headphones size={21} /></span>
-        <div style={{ flex: 1, minWidth: 0, textAlign: "start" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontWeight: 800, fontSize: 16, color: "var(--ink)" }}>Radio &amp; Hören</span>
-            {live && <span className="s-radio-live"><i /> LIVE</span>}
-          </div>
-          <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>Deutsch hören – jederzeit und überall</div>
-        </div>
+    <div className="s-radio-home s-dt s-dt-frost s-dt-sq" dir="ltr" role="region" aria-label="Radio & Hören">
+      <button type="button" className="s-radio-home-head" onClick={onOpen} aria-label="Radio & Hören öffnen">
+        <span className="s-dt-ic s-radio-home-ic"><Headphones size={17} /></span>
+        <span className="s-dt-t">Radio &amp; Hören</span>
+        {live && <span className="s-radio-live"><i /> LIVE</span>}
+      </button>
+      <div className="s-radio-track" ref={track} onScroll={onScroll} tabIndex={0} aria-label="Sender wechseln – nach links oder rechts wischen">
+        {list.map((s) => {
+          const tx = stationText(s, lang);
+          return (
+            <div key={s.id} className="s-radio-slide" role="button" tabIndex={-1} onClick={onOpen} aria-label={`${s.name} – Radio öffnen`}>
+              <StationLogo s={s} size={54} icon={26} plate={false} />
+              <div className="s-radio-slide-n">{!isPlayable(s) && <Lock size={12} />} {s.name}</div>
+              <div className="s-radio-slide-c" dir={langDir(lang)}>{tx.category}</div>
+              <LevelChips s={s} />
+            </div>
+          );
+        })}
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
-        {STATIONS.map((s) => (
-          <span key={s.id} className="s-radio-chip" style={{ opacity: isPlayable(s) ? 1 : 0.75 }}>
-            <StationLogo s={s} size={16} icon={11} plate={false} /> {!isPlayable(s) && <Lock size={11} />} {s.name}
-          </span>
-        ))}
+      <div className="s-radio-dots" role="tablist" aria-label="Sender">
+        {list.map((s, i) => <button key={s.id} type="button" role="tab" aria-selected={i === idx} aria-label={s.name} className={i === idx ? "on" : ""} onClick={() => go(i)} />)}
       </div>
-      <div style={{ marginTop: 12 }}><span className="s-cta" style={{ display: "inline-block" }}>Radio entdecken</span></div>
-    </button>
+    </div>
   );
 }
 
@@ -153,7 +161,7 @@ export function RadioScreen({ onClose, onNavigate, lang }) {
   const favs = all.filter((s) => r.favs.includes(s.id));
   const openFull = () => radio.openFull();
   return (
-    <div className="s-radio-screen" role="region" aria-label="Radio & Hören">
+    <div className="s-radio-screen" dir="ltr" role="region" aria-label="Radio & Hören">
       <div className="s-radio-wrap">
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
           <button type="button" className="s-capsule" onClick={onClose} aria-label="Zurück zur Startseite"><ChevronLeft size={18} /> Zurück</button>
@@ -241,7 +249,7 @@ export function RadioFullPlayer({ lang }) {
   const busy = r.status === "loading" || r.status === "buffering";
   const playing = r.status === "playing";
   return createPortal(
-    <div className="s-radio-full" role="dialog" aria-modal="true" aria-label={`Player: ${st.name}`}>
+    <div className="s-radio-full" dir="ltr" role="dialog" aria-modal="true" aria-label={`Player: ${st.name}`}>
       <div className="s-radio-fullin">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 13, fontWeight: 800, color: "var(--acc-tx)" }}>Radio &amp; Hören</span>
@@ -257,7 +265,7 @@ export function RadioFullPlayer({ lang }) {
           </div>
           <div style={{ marginTop: 6, display: "flex", justifyContent: "center", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             <LevelChips s={st} />
-            <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{stationText(st, lang).category}</span>
+            <span dir={langDir(lang)} style={{ fontSize: 12.5, color: "var(--muted)" }}>{stationText(st, lang).category}</span>
           </div>
           <div role="status" aria-live="polite" style={{ marginTop: 10, minHeight: 20, fontSize: 13.5, fontWeight: 700, color: r.status === "error" ? "#B3402F" : "var(--acc-tx)" }}>
             {statusLine(r, st)}
@@ -303,7 +311,7 @@ export function RadioMiniPlayer() {
   const busy = r.status === "loading" || r.status === "buffering";
   const playing = r.status === "playing";
   return (
-    <div className="s-radio-mini" role="region" aria-label="Radio-Player">
+    <div className="s-radio-mini" dir="ltr" role="region" aria-label="Radio-Player">
       <button type="button" className="s-radio-mini-main" onClick={() => radio.openFull()} aria-label={`Player öffnen: ${st.name}`}>
         <StationLogo s={st} size={38} icon={18} />
         <span style={{ minWidth: 0, textAlign: "start" }}>

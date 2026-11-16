@@ -232,7 +232,19 @@ html { color-scheme: only light; }
 .s-wotd-box { color: var(--ink, #16283A); }
 
 /* ── Radio & Hören ─────────────────────────────────────────────────────────── */
-.s-radio-home { display: block; width: 100%; font: inherit; text-align: start; cursor: pointer; }
+.s-dt.s-radio-home { width: 100%; font: inherit; text-align: center; align-items: stretch; padding: 12px 10px; gap: 6px; }
+.s-radio-home-head { display: flex; align-items: center; justify-content: center; gap: 7px; border: none; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.s-dt .s-radio-home-ic { width: 30px; height: 30px; border-radius: 11px; background: linear-gradient(150deg, var(--acc-lt), var(--acc)); color: #fff; }
+.s-radio-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; margin: 0 -10px; }
+.s-radio-track::-webkit-scrollbar { display: none; }
+.s-radio-slide { flex: 0 0 100%; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; text-align: center; cursor: pointer; min-width: 0; }
+.s-radio-slide .s-radio-logo { width: 54px !important; height: 54px !important; }
+.s-radio-slide-n { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: 14.5px; color: var(--ink); line-height: 1.2; }
+.s-radio-slide-c { font-size: 11.5px; font-weight: 700; color: var(--acc-tx); line-height: 1.3; }
+.s-radio-dots { display: flex; justify-content: center; gap: 5px; }
+.s-radio-dots button { width: 7px; height: 7px; padding: 0; border: none; border-radius: 99px; background: rgba(22,40,58,.22); cursor: pointer; transition: width .2s, background .2s; }
+.s-radio-dots button.on { width: 18px; background: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .s-radio-track { scroll-behavior: auto; } }
 .s-radio-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; color: var(--acc-tx); background: var(--surface-hi); box-shadow: var(--sh-press); }
 .s-radio-live { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 900; letter-spacing: .06em; color: #fff; background: #C2453A; }
 .s-radio-live i { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: radioBlink 1.4s ease-in-out infinite; }

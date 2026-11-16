@@ -67,3 +67,10 @@ export function stationText(s, lang) {
   const row = T[key]?.[s.id];
   return row ? { category: row[0], description: row[1] } : { category: s.category, description: s.description };
 }
+
+/** Text direction of the app language (German UI text is always LTR). */
+export function langDir(lang) {
+  if (lang === "ar" || lang === "fa") return "rtl";
+  if (lang === "ku") return kuDialect() === "kurmanji" ? "ltr" : "rtl";
+  return "ltr";
+}

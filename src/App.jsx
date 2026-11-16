@@ -4035,7 +4035,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
         {/* Word of the day */}
         <WordOfDay className="s-dt s-dt-purple s-dt-span2" lang={lang} favs={favs} toggleFav={toggleFav} speak={speakDe} tC={tC} tEx={tEx} tF={tF} />
 
-        {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} />}
+        {onOpenRadio && <HomeRadioCard onOpen={onOpenRadio} lang={lang} />}
 
         {/* Current level summary */}
         <div className="s-dt s-dt-rose s-dt-sq">

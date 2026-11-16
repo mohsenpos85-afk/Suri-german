@@ -347,3 +347,9 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
   .s-dash { gap: 18px; }
   .s-dt { padding: 18px; }
 }
+
+/* keep tile contents inside the tile on narrow phones */
+.s-dt-head { min-width: 0; }
+.s-dt-head .s-dt-t { min-width: 0; overflow-wrap: anywhere; line-height: 1.2; }
+.s-dt .s-hex { width: 100%; max-width: 100%; height: auto; }
+.s-dt-amber, .s-dt-green { overflow: hidden; }

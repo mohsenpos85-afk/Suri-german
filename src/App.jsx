@@ -4052,7 +4052,7 @@ function Home({ lang = "ku", setTab, setSpielInitialGame, progress = {}, onOpenD
           <div className="s-dt-s">{ht.pyramidSub}</div>
           <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
             <LevelPyramid levels={levelsWithStats} currentLevelId={currentLevelId}
-              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={wideTiles ? 0.8 : 0.62} />
+              selectedLevelId={selectedLevelId} onSelect={setSelectedLevelId} lang={lang} scale={wideTiles ? 0.8 : (typeof window !== "undefined" && window.innerWidth < 400 ? 0.46 : 0.52)} />
           </div>
         </div>
 

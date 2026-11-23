@@ -245,6 +245,9 @@ const C = {
   line: "var(--line)",
 };
 import { LEVELS, levelColor } from './data/levels';
+import PlacementTest, { placementLabels } from "./placement.jsx";
+import { lemmatize } from "./favs.js";
+import FavDetail, { favLabels } from "./favdetail.jsx";
 import { LESSONS } from './data/lessons';
 import { FLASHCARDS } from './data/flashcards';
 import { GRAMMAR, GTABLES, GEXAMPLES } from './data/grammar';
@@ -1951,11 +1954,27 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   );
 
   // Level
+  if (screen === "placement") return (
+    <W>
+      <PlacementTest lang={lang} kmj={_kd==="kurmanji"} dir={dir}
+        onUse={(lv) => { save("level", lv); go("level"); }}
+        onCancel={() => go("level")} />
+    </W>
+  );
+
   if (screen === "level") return (
     <W>
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("level_title")}</div>
       <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("level_sub")}</div>
       <img src="/ob-p3.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
+      <button type="button" onClick={() => go("placement")}
+        style={{ ...card(false), width:"100%", marginBottom:12, padding:"13px 16px", display:"flex", alignItems:"center", gap:12, textAlign:dir==="rtl"?"right":"left", fontFamily:"inherit", borderStyle:"dashed" }}>
+        <div style={{ width:40, height:40, borderRadius:12, background:"color-mix(in srgb, var(--acc) 14%, transparent)", color:"var(--acc-tx)", display:"grid", placeItems:"center", flexShrink:0 }}><Target size={19} /></div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontWeight:700, fontSize:14, color:"var(--ink)" }}>{placementLabels(lang, _kd==="kurmanji").open}</div>
+          <div style={{ fontSize:12, color:"var(--muted)", marginTop:2 }}>{placementLabels(lang, _kd==="kurmanji").openSub}</div>
+        </div>
+      </button>
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
         {OB_LEVELS.map(l => {
           const lbl = l.v==="none" ? t("lv_none") : l.v==="x" ? t("lv_x") : l.label;
@@ -12102,6 +12121,26 @@ function Flashcards({ fixedLevel, onBack, favs = [], toggleFav, lang = "ku" } = 
 const FAV_TYPE_LABEL = { noun:'Substantiv', verb:'Verb', adj:'Adjektiv', adv:'Adverb', phrase:'Phrasel' };
 
 function FavPage({ favs = [], toggleFav, lang = "ku" }) {
+  const [detail, setDetail] = useState(null);       // { w, L }
+  const [pressing, setPressing] = useState(null);   // lemma key of the card being pressed
+  const press = useRef({ timer: null, x: 0, y: 0 });
+  const cancelPress = () => { clearTimeout(press.current.timer); press.current.timer = null; setPressing(null); };
+  const openDetail = (g) => { cancelPress(); try { navigator.vibrate?.(12); } catch { /* no haptics */ } setDetail(g); };
+  useEffect(() => () => clearTimeout(press.current.timer), []);
+
+  // Every favourite is shown in its base form (infinitive / article + singular); entries with the same base are merged.
+  const groups = useMemo(() => {
+    const map = new Map();
+    favs.forEach((w) => {
+      const L = lemmatize(w.de);
+      const key = L.de.toLowerCase();
+      if (!map.has(key)) map.set(key, { key, L, w: L.entry ? { ...w, ...L.entry } : w, items: [] });
+      map.get(key).items.push(w);
+    });
+    return [...map.values()];
+  }, [favs]);
+  const fl = favLabels(lang);
+
   if (favs.length === 0) {
     return (
       <div className="rise" style={{ textAlign:"center", padding:"64px 0" }}>
@@ -12116,6 +12155,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
       </div>
     );
   }
+  const KIND_LABEL = { verb:"Verb", noun:"Substantiv", adj:"Adjektiv" };
   return (
     <div className="rise">
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
@@ -12125,18 +12165,29 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
         </div>
         <div>
           <h2 style={{ fontWeight:800, fontSize:22, margin:0 }}>{tApp(lang,"fav_title")}</h2>
-          <div style={{ fontSize:13, color:"var(--muted)", marginTop:1 }}>{favs.length} {tApp(lang,"fav_words")}</div>
+          <div style={{ fontSize:13, color:"var(--muted)", marginTop:1 }}>{groups.length} {tApp(lang,"fav_words")} · {fl.hold}</div>
         </div>
       </div>
 
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-        {favs.map((w, i) => {
-          const artInfo = detectArticle(w.de);
-          const displayWord = artInfo ? w.de.slice(w.de.indexOf(" ") + 1) : w.de;
+        {groups.map((g, i) => {
+          const { L, w } = g;
+          const artInfo = detectArticle(L.de);
+          const displayWord = artInfo ? L.de.slice(L.de.indexOf(" ") + 1) : L.de;
           const dictEntry = BOOK_DICT[displayWord.toLowerCase()];
-          const typeLabel = dictEntry && FAV_TYPE_LABEL[dictEntry.type];
+          const typeLabel = KIND_LABEL[L.kind] || (dictEntry && FAV_TYPE_LABEL[dictEntry.type]);
           return (
-            <div key={w.de} className="rise"
+            <div key={g.key} className={`rise s-fav-card${pressing === g.key ? " pressing" : ""}`}
+              onPointerDown={(e) => {
+                if (e.target.closest("button")) return;
+                press.current.x = e.clientX; press.current.y = e.clientY;
+                clearTimeout(press.current.timer);
+                setPressing(g.key);
+                press.current.timer = setTimeout(() => openDetail(g), 450);
+              }}
+              onPointerMove={(e) => { if (press.current.timer && (Math.abs(e.clientX - press.current.x) > 10 || Math.abs(e.clientY - press.current.y) > 10)) cancelPress(); }}
+              onPointerUp={cancelPress} onPointerCancel={cancelPress} onPointerLeave={cancelPress}
+              onContextMenu={(e) => { e.preventDefault(); openDetail(g); }}
               style={{ background:"var(--surface)", borderRadius:16, border:"1.5px solid var(--line)",
                 boxShadow:"0 2px 0 rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.06)",
                 display:"flex", alignItems:"stretch", overflow:"hidden" }}>
@@ -12159,13 +12210,17 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
                       padding:"1px 8px", borderRadius:99 }}>{artInfo.art}</span>
                   )}
                   <span style={{ fontWeight:800, fontSize:15, color:"var(--ink)" }} dir="ltr">{displayWord}</span>
+                  {L.prep && (
+                    <span style={{ background:"var(--surface-hi)", color:"var(--acc-tx)", fontSize:12, fontWeight:800,
+                      padding:"1px 8px", borderRadius:99 }} dir="ltr">+ {L.prep}</span>
+                  )}
                   {typeLabel && (
                     <span style={{ background:"var(--surface-hi)", color:"var(--muted)", fontSize:12, fontWeight:700,
                       padding:"1px 8px", borderRadius:99 }}>{typeLabel}</span>
                   )}
-                  <Speak text={w.de} size={14} />
+                  <Speak text={L.de} size={14} />
                 </div>
-                <div style={{ fontWeight:700, fontSize:13, color:"var(--acc-tx)" }}>{tC(w, lang)}</div>
+                <div style={{ fontWeight:700, fontSize:13, color:"var(--acc-tx)" }}>{tC(w, lang) || tC(g.items[0], lang)}</div>
                 {w.ex && (
                   <>
                     <div style={{ fontSize:12, color:"#5A6480", fontStyle:"italic" }} dir="ltr">{w.ex}</div>
@@ -12179,7 +12234,7 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
               {/* Remove button */}
               <div style={{ width:64, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
                 borderLeft:"1.5px solid #F0F1F5" }}>
-                <button onClick={() => toggleFav(w)}
+                <button onClick={() => g.items.forEach((it) => toggleFav(it))}
                   style={{ background:"rgba(239,68,68,.1)", border:"none", borderRadius:12, cursor:"pointer",
                     padding:"8px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
                   <Heart size={18} fill="#ef4444" color="#ef4444" />
@@ -12190,6 +12245,12 @@ function FavPage({ favs = [], toggleFav, lang = "ku" }) {
           );
         })}
       </div>
+
+      {detail && (
+        <FavDetail w={detail.w} L={detail.L} lang={lang} translation={tC(detail.w, lang)}
+          ownExample={detail.w.ex} ownExampleTr={tEx(detail.w, lang)} speak={speakDe} callClaude={callClaude}
+          onClose={() => setDetail(null)} />
+      )}
     </div>
   );
 }

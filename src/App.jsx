@@ -1702,7 +1702,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       `}</style>
     </div>
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [screen, animKey, progress, progressIdx, dir, go, authMode]);
+  ), [screen, animKey, progress, progressIdx, go, authMode]);
 
   // ══ SCREENS ═════════════════════════════════════════════════════
 

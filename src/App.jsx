@@ -9049,38 +9049,66 @@ const UBUNG_SECTIONS = [
   { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"var(--acc-dk)" },
 ];
 
-// ── Topic boxes: replaces the wheel pickers. A list of tappable boxes; tapping one opens its content. ──
-function TopicBoxes({ items, selIdx, onSelect, open, setOpen, getTitle, getSub, getIcon, getColor, getProgress, lang }) {
-  const sel = items[selIdx];
-  const chev = (rot) => (
+// ── Topic boxes (accordion): tap a box → it glows neon and its content slides open right below it;
+//    tapping another box closes the previous one. The tapped box stays fixed under the finger. ──
+function tbScroller(el) {
+  let n = el && el.parentElement;
+  while (n && n !== document.body) {
+    const oy = getComputedStyle(n).overflowY;
+    if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight) return n;
+    n = n.parentElement;
+  }
+  return document.scrollingElement || document.documentElement;
+}
+function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang }) {
+  const [openIdx, setOpenIdx] = useState(null);
+  const [closingIdx, setClosingIdx] = useState(null);
+  const tRef = useRef(null);
+  useEffect(() => () => clearTimeout(tRef.current), []);
+  const chev = (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="s-tb-chev"><path d="M9 6l6 6-6 6" /></svg>
   );
-  if (open && sel) {
-    const col = getColor(sel, selIdx);
-    return (
-      <button className="s-tb-bar" onClick={() => { setOpen(false); try { window.scrollTo({ top: 0 }); } catch (e) {} }} style={{ "--tb": col }}>
-        <span className="s-tb-back">{chev(true)}</span>
-        <span className="s-tb-ico s-tb-ico-s">{getIcon(sel)}</span>
-        <span className="s-tb-txt"><b>{getTitle(sel)}</b><i>{getSub(sel)}</i></span>
-      </button>
-    );
+  function toggle(i, ev) {
+    const btn = ev.currentTarget;
+    const top0 = btn.getBoundingClientRect().top;
+    const sc = tbScroller(btn);
+    const t0 = performance.now();
+    // keep the tapped box exactly where the finger touched while other panels expand/collapse
+    const hold = () => {
+      const d = btn.getBoundingClientRect().top - top0;
+      if (Math.abs(d) > 0.4) { if (sc === document.scrollingElement || sc === document.documentElement) window.scrollBy(0, d); else sc.scrollTop += d; }
+      if (performance.now() - t0 < 620) requestAnimationFrame(hold);
+    };
+    requestAnimationFrame(hold);
+    if (openIdx === i) { setClosingIdx(i); setOpenIdx(null); }
+    else { if (openIdx !== null) setClosingIdx(openIdx); setOpenIdx(i); onSelect && onSelect(i); }
+    clearTimeout(tRef.current);
+    tRef.current = setTimeout(() => setClosingIdx(null), 620);
   }
   return (
     <div className="s-tb-list">
       {items.map((it, i) => {
         const col = getColor(it, i);
         const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
+        const on = openIdx === i;
+        const mounted = on || closingIdx === i;
         return (
-          <button key={i} className="s-tb-box" style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 28}ms` }}
-            onClick={() => { onSelect(i); setOpen(true); try { window.scrollTo({ top: 0 }); } catch (e) {} }}>
-            <span className="s-tb-ico">{getIcon(it)}</span>
-            <span className="s-tb-txt">
-              <b>{getTitle(it)}</b>
-              <i>{getSub(it)}</i>
-              {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
-            </span>
-            {pr >= 95 ? <span className="s-tb-done">✓</span> : chev(false)}
-          </button>
+          <div key={i} className={"s-tb-item" + (on ? " on" : "")} style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 28}ms` }}>
+            <button className="s-tb-box" aria-expanded={on} onClick={(ev) => toggle(i, ev)}>
+              <span className="s-tb-ico">{getIcon(it)}</span>
+              <span className="s-tb-txt">
+                <b>{getTitle(it)}</b>
+                <i>{getSub(it)}</i>
+                {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
+              </span>
+              {pr >= 95 ? <span className="s-tb-done">✓</span> : <span className="s-tb-arrow">{chev}</span>}
+            </button>
+            <div className="s-tb-panel" aria-hidden={!on}>
+              <div className="s-tb-panel-in">
+                <div className="s-tb-panel-pad">{mounted && renderContent ? renderContent(it, i) : null}</div>
+              </div>
+            </div>
+          </div>
         );
       })}
     </div>
@@ -10055,8 +10083,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [expandedVerb, setExpandedVerb] = useState(null);  // expanded verb card index
   const [openWordsSub, setOpenWordsSub] = useState(null);  // "fiil" | "vocab" | "adj" | null
   useEffect(() => { setOpenWordsSub(null); }, [mode, level]);
-  const [topicOpen, setTopicOpen] = useState(false);   // a topic box is open (content visible)
-  useEffect(() => { setTopicOpen(false); }, [mode, level, openWordsSub]);
   const [selGrammarIdx, setSelGrammarIdx] = useState(0);  // wheel picker: selected grammar index
   const [selVerbIdx,    setSelVerbIdx]    = useState(0);  // wheel picker: selected verb index
   const [selVocabIdx,   setSelVocabIdx]   = useState(0);  // wheel picker: selected vocab topic index
@@ -10073,7 +10099,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   useNavLayer(!!examLevel, () => setExamLevel(null), { depth: 4 });
   useNavLayer(!!openDialogId, () => setOpenDialogId(null), { depth: 3 });
   useNavLayer(!!openWordsSub, () => setOpenWordsSub(null), { depth: 3 });
-  useNavLayer(topicOpen, () => setTopicOpen(false), { depth: 4 });
   useNavLayer(!!selMasalId, () => setSelMasalId(null), { depth: 3 });
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
@@ -10783,39 +10808,25 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "ubung" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
-            getTitle={(x)=>x.label} getSub={(x)=>tF(x, lang, 'sub')} getIcon={(x)=>x.emoji} getColor={(x)=>x.color} />
+          <TopicBoxes items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} lang={lang}
+            getTitle={(x)=>x.label} getSub={(x)=>tF(x, lang, 'sub')} getIcon={(x)=>x.emoji} getColor={(x)=>x.color}
+            renderContent={(x, idx) => {
+              switch (idx) {
+                case 0: return <DragDropExercise key={level || "A1"} exercises={sbForLevel(level || "A1")} lang={lang} open={true} onToggle={()=>{}} />;
+                case 1: return <LesenASection lang={lang} open={true} onToggle={()=>{}} />;
+                case 2: return <LesenBSection lang={lang} open={true} onToggle={()=>{}} />;
+                case 3: return <LesenCSection lang={lang} open={true} onToggle={()=>{}} />;
+                case 4: return <SchreibenASection lang={lang} open={true} onToggle={()=>{}} />;
+                case 5: return <SchreibenBSection lang={lang} open={true} onToggle={()=>{}} />;
+                case 6: return <MündlichASection lang={lang} open={true} onToggle={()=>{}} />;
+                case 7: return <MündlichBSection lang={lang} open={true} onToggle={()=>{}} />;
+                case 8: return <UbungQuiz level={level} kind="luecke" lang={lang} accent={UBUNG_SECTIONS[8].color} />;
+                case 9: return <UbungQuiz level={level} kind="trans" lang={lang} accent={UBUNG_SECTIONS[9].color} />;
+                default: return <UbungQuiz level={level} kind="satz" lang={lang} accent={UBUNG_SECTIONS[10].color} />;
+              }
+            }} />
 
-          {topicOpen && (<div>
-          {/* Section bodies — only selected is visible; all stay mounted to preserve state */}
-          <div style={{ display: selUbungIdx===0 ? "" : "none" }}>
-            <DragDropExercise key={level || "A1"} exercises={sbForLevel(level || "A1")} lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===1 ? "" : "none" }}>
-            <LesenASection     lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===2 ? "" : "none" }}>
-            <LesenBSection     lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===3 ? "" : "none" }}>
-            <LesenCSection     lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===4 ? "" : "none" }}>
-            <SchreibenASection lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===5 ? "" : "none" }}>
-            <SchreibenBSection lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===6 ? "" : "none" }}>
-            <MündlichASection  lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          <div style={{ display: selUbungIdx===7 ? "" : "none" }}>
-            <MündlichBSection  lang={lang} open={true} onToggle={()=>{}} />
-          </div>
-          {selUbungIdx===8  && <UbungQuiz level={level} kind="luecke" lang={lang} accent={UBUNG_SECTIONS[8].color} />}
-          {selUbungIdx===9  && <UbungQuiz level={level} kind="trans"  lang={lang} accent={UBUNG_SECTIONS[9].color} />}
-          {selUbungIdx===10 && <UbungQuiz level={level} kind="satz"   lang={lang} accent={UBUNG_SECTIONS[10].color} />}
-          </div>)}
+          
         </div>
       )}
 
@@ -10904,15 +10915,16 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "grammar" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+          <TopicBoxes items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} lang={lang}
             getTitle={(x)=>tC(x, lang)} getSub={(x)=>x.de} getIcon={(x)=>x.icon}
             getColor={(x)=>((progress[level + "::" + x.de] || 0) >= 95 ? "#16A06F" : levelColor(level))}
-            getProgress={(x)=>progress[level + "::" + x.de] || 0} />
-          {/* Inline grammar content for selected item */}
-          {topicOpen && selectedGrammar && (
+            getProgress={(x)=>progress[level + "::" + x.de] || 0}
+            renderContent={(selectedGrammar) => (
             <GrammarContent key={selectedGrammar.de} g={selectedGrammar}
               level={level} progress={progress} mkBatch={mkBatch} lang={lang} />
-          )}
+          )} />
+          {/* Inline grammar content for selected item */}
+          
         </div>
       )}
 
@@ -10936,10 +10948,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             </div>
             <div style={{ display: openWordsSub==="fiil" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Verb category picker */}
-              <TopicBoxes items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
-                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"} />
-              {/* Selected verb category words */}
-              {topicOpen && selectedVerb && (
+              <TopicBoxes items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"}
+            renderContent={(selectedVerb) => (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
@@ -10974,7 +10985,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     ))}
                   </div>
                 </div>
-              )}
+              )} />
+              {/* Selected verb category words */}
+              
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
                 <AITest subject={lang === "tr" ? `${level} seviyesi Almanca fiiller (çekim ve cümlede kullanım)` : lang === "en" ? `German verbs at ${level} level (conjugation and use in sentences)` : lang === "ar" ? `الأفعال الألمانية لمستوى ${level} (التصريف والاستخدام في الجمل)` : lang === "fa" ? `فعل‌های آلمانی در سطح ${level} (صرف و کاربرد در جمله)` : lang === "es" ? `Verbos alemanes de nivel ${level} (conjugación y uso en frases)` : lang === "uk" ? `Німецькі дієслова рівня ${level} (відмінювання та вживання в реченнях)` : `کرداری ئەڵمانی ئاستی ${level} (کێشان و بەکارهێنانیان لە ناو ڕستەدا)`} level={level}
@@ -11001,10 +11014,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             </div>
             <div style={{ display: openWordsSub==="vocab" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Vocab topic wheel picker */}
-              <TopicBoxes items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
-                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${STAT_LABEL.word[lang] || STAT_LABEL.word.ku}`} getIcon={(x)=>x.icon} getColor={()=>"#3E5A7A"} />
-              {/* Selected vocab topic words */}
-              {topicOpen && selectedVocab && (
+              <TopicBoxes items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${STAT_LABEL.word[lang] || STAT_LABEL.word.ku}`} getIcon={(x)=>x.icon} getColor={()=>"#3E5A7A"}
+            renderContent={(selectedVocab) => (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
@@ -11040,7 +11052,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     ))}
                   </div>
                 </div>
-              )}
+              )} />
+              {/* Selected vocab topic words */}
+              
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
                 <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "fa" ? `واژه‌های آلمانی در سطح ${level}، موضوع‌ها: ${vocabList.map((l) => l.title).join("، ")}` : lang === "es" ? `Palabras alemanas de nivel ${level}, temas: ${vocabList.map((l) => l.title).join(", ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
@@ -11066,10 +11080,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
             </div>
             <div style={{ display: openWordsSub==="adj" ? "" : "none", borderTop:"1px solid var(--line)" }}>
-              <TopicBoxes items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
-                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"} />
-              {/* Selected adjective category words */}
-              {topicOpen && selectedAdj && (
+              <TopicBoxes items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"}
+            renderContent={(selectedAdj) => (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
@@ -11104,7 +11117,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     ))}
                   </div>
                 </div>
-              )}
+              )} />
+              {/* Selected adjective category words */}
+              
               {/* AI */}
               <div style={{ margin:"0 12px 14px" }}>
                 <AITest subject={lang === "tr" ? `${level} seviyesi Almanca sıfatlar ve kullanımları` : lang === "en" ? `German adjectives at ${level} level and their usage` : lang === "ar" ? `الصفات الألمانية لمستوى ${level} واستخداماتها` : lang === "fa" ? `صفت‌های آلمانی در سطح ${level} و کاربردشان` : lang === "es" ? `Adjetivos alemanes de nivel ${level} y su uso` : lang === "uk" ? `Німецькі прикметники рівня ${level} та їх вживання` : `ئەپیتافەکانی ئەڵمانی ئاستی ${level} و بەکارهێنانیان`} level={level}

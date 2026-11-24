@@ -9049,6 +9049,39 @@ const UBUNG_SECTIONS = [
   { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"var(--acc-dk)" },
 ];
 
+// ── Page-hold helper: swaps of tall content must never move the page under the user's finger. ──
+// Keeps the tapped element fixed on screen and adds a temporary bottom cushion so the browser can't clamp the scroll
+// when the new content is shorter; the cushion shrinks away again as the user scrolls back up.
+let _pageSpacer = null;
+function pageSpacer() {
+  if (_pageSpacer && document.body.contains(_pageSpacer)) return _pageSpacer;
+  _pageSpacer = document.createElement("div");
+  _pageSpacer.setAttribute("aria-hidden", "true");
+  _pageSpacer.style.cssText = "height:0;pointer-events:none;";
+  document.body.appendChild(_pageSpacer);
+  window.addEventListener("scroll", pageSettle, { passive: true });
+  return _pageSpacer;
+}
+function pageSettle() {
+  const sp = _pageSpacer; if (!sp) return;
+  const h = parseFloat(sp.style.height) || 0; if (!h) return;
+  const nat = document.documentElement.scrollHeight - h;
+  sp.style.height = Math.max(0, window.scrollY + window.innerHeight - nat) + "px";
+}
+function pageClear() { if (_pageSpacer) _pageSpacer.style.height = "0px"; }
+function pageHold(btn, ms = 900) {
+  const sp = pageSpacer();
+  const top0 = btn.getBoundingClientRect().top;
+  const t0 = performance.now();
+  sp.style.height = ((parseFloat(sp.style.height) || 0) + document.documentElement.scrollHeight) + "px";
+  const loop = () => {
+    const d = btn.getBoundingClientRect().top - top0;
+    if (Math.abs(d) > 0.4) window.scrollBy(0, d);
+    if (performance.now() - t0 < ms) requestAnimationFrame(loop); else pageSettle();
+  };
+  requestAnimationFrame(loop);
+}
+
 // ── Topic boxes (accordion): tap a box → it glows neon and its content slides open right below it;
 //    tapping another box closes the previous one. The tapped box stays fixed under the finger. ──
 function tbScroller(el) {
@@ -9087,16 +9120,7 @@ function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getCol
     const btn = ev.currentTarget;
     // remember current content height (start point of the height animation)
     prevH.current = innerRef.current ? innerRef.current.offsetHeight : 0;
-    // keep the tapped box exactly where the finger touched
-    const top0 = btn.getBoundingClientRect().top;
-    const sc = tbScroller(btn);
-    const t0 = performance.now();
-    const hold = () => {
-      const d = btn.getBoundingClientRect().top - top0;
-      if (Math.abs(d) > 0.4) { if (sc === document.scrollingElement || sc === document.documentElement) window.scrollBy(0, d); else sc.scrollTop += d; }
-      if (performance.now() - t0 < 700) requestAnimationFrame(hold);
-    };
-    requestAnimationFrame(hold);
+    pageHold(btn, 800);
     // centre the tapped box inside the horizontal strip (horizontal only — never vertical)
     const strip = stripRef.current;
     if (strip) {
@@ -10115,7 +10139,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   useNavLayer(!!selMasalId, () => setSelMasalId(null), { depth: 3 });
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
-  useEffect(() => { setSelGrammarIdx(0); setSelVerbIdx(0); setSelVocabIdx(0); setSelUbungIdx(0); setSelMasalId(null); window.scrollTo(0, 0); }, [mode, level]);
+  useEffect(() => { setSelGrammarIdx(0); setSelVerbIdx(0); setSelVocabIdx(0); setSelUbungIdx(0); setSelMasalId(null); }, [mode, level]);
 
   // ── Scroll management inside Lessons ────────────────────────────
   // Sadece yeni seviyeye ilk girildiğinde başa scroll yap.
@@ -10146,8 +10170,12 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
 
   // mode (tab pill) geçişinde scroll kaydet/geri yükle
   const modeScrollRef = useRef({});
-  const goToMode = (newMode) => {
+  useEffect(() => () => pageClear(), []);
+  useEffect(() => { pageClear(); }, [level]);
+  const goToMode = (newMode, ev) => {
     if (newMode === mode) return;
+    const btn = ev && ev.currentTarget;
+    if (btn) { pageHold(btn, 900); setMode(newMode); return; }
     modeScrollRef.current[mode] = window.scrollY;
     setMode(newMode);
     const saved = modeScrollRef.current[newMode];
@@ -10559,7 +10587,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                     examLockMsgTimer.current = setTimeout(() => setExamLockMsg(null), 2500);
                     return;
                   }
-                  goToMode(tb.id);
+                  goToMode(tb.id, e);
                 }}>
                 <span className="s-lv-ico"><tb.Icon size={22} strokeWidth={1.75} /></span>
                 <span className="s-lv-lbl">{tb.label}{tb.id === "exam" && examUnlocked ? " ✓" : ""}</span>

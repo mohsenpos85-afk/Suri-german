@@ -245,6 +245,8 @@ const C = {
   line: "var(--line)",
 };
 import { LEVELS, levelColor } from './data/levels';
+import { HorDiktat, VerbJagd, PrapBruecke, Wortschlange, FehlerDetektiv, RadioQuiz } from "./games/games.jsx";
+import { GAME_NAMES as PK_NAMES, packDesc as pkDesc } from "./games/labels.js";
 import PlacementTest, { placementLabels, ChoiceScreen } from "./placement.jsx";
 import { lemmatize } from "./favs.js";
 import FavDetail, { favLabels } from "./favdetail.jsx";
@@ -12624,13 +12626,23 @@ function tSpiel(lang, key) {
   const d = SPIEL_T[lang] || SPIEL_T.en;
   return d[key] ?? (SPIEL_T.en[key] ?? key);
 }
+// names/descriptions of the newer mini-games live in src/games/labels.js
+function tSpielCard(lang, g) {
+  if (g.pk) return { name: PK_NAMES[g.pk], desc: pkDesc(lang, g.pk) };
+  return { name: tSpiel(lang, g.nameKey), desc: null };
+}
 
 const SPIEL_GAMES = [
   { id:"word-match", icon:"🃏", img:"/game-wordmatch.jpg", nameKey:"wm_name", descKey:"wm_desc", color:"var(--acc-tx)", ready:true  },
   { id:"artikel",    icon:"🎯", img:"/game-artikel.jpg",   nameKey:"aq_name", descKey:"aq_desc", color:"#C93A3F", ready:true, pos:"center top" },
   { id:"sentence",   icon:"🧩", img:"/game-sentence.jpg",  nameKey:"sp_name", descKey:"sp_desc", color:"#1F8A57", ready:true, pos:"center top" },
   { id:"zahlkode",   icon:"🔢", img:"/game-zahlkode.jpg",  nameKey:"zk_name", descKey:"zk_desc", color:"#B45309", ready:true  },
-  { id:"listen",     icon:"🎧", img:"/game-listen.jpg",    nameKey:"li_name", descKey:"li_desc", color:"#F76B15", ready:false },
+  { id:"hor-diktat",  pk:"hd", icon:"🎧", color:"#F76B15", ready:true, lv:"A1–C2" },
+  { id:"verb-jagd",   pk:"vj", icon:"🏹", color:"#C93A3F", ready:true, lv:"A1–B1" },
+  { id:"prap-bruecke",pk:"pb", icon:"🌉", color:"#0E7C86", ready:true, lv:"A1–B2" },
+  { id:"wortschlange",pk:"ws", icon:"🐍", color:"#1F8A57", ready:true, lv:"A1–C2" },
+  { id:"fehler-detektiv",pk:"fd", icon:"🔍", color:"#7A4FD0", ready:true, lv:"A1–B2" },
+  { id:"radio-quiz",  pk:"rq", icon:"📻", color:"#E8590C", ready:true, lv:"A2–B1" },
 ];
 
 // ── Satz Puzzle — veri ────────────────────────────────────────────────
@@ -21136,6 +21148,12 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
   if (activeGame === 'sentence')   return <SatzPuzzle lang={lang} onBack={()=>setActiveGame(null)} />;
   if (activeGame === 'journey')    return <JourneyScreen lang={lang} onBack={()=>setActiveGame(null)} onPractice={()=>setActiveGame('artikel')} />;
   if (activeGame === 'zahlkode')   return <ZahlkodeGame lang={lang} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'hor-diktat')      return <HorDiktat lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'verb-jagd')       return <VerbJagd lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'prap-bruecke')    return <PrapBruecke lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'wortschlange')    return <Wortschlange lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'fehler-detektiv') return <FehlerDetektiv lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
+  if (activeGame === 'radio-quiz')      return <RadioQuiz lang={lang} addXp={addXp} onBack={()=>setActiveGame(null)} />;
 
   return (
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
@@ -21165,8 +21183,8 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
               boxShadow:"0 2px 12px rgba(0,0,0,.06)", position:"relative", overflow:"hidden",
               opacity: g.ready ? 1 : 0.68, cursor: g.ready ? "pointer" : "default",
               transition:"transform .15s, box-shadow .15s",
-              minHeight:180, display:"flex", flexDirection:"column", justifyContent:"flex-end",
-              backgroundColor:"#fff",
+              minHeight: g.img ? 180 : 0, display:"flex", flexDirection:"column", justifyContent:"flex-end",
+              backgroundColor:"var(--surface)",
               backgroundImage: g.img
                 ? `linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.78) 100%), url(${g.img})`
                 : "none",
@@ -21180,19 +21198,29 @@ function DasSpiel({ lang = "ku", initialGame = null, onConsumeInitialGame, setTa
                 {tSpiel(lang,"soon")}
               </div>
             )}
+            {(() => { const cd = tSpielCard(lang, g); return (
             <div style={{ position:"relative", zIndex:1, padding:"14px 20px" }}>
               {!g.img && (
-                <div style={{ width:44, height:44, borderRadius:14,
-                  background:`${A(g.color,"18")}`, display:"grid", placeItems:"center",
-                  fontSize:22, marginBottom:14 }}>
-                  {g.icon}
+                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                  <div style={{ width:56, height:56, borderRadius:18, flexShrink:0,
+                    background:`linear-gradient(145deg, ${A(g.color,"33")}, ${A(g.color,"10")})`,
+                    border:`1px solid ${A(g.color,"40")}`, display:"grid", placeItems:"center", fontSize:28 }}>
+                    {g.icon}
+                  </div>
+                  <div style={{ minWidth:0, flex:1 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <div style={{ fontWeight:800, fontSize:17, color:"var(--ink)" }}>{cd.name}</div>
+                      {g.lv && <span style={{ fontSize:11, fontWeight:800, padding:"2px 8px", borderRadius:99, background:A(g.color,"1c"), color:g.color }}>{g.lv}</span>}
+                    </div>
+                    {cd.desc && <div style={{ fontSize:13, color:"var(--muted)", marginTop:3, lineHeight:1.4 }}>{cd.desc}</div>}
+                  </div>
                 </div>
               )}
-              <div style={{ fontWeight:700, fontSize:16, color: g.img ? "#fff" : "#1a1a2e",
-                textShadow: g.img ? "0 2px 6px rgba(0,0,0,.5)" : "none" }}>
-                {tSpiel(lang, g.nameKey)}
-              </div>
+              {g.img && (
+                <div style={{ fontWeight:700, fontSize:16, color:"#fff", textShadow:"0 2px 6px rgba(0,0,0,.5)" }}>{cd.name}</div>
+              )}
             </div>
+            ); })()}
           </div>
         ))}
       </div>

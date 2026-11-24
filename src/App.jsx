@@ -245,7 +245,7 @@ const C = {
   line: "var(--line)",
 };
 import { LEVELS, levelColor } from './data/levels';
-import PlacementTest, { placementLabels } from "./placement.jsx";
+import PlacementTest, { placementLabels, ChoiceScreen } from "./placement.jsx";
 import { lemmatize } from "./favs.js";
 import FavDetail, { favLabels } from "./favdetail.jsx";
 import { LESSONS } from './data/lessons';
@@ -1546,6 +1546,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
     return { goals: stored.goals || [], focus: stored.focus || [], ...(stored.lang ? { lang: stored.lang } : {}) };
   });
   // auth sub-states
+  const [placeFrom, setPlaceFrom] = useState("choice");
   const [authMode, setAuthMode]   = useState("main"); // main|email|forgot_email|forgot_otp|forgot_newpw|check_email
   const [email, setEmail]         = useState("");
   const [name, setName]           = useState("");
@@ -1940,7 +1941,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       <button
         className="ob-btn"
         disabled={!answers.lang || (answers.lang === "ku" && !answers.kuDialect)}
-        onClick={() => go("level")}
+        onClick={() => go("choice")}
         style={{
           marginTop:20, width:"100%", padding:"16px", fontSize:16,
           background: (answers.lang && !(answers.lang === "ku" && !answers.kuDialect)) ? "linear-gradient(135deg,var(--acc-btn),var(--acc-dk))" : "#E4E4E7",
@@ -1954,11 +1955,22 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
   );
 
   // Level
+  if (screen === "choice") return (
+    <W>
+      <ChoiceScreen lang={lang} kmj={_kd==="kurmanji"} dir={dir}
+        onTest={() => { setPlaceFrom("choice"); go("placement"); }}
+        onDirect={() => { if (!answers.level) save("level", "x"); go("auth"); }} />
+    </W>
+  );
+
   if (screen === "placement") return (
     <W>
       <PlacementTest lang={lang} kmj={_kd==="kurmanji"} dir={dir}
-        onUse={(lv) => { save("level", lv); go("level"); }}
-        onCancel={() => go("level")} />
+        levelText={(v) => v === "none" ? { label: t("lv_none"), sub: t("lv_none_s") }
+          : v === "C2" ? { label: "C2 — Proficient", sub: t("lv_C1_s") }
+          : { label: OB_LEVELS.find(l => l.v === v)?.label || v, sub: t(`lv_${v}_s`) }}
+        onUse={(lv) => { save("level", lv); go("goals"); }}
+        onCancel={() => go(placeFrom)} />
     </W>
   );
 
@@ -1967,7 +1979,7 @@ function OnboardingSystem({ onDone, startAt = "welcome" }) {
       <div style={{ fontFamily:"'Satoshi',system-ui,sans-serif", fontWeight:800, fontSize:22, color:"var(--ink)", marginBottom:6, textAlign:"center", direction:dir }}>{t("level_title")}</div>
       <div style={{ fontSize:14, color:"var(--muted)", marginBottom:16, textAlign:"center", direction:dir }}>{t("level_sub")}</div>
       <img src="/ob-p3.png" alt="" style={{ width:130, height:130, objectFit:"contain", filter:"drop-shadow(0 16px 32px rgba(255,140,0,.4))", display:"block", margin:"0 auto 20px" }} />
-      <button type="button" onClick={() => go("placement")}
+      <button type="button" onClick={() => { setPlaceFrom("level"); go("placement"); }}
         style={{ ...card(false), width:"100%", marginBottom:12, padding:"13px 16px", display:"flex", alignItems:"center", gap:12, textAlign:dir==="rtl"?"right":"left", fontFamily:"inherit", borderStyle:"dashed" }}>
         <div style={{ width:40, height:40, borderRadius:12, background:"color-mix(in srgb, var(--acc) 14%, transparent)", color:"var(--acc-tx)", display:"grid", placeItems:"center", flexShrink:0 }}><Target size={19} /></div>
         <div style={{ flex:1, minWidth:0 }}>

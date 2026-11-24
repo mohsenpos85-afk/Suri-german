@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react"; // ku
+import { useState, useRef, useEffect, useMemo, useCallback, useLayoutEffect } from "react"; // ku
 import { createPortal } from "react-dom";
 import { supabase } from "./lib/supabase.js";
 import { startSync, stopSync, syncNow, clearLocalState } from "./lib/sync.js";
@@ -9062,57 +9062,80 @@ function tbScroller(el) {
 }
 function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang }) {
   const [openIdx, setOpenIdx] = useState(null);
-  const [closingIdx, setClosingIdx] = useState(null);
-  const tRef = useRef(null);
-  useEffect(() => () => clearTimeout(tRef.current), []);
+  const stageRef = useRef(null);
+  const innerRef = useRef(null);
+  const stripRef = useRef(null);
+  const prevH = useRef(0);
+  const tmRef = useRef(null);
+  useEffect(() => () => clearTimeout(tmRef.current), []);
+
+  // animate the content area's height so the page never jumps when topics of different length are swapped
+  useLayoutEffect(() => {
+    const st = stageRef.current, inn = innerRef.current;
+    if (!st || !inn) return;
+    const from = prevH.current, to = inn.offsetHeight;
+    prevH.current = to;
+    if (Math.abs(from - to) < 2) return;
+    st.style.transition = "none"; st.style.height = from + "px"; st.style.overflow = "hidden";
+    void st.offsetHeight;
+    st.style.transition = "height .5s cubic-bezier(.22,.9,.28,1)"; st.style.height = to + "px";
+    clearTimeout(tmRef.current);
+    tmRef.current = setTimeout(() => { st.style.height = ""; st.style.overflow = ""; st.style.transition = ""; }, 540);
+  }, [openIdx]);
+
   function toggle(i, ev) {
     const btn = ev.currentTarget;
+    // remember current content height (start point of the height animation)
+    prevH.current = innerRef.current ? innerRef.current.offsetHeight : 0;
+    // keep the tapped box exactly where the finger touched
     const top0 = btn.getBoundingClientRect().top;
     const sc = tbScroller(btn);
     const t0 = performance.now();
-    // keep the tapped box exactly where the finger touched while other panels expand/collapse
     const hold = () => {
       const d = btn.getBoundingClientRect().top - top0;
       if (Math.abs(d) > 0.4) { if (sc === document.scrollingElement || sc === document.documentElement) window.scrollBy(0, d); else sc.scrollTop += d; }
-      if (performance.now() - t0 < 620) requestAnimationFrame(hold);
+      if (performance.now() - t0 < 700) requestAnimationFrame(hold);
     };
     requestAnimationFrame(hold);
-    if (openIdx === i) { setClosingIdx(i); setOpenIdx(null); }
-    else { if (openIdx !== null) setClosingIdx(openIdx); setOpenIdx(i); onSelect && onSelect(i); }
-    clearTimeout(tRef.current);
-    tRef.current = setTimeout(() => setClosingIdx(null), 620);
-  }
-  const COLS = 2;
-  const nodes = [];
-  items.forEach((it, i) => {
-    const col = getColor(it, i);
-    const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
-    const on = openIdx === i;
-    nodes.push(
-      <button key={"b" + i} className={"s-tb-box" + (on ? " on" : "")} aria-expanded={on} onClick={(ev) => toggle(i, ev)}
-        style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 24}ms` }}>
-        <span className="s-tb-ico">{getIcon(it)}</span>
-        {pr >= 95 && <span className="s-tb-done">✓</span>}
-        <b>{getTitle(it)}</b>
-        <i>{getSub(it)}</i>
-        {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
-      </button>
-    );
-    if (i % COLS === COLS - 1 || i === items.length - 1) {
-      for (let j = i - (i % COLS); j <= i; j++) {
-        const open = openIdx === j;
-        if (!(open || closingIdx === j)) continue;
-        nodes.push(
-          <div key={"p" + j} className={"s-tb-panel" + (open ? " on" : "")} style={{ "--tb": getColor(items[j], j) }} aria-hidden={!open}>
-            <div className="s-tb-panel-in">
-              <div className="s-tb-panel-pad">{renderContent ? renderContent(items[j], j) : null}</div>
-            </div>
-          </div>
-        );
-      }
+    // centre the tapped box inside the horizontal strip (horizontal only — never vertical)
+    const strip = stripRef.current;
+    if (strip) {
+      const target = btn.offsetLeft - (strip.clientWidth - btn.offsetWidth) / 2;
+      strip.scrollTo({ left: target, behavior: "smooth" });
     }
-  });
-  return <div className="s-tb-list">{nodes}</div>;
+    if (openIdx === i) setOpenIdx(null);
+    else { setOpenIdx(i); onSelect && onSelect(i); }
+  }
+  const cur = openIdx !== null ? items[openIdx] : null;
+  return (
+    <div className="s-tb-wrap">
+      <div className="s-tb-strip" ref={stripRef}>
+        {items.map((it, i) => {
+          const col = getColor(it, i);
+          const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
+          const on = openIdx === i;
+          return (
+            <button key={i} className={"s-tb-box" + (on ? " on" : "")} aria-pressed={on} onClick={(ev) => toggle(i, ev)} style={{ "--tb": col }}>
+              <span className="s-tb-ico">{getIcon(it)}</span>
+              {pr >= 95 && <span className="s-tb-done">✓</span>}
+              <b>{getTitle(it)}</b>
+              {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
+            </button>
+          );
+        })}
+      </div>
+      <div className="s-tb-stage" ref={stageRef}>
+        <div ref={innerRef}>
+          {cur && (
+            <div key={openIdx} className="s-tb-card" style={{ "--tb": getColor(cur, openIdx) }}>
+              <div className="s-tb-sub">{getSub(cur)}</div>
+              {renderContent ? renderContent(cur, openIdx) : null}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ── Collapsing Picker Header ─────────────────────────────────────────

@@ -9065,9 +9065,6 @@ function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getCol
   const [closingIdx, setClosingIdx] = useState(null);
   const tRef = useRef(null);
   useEffect(() => () => clearTimeout(tRef.current), []);
-  const chev = (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="s-tb-chev"><path d="M9 6l6 6-6 6" /></svg>
-  );
   function toggle(i, ev) {
     const btn = ev.currentTarget;
     const top0 = btn.getBoundingClientRect().top;
@@ -9085,34 +9082,37 @@ function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getCol
     clearTimeout(tRef.current);
     tRef.current = setTimeout(() => setClosingIdx(null), 620);
   }
-  return (
-    <div className="s-tb-list">
-      {items.map((it, i) => {
-        const col = getColor(it, i);
-        const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
-        const on = openIdx === i;
-        const mounted = on || closingIdx === i;
-        return (
-          <div key={i} className={"s-tb-item" + (on ? " on" : "")} style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 28}ms` }}>
-            <button className="s-tb-box" aria-expanded={on} onClick={(ev) => toggle(i, ev)}>
-              <span className="s-tb-ico">{getIcon(it)}</span>
-              <span className="s-tb-txt">
-                <b>{getTitle(it)}</b>
-                <i>{getSub(it)}</i>
-                {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
-              </span>
-              {pr >= 95 ? <span className="s-tb-done">✓</span> : <span className="s-tb-arrow">{chev}</span>}
-            </button>
-            <div className="s-tb-panel" aria-hidden={!on}>
-              <div className="s-tb-panel-in">
-                <div className="s-tb-panel-pad">{mounted && renderContent ? renderContent(it, i) : null}</div>
-              </div>
+  const COLS = 2;
+  const nodes = [];
+  items.forEach((it, i) => {
+    const col = getColor(it, i);
+    const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
+    const on = openIdx === i;
+    nodes.push(
+      <button key={"b" + i} className={"s-tb-box" + (on ? " on" : "")} aria-expanded={on} onClick={(ev) => toggle(i, ev)}
+        style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 24}ms` }}>
+        <span className="s-tb-ico">{getIcon(it)}</span>
+        {pr >= 95 && <span className="s-tb-done">✓</span>}
+        <b>{getTitle(it)}</b>
+        <i>{getSub(it)}</i>
+        {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
+      </button>
+    );
+    if (i % COLS === COLS - 1 || i === items.length - 1) {
+      for (let j = i - (i % COLS); j <= i; j++) {
+        const open = openIdx === j;
+        if (!(open || closingIdx === j)) continue;
+        nodes.push(
+          <div key={"p" + j} className={"s-tb-panel" + (open ? " on" : "")} style={{ "--tb": getColor(items[j], j) }} aria-hidden={!open}>
+            <div className="s-tb-panel-in">
+              <div className="s-tb-panel-pad">{renderContent ? renderContent(items[j], j) : null}</div>
             </div>
           </div>
         );
-      })}
-    </div>
-  );
+      }
+    }
+  });
+  return <div className="s-tb-list">{nodes}</div>;
 }
 
 // ── Collapsing Picker Header ─────────────────────────────────────────
@@ -9234,17 +9234,7 @@ function GrammarContent({ g, level, progress, mkBatch, lang = "ku" }) {
   const exList = (lang !== "ku" && g.ex?.length) ? g.ex : (GEXAMPLES[g.de] || g.ex || []);
   return (
     <div key={g.de} style={{ display:"flex", flexDirection:"column", gap:13, paddingTop:14 }}>
-      {/* hero */}
-      <div className="rise" style={{ animationDelay:"0ms", background:`linear-gradient(145deg,${lc},${A(lc,"CC")})`, borderRadius:20, padding:"18px 18px 16px", color:"#fff", boxShadow:`0 10px 26px ${A(lc,"44")}`, position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", top:-25, left:-25, width:100, height:100, borderRadius:"50%", background:"rgba(255,255,255,.08)", pointerEvents:"none" }} />
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          <div style={{ width:44, height:44, borderRadius:13, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:22, flexShrink:0, boxShadow:"0 2px 0 rgba(0,0,0,.1)" }}>{g.icon}</div>
-          <div>
-            <h3 style={{ fontWeight:800, fontSize:20, margin:0, letterSpacing:"-.02em" }}>{tC(g, lang)}</h3>
-            <div dir="ltr" style={{ fontSize:13, opacity:.85, marginTop:2, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{g.de}</div>
-          </div>
-        </div>
-      </div>
+      
       {/* explanation */}
       <div className="rise" style={{ animationDelay:"30ms", background:"var(--surface)", border:`1.5px solid ${A(lc,"22")}`, borderRadius:16, padding:"14px 16px", boxShadow:`0 2px 0 rgba(0,0,0,.06),0 5px 16px ${A(lc,"0E")}` }}>
         <WPLabel icon={AlertCircle} label={tApp(lang,"gc_explain")} color={lc} />
@@ -10556,7 +10546,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         </div>
       )}
 
-      {level !== null && lg && (
+      {level !== null && lg && !mode && (
         <div className="s-lv-stats">
           {[
             { Icon: BookOpen,    v: lvLessons.length, l: STAT_LABEL.lesson[lang] || STAT_LABEL.lesson.ku },
@@ -10952,16 +10942,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"}
             renderContent={(selectedVerb) => (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-                      <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVerb.icon}</div>
-                      <div>
-                        <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedVerb, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVerb.de}</div>
-                      </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedVerb.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
-                    </div>
-                  </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedVerb.words.map((w,i) => (
                       <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>
@@ -11019,16 +10999,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             renderContent={(selectedVocab) => (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-                      <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedVocab.icon}</div>
-                      <div>
-                        <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedVocab, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedVocab.de}</div>
-                      </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedVocab.words.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
-                    </div>
-                  </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedVocab.words.map((w,i) => (
                       <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>
@@ -11084,16 +11054,6 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"}
             renderContent={(selectedAdj) => (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
-                  <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-                      <div style={{ width:38, height:38, borderRadius:11, background:"rgba(255,255,255,.2)", display:"grid", placeItems:"center", fontSize:19, flexShrink:0 }}>{selectedAdj.icon}</div>
-                      <div>
-                        <div style={{ fontWeight:800, fontSize:15, lineHeight:1.2 }}>{tF(selectedAdj, lang, 'title')}</div>
-                        <div dir="ltr" style={{ fontSize:12.5, opacity:.85, marginTop:1, fontFamily:"'Satoshi',system-ui,sans-serif" }}>{selectedAdj.de}</div>
-                      </div>
-                      <div style={{ marginInlineStart:"auto", background:"rgba(255,255,255,.2)", borderRadius:99, padding:"4px 10px", fontSize:12, fontWeight:700 }}>{selectedAdj.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
-                    </div>
-                  </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))", gap:8, marginBottom:11 }}>
                     {selectedAdj.words.map((w,i) => (
                       <div key={i} className="wword-card2" style={{ background:"var(--surface)", border:`1.5px solid ${A(levelColor(level),"1A")}`, borderRadius:13, padding:"11px 12px", boxShadow:`0 2px 0 rgba(0,0,0,.05),0 5px 14px ${A(levelColor(level),"0C")}` }}>

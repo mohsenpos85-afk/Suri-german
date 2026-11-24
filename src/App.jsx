@@ -9049,6 +9049,44 @@ const UBUNG_SECTIONS = [
   { id:"qSatz",     label:"Satzbau",         sub:"ڕیزبەندی ڕستە",       subTr:"Cümle kuruluşu",      subUk:"Побудова речення", subFa:"ساختار جمله",      emoji:"🧱", color:"var(--acc-dk)" },
 ];
 
+// ── Topic boxes: replaces the wheel pickers. A list of tappable boxes; tapping one opens its content. ──
+function TopicBoxes({ items, selIdx, onSelect, open, setOpen, getTitle, getSub, getIcon, getColor, getProgress, lang }) {
+  const sel = items[selIdx];
+  const chev = (rot) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="s-tb-chev"><path d="M9 6l6 6-6 6" /></svg>
+  );
+  if (open && sel) {
+    const col = getColor(sel, selIdx);
+    return (
+      <button className="s-tb-bar" onClick={() => { setOpen(false); try { window.scrollTo({ top: 0 }); } catch (e) {} }} style={{ "--tb": col }}>
+        <span className="s-tb-back">{chev(true)}</span>
+        <span className="s-tb-ico s-tb-ico-s">{getIcon(sel)}</span>
+        <span className="s-tb-txt"><b>{getTitle(sel)}</b><i>{getSub(sel)}</i></span>
+      </button>
+    );
+  }
+  return (
+    <div className="s-tb-list">
+      {items.map((it, i) => {
+        const col = getColor(it, i);
+        const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
+        return (
+          <button key={i} className="s-tb-box" style={{ "--tb": col, animationDelay: `${Math.min(i, 12) * 28}ms` }}
+            onClick={() => { onSelect(i); setOpen(true); try { window.scrollTo({ top: 0 }); } catch (e) {} }}>
+            <span className="s-tb-ico">{getIcon(it)}</span>
+            <span className="s-tb-txt">
+              <b>{getTitle(it)}</b>
+              <i>{getSub(it)}</i>
+              {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
+            </span>
+            {pr >= 95 ? <span className="s-tb-done">✓</span> : chev(false)}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Collapsing Picker Header ─────────────────────────────────────────
 // Wraps any WheelPicker in a sticky container that collapses to a
 // compact glassmorphism bar as the user scrolls into the content area.
@@ -10017,6 +10055,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const [expandedVerb, setExpandedVerb] = useState(null);  // expanded verb card index
   const [openWordsSub, setOpenWordsSub] = useState(null);  // "fiil" | "vocab" | "adj" | null
   useEffect(() => { setOpenWordsSub(null); }, [mode, level]);
+  const [topicOpen, setTopicOpen] = useState(false);   // a topic box is open (content visible)
+  useEffect(() => { setTopicOpen(false); }, [mode, level, openWordsSub]);
   const [selGrammarIdx, setSelGrammarIdx] = useState(0);  // wheel picker: selected grammar index
   const [selVerbIdx,    setSelVerbIdx]    = useState(0);  // wheel picker: selected verb index
   const [selVocabIdx,   setSelVocabIdx]   = useState(0);  // wheel picker: selected vocab topic index
@@ -10033,6 +10073,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   useNavLayer(!!examLevel, () => setExamLevel(null), { depth: 4 });
   useNavLayer(!!openDialogId, () => setOpenDialogId(null), { depth: 3 });
   useNavLayer(!!openWordsSub, () => setOpenWordsSub(null), { depth: 3 });
+  useNavLayer(topicOpen, () => setTopicOpen(false), { depth: 4 });
   useNavLayer(!!selMasalId, () => setSelMasalId(null), { depth: 3 });
   const [examLockMsg, setExamLockMsg] = useState(null); // {x,y} — brief "reach 95%" toast above the Sınav tab
   const examLockMsgTimer = useRef(null);
@@ -10742,56 +10783,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "ubung" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <CollapsingPickerHeader
-            accent={UBUNG_SECTIONS[selUbungIdx]?.color || C.red}
-            compact={(() => { const s = UBUNG_SECTIONS[selUbungIdx]; return s ? (
-              <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
-                <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                  background:`linear-gradient(135deg,${s.color},${A(s.color,"BB")})`,
-                  display:"grid", placeItems:"center", fontSize:18 }}>{s.emoji}</div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
-                    overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} dir="ltr">{s.label}</div>
-                  <div style={{ fontSize:12, color:s.color, fontWeight:600, marginTop:1 }}>{tF(s, lang, 'sub')}</div>
-                </div>
-              </div>
-            ) : null; })()}>
-            <WheelPicker
-              items={UBUNG_SECTIONS}
-              selIdx={selUbungIdx}
-              onSelect={setSelUbungIdx}
-              accent={UBUNG_SECTIONS[selUbungIdx]?.color || C.red}
-              renderCard={(sec, idx, isSel) => (
-                <div style={{ height:"100%", display:"flex", alignItems:"center" }}>
-                  {/* circle node */}
-                  <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
-                    background: isSel ? sec.color : "#fff",
-                    border:`2.5px solid ${sec.color}`,
-                    boxShadow: isSel ? `0 0 0 4px ${A(sec.color,"28")},0 3px 10px ${A(sec.color,"50")}` : `0 0 0 3px ${A(sec.color,"18")}`,
-                    display:"grid", placeItems:"center" }}>
-                    {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
-                  </div>
-                  <div style={{ width:10, flexShrink:0 }} />
-                  {/* gradient-border pill */}
-                  <div style={{ flex:1, height:"87%",
-                    background:`linear-gradient(135deg,${sec.color},${A(sec.color,"AA")})`,
-                    borderRadius:99, padding:"2.5px",
-                    boxShadow: isSel ? `0 8px 20px ${A(sec.color,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                    <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
-                      display:"flex", alignItems:"center", padding:"0 12px", gap:8 }}>
-                      <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontWeight:800, fontSize:15, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} dir="ltr">{sec.label}</div>
-                        <div style={{ fontSize:12, color: isSel ? sec.color : "#8B96AA", fontWeight:600, marginTop:2 }}>{tF(sec, lang, 'sub')}</div>
-                      </div>
-                      <span style={{ fontSize:18, flexShrink:0 }}>{sec.emoji}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              getItemColor={(sec) => sec.color}
-            />
-          </CollapsingPickerHeader>
+          <TopicBoxes items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+            getTitle={(x)=>x.label} getSub={(x)=>tF(x, lang, 'sub')} getIcon={(x)=>x.emoji} getColor={(x)=>x.color} />
 
+          {topicOpen && (<div>
           {/* Section bodies — only selected is visible; all stay mounted to preserve state */}
           <div style={{ display: selUbungIdx===0 ? "" : "none" }}>
             <DragDropExercise key={level || "A1"} exercises={sbForLevel(level || "A1")} lang={lang} open={true} onToggle={()=>{}} />
@@ -10820,6 +10815,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           {selUbungIdx===8  && <UbungQuiz level={level} kind="luecke" lang={lang} accent={UBUNG_SECTIONS[8].color} />}
           {selUbungIdx===9  && <UbungQuiz level={level} kind="trans"  lang={lang} accent={UBUNG_SECTIONS[9].color} />}
           {selUbungIdx===10 && <UbungQuiz level={level} kind="satz"   lang={lang} accent={UBUNG_SECTIONS[10].color} />}
+          </div>)}
         </div>
       )}
 
@@ -10908,70 +10904,12 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "grammar" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <CollapsingPickerHeader
-            accent={levelColor(level)}
-            compact={selectedGrammar && (
-              <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
-                <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                  background:`linear-gradient(135deg,${levelColor(level)},${A(levelColor(level),"BB")})`,
-                  display:"grid", placeItems:"center", fontSize:18 }}>{selectedGrammar.icon}</div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
-                    overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                    {tC(selectedGrammar, lang)}
-                  </div>
-                  <div style={{ fontSize:12, color:levelColor(level), fontWeight:600, marginTop:1 }}
-                    dir="ltr">{selectedGrammar.de}</div>
-                </div>
-              </div>
-            )}>
-            <WheelPicker
-              items={grammarList}
-              selIdx={selGrammarIdx}
-              onSelect={setSelGrammarIdx}
-              accent={levelColor(level)}
-              renderCard={(item, idx, isSel) => {
-                const tp   = progress[level + "::" + item.de] || 0;
-                const done = tp >= 95;
-                const ac   = done ? "#16A06F" : levelColor(level);
-                return (
-                  <div style={{ height:"100%", display:"flex", alignItems:"center" }}>
-                    {/* circle node on timeline */}
-                    <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
-                      background: isSel ? ac : "#fff",
-                      border:`2.5px solid ${ac}`,
-                      boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
-                      display:"grid", placeItems:"center" }}>
-                      {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
-                    </div>
-                    {/* spacer */}
-                    <div style={{ width:10, flexShrink:0 }} />
-                    {/* gradient-border pill card */}
-                    <div style={{ flex:1, height:"87%",
-                      background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
-                      borderRadius:99, padding:"2.5px",
-                      boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                      <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
-                        display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
-                        <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tC(item, lang)}</div>
-                          <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }} dir="ltr">{item.de}</div>
-                        </div>
-                        <span style={{ fontSize:17, flexShrink:0 }}>{item.icon}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }}
-              getItemColor={(item) => {
-                const tp = progress[level + "::" + item.de] || 0;
-                return tp >= 95 ? "#16A06F" : levelColor(level);
-              }}
-              getProgress={(item) => progress[level + "::" + item.de] || 0}
-            />
-          </CollapsingPickerHeader>
+          <TopicBoxes items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+            getTitle={(x)=>tC(x, lang)} getSub={(x)=>x.de} getIcon={(x)=>x.icon}
+            getColor={(x)=>((progress[level + "::" + x.de] || 0) >= 95 ? "#16A06F" : levelColor(level))}
+            getProgress={(x)=>progress[level + "::" + x.de] || 0} />
           {/* Inline grammar content for selected item */}
-          {selectedGrammar && (
+          {topicOpen && selectedGrammar && (
             <GrammarContent key={selectedGrammar.de} g={selectedGrammar}
               level={level} progress={progress} mkBatch={mkBatch} lang={lang} />
           )}
@@ -10998,64 +10936,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             </div>
             <div style={{ display: openWordsSub==="fiil" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Verb category picker */}
-              <CollapsingPickerHeader
-                accent="#2D5C8A"
-                compact={selectedVerb && (
-                  <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
-                    <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                      background:"linear-gradient(135deg,#2D5C8A,#2D5C8ABB)",
-                      display:"grid", placeItems:"center", fontSize:18 }}>
-                      {selectedVerb.icon}
-                    </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
-                        overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                        {tF(selectedVerb, lang, 'title')}</div>
-                      <div style={{ fontSize:12, color:"#2D5C8A", fontWeight:600, marginTop:1 }}>
-                        {selectedVerb.words?.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
-                    </div>
-                  </div>
-                )}>
-              <WheelPicker
-                items={verbList}
-                selIdx={selVerbIdx}
-                onSelect={setSelVerbIdx}
-                accent="#242F49"
-                renderCard={(l, idx, isSel) => {
-                  const ac = "#2D5C8A";
-                  return (
-                    <div style={{ height:"100%", display:"flex", alignItems:"center" }}>
-                      {/* circle node */}
-                      <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
-                        background: isSel ? ac : "#fff",
-                        border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
-                        display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
-                      </div>
-                      <div style={{ width:10, flexShrink:0 }} />
-                      {/* gradient-border pill */}
-                      <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
-                        borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
-                          display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
-                          <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
-                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
-                          </div>
-                          <span style={{ fontSize:18, flexShrink:0 }}>{l.icon}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }}
-                getItemColor={() => "#2D5C8A"}
-              />
-              </CollapsingPickerHeader>
+              <TopicBoxes items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"} />
               {/* Selected verb category words */}
-              {selectedVerb && (
+              {topicOpen && selectedVerb && (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>
@@ -11117,64 +11001,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             </div>
             <div style={{ display: openWordsSub==="vocab" ? "" : "none", borderTop:"1px solid var(--line)" }}>
               {/* Vocab topic wheel picker */}
-              <CollapsingPickerHeader
-                accent="#3E5A7A"
-                compact={selectedVocab && (
-                  <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
-                    <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                      background:"linear-gradient(135deg,#3E5A7A,#3E5A7ABB)",
-                      display:"grid", placeItems:"center", fontSize:18 }}>
-                      {selectedVocab.icon}
-                    </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
-                        overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                        {tF(selectedVocab, lang, 'title')}</div>
-                      <div style={{ fontSize:12, color:"#3E5A7A", fontWeight:600, marginTop:1 }}>
-                        {selectedVocab.words?.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
-                    </div>
-                  </div>
-                )}>
-              <WheelPicker
-                items={vocabList}
-                selIdx={selVocabIdx}
-                onSelect={setSelVocabIdx}
-                accent="#384358"
-                renderCard={(l, idx, isSel) => {
-                  const ac = "#3E5A7A";
-                  return (
-                    <div style={{ height:"100%", display:"flex", alignItems:"center" }}>
-                      {/* circle node */}
-                      <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
-                        background: isSel ? ac : "#fff",
-                        border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
-                        display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
-                      </div>
-                      <div style={{ width:10, flexShrink:0 }} />
-                      {/* gradient-border pill */}
-                      <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
-                        borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
-                          display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
-                          <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
-                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {STAT_LABEL.word[lang] || STAT_LABEL.word.ku}</div>
-                          </div>
-                          <span style={{ fontSize:18, flexShrink:0 }}>{l.icon}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }}
-                getItemColor={() => "#3E5A7A"}
-              />
-              </CollapsingPickerHeader>
+              <TopicBoxes items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${STAT_LABEL.word[lang] || STAT_LABEL.word.ku}`} getIcon={(x)=>x.icon} getColor={()=>"#3E5A7A"} />
               {/* Selected vocab topic words */}
-              {selectedVocab && (
+              {topicOpen && selectedVocab && (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <style>{`.wword-card2 { transition: transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s; } .wword-card2:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08) !important; }`}</style>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
@@ -11236,62 +11066,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
             </div>
             <div style={{ display: openWordsSub==="adj" ? "" : "none", borderTop:"1px solid var(--line)" }}>
-              <CollapsingPickerHeader
-                accent="#2D6B52"
-                compact={selectedAdj && (
-                  <div style={{ display:"flex", alignItems:"center", gap:10, flex:1, minWidth:0 }}>
-                    <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
-                      background:"linear-gradient(135deg,#2D6B52,#2D6B52BB)",
-                      display:"grid", placeItems:"center", fontSize:18 }}>
-                      {selectedAdj.icon}
-                    </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontWeight:800, fontSize:13.5, color:"#1A1F2E",
-                        overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                        {tF(selectedAdj, lang, 'title')}</div>
-                      <div style={{ fontSize:12, color:"#2D6B52", fontWeight:600, marginTop:1 }}>
-                        {selectedAdj.words?.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
-                    </div>
-                  </div>
-                )}>
-              <WheelPicker
-                items={adjWordList}
-                selIdx={selAdjIdx}
-                onSelect={setSelAdjIdx}
-                accent="#2D6B52"
-                renderCard={(l, idx, isSel) => {
-                  const ac = "#2D6B52";
-                  return (
-                    <div style={{ height:"100%", display:"flex", alignItems:"center" }}>
-                      <div style={{ width:22, height:22, borderRadius:"50%", flexShrink:0,
-                        background: isSel ? ac : "#fff",
-                        border:`2.5px solid ${ac}`,
-                        boxShadow: isSel ? `0 0 0 4px ${A(ac,"28")},0 3px 10px ${A(ac,"50")}` : `0 0 0 3px ${A(ac,"18")}`,
-                        display:"grid", placeItems:"center" }}>
-                        {isSel && <div style={{ width:7, height:7, borderRadius:"50%", background:"var(--surface)" }} />}
-                      </div>
-                      <div style={{ width:10, flexShrink:0 }} />
-                      <div style={{ flex:1, height:"87%",
-                        background:`linear-gradient(135deg,${ac},${A(ac,"AA")})`,
-                        borderRadius:99, padding:"2.5px",
-                        boxShadow: isSel ? `0 8px 20px ${A(ac,"30")}` : `0 1px 6px rgba(0,0,0,.07)` }}>
-                        <div style={{ height:"100%", background:"var(--surface)", borderRadius:97,
-                          display:"flex", alignItems:"center", padding:"0 12px", gap:6 }}>
-                          <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ fontWeight:800, fontSize:14.5, color:"#1A1F2E", lineHeight:1.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{tF(l, lang, 'title')}</div>
-                            <div style={{ fontSize:12, color: isSel ? ac : "#8B96AA", fontWeight:600, marginTop:2 }}>{l.words.length} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
-                          </div>
-                          <span style={{ fontSize:18, flexShrink:0 }}>{l.icon}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }}
-                getItemColor={() => "#2D6B52"}
-              />
-              </CollapsingPickerHeader>
+              <TopicBoxes items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} open={topicOpen} setOpen={setTopicOpen} lang={lang}
+                getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"} />
               {/* Selected adjective category words */}
-              {selectedAdj && (
+              {topicOpen && selectedAdj && (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
                   <div style={{ background:`linear-gradient(145deg,${levelColor(level)},${A(levelColor(level),"BB")})`, borderRadius:14, padding:"13px 15px 11px", color:"#fff", marginBottom:11, boxShadow:`0 8px 22px ${A(levelColor(level),"38")}` }}>
                     <div style={{ display:"flex", alignItems:"center", gap:9 }}>

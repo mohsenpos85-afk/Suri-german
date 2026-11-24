@@ -4,33 +4,69 @@ import { useState } from "react";
 import { Target, ChevronRight, ChevronLeft, Check, Clock, Sparkles, TrendingUp, LogIn } from "lucide-react";
 
 const LV = ["A1", "A2", "B1", "B2", "C1", "C2"];
-const Q = [
+const POOL = [
   // A1
+  { l: "A1", q: "Wir ___ aus der Türkei.", o: ["kommen", "komme", "kommt"], a: 0 },
+  { l: "A1", q: "Das ist ___ Apfel.", o: ["eine", "ein", "einen"], a: 1 },
+  { l: "A1", q: "Er ___ Lehrer.", o: ["bin", "sind", "ist"], a: 2 },
+  { l: "A1", q: "Ich ___ Deutsch lernen.", o: ["möchte", "möchtest", "möchten"], a: 0 },
+  { l: "A1", q: "Heute ist Montag, morgen ist ___.", o: ["Sonntag", "Dienstag", "Freitag"], a: 1 },
+  { l: "A1", q: "Wir ___ zwei Kinder.", o: ["hat", "habt", "haben"], a: 2 },
   { l: "A1", q: "Ich ___ Anna.", o: ["bin", "bist", "ist"], a: 0 },
   { l: "A1", q: "Wie ___ du?", o: ["heiße", "heißt", "heißen"], a: 1 },
   { l: "A1", q: "Ich komme ___ Syrien.", o: ["aus", "in", "nach"], a: 0 },
   { l: "A1", q: "Ich habe zwei ___.", o: ["Bruder", "Brüder", "Brüdern"], a: 1 },
   // A2
+  { l: "A2", q: "Ich habe gestern einen Film ___.", o: ["sehen", "gesehen", "gesehe"], a: 1 },
+  { l: "A2", q: "Das Wetter ist heute ___ als gestern.", o: ["schön", "am schönsten", "schöner"], a: 2 },
+  { l: "A2", q: "Kannst du mir bitte ___?", o: ["helfen", "hilfst", "geholfen"], a: 0 },
+  { l: "A2", q: "Ich fahre ___ dem Bus zur Arbeit.", o: ["bei", "zu", "mit"], a: 2 },
+  { l: "A2", q: "Der Zug ___ um 8 Uhr ab.", o: ["fahren", "fährt", "fahre"], a: 1 },
+  { l: "A2", q: "Ich muss heute früh ___.", o: ["aufstehen", "aufstehe", "aufgestanden"], a: 0 },
   { l: "A2", q: "Gestern ___ ich ins Kino gegangen.", o: ["habe", "bin", "war"], a: 1 },
   { l: "A2", q: "Ich möchte ___ Kaffee.", o: ["ein", "eine", "einen"], a: 2 },
   { l: "A2", q: "Mir ___ kalt.", o: ["bin", "ist", "hat"], a: 1 },
   { l: "A2", q: "Ich bleibe zu Hause, ___ ich krank bin.", o: ["weil", "aber", "oder"], a: 0 },
   // B1
+  { l: "B1", q: "Er hat Angst ___ Hunden.", o: ["von", "vor", "für"], a: 1 },
+  { l: "B1", q: "Obwohl es regnete, ___ wir spazieren.", o: ["gehen", "gegangen", "gingen"], a: 2 },
+  { l: "B1", q: "Das ist der Mann, ___ ich gestern gesprochen habe.", o: ["mit dem", "mit den", "mit der"], a: 0 },
+  { l: "B1", q: "Ich weiß nicht, ___ er heute kommt.", o: ["dass", "wenn", "ob"], a: 2 },
+  { l: "B1", q: "Bevor ich ins Bett gehe, ___ ich noch die Zähne.", o: ["putze", "putzen", "geputzt"], a: 0 },
+  { l: "B1", q: "Wir haben den Termin ___ nächste Woche verschoben.", o: ["zu", "bei", "auf"], a: 2 },
   { l: "B1", q: "Ich warte ___ den Bus.", o: ["für", "an", "auf"], a: 2 },
   { l: "B1", q: "Das Auto, ___ ich gekauft habe, ist rot.", o: ["der", "das", "dem"], a: 1 },
   { l: "B1", q: "Wenn ich mehr Zeit ___, würde ich reisen.", o: ["habe", "hatte", "hätte"], a: 2 },
   { l: "B1", q: "Ich interessiere mich ___ Musik.", o: ["an", "für", "auf"], a: 1 },
   // B2
+  { l: "B2", q: "Je mehr ich lerne, ___ besser verstehe ich.", o: ["desto", "weil", "obwohl"], a: 0 },
+  { l: "B2", q: "Er wurde ___ seiner Verspätung kritisiert.", o: ["trotz", "ohne", "wegen"], a: 2 },
+  { l: "B2", q: "Die Frau, mit ___ ich gesprochen habe, ist Ärztin.", o: ["die", "der", "dem"], a: 1 },
+  { l: "B2", q: "Er tat, als ___ er nichts gehört.", o: ["hat", "habe", "hätte"], a: 2 },
+  { l: "B2", q: "Nachdem sie gegessen ___, gingen sie spazieren.", o: ["hatten", "haben", "hätten"], a: 0 },
+  { l: "B2", q: "Es ist wichtig, ___ man regelmäßig Pause macht.", o: ["ob", "damit", "dass"], a: 2 },
   { l: "B2", q: "Der Mann, ___ Auto gestohlen wurde, ruft die Polizei.", o: ["dem", "dessen", "das"], a: 1 },
   { l: "B2", q: "Er tut so, ___ er alles wüsste.", o: ["weil", "obwohl", "als ob"], a: 2 },
   { l: "B2", q: "Die Arbeit ___ bis morgen erledigt werden.", o: ["hat", "muss", "wird"], a: 1 },
   { l: "B2", q: "Das Gesetz wurde vom Parlament ___.", o: ["verabschieden", "verabschiedet", "verabschiedete"], a: 1 },
   // C1
+  { l: "C1", q: "Die Studie kommt ___ dem Ergebnis, dass die Methode funktioniert.", o: ["auf", "an", "zu"], a: 2 },
+  { l: "C1", q: "Er hat sich ___ Verantwortung entzogen.", o: ["die", "der", "den"], a: 1 },
+  { l: "C1", q: "___ aller Bemühungen blieb der Erfolg aus.", o: ["Trotz", "Wegen", "Dank"], a: 0 },
+  { l: "C1", q: "Das ist eine Frage, ___ Beantwortung viel Zeit erfordert.", o: ["dessen", "deren", "derer"], a: 1 },
+  { l: "C1", q: "Es bedarf ___ umfassenden Reform.", o: ["eine", "einen", "einer"], a: 2 },
+  { l: "C1", q: "Angesichts ___ steigenden Kosten wurde das Projekt gestoppt.", o: ["der", "die", "den"], a: 0 },
   { l: "C1", q: "Sie bestand ___ ihrer Meinung, obwohl alle widersprachen.", o: ["an", "bei", "auf"], a: 2 },
   { l: "C1", q: "Das Projekt ist ___ gescheitert, dass die Finanzierung fehlte.", o: ["dafür", "daran", "darauf"], a: 1 },
   { l: "C1", q: "Ungeachtet ___ Warnungen fuhr er weiter.", o: ["den", "dem", "der"], a: 2 },
   { l: "C1", q: "Die Verhandlungen scheiterten ___ der Uneinigkeit der Parteien.", o: ["durch", "an", "von"], a: 1 },
   // C2
+  { l: "C2", q: "Der Redner spannte den ___ von der Antike bis zur Gegenwart.", o: ["Bogen", "Bogens", "Bögen"], a: 0 },
+  { l: "C2", q: "Seine Argumentation ___ auf tönernen Füßen.", o: ["liegt", "steht", "stellt"], a: 1 },
+  { l: "C2", q: "Er schlug alle Warnungen in den ___.", o: ["Regen", "Sturm", "Wind"], a: 2 },
+  { l: "C2", q: "Das lässt tief ___.", o: ["sehen", "blicken", "schauen"], a: 1 },
+  { l: "C2", q: "Die Verhandlungen sind ins ___ geraten.", o: ["Stoppen", "Stocken", "Stehen"], a: 1 },
+  { l: "C2", q: "Er konnte sich des Eindrucks nicht ___, dass sie log.", o: ["wehren", "weigern", "erwehren"], a: 2 },
   { l: "C2", q: "Der Minister sah sich ___, sein Amt niederzulegen.", o: ["gezwungen", "zwingend", "Zwang"], a: 0 },
   { l: "C2", q: "Er ___ keinen Hehl daraus, dass er die Entscheidung missbilligte.", o: ["tat", "machte", "gab"], a: 1 },
   { l: "C2", q: "Sie legte ihm nahe, von dem Vorhaben ___ zu nehmen.", o: ["Abstand", "Abschied", "Rücksicht"], a: 0 },
@@ -68,8 +104,18 @@ const text = (lang, kmj) => T[kmj ? "kmj" : lang] || T.en;
 export const placementLabels = text;
 export const LEVEL_COLORS = { A1: "#659DB8", A2: "#569F95", B1: "#547CB6", B2: "#8877B5", C1: "#BD8D52", C2: "#9A657F" };
 
+const PER_LEVEL = 5;
+const shuffle = (a) => { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+/** A fresh test: 5 random questions per level, answer options shuffled. */
+function buildDeck() {
+  return LV.flatMap((l) => shuffle(POOL.filter((q) => q.l === l)).slice(0, PER_LEVEL).map((q) => {
+    const idx = shuffle(q.o.map((_, k) => k));
+    return { l: q.l, q: q.q, o: idx.map((k) => q.o[k]), a: idx.indexOf(q.a) };
+  }));
+}
+
 /** Highest passed level, or "none" when A1 was not passed. */
-function result(answers) {
+function result(answers, Q) {
   let reached = "none";
   for (const lv of LV) {
     const qs = Q.map((q, i) => [q, i]).filter(([q]) => q.l === lv);
@@ -116,6 +162,7 @@ export function ChoiceScreen({ lang, kmj, dir, onTest, onDirect }) {
 
 export default function PlacementTest({ lang, kmj, dir, levelText, onUse, onCancel }) {
   const t = text(lang, kmj);
+  const [Q, setDeck] = useState(buildDeck);
   const [started, setStarted] = useState(false);
   const [i, setI] = useState(0);
   const [ans, setAns] = useState({});
@@ -140,7 +187,7 @@ export default function PlacementTest({ lang, kmj, dir, levelText, onUse, onCanc
     setAns(next);
     setTimeout(() => { setPicked(null); advance(next, i); }, 220);
   }
-  function restart() { setAns({}); setI(0); setDone(false); setPicked(null); setStarted(true); }
+  function restart() { setDeck(buildDeck()); setAns({}); setI(0); setDone(false); setPicked(null); setStarted(true); }
 
   const shell = (children) => <div dir={dir} className="pt-wrap"><style>{CSS}</style>{children}</div>;
 
@@ -156,7 +203,7 @@ export default function PlacementTest({ lang, kmj, dir, levelText, onUse, onCanc
             <div key={k} className="pt-pt" style={{ textAlign: ar ? "right" : "left" }}><span><Ic size={18} /></span>{tx}</div>
           ))}
         </div>
-        <button className="ob-btn pt-cta" onClick={() => setStarted(true)}>{t.start}</button>
+        <button className="ob-btn pt-cta" onClick={() => { setDeck(buildDeck()); setStarted(true); }}>{t.start}</button>
         <button type="button" className="pt-link" onClick={onCancel}>{t.back}</button>
       </div>
     );
@@ -164,7 +211,7 @@ export default function PlacementTest({ lang, kmj, dir, levelText, onUse, onCanc
 
   // ── result ──
   if (done) {
-    const r = result(ans);
+    const r = result(ans, Q);
     const level = r === "none" ? "none" : r === "C2" ? "C1" : r; // the onboarding list ends at C1
     const correct = Object.entries(ans).filter(([k, v]) => Q[k].a === v).length;
     const asked = Object.keys(ans).length;

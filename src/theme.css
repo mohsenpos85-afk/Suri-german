@@ -406,15 +406,15 @@ button.s-dt:active, .s-dt.s-wotd-card:active { transform: scale(.985); }
 .s-tb-body.has-rail::after{content:"";position:absolute;inset-inline-start:-3px;top:19px;width:8px;height:8px;border-radius:50%;background:var(--rail);box-shadow:0 0 10px var(--rail)}
 .s-tb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
 .s-tb-box{--tb:var(--acc);position:relative;min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:9px 9px 10px;text-align:start;font-family:inherit;color:var(--ink);cursor:pointer;
-  border:1px solid color-mix(in srgb,var(--tb) 30%,transparent);border-radius:18px;background:linear-gradient(165deg,color-mix(in srgb,var(--tb) 13%,var(--surface-hi,var(--surface))),var(--surface-hi,var(--surface)) 70%);
+  border:1.5px solid color-mix(in srgb,var(--tb) 50%,transparent);border-radius:18px;background:linear-gradient(160deg,color-mix(in srgb,var(--tb) 30%,var(--surface-hi,var(--surface))),color-mix(in srgb,var(--tb) 8%,var(--surface-hi,var(--surface))) 85%);
   box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 8px 18px -10px rgba(20,40,60,.35);-webkit-tap-highlight-color:transparent;
   transition:border-color .35s ease,box-shadow .45s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
 .s-tb-box:active{transform:scale(.96)}
 .s-tb-box.on{border-color:var(--tb);box-shadow:0 0 0 1px var(--tb),0 0 14px color-mix(in srgb,var(--tb) 90%,transparent),0 0 34px color-mix(in srgb,var(--tb) 50%,transparent),inset 0 0 14px color-mix(in srgb,var(--tb) 12%,transparent);animation:sTbNeon 2.8s ease-in-out infinite}
 @keyframes sTbNeon{50%{box-shadow:0 0 0 1px var(--tb),0 0 20px var(--tb),0 0 44px color-mix(in srgb,var(--tb) 60%,transparent),inset 0 0 18px color-mix(in srgb,var(--tb) 16%,transparent)}}
-.s-tb-ico{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:14px;margin-bottom:3px;background:linear-gradient(145deg,color-mix(in srgb,var(--tb) 30%,var(--surface)),color-mix(in srgb,var(--tb) 9%,var(--surface)));border:1px solid color-mix(in srgb,var(--tb) 32%,transparent);transition:transform .4s cubic-bezier(.3,1.4,.5,1)}
+.s-tb-ico{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:14px;margin-bottom:3px;background:linear-gradient(145deg,var(--tb),color-mix(in srgb,var(--tb) 65%,#000));border:0;color:#fff;box-shadow:0 4px 10px -3px color-mix(in srgb,var(--tb) 70%,transparent);transition:transform .4s cubic-bezier(.3,1.4,.5,1)}
 .s-tb-box.on .s-tb-ico{transform:scale(1.1) rotate(-6deg)}
-.s-tb-box b{font-weight:800;font-size:11.8px;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;overflow-wrap:anywhere}
+.s-tb-box b{font-weight:800;color:color-mix(in srgb,var(--tb) 40%,var(--ink));font-size:11.8px;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;overflow-wrap:anywhere}
 .s-tb-prog{display:block;width:100%;height:3px;border-radius:99px;background:var(--line);margin-top:auto;overflow:hidden}
 .s-tb-prog>span{display:block;height:100%;border-radius:99px;background:var(--tb)}
 .s-tb-done{position:absolute;top:8px;inset-inline-end:8px;width:18px;height:18px;border-radius:50%;background:#16A06F;color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800}

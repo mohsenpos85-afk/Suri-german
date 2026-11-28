@@ -6044,14 +6044,14 @@ B1_REDEMITTEL.forEach((cat, ci) => {
   cat.items.forEach((item, ii) => { item.exuk = uk.ex[ii] || ""; });
 });
 
-function RedemittelPanel({ lang = "ku" }) {
+function RedemittelPanel({ lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>📚 {lang === "tr" ? "B1 Önemli İfadeler ve Bağlaçlar (örneklerle)" : lang === "en" ? "B1 Key Phrases and Connectors (with examples)" : lang === "ar" ? "عبارات وروابط B1 المهمة (بأمثلة)" : lang === "es" ? "B1 Frases clave y conectores (con ejemplos)" : lang === "uk" ? "B1 Ключові фрази та сполучники (з прикладами)" : lang === "fa" ? "B1 عبارات کلیدی و حروف ربط (با مثال)" : "دەستەواژە و گرێدەرە گرنگەکانی B1 (بە نموونە)"}</div>
-      <div style={{ display: "grid", gap: 12 }}>
-        {B1_REDEMITTEL.map((cat, ci) => (
-          <CollapsibleCat key={ci} de={cat.de} ku={tC(cat, lang)} accent={C.gold}>
-            <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
+      <TopicBoxes parent={parent} items={B1_REDEMITTEL} lang={lang}
+        getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => B1_REDEMITTEL.indexOf(x) + 1}
+        renderContent={(cat) => (
+          <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 12, marginTop: 12 }}>
               {cat.items.map((it, i) => (
                 <div key={i} style={{ borderTop: i ? `1px dashed ${C.line}` : "none", paddingTop: i ? 10 : 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}><De size={15} color={C.red}>{it.p}</De></div>
@@ -6062,10 +6062,8 @@ function RedemittelPanel({ lang = "ku" }) {
                   {(lang === "uk" ? it.exuk : (it["ex"+lang] || it.exku)) && <div style={{ color: C.muted, fontSize: 14, marginTop: 3, lineHeight: 1.7 }}>{lang === "uk" ? it.exuk : (it["ex"+lang] || it.exku)}</div>}
                 </div>
               ))}
-            </div>
-          </CollapsibleCat>
-        ))}
-      </div>
+            </div></div>
+        )} />
     </div>
   );
 }
@@ -6112,14 +6110,14 @@ const B2_PRAESENTATION = [
   ]},
 ];
 
-function PraesentationPanel({ lang = "ku" }) {
+function PraesentationPanel({ lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10, display:"flex", alignItems:"center", gap:6 }}><Mic size={14} /> {lang === "tr" ? "Sunum Yapısı (Präsentation) — B2" : lang === "en" ? "Presentation Structure (Präsentation) — B2" : lang === "ar" ? "بنية العرض التقديمي (Präsentation) — B2" : lang === "es" ? "Estructura de la presentación (Präsentation) — B2" : lang === "uk" ? "Структура презентації (Präsentation) — B2" : lang === "fa" ? "ساختار ارائه (Präsentation) — B2" : "پێکهاتەی پێشکەشکردن (Präsentation) — B2"}</div>
-      <div style={{ display: "grid", gap: 12 }}>
-        {B2_PRAESENTATION.map((cat, ci) => (
-          <CollapsibleCat key={ci} de={cat.de} ku={tC(cat, lang)} accent={C.plum}>
-            <div style={{ display: "grid", gap: 11, marginTop: 12 }}>
+      <TopicBoxes parent={parent} items={B2_PRAESENTATION} lang={lang}
+        getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => B2_PRAESENTATION.indexOf(x) + 1}
+        renderContent={(cat) => (
+          <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 11, marginTop: 12 }}>
               {cat.items.map((it, i) => (
                 <div key={i} style={{ borderTop: i ? `1px dashed ${C.line}` : "none", paddingTop: i ? 9 : 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
@@ -6129,10 +6127,8 @@ function PraesentationPanel({ lang = "ku" }) {
                   <div style={{ color: C.muted, fontSize: 14, marginTop: 3, lineHeight: 1.7 }}>{tC(it, lang)}</div>
                 </div>
               ))}
-            </div>
-          </CollapsibleCat>
-        ))}
-      </div>
+            </div></div>
+        )} />
     </div>
   );
 }
@@ -8079,14 +8075,14 @@ function CollapsibleCat({ de, ku, accent, children }) {
   );
 }
 
-function PhrasePanel({ title, data, accent, lang = "ku" }) {
+function PhrasePanel({ title, data, accent, lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>{title}</div>
-      <div style={{ display: "grid", gap: 12 }}>
-        {data.map((cat, ci) => (
-          <CollapsibleCat key={ci} de={cat.de} ku={tC(cat, lang)} accent={accent}>
-            <div style={{ display: "grid", gap: 11, marginTop: 12 }}>
+      <TopicBoxes parent={parent} items={data} lang={lang}
+        getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => data.indexOf(x) + 1}
+        renderContent={(cat) => (
+          <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 11, marginTop: 12 }}>
               {cat.items.map((it, i) => {
                 const hasEx = it.ex && it.ex !== it.p;
                 const exTrans = lang === "uk" ? it.exuk : (it["ex"+lang] || it.exku);
@@ -8105,10 +8101,8 @@ function PhrasePanel({ title, data, accent, lang = "ku" }) {
                   </div>
                 );
               })}
-            </div>
-          </CollapsibleCat>
-        ))}
-      </div>
+            </div></div>
+        )} />
     </div>
   );
 }
@@ -10661,108 +10655,18 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
             <div style={{ fontSize: 14 }}>{lang === "tr" ? `${level} seviyesi için henüz diyalog eklenmedi.` : lang === "en" ? `No dialogues have been added yet for level ${level}.` : lang === "ar" ? `لم تُضَف حوارات بعد لمستوى ${level}.` : lang === "fa" ? `هنوز گفتگویی برای سطح ${level} اضافه نشده است.` : lang === "es" ? `Aún no se han añadido diálogos para el nivel ${level}.` : lang === "uk" ? `Для рівня ${level} діалоги ще не додані.` : `بۆ ئاستی ${level} هێشتا دیالۆگ زیاد نەکراوە.`}</div>
           </div>
         );
+        const DLG_ICONS = ["💬","🛒","🍽️","🚆","🏥","🏠","☎️","🎓","🧳","🎉"];
         return (
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            <style>{`
-              @keyframes dlg-bubble {
-                from { opacity:0; transform:translateY(10px) scale(.97) }
-                to   { opacity:1; transform:none }
-              }
-              .dlg-card-btn:hover { filter: brightness(1.04); }
-            `}</style>
-            {dialogs.map((dlg, idx) => {
-              const isOpen = openDialogId === dlg.id;
+          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={dialogs} lang={lang}
+            getTitle={(x) => <span dir="ltr">{x.theme}</span>}
+            getSub={(x) => `${[...new Set(x.lines.map((l) => l.s))].join(" · ")} · ${x.lines.length} Sätze`}
+            getIcon={(x) => DLG_ICONS[dialogs.indexOf(x) % DLG_ICONS.length]}
+            renderContent={(dlg) => {
               const speakers = [...new Set(dlg.lines.map((x) => x.s))];
               return (
-                <div
-                  key={dlg.id}
-                  className="rise"
-                  style={{
-                    animationDelay: `${idx * 35}ms`,
-                    background: C.panel,
-                    border: `1.5px solid ${isOpen ? "var(--acc)" : C.line}`,
-                    borderRadius: 16,
-                    overflow: "hidden",
-                    boxShadow: isOpen
-                      ? "0 8px 28px color-mix(in srgb, var(--acc) 18%, transparent), 0 2px 8px color-mix(in srgb, var(--acc) 8%, transparent)"
-                      : "0 1px 4px rgba(0,0,0,.04)",
-                    transition: "border-color .28s, box-shadow .32s",
-                  }}>
-
-                  {/* ── Header ── */}
-                  <button
-                    className="dlg-card-btn"
-                    onClick={() => setOpenDialogId(isOpen ? null : dlg.id)}
-                    style={{
-                      width: "100%", border: "none",
-                      background: isOpen
-                        ? "linear-gradient(135deg,var(--acc-btn) 0%,var(--acc-dk) 100%)"
-                        : C.panel,
-                      color: isOpen ? "#fff" : C.ink,
-                      padding: "14px 16px",
-                      display: "flex", alignItems: "center", gap: 12,
-                      cursor: "pointer", textAlign: "left",
-                      transition: "background .32s, color .28s",
-                    }}>
-
-                    {/* icon bubble */}
-                    <div style={{
-                      width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                      background: isOpen ? "rgba(255,255,255,.18)" : "#EEF2FF",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      transition: "background .32s",
-                    }}>
-                      <MessageCircle size={16} color={isOpen ? "#fff" : "var(--acc)"} />
-                    </div>
-
-                    {/* text */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <div style={{ fontWeight: 700, fontSize: 14.5, letterSpacing: "-.01em" }} dir="ltr">{dlg.theme}</div>
-                        {dlg.register && (
-                          <span style={{
-                            fontSize: 12.5, fontWeight: 700, padding: "1.5px 7px", borderRadius: 20,
-                            background: isOpen ? "rgba(255,255,255,.22)" : (dlg.register === "formal" ? "#2a78d618" : "#16A06F18"),
-                            color: isOpen ? "#fff" : (dlg.register === "formal" ? "#2a78d6" : "#16A06F"),
-                          }}>
-                            {(REGISTER_LABEL[dlg.register] && REGISTER_LABEL[dlg.register][lang]) || REGISTER_LABEL[dlg.register].ku}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 12, opacity: .68, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }} dir="ltr">
-                        <span>{speakers.join(" · ")}</span>
-                        <span style={{ opacity: .5 }}>·</span>
-                        <span>{dlg.lines.length} Sätze</span>
-                      </div>
-                    </div>
-
-                    {/* chevron badge */}
-                    <div style={{
-                      width: 26, height: 26, borderRadius: 7, flexShrink: 0,
-                      background: isOpen ? "rgba(255,255,255,.14)" : C.line,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      transition: "background .32s",
-                    }}>
-                      <ChevronDown
-                        size={14}
-                        color={isOpen ? "#fff" : C.muted}
-                        style={{
-                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                          transition: "transform .42s cubic-bezier(.34,1.56,.64,1), color .28s",
-                        }}
-                      />
-                    </div>
-                  </button>
-
-                  {/* ── Body — CSS grid trick for smooth height ── */}
-                  <div style={{
-                    display: "grid",
-                    gridTemplateRows: isOpen ? "1fr" : "0fr",
-                    transition: "grid-template-rows .42s cubic-bezier(.4,0,.2,1)",
-                  }}>
-                    <div style={{ overflow: "hidden" }}>
-                      <div style={{ padding: "14px 14px 16px", display: "flex", flexDirection: "column", gap: 10, borderTop: `1px solid ${C.line}` }}>
-                        {dlg.lines.map((line, i) => {
+                <div style={{ padding: "6px 12px 12px", display: "flex", flexDirection: "column", gap: 10 }}>
+                  <style>{`@keyframes dlg-bubble{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}`}</style>
+                  {dlg.lines.map((line, i) => {
                           const isLeft = speakers.indexOf(line.s) === 0;
                           return (
                             <div
@@ -10770,7 +10674,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                               style={{
                                 display: "flex", flexDirection: "column",
                                 alignItems: isLeft ? "flex-start" : "flex-end",
-                                animation: isOpen ? `dlg-bubble .35s cubic-bezier(.22,1,.36,1) both` : "none",
+                                animation: `dlg-bubble .35s cubic-bezier(.22,1,.36,1) both`,
                                 animationDelay: `${i * 50}ms`,
                               }}>
                               <div style={{ fontSize: 12, color: C.muted, marginBottom: 3, fontWeight: 700, paddingInline: 5 }} dir="ltr">{line.s}</div>
@@ -10794,13 +10698,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                             </div>
                           );
                         })}
-                      </div>
-                    </div>
-                  </div>
                 </div>
               );
-            })}
-          </div>
+            }} />
         );
       })()}
 
@@ -10893,10 +10793,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 : `دەستەواژە و پێکهاتە گرنگەکان بۆ ئامادەکاری تاقیکردنەوەی فەرمی ئاستی ${level} — لەگەڵ نموونە و وەرگێڕانی سۆرانی.`}
             </div>
           </div>
-          {level === "A1" && <PhrasePanel title={lang === "tr" ? "🗣️ A1 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A1 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A1 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A1 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A1 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A1 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A1 (بە نموونە)"} data={A1_REDEMITTEL} accent={C.red} lang={lang} />}
-          {level === "A2" && <PhrasePanel title={lang === "tr" ? "🗣️ A2 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A2 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A2 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A2 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A2 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A2 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A2 (بە نموونە)"} data={A2_REDEMITTEL} accent={C.green} lang={lang} />}
-          {level === "B1" && <RedemittelPanel lang={lang} />}
-          {level === "B2" && <PraesentationPanel lang={lang} />}
+          {level === "A1" && <PhrasePanel title={lang === "tr" ? "🗣️ A1 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A1 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A1 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A1 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A1 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A1 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A1 (بە نموونە)"} data={A1_REDEMITTEL} accent={C.red} lang={lang} parent={TABS.find((t) => t.id === mode)} />}
+          {level === "A2" && <PhrasePanel title={lang === "tr" ? "🗣️ A2 Önemli İfadeler (örneklerle)" : lang === "en" ? "🗣️ A2 Key Phrases (with examples)" : lang === "ar" ? "🗣️ عبارات A2 المهمة (بأمثلة)" : lang === "es" ? "🗣️ A2 Frases clave (con ejemplos)" : lang === "uk" ? "🗣️ A2 Ключові фрази (з прикладами)" : lang === "fa" ? "🗣️ A2 عبارات کلیدی (با مثال)" : "🗣️ دەستەواژە گرنگەکانی A2 (بە نموونە)"} data={A2_REDEMITTEL} accent={C.green} lang={lang} parent={TABS.find((t) => t.id === mode)} />}
+          {level === "B1" && <RedemittelPanel lang={lang} parent={TABS.find((t) => t.id === mode)} />}
+          {level === "B2" && <PraesentationPanel lang={lang} parent={TABS.find((t) => t.id === mode)} />}
         </div>
       )}
 

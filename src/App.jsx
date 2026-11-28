@@ -6,7 +6,7 @@ import {
   Home as HomeIcon, BookOpen, LayoutGrid, MessageCircle,
   AlertTriangle, GraduationCap, Briefcase,
   Library, Target, Trophy, Pin, BookMarked, BookOpenCheck,
-  CheckCircle2, XCircle, AlertCircle, RotateCcw, Zap, RefreshCw, Mic, Volume2,
+  CheckCircle2, XCircle, AlertCircle, RotateCcw, Zap, Layers, Sparkles, RefreshCw, Mic, Volume2,
   Plane, Users, Heart, Globe, Clock, Lock, LogOut,
   Headphones, PenLine, FileText, Type, Star, TrendingUp, SlidersHorizontal, ClipboardCheck,
   ChevronDown, Gamepad2, User, Menu, ScanText, Flame
@@ -9093,11 +9093,11 @@ function tbScroller(el) {
   }
   return document.scrollingElement || document.documentElement;
 }
-function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang }) {
+const SUB_PALETTE = ["#8B5CF6", "#0EA5A4", "#F59E0B", "#EC4899", "#22A06B", "#6366F1", "#F43F5E", "#65A30D", "#0284C7", "#C2410C"];
+function TopicBoxes({ items, selIdx, onSelect, onPick, parent, ownColor, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang }) {
   const [openIdx, setOpenIdx] = useState(null);
   const stageRef = useRef(null);
   const innerRef = useRef(null);
-  const stripRef = useRef(null);
   const prevH = useRef(0);
   const tmRef = useRef(null);
   useEffect(() => () => clearTimeout(tmRef.current), []);
@@ -9116,47 +9116,58 @@ function TopicBoxes({ items, selIdx, onSelect, getTitle, getSub, getIcon, getCol
     tmRef.current = setTimeout(() => { st.style.height = ""; st.style.overflow = ""; st.style.transition = ""; }, 540);
   }, [openIdx]);
 
+  const colorOf = (it, i) => (ownColor && getColor ? getColor(it, i) : SUB_PALETTE[i % SUB_PALETTE.length]);
+
   function toggle(i, ev) {
     const btn = ev.currentTarget;
-    // remember current content height (start point of the height animation)
+    if (onPick) { onPick(items[i], i); return; }
     prevH.current = innerRef.current ? innerRef.current.offsetHeight : 0;
     pageHold(btn, 800);
-    // centre the tapped box inside the horizontal strip (horizontal only — never vertical)
-    const strip = stripRef.current;
-    if (strip) {
-      const target = btn.offsetLeft - (strip.clientWidth - btn.offsetWidth) / 2;
-      strip.scrollTo({ left: target, behavior: "smooth" });
-    }
     if (openIdx === i) setOpenIdx(null);
     else { setOpenIdx(i); onSelect && onSelect(i); }
   }
   const cur = openIdx !== null ? items[openIdx] : null;
+  const PIcon = parent && parent.Icon;
   return (
     <div className="s-tb-wrap">
-      <div className="s-tb-strip" ref={stripRef}>
-        {items.map((it, i) => {
-          const col = getColor(it, i);
-          const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
-          const on = openIdx === i;
-          return (
-            <button key={i} className={"s-tb-box" + (on ? " on" : "")} aria-pressed={on} onClick={(ev) => toggle(i, ev)} style={{ "--tb": col }}>
-              <span className="s-tb-ico">{getIcon(it)}</span>
-              {pr >= 95 && <span className="s-tb-done">✓</span>}
-              <b>{getTitle(it)}</b>
-              {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
-            </button>
-          );
-        })}
-      </div>
-      <div className="s-tb-stage" ref={stageRef}>
-        <div ref={innerRef}>
-          {cur && (
-            <div key={openIdx} className="s-tb-card" style={{ "--tb": getColor(cur, openIdx) }}>
-              <div className="s-tb-sub">{getSub(cur)}</div>
-              {renderContent ? renderContent(cur, openIdx) : null}
-            </div>
-          )}
+      {parent && (
+        <div className="s-tb-head">
+          <span className="s-tb-head-chip">
+            {PIcon ? <span className="s-tb-head-ico"><PIcon size={14} strokeWidth={2} /></span> : null}
+            <span>{parent.label}</span>
+          </span>
+          <span className="s-tb-head-line" />
         </div>
+      )}
+      <div className={"s-tb-body" + (parent ? " has-rail" : "")}>
+        <div className="s-tb-grid">
+          {items.map((it, i) => {
+            const col = colorOf(it, i);
+            const pr = getProgress ? Math.min(100, Math.round(getProgress(it) || 0)) : 0;
+            const on = openIdx === i;
+            return (
+              <button key={i} className={"s-tb-box" + (on ? " on" : "")} aria-pressed={on} onClick={(ev) => toggle(i, ev)} style={{ "--tb": col }}>
+                <span className="s-tb-ico">{getIcon(it)}</span>
+                {pr >= 95 && <span className="s-tb-done">✓</span>}
+                <b>{getTitle(it)}</b>
+                {getSub && onPick && <i>{getSub(it)}</i>}
+                {getProgress && <span className="s-tb-prog"><span style={{ width: `${pr}%` }} /></span>}
+              </button>
+            );
+          })}
+        </div>
+        {!onPick && (
+          <div className="s-tb-stage" ref={stageRef}>
+            <div ref={innerRef}>
+              {cur && (
+                <div key={openIdx} className="s-tb-card" style={{ "--tb": colorOf(cur, openIdx) }}>
+                  <div className="s-tb-sub">{getSub(cur)}</div>
+                  {renderContent ? renderContent(cur, openIdx) : null}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -10849,7 +10860,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "ubung" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} lang={lang}
+          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} lang={lang}
             getTitle={(x)=>x.label} getSub={(x)=>tF(x, lang, 'sub')} getIcon={(x)=>x.emoji} getColor={(x)=>x.color}
             renderContent={(x, idx) => {
               switch (idx) {
@@ -10956,7 +10967,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "grammar" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} lang={lang}
+          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} lang={lang}
             getTitle={(x)=>tC(x, lang)} getSub={(x)=>x.de} getIcon={(x)=>x.icon}
             getColor={(x)=>((progress[level + "::" + x.de] || 0) >= 95 ? "#16A06F" : levelColor(level))}
             getProgress={(x)=>progress[level + "::" + x.de] || 0}
@@ -10970,26 +10981,17 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       )}
 
       {mode === "words" && level !== null && (
-        <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-
-          {/* ── کردار sub-section ── */}
-          <div style={{ ...CARD, overflow:"hidden" }}>
-            <div onClick={() => setOpenWordsSub(s => s==="fiil" ? null : "fiil")}
-              style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="fiil" ? "rgba(36,47,73,.04)" : "#fff", transition:"background .15s" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#242F49,#4A6585)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 3px 10px rgba(36,47,73,.28)" }}>
-                  <Zap size={18} color="#fff" />
-                </div>
-                <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "es" ? "Verbos" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</div>
-                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</div>
-                </div>
-              </div>
-              <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="fiil"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
-            </div>
-            <div style={{ display: openWordsSub==="fiil" ? "" : "none", borderTop:"1px solid var(--line)" }}>
+        <TopicBoxes parent={TABS.find((t) => t.id === mode)} lang={lang}
+          items={[
+            { id:"fiil", icon:<Zap size={17} />, title:(<>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "es" ? "Verbos" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</>), sub:(<>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</>) },
+            { id:"vocab", icon:<Layers size={17} />, title:(<>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "es" ? "Sustantivos" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</>), sub:(<>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</>) },
+            { id:"adj", icon:<Sparkles size={17} />, title:(<>{lang === "tr" ? "Sıfatlar" : lang === "en" ? "Adjectives" : lang === "ar" ? "الصفات" : lang === "es" ? "Adjetivos" : lang === "uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "ئەپیتاف"} — Adjektive</>), sub:(<>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</>) },
+          ]}
+          getTitle={(x) => x.title} getSub={(x) => x.sub} getIcon={(x) => x.icon}
+          renderContent={(x) => (
+            x.id === "fiil" ? (<div>
               {/* Verb category picker */}
-              <TopicBoxes items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} lang={lang}
+              <TopicBoxes parent={{ label: "Verben", Icon: Zap }} items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"}
             renderContent={(selectedVerb) => (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
@@ -11025,27 +11027,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   hint={lang === "tr" ? "Fiillerin cümlede kullanımı üzerine sorular: doğru fiil formu, zaman, çekim ve boşluk doldurma. Fiilin Kürtçe anlamını sorma." : lang === "en" ? "Questions on verb use in sentences: correct verb form, tense, conjugation, and fill-in-the-blank. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول استخدام الأفعال في الجمل: الصيغة الصحيحة، الزمن، التصريف، وملء الفراغات. لا تسأل عن المعنى بالكردية." : lang === "es" ? "Preguntas sobre el uso de verbos en frases: forma verbal correcta, tiempo, conjugación y rellenar huecos. No preguntes el significado en español." : lang === "uk" ? "Питання про вживання дієслів у реченнях: правильна форма, час, дієвідмінювання та заповнення пропусків. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد افعال در جملات: شکل درست فعل، زمان، صرف و پر کردن جای خالی. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی کردارەکان بن لە ناو ڕستەدا: فۆرمی ڕاستی کردار، کات، کێشان و پڕکردنەوەی بۆشایی لە ڕستەدا. پرسیاری واتای کوردی کردارەکە مەکە."}
                   pct={progress[level + "::verbs"] || 0} onBatch={mkBatch(level + "::verbs")} lang={lang} />
               </div>
-            </div>
-          </div>
-
-          {/* ── ناو sub-section ── */}
-          <div style={{ ...CARD, overflow:"hidden" }}>
-            <div onClick={() => setOpenWordsSub(s => s==="vocab" ? null : "vocab")}
-              style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="vocab" ? "rgba(56,67,88,.04)" : "#fff", transition:"background .15s" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#384358,#5B6B88)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 3px 10px rgba(56,67,88,.28)" }}>
-                  <Type size={18} color="#fff" />
-                </div>
-                <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "es" ? "Sustantivos" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</div>
-                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</div>
-                </div>
-              </div>
-              <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="vocab"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
-            </div>
-            <div style={{ display: openWordsSub==="vocab" ? "" : "none", borderTop:"1px solid var(--line)" }}>
+            </div>) : x.id === "vocab" ? (<div>
               {/* Vocab topic wheel picker */}
-              <TopicBoxes items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} lang={lang}
+              <TopicBoxes parent={{ label: "Wortschatz", Icon: Layers }} items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${STAT_LABEL.word[lang] || STAT_LABEL.word.ku}`} getIcon={(x)=>x.icon} getColor={()=>"#3E5A7A"}
             renderContent={(selectedVocab) => (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
@@ -11081,27 +11065,8 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <AITest subject={lang === "tr" ? `${level} seviyesi Almanca kelimeler: ${vocabList.map((l) => l.title).join(", ")}` : lang === "en" ? `German words at ${level} level, topics: ${vocabList.map((l) => l.title).join(", ")}` : lang === "ar" ? `كلمات ألمانية لمستوى ${level}، المواضيع: ${vocabList.map((l) => l.title).join("، ")}` : lang === "fa" ? `واژه‌های آلمانی در سطح ${level}، موضوع‌ها: ${vocabList.map((l) => l.title).join("، ")}` : lang === "es" ? `Palabras alemanas de nivel ${level}, temas: ${vocabList.map((l) => l.title).join(", ")}` : lang === "uk" ? `Німецькі слова рівня ${level}, теми: ${vocabList.map((l) => l.title).join(", ")}` : `وشەی ئەڵمانی ئاستی ${level} لەسەر بابەتەکانی: ${vocabList.map((l) => l.title).join("، ")}`} level={level}
                   pct={progress[level + "::vocab"] || 0} onBatch={mkBatch(level + "::vocab")} lang={lang} />
               </div>
-            </div>
-          </div>
-
-          {/* ── Sıfatlar / Adjektive sub-section ── */}
-          {adjWordList.length > 0 && (
-          <div style={{ ...CARD, overflow:"hidden" }}>
-            <div onClick={() => setOpenWordsSub(s => s==="adj" ? null : "adj")}
-              style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"15px 18px", cursor:"pointer", userSelect:"none", background: openWordsSub==="adj" ? "rgba(45,107,82,.04)" : "#fff", transition:"background .15s" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#2D6B52,#52937A)", display:"grid", placeItems:"center", flexShrink:0, boxShadow:"0 3px 10px rgba(45,107,82,.28)" }}>
-                  <Star size={18} color="#fff" />
-                </div>
-                <div>
-                  <div style={{ fontWeight:800, fontSize:14, color:C.ink }}>{lang === "tr" ? "Sıfatlar" : lang === "en" ? "Adjectives" : lang === "ar" ? "الصفات" : lang === "es" ? "Adjetivos" : lang === "uk" ? "Прикметники" : lang === "fa" ? "صفت‌ها" : "ئەپیتاف"} — Adjektive</div>
-                  <div style={{ fontSize:12, color:C.muted, marginTop:1 }}>{adjWordCount} {lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}</div>
-                </div>
-              </div>
-              <span style={{ fontSize:20, color:"#8892A4", display:"inline-block", transform: openWordsSub==="adj"?"rotate(90deg)":"rotate(0deg)", transition:"transform .2s" }}>›</span>
-            </div>
-            <div style={{ display: openWordsSub==="adj" ? "" : "none", borderTop:"1px solid var(--line)" }}>
-              <TopicBoxes items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} lang={lang}
+            </div>) : (<div>
+              <TopicBoxes parent={{ label: "Adjektive", Icon: Sparkles }} items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"}
             renderContent={(selectedAdj) => (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>
@@ -11137,13 +11102,9 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   hint={lang === "tr" ? "Sıfatların cümlede doğru kullanımı, karşıtları ve edatlı sıfatlar üzerine sorular. Kelimenin Kürtçe anlamını sorma." : lang === "en" ? "Questions on correct adjective use in sentences, opposites, and preposition-linked adjectives. Don't ask for the word's Kurdish meaning." : lang === "ar" ? "أسئلة حول الاستخدام الصحيح للصفات في الجمل، الأضداد، والصفات المرتبطة بحروف الجر. لا تسأل عن المعنى بالكردية." : lang === "es" ? "Preguntas sobre el uso correcto de adjetivos en frases, antónimos y adjetivos con preposición. No preguntes el significado en español." : lang === "uk" ? "Питання про правильне вживання прикметників у реченнях, антоніми та прикметники з прийменниками. Не запитуйте значення слова українською." : lang === "fa" ? "سؤال درباره کاربرد درست صفت‌ها در جملات، متضادها و صفت‌های همراه با حرف اضافه. معنی واژه را به فارسی نپرسید." : "پرسیارەکان لەسەر بەکارهێنانی ڕاستی ئەپیتافەکان لە ناو ڕستەدا، دژەواژەکان و ئەپیتافەکانی لەگەڵ داچەک."}
                   pct={progress[level + "::adj"] || 0} onBatch={mkBatch(level + "::adj")} lang={lang} />
               </div>
-            </div>
-          </div>
-          )}
-
-        </div>
+            </div>)
+          )} />
       )}
-
       {/* ══ MASAL / Märchen ══════════════════════════════════════════ */}
       {mode === "masal" && level !== null && (() => {
         const masals = MASALS[level] || [];
@@ -11296,47 +11257,10 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <div style={{ fontWeight:700, fontSize:15 }}>{tL("stories_empty")}</div>
               </div>
             ) : (
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-                {masals.map((story, i) => (
-                  <div key={story.id} className="rise lcard"
-                    onClick={() => { setSelMasalId(story.id); setMasalDictEntry(null); window.scrollTo({top:0,behavior:"instant"}); }}
-                    style={{ animationDelay:`${i * 60}ms`, background:"var(--surface)", borderRadius:20,
-                      overflow:"hidden", cursor:"pointer",
-                      boxShadow:"0 8px 24px rgba(0,0,0,.08)" }}>
-                    {/* gradient header */}
-                    <div style={{ background:`linear-gradient(135deg,${story.color},${A(story.color,"BB")})`,
-                      padding:"18px 18px 16px", position:"relative", overflow:"hidden" }}>
-                      <div style={{ position:"absolute", top:-16, right:-16, width:56, height:56,
-                        borderRadius:"50%", background:"rgba(255,255,255,.14)", pointerEvents:"none" }} />
-                      <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-                        <div style={{ fontSize:36, lineHeight:1 }}>{story.emoji}</div>
-                        <div>
-                          <div dir="ltr" style={{ fontWeight:900, fontSize:17, color:"#fff",
-                            fontFamily:"'Satoshi',system-ui,sans-serif", lineHeight:1.2 }}>
-                            {story.title}
-                          </div>
-                          <div style={{ fontSize:13, color:"rgba(255,255,255,.82)",
-                            fontWeight:700, marginTop:4 }}>{story[lang] || story.ku}</div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* footer */}
-                    <div style={{ padding:"12px 18px", display:"flex",
-                      alignItems:"center", justifyContent:"space-between" }}>
-                      <div style={{ display:"flex", gap:8 }}>
-                        <span style={{ fontSize:12, fontWeight:700, color:C.muted,
-                          background:"var(--surface-hi)", borderRadius:99, padding:"3px 10px" }}>
-                          {story.paragraphs.length} {tL("stories_para")}
-                        </span>
-                        <span style={{ fontSize:12, fontWeight:700,
-                          color:story.color, background:`${A(story.color,"14")}`,
-                          borderRadius:99, padding:"3px 10px" }}>{level}</span>
-                      </div>
-                      <span style={{ fontSize:18, color:story.color, fontWeight:700 }}>←</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={masals} lang={lang} ownColor
+                onPick={(story) => { setSelMasalId(story.id); setMasalDictEntry(null); window.scrollTo({ top: 0, behavior: "instant" }); }}
+                getTitle={(x) => <span dir="ltr">{x.title}</span>} getSub={(x) => x[lang] || x.ku}
+                getIcon={(x) => x.emoji} getColor={(x) => x.color} />
             )}
           </div>
         );

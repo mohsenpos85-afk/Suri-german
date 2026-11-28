@@ -259,6 +259,7 @@ import { lidTr } from './data/lidTranslations';
 import { UBUNG_DATA } from './data/ubung';
 import { GRAMMAR_QUIZ } from './data/grammarQuiz';
 import { useNavLayer, useNavState, navBack } from './lib/nav';
+import { RESUME_CTX, RESUME_AUTO, resumeGet, resumeLast, resumeSave, resumeBoxText } from './lib/resume';
 import DailyPlan, { DailyHomeCard, dailyLevel } from './daily';
 import { CARD, A, LEVEL_PALETTE, setThemeLevel } from './theme';
 
@@ -4161,6 +4162,26 @@ function Seviyeler({ setTab, setLessonsLevel, progress = {}, lang = "ku" }) {
         {tApp(lang,"nav_levels")}
       </h2>
 
+      {(() => {
+        const rl = resumeLast();
+        if (!rl) return null;
+        const RT = {"tr": "Kaldığın yerden devam et", "en": "Continue where you left off", "ar": "تابع من حيث توقفت", "fa": "از جایی که ماندی ادامه بده", "es": "Continúa donde lo dejaste", "uk": "Продовжити з того місця, де зупинився", "ku": "لەو شوێنەوە بەردەوامبە کە وەستابوویت"};
+        const mk = { grammar: "tab_grammar", words: "tab_words", cards: "tab_cards", masal: "tab_stories", ubung: "tab_ubung", dialog: "tab_dialog", pre: "tab_pretest", exam: "tab_exam" }[rl.mode];
+        const tl = (k) => APP_TRANS[lang]?.[k] || APP_TRANS.en?.[k] || APP_TRANS.ku?.[k] || k;
+        const txt = [rl.level, mk ? tl(mk) : "", resumeBoxText(rl)].filter(Boolean).join(" › ");
+        return (
+          <button onClick={() => { RESUME_AUTO.level = rl.level; setLessonsLevel(rl.level); setTab("lessons"); }}
+            className="s-capsule" style={{ display:"flex", alignItems:"center", gap:12, width:"100%", textAlign:"start", padding:"13px 16px", marginBottom:16, borderRadius:18, cursor:"pointer", border:"1.5px solid color-mix(in srgb, var(--acc) 50%, transparent)", background:"linear-gradient(135deg, color-mix(in srgb, var(--acc) 16%, var(--surface)), var(--surface))", color:"var(--ink)", fontFamily:"inherit" }}>
+            <span style={{ width:38, height:38, borderRadius:12, display:"grid", placeItems:"center", background:"linear-gradient(145deg, var(--acc), var(--acc-dk))", color:"#fff", fontSize:17, flexShrink:0 }}>↺</span>
+            <span style={{ flex:1, minWidth:0 }}>
+              <span style={{ display:"block", fontWeight:800, fontSize:14 }}>{RT[lang] || RT.en}</span>
+              <span style={{ display:"block", fontSize:12, color:"var(--muted)", fontWeight:600, marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{txt}</span>
+            </span>
+            <span style={{ fontWeight:800, color:"var(--acc)" }}>→</span>
+          </button>
+        );
+      })()}
+
       {/* ══ STEP CARDS 3×2 ════════════════════════════════════════════ */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}>
         {cards.map((lv, i) => (
@@ -6048,7 +6069,7 @@ function RedemittelPanel({ lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>📚 {lang === "tr" ? "B1 Önemli İfadeler ve Bağlaçlar (örneklerle)" : lang === "en" ? "B1 Key Phrases and Connectors (with examples)" : lang === "ar" ? "عبارات وروابط B1 المهمة (بأمثلة)" : lang === "es" ? "B1 Frases clave y conectores (con ejemplos)" : lang === "uk" ? "B1 Ключові фрази та сполучники (з прикладами)" : lang === "fa" ? "B1 عبارات کلیدی و حروف ربط (با مثال)" : "دەستەواژە و گرێدەرە گرنگەکانی B1 (بە نموونە)"}</div>
-      <TopicBoxes parent={parent} items={B1_REDEMITTEL} lang={lang}
+      <TopicBoxes memKey="main" parent={parent} items={B1_REDEMITTEL} lang={lang}
         getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => B1_REDEMITTEL.indexOf(x) + 1}
         renderContent={(cat) => (
           <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 12, marginTop: 12 }}>
@@ -6114,7 +6135,7 @@ function PraesentationPanel({ lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10, display:"flex", alignItems:"center", gap:6 }}><Mic size={14} /> {lang === "tr" ? "Sunum Yapısı (Präsentation) — B2" : lang === "en" ? "Presentation Structure (Präsentation) — B2" : lang === "ar" ? "بنية العرض التقديمي (Präsentation) — B2" : lang === "es" ? "Estructura de la presentación (Präsentation) — B2" : lang === "uk" ? "Структура презентації (Präsentation) — B2" : lang === "fa" ? "ساختار ارائه (Präsentation) — B2" : "پێکهاتەی پێشکەشکردن (Präsentation) — B2"}</div>
-      <TopicBoxes parent={parent} items={B2_PRAESENTATION} lang={lang}
+      <TopicBoxes memKey="main" parent={parent} items={B2_PRAESENTATION} lang={lang}
         getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => B2_PRAESENTATION.indexOf(x) + 1}
         renderContent={(cat) => (
           <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 11, marginTop: 12 }}>
@@ -8079,7 +8100,7 @@ function PhrasePanel({ title, data, accent, lang = "ku", parent }) {
   return (
     <div style={{ marginBottom: 18 }}>
       <div style={{ fontSize: 13.5, fontWeight: 700, color: C.muted, marginBottom: 10 }}>{title}</div>
-      <TopicBoxes parent={parent} items={data} lang={lang}
+      <TopicBoxes memKey="main" parent={parent} items={data} lang={lang}
         getTitle={(x) => tC(x, lang)} getSub={(x) => x.de} getIcon={(x) => data.indexOf(x) + 1}
         renderContent={(cat) => (
           <div style={{ padding: "0 14px 8px" }}><div style={{ display: "grid", gap: 11, marginTop: 12 }}>
@@ -9088,8 +9109,18 @@ function tbScroller(el) {
   return document.scrollingElement || document.documentElement;
 }
 const SUB_PALETTE = ["#8B5CF6", "#0EA5A4", "#F59E0B", "#EC4899", "#22A06B", "#6366F1", "#F43F5E", "#65A30D", "#0284C7", "#C2410C"];
-function TopicBoxes({ items, selIdx, onSelect, onPick, parent, ownColor, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang }) {
-  const [openIdx, setOpenIdx] = useState(null);
+function TopicBoxes({ items, selIdx, onSelect, onPick, parent, ownColor, getTitle, getSub, getIcon, getColor, getProgress, renderContent, lang, memKey }) {
+  const memId = memKey ? (RESUME_CTX.mode || "") + "|" + memKey : null;
+  const [openIdx, setOpenIdx] = useState(() => {
+    if (!memId || onPick) return null;
+    const r = resumeGet(RESUME_CTX.level);
+    const v = r && r.boxes ? r.boxes[memId] : null;
+    return Number.isInteger(v) && v >= 0 && v < items.length ? v : null;
+  });
+  const labelOf = (it) => {
+    const textOf = (n) => (n == null || n === false ? "" : typeof n === "string" || typeof n === "number" ? String(n) : Array.isArray(n) ? n.map(textOf).join("") : n.props ? textOf(n.props.children) : "");
+    return textOf(getTitle(it)).replace(/\s+/g, " ").trim();
+  };
   const stageRef = useRef(null);
   const innerRef = useRef(null);
   const prevH = useRef(0);
@@ -9117,7 +9148,9 @@ function TopicBoxes({ items, selIdx, onSelect, onPick, parent, ownColor, getTitl
     if (onPick) { onPick(items[i], i); return; }
     prevH.current = innerRef.current ? innerRef.current.offsetHeight : 0;
     pageHold(btn, 800);
-    if (openIdx === i) setOpenIdx(null);
+    const closing = openIdx === i;
+    if (memId) resumeSave(RESUME_CTX.level, { boxes: { [memId]: closing ? null : i }, labels: { [memId]: closing ? null : labelOf(items[i]) } });
+    if (closing) setOpenIdx(null);
     else { setOpenIdx(i); onSelect && onSelect(i); }
   }
   const cur = openIdx !== null ? items[openIdx] : null;
@@ -10114,6 +10147,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   };
   const lg = level ? (LEVEL_GRADS[level] || { from: levelColor(level), to: levelColor(level) }) : null;
   const [mode, setMode] = useState(null); // null | grammar | words | cards | dialog | pre | exam | ubung
+  RESUME_CTX.level = level; RESUME_CTX.mode = mode;
   useEffect(() => { setMode(null); }, [level]);
   const [openSec, setOpenSec] = useState(null); // accordion: sadece bir bölüm açık
   useEffect(() => { setOpenSec(null); }, [mode]); // mode değişince tüm bölümler kapansın
@@ -10177,6 +10211,25 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
   const modeScrollRef = useRef({});
   useEffect(() => () => pageClear(), []);
   useEffect(() => { pageClear(); }, [level]);
+  // ── Resume: remember the last tab / story per level, and jump back to it on "Continue" ──
+  useEffect(() => { if (level && mode) resumeSave(level, { mode }); }, [level, mode]);
+  useEffect(() => { if (level && mode === "masal") resumeSave(level, { story: selMasalId || null }); }, [level, mode, selMasalId]);
+  const resumeScrollToBox = () => {
+    setTimeout(() => {
+      const el = document.querySelector(".s-tb-stage") || document.querySelector(".s-tb-grid");
+      if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - 150), behavior: "smooth" });
+    }, 600);
+  };
+  const continueFromResume = () => {
+    const r = resumeGet(level) || {};
+    const m = r.mode || "grammar";
+    if (m === "masal" && r.story) { setSelMasalId(r.story); setMasalDictEntry(null); }
+    if (m !== mode) setMode(m);
+    resumeScrollToBox();
+  };
+  useEffect(() => {
+    if (level && RESUME_AUTO.level === level) { RESUME_AUTO.level = null; continueFromResume(); }
+  }, [level]);
   const goToMode = (newMode, ev) => {
     if (newMode === mode) return;
     const btn = ev && ev.currentTarget;
@@ -10566,8 +10619,15 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                 <div style={{ fontSize:12.5, color:"var(--ice)", fontWeight:700, marginTop:6 }}>
                   {avgPct}% {STAT_LABEL.completed[lang] || STAT_LABEL.completed.ku}
                 </div>
+                {(() => {
+                  const rs = resumeGet(level);
+                  if (!rs || !rs.mode) return null;
+                  const mk = { grammar: "tab_grammar", words: "tab_words", cards: "tab_cards", masal: "tab_stories", ubung: "tab_ubung", dialog: "tab_dialog", pre: "tab_pretest", exam: "tab_exam" }[rs.mode];
+                  const txt = [mk ? tL(mk) : "", resumeBoxText(rs)].filter(Boolean).join(" › ");
+                  return txt ? <div style={{ fontSize:12, color:"var(--ice)", opacity:.85, marginTop:3, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>↺ {txt}</div> : null;
+                })()}
               </div>
-              <button className="s-cta lesson-continue-btn" onClick={() => goToMode("grammar")} style={{ flexShrink:0 }}>
+              <button className="s-cta lesson-continue-btn" onClick={continueFromResume} style={{ flexShrink:0 }}>
                 {STAT_LABEL.continue[lang] || STAT_LABEL.continue.ku} →
               </button>
             </div>
@@ -10657,7 +10717,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
         );
         const DLG_ICONS = ["💬","🛒","🍽️","🚆","🏥","🏠","☎️","🎓","🧳","🎉"];
         return (
-          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={dialogs} lang={lang}
+          <TopicBoxes memKey="main" parent={TABS.find((t) => t.id === mode)} items={dialogs} lang={lang}
             getTitle={(x) => <span dir="ltr">{x.theme}</span>}
             getSub={(x) => `${[...new Set(x.lines.map((l) => l.s))].join(" · ")} · ${x.lines.length} Sätze`}
             getIcon={(x) => DLG_ICONS[dialogs.indexOf(x) % DLG_ICONS.length]}
@@ -10760,7 +10820,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "ubung" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} lang={lang}
+          <TopicBoxes memKey="main" parent={TABS.find((t) => t.id === mode)} items={UBUNG_SECTIONS} selIdx={selUbungIdx} onSelect={setSelUbungIdx} lang={lang}
             getTitle={(x)=>x.label} getSub={(x)=>tF(x, lang, 'sub')} getIcon={(x)=>x.emoji} getColor={(x)=>x.color}
             renderContent={(x, idx) => {
               switch (idx) {
@@ -10867,7 +10927,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       {mode === "grammar" && level !== null && (
         <div>
           {/* Collapsing wheel picker */}
-          <TopicBoxes parent={TABS.find((t) => t.id === mode)} items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} lang={lang}
+          <TopicBoxes memKey="main" parent={TABS.find((t) => t.id === mode)} items={grammarList} selIdx={selGrammarIdx} onSelect={setSelGrammarIdx} lang={lang}
             getTitle={(x)=>tC(x, lang)} getSub={(x)=>x.de} getIcon={(x)=>x.icon}
             getColor={(x)=>((progress[level + "::" + x.de] || 0) >= 95 ? "#16A06F" : levelColor(level))}
             getProgress={(x)=>progress[level + "::" + x.de] || 0}
@@ -10881,7 +10941,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
       )}
 
       {mode === "words" && level !== null && (
-        <TopicBoxes parent={TABS.find((t) => t.id === mode)} lang={lang}
+        <TopicBoxes memKey="main" parent={TABS.find((t) => t.id === mode)} lang={lang}
           items={[
             { id:"fiil", icon:<Zap size={17} />, title:(<>{lang === "tr" ? "Fiiller" : lang === "en" ? "Verbs" : lang === "ar" ? "الأفعال" : lang === "es" ? "Verbos" : lang === "uk" ? "Дієслова" : lang === "fa" ? "افعال" : "کردار"} — Verben</>), sub:(<>{lvVerbCount} {lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}</>) },
             { id:"vocab", icon:<Layers size={17} />, title:(<>{lang === "tr" ? "İsimler" : lang === "en" ? "Nouns" : lang === "ar" ? "الأسماء" : lang === "es" ? "Sustantivos" : lang === "uk" ? "Іменники" : lang === "fa" ? "اسم‌ها" : "ناوەکان"}</>), sub:(<>{vocabList.length} {lang === "tr" ? "konu" : lang === "en" ? "topic" : lang === "ar" ? "موضوع" : lang === "es" ? "tema" : lang === "uk" ? "тема" : lang === "fa" ? "موضوع" : "بابەت"}</>) },
@@ -10891,7 +10951,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
           renderContent={(x) => (
             x.id === "fiil" ? (<div>
               {/* Verb category picker */}
-              <TopicBoxes parent={{ label: "Verben", Icon: Zap }} items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} lang={lang}
+              <TopicBoxes memKey="verb" parent={{ label: "Verben", Icon: Zap }} items={verbList} selIdx={selVerbIdx} onSelect={setSelVerbIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "fiil" : lang === "en" ? "verb" : lang === "ar" ? "فعل" : lang === "es" ? "verbo" : lang === "uk" ? "дієслово" : lang === "fa" ? "فعل" : "کردار"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D5C8A"}
             renderContent={(selectedVerb) => (
                 <div key={selectedVerb.id} className="rise" style={{ margin:"0 12px 4px" }}>
@@ -10929,7 +10989,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
               </div>
             </div>) : x.id === "vocab" ? (<div>
               {/* Vocab topic wheel picker */}
-              <TopicBoxes parent={{ label: "Wortschatz", Icon: Layers }} items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} lang={lang}
+              <TopicBoxes memKey="vocab" parent={{ label: "Wortschatz", Icon: Layers }} items={vocabList} selIdx={selVocabIdx} onSelect={setSelVocabIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${STAT_LABEL.word[lang] || STAT_LABEL.word.ku}`} getIcon={(x)=>x.icon} getColor={()=>"#3E5A7A"}
             renderContent={(selectedVocab) => (
                 <div key={selectedVocab.id} className="rise" style={{ margin:"0 12px 4px" }}>
@@ -10966,7 +11026,7 @@ function Lessons({ open, setOpen, progress = {}, setProgress, startLevel = null,
                   pct={progress[level + "::vocab"] || 0} onBatch={mkBatch(level + "::vocab")} lang={lang} />
               </div>
             </div>) : (<div>
-              <TopicBoxes parent={{ label: "Adjektive", Icon: Sparkles }} items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} lang={lang}
+              <TopicBoxes memKey="adj" parent={{ label: "Adjektive", Icon: Sparkles }} items={adjWordList} selIdx={selAdjIdx} onSelect={setSelAdjIdx} lang={lang}
                 getTitle={(x)=>tF(x, lang, 'title')} getSub={(x)=>`${x.words.length} ${lang === "tr" ? "sıfat" : lang === "en" ? "adjective" : lang === "ar" ? "صفة" : lang === "es" ? "adjetivo" : lang === "uk" ? "прикметник" : lang === "fa" ? "صفت" : "ئەپیتاف"}`} getIcon={(x)=>x.icon} getColor={()=>"#2D6B52"}
             renderContent={(selectedAdj) => (
                 <div key={selectedAdj.id} className="rise" style={{ margin:"0 12px 4px" }}>

@@ -8,9 +8,11 @@
 // unioned, dates take the latest, objects merge key by key. So progress can
 // only move forward, no matter which device synced last.
 
+import { mergeResume } from './resume';
+
 export const SYNC_KEYS = [
   'fuxi_progress', 'fuxi_streak', 'fuxi_xp', 'fuxi_journey', 'fuxi_journey_done',
-  'fuxi_pending_key', 'fuxi_cards', 'fuxi_favs', 'fuxi_srs',
+  'fuxi_pending_key', 'fuxi_cards', 'fuxi_favs', 'fuxi_srs', 'suri_resume_v1',
 ];
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}/;
@@ -52,6 +54,7 @@ export function mergeStates(local, remote) {
   const out = {};
   for (const k of SYNC_KEYS) {
     if (k === 'fuxi_pending_key') continue;
+    if (k === 'suri_resume_v1') { const m = mergeResume(local[k], remote ? remote[k] : undefined); if (Object.keys(m).length) out[k] = m; continue; }
     const v = mergeValue(local[k], remote ? remote[k] : undefined);
     if (v !== null && v !== undefined) out[k] = v;
   }
